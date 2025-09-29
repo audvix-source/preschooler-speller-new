@@ -1,0 +1,38 @@
+/* CategoryMenuScreen.css */
+.category-menu-container {
+  position: relative; width: 420px; height: 680px;
+  border-radius: 20px; box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: auto; display: flex; flex-direction: column;
+  justify-content: flex-start; align-items: center;
+  background-size: cover; background-position: center;
+  color: white; padding: 20px; box-sizing: border-box;
+}
+.category-title {
+  color: white; font-size: 2em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px; flex-shrink: 0; 
+}
+.category-buttons-grid {
+  display: flex; flex-direction: column; gap: 8px;
+  width: 100%; max-width: 300px; margin-bottom: 20px;
+  align-items: center;
+}
+.category-button {
+  padding: 8px 15px; font-size: 1.1em; width: 100%;
+  font-weight: bold; color: #333;
+  background-color: rgba(255, 215, 0, 0.8); border: none;
+  border-radius: 12px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer; transition: all 0.2s ease-in-out;
+}
+.category-button:hover {
+  transform: scale(1.03); background-color: rgba(255, 199, 0, 0.9);
+}
+.back-button {
+  margin-top: auto; padding: 10px 25px; font-size: 1em;
+  color: white; background-color: rgba(244, 67, 54, 0.8);
+  border: none;
+  /* CHANGED: Made oblong */
+  border-radius: 999px;
+  cursor: pointer; flex-shrink: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+.back-button:hover { background-color: rgba(244, 67, 54, 1); }

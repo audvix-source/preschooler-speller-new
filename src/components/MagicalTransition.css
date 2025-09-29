@@ -1,0 +1,44 @@
+.magic-container {
+  position: absolute;
+  bottom: 80px;
+  height: 300px;
+  width: 50%;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.magic-container.left {
+  left: 0;
+}
+.magic-container.right {
+  right: 0;
+}
+
+.smoke-particle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background-color: rgba(220, 220, 220, 0.7);
+  border-radius: 50%;
+  filter: blur(15px);
+  opacity: 0;
+  animation: smoke-rise 1.5s ease-out forwards;
+  animation-delay: calc(var(--delay) * 0.5s);
+}
+
+@keyframes smoke-rise {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--x) * 1px - 50%), -300px) scale(3);
+  }
+}

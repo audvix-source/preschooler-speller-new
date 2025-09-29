@@ -1,0 +1,31 @@
+.main-container {
+  position: relative; width: 420px; height: 680px;
+  border-radius: 20px; box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden; background-size: cover; background-position: center;
+  background-repeat: no-repeat; transition: filter 0.3s ease-in-out;
+}
+.settings-button {
+  position: absolute; top: 20px; right: 20px; width: 50px; height: 50px;
+  background-color: rgba(255, 255, 255, 0.7); border: none; border-radius: 50%;
+  font-size: 24px; cursor: pointer; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s;
+}
+.settings-button:hover { background-color: rgba(255, 255, 255, 1); }
+.start-button-overlay {
+  position: absolute; left: 51%; transform: translateX(-50%);
+  bottom: 110px; width: 140px; height: 52px;
+  border: none; cursor: pointer; z-index: 10;
+  background-color: rgba(0, 0, 0, 0.001);
+}
+.toucan-touchpad {
+  position: absolute; bottom: 115px; left: 90px; 
+  width: 47px; height: 42px; border: none;
+  cursor: pointer; z-index: 10;
+  background-color: rgba(0, 0, 0, 0.001);
+}
+.parrot-touchpad {
+  position: absolute; bottom: 115px; right: 78px;
+  width: 47px; height: 42px; border: none;
+  cursor: pointer; z-index: 10;
+  background-color: rgba(0, 0, 0, 0.001);
+}
