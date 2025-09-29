@@ -27,12 +27,15 @@
   transform: scale(1.03); background-color: rgba(255, 199, 0, 0.9);
 }
 .back-button {
-  margin-top: auto; padding: 10px 25px; font-size: 1em;
-  color: white; background-color: rgba(244, 67, 54, 0.8);
+  margin-top: auto;
+  padding: 8px 15px;
+  font-size: 1.1em;
+  width: 300px;
+  font-weight: bold;
+  color: white;
+  background-color: rgba(244, 67, 54, 0.8);
   border: none;
-  /* CHANGED: Made oblong */
-  border-radius: 999px;
-  cursor: pointer; flex-shrink: 0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 12px; /* <-- This line makes it oblong */
+  cursor: pointer;
 }
 .back-button:hover { background-color: rgba(244, 67, 54, 1); }

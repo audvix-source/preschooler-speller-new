@@ -5,7 +5,7 @@ function OnScreenKeyboard({ onLetterClick, usedLetters, currentWord }) {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   // This logic correctly disables letters if they've been used up in the current word
-  const getLetterCount = (letter) => {
+  const getLetterCountInWord = (letter) => {
     return currentWord.word.toUpperCase().split(letter).length - 1;
   };
 
@@ -20,7 +20,7 @@ function OnScreenKeyboard({ onLetterClick, usedLetters, currentWord }) {
           key={letter}
           className="keyboard-letter"
           onClick={() => onLetterClick(letter)}
-          disabled={getUsedCount(letter) >= getLetterCount(letter)}
+          disabled={getUsedCount(letter) >= getLetterCountInWord(letter)}
         >
           {letter}
         </button>
@@ -30,3 +30,4 @@ function OnScreenKeyboard({ onLetterClick, usedLetters, currentWord }) {
 }
 
 export default OnScreenKeyboard;
+

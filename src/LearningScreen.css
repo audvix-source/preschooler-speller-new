@@ -1,3 +1,305 @@
+/* Main Container - Tablet Dimensions */
+.learning-screen-container {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 680px;
+  margin: 0 auto;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Character Selection Screen */
+.character-selection-container .back-button-fixed {
+  position: relative;
+  padding: 12px 30px;
+  font-size: 1.2em;
+  background-color: rgba(244, 67, 54, 0.9);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 20;
+  margin-top: 30px; /* Add space from characters */
+}
+
+.character-selection-container.hidden {
+  display: none;
+}
+
+.selection-title {
+  font-size: 3em;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.character-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 60px;
+  width: 100%;
+  margin-bottom: 50px; /* Add space before button */
+}
+
+.character-model {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.character-model:hover {
+  transform: scale(1.08);
+}
+
+.character-model img {
+  width: 300px;
+  height: 500px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* Back Button in Character Selection */
+.character-selection-container .back-button-fixed {
+  position: relative;
+  padding: 12px 30px;
+  font-size: 1.2em;
+  background-color: rgba(244, 67, 54, 0.9);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.character-selection-container .back-button-fixed:hover {
+  background-color: rgba(244, 67, 54, 1);
+}
+
+/* Activity View */
+.activity-view {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.activity-view.visible {
+  display: flex;
+}
+
+/* Top Button Row */
+.top-button-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.back-button {
+  padding: 12px 25px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: white;
+  background-color: #F44336;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.back-button:hover {
+  background-color: #D32F2F;
+}
+
+.next-word-button {
+  padding: 12px 25px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+  background-color: #FFD700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.next-word-button:hover {
+  background-color: #FFC700;
+}
+
+/* Game Container */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  max-width: 380px;
+}
+
+/* Image Container */
+.word-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  min-height: 300px;
+}
+
+.word-image-container.spelling-mode {
+  min-height: 200px;
+}
+
+.activity-image {
+  max-width: 80%;
+  max-height: 350px;
+  object-fit: contain;
+  display: block;
+}
+
+.activity-image.small {
+  max-height: 200px;
+}
+
+/* Word Blanks Container */
+.word-blanks-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+  position: relative;
+}
+
+.word-blanks-container.spelling-mode {
+  margin: 10px 0;
+}
+
+.letter-blank {
+  width: 40px;
+  height: 50px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.letter-blank.filled {
+  background-color: #90EE90;
+  border-color: #228B22;
+}
+
+.letter-blank.current {
+  background-color: #FFD700;
+  border-color: #FFA500;
+  transform: scale(1.1);
+}
+
+/* Button Row */
+.button-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.hear-word-button {
+  padding: 10px 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: white;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hear-word-button:hover:not(:disabled) {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.hear-word-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.challenge-button {
+  padding: 10px 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: white;
+  background-color: #FF9800;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.challenge-button:hover {
+  background-color: #F57C00;
+  transform: scale(1.05);
+}
+
+/* Challenge Section */
+.challenge-section {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.challenge-blanks-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.challenge-blank {
+  width: 40px;
+  height: 50px;
+  border: 2px solid #2196F3;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  background-color: white;
+}
+
+/* On-Screen Keyboard */
 .alphabet-keyboard {
   display: flex;
   flex-wrap: wrap;
@@ -33,4 +335,58 @@
   opacity: 0.7;
   cursor: not-allowed;
   color: #888;
+}
+
+/* Completion Message */
+.completion-message {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.5em;
+  color: #4CAF50;
+  animation: celebrate 0.5s ease;
+}
+
+@keyframes celebrate {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Confetti Overlay */
+.confetti-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+  animation: fadeInOut 3s ease;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Back Button Fixed (Outside activity view) */
+.back-button-fixed {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 25px;
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  background-color: rgba(244, 67, 54, 0.8);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.back-button-fixed:hover {
+  background-color: rgba(244, 67, 54, 1);
 }

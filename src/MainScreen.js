@@ -19,35 +19,41 @@ function MainScreen(props) {
   const handleSpeedChange = (event) => setSpeed(parseFloat(event.target.value));
 
   const playJingle = () => {
-    console.log("Attempting to play jingle...");
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play()
-        .then(() => {
-          console.log("Jingle started successfully");
-          // Start fade out after 4 seconds
-          setTimeout(() => {
-            if (audioRef.current) {
-              console.log("Starting jingle fade out after 4 seconds");
-              const fadeOut = setInterval(() => {
-                if (audioRef.current.volume > 0.1) {
-                  audioRef.current.volume -= 0.1;
-                } else {
-                  console.log("Stopping jingle after fade");
-                  audioRef.current.pause();
-                  audioRef.current.currentTime = 0;
-                  audioRef.current.volume = 1.0; // Reset volume for next time
-                  clearInterval(fadeOut);
-                }
-              }, 100);
-            }
-          }, 4000);
-        })
-        .catch(e => console.error("Jingle play failed:", e));
-    } else {
-      console.error("Audio ref is null");
-    }
-  };
+  console.log("Attempting to play jingle...");
+  if (audioRef.current) {
+    audioRef.current.currentTime = 0;
+    audioRef.current.play()
+      .then(() => {
+        console.log("Jingle started successfully");
+        // Start fade out after 4 seconds
+        setTimeout(() => {
+          if (audioRef.current) {
+            console.log("Starting jingle fade out after 4 seconds");
+            const fadeOut = setInterval(() => {
+              // Check if audioRef.current still exists
+              if (!audioRef.current) {
+                clearInterval(fadeOut);
+                return;
+              }
+              
+              if (audioRef.current.volume > 0.1) {
+                audioRef.current.volume = Math.max(0, audioRef.current.volume - 0.1);
+              } else {
+                console.log("Stopping jingle after fade");
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+                audioRef.current.volume = 1.0; // Reset volume for next time
+                clearInterval(fadeOut);
+              }
+            }, 100);
+          }
+        }, 4000);
+      })
+      .catch(e => console.error("Jingle play failed:", e));
+  } else {
+    console.error("Audio ref is null");
+  }
+};
 
   const handleFirstInteraction = () => {
     if (!hasInteracted) {

@@ -52,12 +52,16 @@ function LearningScreen(props) {
   }, [wordIndex]);
   
   const getCurrentImage = () => {
-    if (!currentWord || !currentWord.image) return null;
-    if (typeof currentWord.image === 'object' && chosenModel) {
-      return currentWord.image[chosenModel];
-    }
-    return currentWord.image;
-  };
+  if (!currentWord || !currentWord.image) return null;
+  
+  // If image is an object (boy/girl), return the appropriate one
+  if (typeof currentWord.image === 'object' && currentWord.image !== null) {
+    return chosenModel ? currentWord.image[chosenModel] : null;
+  }
+  
+  // If image is a string, return it directly
+  return currentWord.image;
+};
   
   const imageFileName = getCurrentImage();
 
@@ -121,16 +125,27 @@ function LearningScreen(props) {
   };
   
   const playErrorSound = () => {
+  try {
     const context = new (window.AudioContext || window.webkitAudioContext)();
     const o = context.createOscillator();
     const g = context.createGain();
     o.connect(g);
     g.connect(context.destination);
-    o.frequency.setValueAtTime(300, context.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.5);
-    o.start(0);
-    o.stop(context.currentTime + 0.5);
-  };
+    
+    // Pleasant chime sound
+    o.type = 'sine';
+    o.frequency.setValueAtTime(523.25, context.currentTime); // C5 note
+    o.frequency.setValueAtTime(392.00, context.currentTime + 0.1); // G4 note
+    
+    g.gain.setValueAtTime(0.3, context.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.4);
+    
+    o.start(context.currentTime);
+    o.stop(context.currentTime + 0.4);
+  } catch (e) {
+    console.error("Audio error:", e);
+  }
+};
 
   const triggerReward = () => {
     setShowReward(true);
@@ -162,6 +177,9 @@ function LearningScreen(props) {
           <div className="character-model" onClick={() => handleCharacterSelect('boy')}><img src={boyModel} alt="Boy"/></div>
           <div className="character-model" onClick={() => handleCharacterSelect('girl')}><img src={girlModel} alt="Girl"/></div>
         </div>
+         <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>
+    Back to Menu
+  </button>
       </div>
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
@@ -207,7 +225,6 @@ function LearningScreen(props) {
       
       {showReward && <div className="confetti-overlay"></div>}
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
-      <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
     </div>
   );
 }
