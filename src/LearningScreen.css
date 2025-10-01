@@ -1,4 +1,4 @@
-/* --- LearningScreen.css (Final Aggressive Tweaks) --- */
+/* --- LearningScreen.css (Final Pixel Polish) --- */
 
 /* Main Container - Tablet Dimensions */
 .learning-screen-container {
@@ -36,110 +36,73 @@
   top: 0;
   left: 0;
   z-index: 5;
-  padding: 20px;
+  /* --- FINAL TWEAK: Reduced bottom padding to push keyboard down --- */
+  padding: 20px 20px 10px 20px;
   box-sizing: border-box;
 }
 .activity-view.visible { display: flex; }
 
 /* Top Button Row */
-.top-button-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  max-width: 380px;
-  /* --- FINAL TWEAK: Reduced margin to save space --- */
-  margin-bottom: 10px; 
-  flex-shrink: 0;
-}
-.back-button, .next-word-button {
-  /* --- FINAL TWEAK: Reduced padding to make buttons shorter --- */
-  padding: 8px 20px;
-  font-size: 1em;
-  font-weight: bold;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  flex: 1;
-}
+.top-button-row { display: flex; justify-content: space-between; gap: 10px; width: 100%; max-width: 380px; margin-bottom: 10px; flex-shrink: 0; }
+.back-button, .next-word-button { padding: 8px 20px; font-size: 1em; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; flex: 1; }
 .back-button { color: white; background-color: #F44336; }
 .back-button:hover { background-color: #D32F2F; }
 .next-word-button { color: #333; background-color: #FFD700; }
 .next-word-button:hover { background-color: #FFC700; }
 
-
 /* Game Container */
-.game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 1;
-  width: 100%;
-  max-width: 380px;
-}
+.game-container { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%; max-width: 380px; }
 .game-container.challenge-mode { justify-content: flex-start; }
 
 /* Image Container */
-.word-image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 10px;
-  /* --- FINAL TWEAK: Reduced default min-height --- */
-  min-height: 250px; 
-  transition: min-height 0.3s ease;
-}
-.word-image-container.spelling-mode { min-height: 200px; }
+.word-image-container { display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 0; min-height: 200px; transition: min-height 0.3s ease; }
+.word-image-container.spelling-mode { min-height: 150px; }
 .game-container.challenge-mode .word-image-container { min-height: auto; }
-.activity-image {
-  max-width: 80%;
-  max-height: 350px;
-  object-fit: contain;
-  display: block;
-  transition: max-height 0.3s ease;
-}
+.activity-image { max-width: 80%; max-height: 300px; object-fit: contain; display: block; transition: max-height 0.3s ease; }
 .activity-image.small {
-  /* --- FINAL TWEAK: Aggressively shrink image for long words in challenge --- */
-  max-height: 80px; 
+  /* --- FINAL TWEAK: Significantly bigger image size --- */
+  max-height: 220px; 
 }
 
 /* Word Blanks & Buttons */
-.word-blanks-container { 
-  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; 
-  /* --- FINAL TWEAK: Reduced vertical margin to tighten rows --- */
-  margin: 10px 0; 
-  position: relative; 
-}
-.word-blanks-container.spelling-mode { margin: 10px 0; }
+.word-blanks-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0; position: relative; }
+.word-blanks-container.spelling-mode { margin: 5px 0; }
 .letter-blank { width: 40px; height: 50px; border: 2px solid #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; background-color: white; transition: all 0.3s ease; }
 .letter-blank.filled { background-color: #90EE90; border-color: #228B22; }
 .letter-blank.current { background-color: #FFD700; border-color: #FFA500; transform: scale(1.1); }
 
-.button-row { display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
-.hear-word-button, .challenge-button {
-  /* --- FINAL TWEAK: Reduced padding to make buttons shorter --- */
-  padding: 8px 18px;
-  font-size: 1em;
-  font-weight: bold;
-  border: none; 
-  border-radius: 12px; 
-  cursor: pointer; 
-  transition: all 0.2s ease;
-}
+.button-row { display: flex; gap: 10px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+.hear-word-button, .challenge-button { padding: 8px 18px; font-size: 1em; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; }
 .hear-word-button { color: white; background-color: #4CAF50; }
 .hear-word-button:hover:not(:disabled) { background-color: #45a049; transform: scale(1.05); }
 .hear-word-button:disabled { background-color: #cccccc; cursor: not-allowed; }
 .challenge-button { color: white; background-color: #FF9800; }
 .challenge-button:hover { background-color: #F57C00; transform: scale(1.05); }
 
-
 /* Challenge Section & Keyboard */
-.challenge-section { margin-top: auto; padding-top: 10px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+.challenge-section { 
+  /* --- FINAL TWEAK: Removed all top margin/padding to eliminate gap --- */
+  margin-top: 0; 
+  padding-top: 0; 
+  width: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  flex-grow: 1;
+  justify-content: flex-start;
+}
 .challenge-blanks-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
 .challenge-blank { width: 40px; height: 50px; border: 2px solid #2196F3; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; background-color: white; }
-.alphabet-keyboard { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; width: 100%; max-width: 380px; margin: 10px 0; }
+.alphabet-keyboard { 
+  display: grid; 
+  grid-template-columns: repeat(8, 1fr); 
+  gap: 4px; 
+  width: 100%; 
+  max-width: 380px; 
+  margin-top: auto; 
+  /* --- FINAL TWEAK: Removed bottom margin --- */
+  margin-bottom: 0;
+}
 .keyboard-letter { display: flex; align-items: center; justify-content: center; font-size: 1em; font-weight: bold; background-color: white; color: #333; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; aspect-ratio: 1 / 1; transition: background-color 0.2s, transform 0.2s; }
 .keyboard-letter:hover:not(:disabled) { background-color: #f0f0f0; transform: translateY(-2px); }
 .keyboard-letter:disabled { background-color: #e9ecef; opacity: 0.7; cursor: not-allowed; color: #888; }
