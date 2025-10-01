@@ -13,40 +13,46 @@
   flex-direction: column;
 }
 
-/* Character Selection Screen */
-.character-selection-container .back-button-fixed {
-  position: relative;
-  padding: 12px 30px;
-  font-size: 1.2em;
-  background-color: rgba(244, 67, 54, 0.9);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  z-index: 20;
-  margin-top: 30px; /* Add space from characters */
+/* --- NEW RULE --- */
+/* This is the new layout container for the character selection screen */
+.character-selection-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 40px 15px;
+  box-sizing: border-box;
 }
 
 .character-selection-container.hidden {
   display: none;
 }
 
+/* --- UPDATED RULE --- */
+/* Updated title with correct font size and alignment */
 .selection-title {
-  font-size: 3em;
+  font-size: 2.3em;
   color: white;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-  margin-bottom: 20px;
+  white-space: nowrap; 
+  text-align: center;
   flex-shrink: 0;
+  margin-bottom: 0;
 }
 
+/* --- UPDATED RULE --- */
+/* Updated character container with correct spacing */
 .character-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: flex-end;
-  gap: 60px;
+  gap: 10px;
   width: 100%;
-  margin-bottom: 50px; /* Add space before button */
+  margin-top: 40px;
+  margin-bottom: 0;
 }
 
 .character-model {
@@ -58,30 +64,19 @@
   transform: scale(1.08);
 }
 
+/* --- UPDATED RULE --- */
+/* Adjusted image size for better screen fit */
 .character-model img {
-  width: 300px;
-  height: 500px;
+  width: 180px;
+  height: 360px;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-/* Back Button in Character Selection */
-.character-selection-container .back-button-fixed {
-  position: relative;
-  padding: 12px 30px;
-  font-size: 1.2em;
-  background-color: rgba(244, 67, 54, 0.9);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  z-index: 20;
-}
-
-.character-selection-container .back-button-fixed:hover {
-  background-color: rgba(244, 67, 54, 1);
-}
+/* NOTE: The old ".character-selection-container .back-button-fixed" rules 
+  have been removed from here to prevent conflicts.
+*/
 
 /* Activity View */
 .activity-view {
@@ -370,23 +365,25 @@
   50% { opacity: 1; }
 }
 
-/* Back Button Fixed (Outside activity view) */
+/* --- UPDATED RULE --- */
+/* The definitive, single rule for the bottom button */
 .back-button-fixed {
   position: absolute;
-  bottom: 20px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 25px;
-  font-size: 1em;
-  font-weight: bold;
+  padding: 12px 30px;
+  font-size: 1.2em;
+  background-color: rgba(244, 67, 54, 0.9);
   color: white;
-  background-color: rgba(244, 67, 54, 0.8);
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  z-index: 100;
+  z-index: 20;
 }
 
+/* --- UPDATED RULE --- */
+/* The single hover effect for the bottom button */
 .back-button-fixed:hover {
   background-color: rgba(244, 67, 54, 1);
 }
