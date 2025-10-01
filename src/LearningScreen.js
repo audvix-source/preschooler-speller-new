@@ -5,7 +5,7 @@ import parkBackground from './assets/park-background.png';
 import boyModel from './assets/boy-model.png';
 import girlModel from './assets/girl-model.png';
 import MagicalTransition from './components/MagicalTransition';
-import OnScreenKeyboard from './components/OnScreenKeyboard'; // Import the new keyboard
+import OnScreenKeyboard from './components/OnScreenKeyboard';
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -52,16 +52,12 @@ function LearningScreen(props) {
   }, [wordIndex]);
   
   const getCurrentImage = () => {
-  if (!currentWord || !currentWord.image) return null;
-  
-  // If image is an object (boy/girl), return the appropriate one
-  if (typeof currentWord.image === 'object' && currentWord.image !== null) {
-    return chosenModel ? currentWord.image[chosenModel] : null;
-  }
-  
-  // If image is a string, return it directly
-  return currentWord.image;
-};
+    if (!currentWord || !currentWord.image) return null;
+    if (typeof currentWord.image === 'object' && currentWord.image !== null) {
+      return chosenModel ? currentWord.image[chosenModel] : null;
+    }
+    return currentWord.image;
+  };
   
   const imageFileName = getCurrentImage();
 
@@ -125,27 +121,23 @@ function LearningScreen(props) {
   };
   
   const playErrorSound = () => {
-  try {
-    const context = new (window.AudioContext || window.webkitAudioContext)();
-    const o = context.createOscillator();
-    const g = context.createGain();
-    o.connect(g);
-    g.connect(context.destination);
-    
-    // Pleasant chime sound
-    o.type = 'sine';
-    o.frequency.setValueAtTime(523.25, context.currentTime); // C5 note
-    o.frequency.setValueAtTime(392.00, context.currentTime + 0.1); // G4 note
-    
-    g.gain.setValueAtTime(0.3, context.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.4);
-    
-    o.start(context.currentTime);
-    o.stop(context.currentTime + 0.4);
-  } catch (e) {
-    console.error("Audio error:", e);
-  }
-};
+    try {
+      const context = new (window.AudioContext || window.webkitAudioContext)();
+      const o = context.createOscillator();
+      const g = context.createGain();
+      o.connect(g);
+      g.connect(context.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(523.25, context.currentTime);
+      o.frequency.setValueAtTime(392.00, context.currentTime + 0.1);
+      g.gain.setValueAtTime(0.3, context.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.4);
+      o.start(context.currentTime);
+      o.stop(context.currentTime + 0.4);
+    } catch (e) {
+      console.error("Audio error:", e);
+    }
+  };
 
   const triggerReward = () => {
     setShowReward(true);
@@ -178,8 +170,8 @@ function LearningScreen(props) {
           <div className="character-model" onClick={() => handleCharacterSelect('girl')}><img src={girlModel} alt="Girl"/></div>
         </div>
          <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>
-    Back to Menu
-  </button>
+           Back to Menu
+         </button>
       </div>
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
@@ -187,23 +179,31 @@ function LearningScreen(props) {
             <button className="back-button" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
             <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
         </div>
-        <div className="game-container">
-          <div className={`word-image-container ${isSpelling || challengeMode ? 'spelling-mode' : ''}`}>
-            {imageFileName && ( <img src={require(`./assets/${imageFileName}`)} alt={currentWord.word} className={`activity-image ${isSpelling || challengeMode ? 'small' : ''}`} /> )}
+        <div className={`game-container ${challengeMode ? 'challenge-mode' : ''}`}>
+          <div className={`word-image-container ${isSpelling ? 'spelling-mode' : ''}`}>
+            {imageFileName && (
+              (() => {
+                  const isLongWord = currentWord.word.length > 7;
+                  const imageClass = `activity-image ${isSpelling || (challengeMode && isLongWord) ? 'small' : ''}`;
+                  return <img src={require(`./assets/${imageFileName}`)} alt={currentWord.word} className={imageClass} />;
+              })()
+            )}
           </div>
-          <div className={`word-blanks-container ${isSpelling || challengeMode ? 'spelling-mode' : ''}`}>
+          <div className={`word-blanks-container ${isSpelling ? 'spelling-mode' : ''}`}>
             {currentWord.word.split('').map((letter, index) => (
               <div key={index} className={`letter-blank ${filledLetters[index] ? 'filled' : ''} ${currentLetterIndex === index ? 'current' : ''}`} onClick={() => handleHintClick(index)} style={{ cursor: showHints[index] ? 'pointer' : 'default' }}>
                 {showHints[index] ? '?' : (filledLetters[index] || '')}
               </div>
             ))}
           </div>
-          <div className="button-row">
-            <button className="hear-word-button" onClick={handleSpellWord} disabled={isSpelling || challengeMode}>🔊 {isSpelling ? 'Spelling...' : 'Hear the Word'}</button>
-            {!challengeMode && !isSpelling && (
-              <button className="challenge-button" onClick={handleAcceptChallenge}>Accept Challenge</button>
-            )}
-          </div>
+          {!challengeMode && (
+            <div className="button-row">
+              <button className="hear-word-button" onClick={handleSpellWord} disabled={isSpelling}>🔊 Hear the Word</button>
+              {!isSpelling && (
+                <button className="challenge-button" onClick={handleAcceptChallenge}>Accept Challenge</button>
+              )}
+            </div>
+          )}
         </div>
         
         {challengeMode && (
@@ -228,4 +228,5 @@ function LearningScreen(props) {
     </div>
   );
 }
+
 export default LearningScreen;
