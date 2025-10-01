@@ -51,8 +51,11 @@
   align-items: flex-end;
   gap: 10px;
   width: 100%;
-  margin-top: 40px;
-  margin-bottom: 0;
+  
+  /* ADJUSTED: Reduce margin-top to bring characters down */
+  margin-top: 100px; /* Increase this value (e.g., from 40px to 100px, 120px) to move them down more */
+  
+  margin-bottom: 0; 
 }
 
 .character-model {
