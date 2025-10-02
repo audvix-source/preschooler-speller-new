@@ -140,16 +140,35 @@ function LearningScreen(props) {
   };
 
   const triggerReward = () => {
-    setShowReward(true);
-    const congratulations = ["Excellent!", "Amazing!", "You did it!"];
-    const encouragement = ["Good work!", "Nice try!"];
-    const message = hadMistake ? encouragement[Math.floor(Math.random() * encouragement.length)] : congratulations[Math.floor(Math.random() * congratulations.length)];
-    props.speak(message);
-    setTimeout(() => {
-      setShowReward(false);
-      handleNextWord();
-    }, 3000);
-  };
+  setShowReward(true);
+  
+  // --- NEW LOGIC STARTS HERE ---
+  const isLongWord = currentWord.word.length > 7;
+  let message = '';
+
+  const congratulations = ["Excellent!", "Amazing!", "You did it!"];
+  const encouragement = ["Good work!", "Nice try!"];
+  const longWordPraise = ["Wow, that was a long one!", "Super speller!", "Incredible job!"];
+
+  if (hadMistake) {
+    // If they made a mistake, give gentle encouragement
+    message = encouragement[Math.floor(Math.random() * encouragement.length)];
+  } else if (isLongWord) {
+    // If it was a long word with no mistakes, give special praise
+    message = longWordPraise[Math.floor(Math.random() * longWordPraise.length)];
+  } else {
+    // Otherwise, give the standard congratulations
+    message = congratulations[Math.floor(Math.random() * congratulations.length)];
+  }
+    console.log('PRAISE MESSAGE:', message);
+
+  props.speak(message); // The app speaks the chosen message
+
+  setTimeout(() => {
+    setShowReward(false);
+    handleNextWord();
+  }, 3000);
+};
   
   if (!currentWord) {
     return (
@@ -189,13 +208,15 @@ function LearningScreen(props) {
               })()
             )}
           </div>
-          <div className={`word-blanks-container ${isSpelling ? 'spelling-mode' : ''}`}>
-            {currentWord.word.split('').map((letter, index) => (
-              <div key={index} className={`letter-blank ${filledLetters[index] ? 'filled' : ''} ${currentLetterIndex === index ? 'current' : ''}`} onClick={() => handleHintClick(index)} style={{ cursor: showHints[index] ? 'pointer' : 'default' }}>
-                {showHints[index] ? '?' : (filledLetters[index] || '')}
-              </div>
-            ))}
-          </div>
+                    <div className={`word-blanks-container ${isSpelling ? 'spelling-mode' : ''}`}>
+           {currentWord.word.split('').map((letter, index) => (
+             letter === ' '
+          ? <div key={index} className="word-space"></div>
+        : <div key={index} className={`letter-blank ${filledLetters[index] ? 'filled' : ''} ${currentLetterIndex === index ? 'current' : ''}`} onClick={() => handleHintClick(index)} style={{ cursor: showHints[index] ? 'pointer' : 'default' }}>
+          {showHints[index] ? '?' : (filledLetters[index] || '')}
+        </div>
+  ))}
+</div>
           {!challengeMode && (
             <div className="button-row">
               <button className="hear-word-button" onClick={handleSpellWord} disabled={isSpelling}>🔊 Hear the Word</button>
@@ -209,8 +230,12 @@ function LearningScreen(props) {
         {challengeMode && (
           <div className="challenge-section">
             <div className="challenge-blanks-container">
-              {challengeLetters.map((letter, index) => ( <div key={index} className="challenge-blank">{letter}</div> ))}
-            </div>
+             {currentWord.word.split('').map((char, index) => (
+               char === ' '
+         ? <div key={index} className="word-space"></div>
+      : <div key={index} className="challenge-blank">{challengeLetters[index]}</div>
+  ))}
+</div>
             {!isCompleted && (
               <OnScreenKeyboard onLetterClick={handleKeyboardLetter} usedLetters={challengeLetters.filter(l=>l!=='')} currentWord={currentWord} />
             )}

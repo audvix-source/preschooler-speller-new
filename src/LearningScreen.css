@@ -68,6 +68,12 @@
 .word-blanks-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 0; position: relative; }
 .word-blanks-container.spelling-mode { margin: 5px 0; }
 .letter-blank { width: 40px; height: 50px; border: 2px solid #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; background-color: white; transition: all 0.3s ease; }
+/* --- ADD THIS NEW RULE HERE --- */
+.word-space {
+  width: 20px;
+  height: 50px;
+}
+/* --- END OF NEW RULE --- */
 .letter-blank.filled { background-color: #90EE90; border-color: #228B22; }
 .letter-blank.current { background-color: #FFD700; border-color: #FFA500; transform: scale(1.1); }
 
