@@ -9,8 +9,9 @@ function MainScreen(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const audioRef = useRef(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [selectedGender, setSelectedGender] = useState(null);
 
-  const { speak, settings, setters, onNavigate, setGuideVoice } = props;
+  const { speak, settings, setters, onNavigate, setGuideVoice, guideVoice } = props;
   const { brightness, pitch, speed } = settings;
   const { setBrightness, setPitch, setSpeed } = setters;
 
@@ -19,41 +20,11 @@ function MainScreen(props) {
   const handleSpeedChange = (event) => setSpeed(parseFloat(event.target.value));
 
   const playJingle = () => {
-  console.log("Attempting to play jingle...");
-  if (audioRef.current) {
-    audioRef.current.currentTime = 0;
-    audioRef.current.play()
-      .then(() => {
-        console.log("Jingle started successfully");
-        // Start fade out after 4 seconds
-        setTimeout(() => {
-          if (audioRef.current) {
-            console.log("Starting jingle fade out after 4 seconds");
-            const fadeOut = setInterval(() => {
-              // Check if audioRef.current still exists
-              if (!audioRef.current) {
-                clearInterval(fadeOut);
-                return;
-              }
-              
-              if (audioRef.current.volume > 0.1) {
-                audioRef.current.volume = Math.max(0, audioRef.current.volume - 0.1);
-              } else {
-                console.log("Stopping jingle after fade");
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
-                audioRef.current.volume = 1.0; // Reset volume for next time
-                clearInterval(fadeOut);
-              }
-            }, 100);
-          }
-        }, 4000);
-      })
-      .catch(e => console.error("Jingle play failed:", e));
-  } else {
-    console.error("Audio ref is null");
-  }
-};
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(e => console.error("Jingle play failed:", e));
+    }
+  };
 
   const handleFirstInteraction = () => {
     if (!hasInteracted) {
@@ -62,25 +33,20 @@ function MainScreen(props) {
   };
 
   const handleStart = () => {
-    console.log("Let's Fly button clicked");
     window.speechSynthesis.cancel();
-    
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
 
-    if (!hasInteracted) {
-      setHasInteracted(true);
+    if (selectedGender) {
+      playJingle();
+      setTimeout(() => {
+        onNavigate('menu');
+      }, 5000);
+    } else {
+      speak("Please choose a playmate first!");
     }
-
-    playJingle();
-    
-    // Navigate after jingle finishes (5 seconds + buffer)
-    setTimeout(() => {
-      console.log("Navigating to menu");
-      onNavigate('menu');
-    }, 5500);
   };
 
   const handleSettingsOpen = () => {
@@ -89,40 +55,47 @@ function MainScreen(props) {
   };
 
   const handleToucanClick = () => {
-    console.log("Toucan clicked");
     window.speechSynthesis.cancel();
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
-
     setHasInteracted(true);
     setGuideVoice('male');
-
     setTimeout(() => {
-      const text = "I'm Treb the toucan and this is Maya the parrot. We are your guides in this learning journey. Click on the 'Let's Fly' button and let's get started!";
-      console.log("Speaking toucan text");
+      const text = "Hello, I'm Treb, the toucan; great to see you here!";
       speak(text, 'male');
     }, 300);
   };
 
   const handleParrotClick = () => {
-    console.log("Parrot clicked");
     window.speechSynthesis.cancel();
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
-
     setHasInteracted(true);
     setGuideVoice('female');
-
     setTimeout(() => {
-      const text = "I'm Maya the parrot and this is Treb the toucan. We are your guides in this learning journey. Click on the 'Let's Fly' button and let's get started!";
-      console.log("Speaking parrot text");
+      const text = "Hi, I'm Maya, the parrot. how are you?";
       speak(text, 'female');
     }, 300);
   };
+  
+  // REPLACE IT WITH THIS
+const handleGenderSelect = (gender) => {
+  setSelectedGender(gender);
+  
+  // This sets the main guide voice for the rest of the app
+  const voiceType = gender === 'boy' ? 'male' : 'female';
+  setGuideVoice(voiceType);
+
+  window.speechSynthesis.cancel();
+  const instructionText = "We are your guide in this learning journey. I'm happy to be your learning buddy. Click on the 'let's fly' button and let's get started!";
+  
+  // This now correctly uses the voice of the gender you just clicked
+  speak(instructionText, voiceType);
+};
 
   const mainStyle = {
     backgroundImage: `url(${coverBackground})`,
@@ -132,16 +105,23 @@ function MainScreen(props) {
   return (
     <div className="main-container" style={mainStyle}>
       <audio ref={audioRef} src={welcomeJingle} />
-
       <Greeting />
-
       <button className="settings-button" onClick={handleSettingsOpen}>⚙️</button>
-
       <button className="start-button-overlay" onClick={handleStart}></button>
 
+      {/* Bird touchpads */}
       <button className="toucan-touchpad" onClick={handleToucanClick}></button>
-
       <button className="parrot-touchpad" onClick={handleParrotClick}></button>
+
+      {/* Gender selection touchpads */}
+      <button 
+        className="gender-touchpad male" 
+        onClick={() => handleGenderSelect('boy')}
+      ></button>
+      <button 
+        className="gender-touchpad female" 
+        onClick={() => handleGenderSelect('girl')}
+      ></button>
 
       {isModalOpen && <SettingsModal
         onClose={() => setIsModalOpen(false)}
