@@ -4,3 +4,9 @@ dist/
 .env.local
 *.log
 .DS_Store
+# =======================================
+# 🖼️ Image Management (for your app)
+# =======================================
+# Ignore editable or test image folders (local only)
+src/assets/images/originals/
+src/assets/images/temp/
