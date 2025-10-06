@@ -46,6 +46,7 @@ export const wordList = [
   { id: 214, word: 'Forehead', image: { boy: 'boy-forehead.png', girl: 'girl-forehead.png' }, category: 'Parts of the Body' },
   { id: 215, word: 'Eyebrows', image: { boy: 'boy-eyebrows.png', girl: 'girl-eyebrows.png' }, category: 'Parts of the Body' },
   { id: 216, word: 'Eyelashes', image: { boy: 'boy-eyelashes.png', girl: 'girl-eyelashes.png' }, category: 'Parts of the Body' },
+  { id: 216.1, word: 'Eyelids', image: { boy: 'boy-eyelids.png', girl: 'girl-eyelids.png' }, category: 'Parts of the Body' },
   { id: 217, word: 'Cleft Chin', image: { boy: 'boy-cleft_chin.png', girl: 'girl-cleft_chin.png' }, category: 'Parts of the Body' },
 
   // --- Parts of the Body Category - OTHER BODY PARTS ---
