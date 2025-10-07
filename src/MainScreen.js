@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef } from 'react';
 import './MainScreen.css';
 import coverBackground from './assets/cover-background.png';
