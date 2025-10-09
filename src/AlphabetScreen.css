@@ -69,37 +69,54 @@
   position: absolute; top: 0px; right: 0px; width: 30px; height: 30px; border-radius: 50%; border: none; background-color: #f44336; color: white; font-size: 20px; line-height: 30px; text-align: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
+/* In AlphabetScreen.css */
+
+/* --- UPDATED: This container now holds the bird background image --- */
 .alphabet-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  /* --- CHANGED: Reduced gap for a tighter grid --- */
-  gap: 4px; 
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
   width: 100%;
-  max-width: 380px; 
+  max-width: 380px; /* Keep consistent with your layout */
   align-self: center;
-  margin: 15px 0 0 0;
-  flex-shrink: 0; 
+  margin-top: auto; /* Pushes grid towards the bottom of the container */
+  padding: 15px;
+  
+  /* --- KEY CHANGES FOR THE BACKGROUND IMAGE --- */
+  background-image: url('./assets/pair-birds.png'); /* Ensure this path is correct */
+  background-size: cover; /* Make the image cover the grid area */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Don't repeat the image */
+  
+  /* You can optionally add a filter to the *entire* grid background for more fading: */
+  filter: grayscale(30%) brightness(120%) opacity(0.5); /* Adjust these values to control faintness/color */
+  
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
+/* --- UPDATED: Tiles are now semi-transparent --- */
 .letter-tile {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  color: #333;
-  border: none;
+  
+  /* --- KEY CHANGE: Semi-transparent background for the tiles themselves --- */
+  background-color: rgba(255, 255, 255, 0.6); /* This allows the grid's background image to show through */
+  border: 1px solid rgba(255, 255, 255, 0.8); /* Faint border */
+  
+  color: #333; /* Dark text color for better contrast against faint background */
   border-radius: 8px;
-  /* --- CHANGED: Reduced font size to shrink tiles --- */
-  font-size: 1.1em; 
+  font-size: 1.2em;
   font-weight: bold;
   aspect-ratio: 1 / 1;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
 .letter-tile:hover {
   transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly less transparent on hover */
 }
 
 .back-button {
