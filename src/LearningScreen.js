@@ -6,6 +6,7 @@ import boyModel from './assets/boy-model.png';
 import girlModel from './assets/girl-model.png';
 import MagicalTransition from './components/MagicalTransition';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
+import ComingSoonModal from './components/ComingSoonModal';
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 

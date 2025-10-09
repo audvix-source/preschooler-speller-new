@@ -4,7 +4,6 @@ import './OnScreenKeyboard.css';
 function OnScreenKeyboard({ onLetterClick, usedLetters, currentWord }) {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // This logic correctly disables letters if they've been used up in the current word
   const getLetterCountInWord = (letter) => {
     return currentWord.word.toUpperCase().split(letter).length - 1;
   };
@@ -13,14 +12,19 @@ function OnScreenKeyboard({ onLetterClick, usedLetters, currentWord }) {
     return usedLetters.filter(l => l === letter).length;
   };
 
+  const isLetterUsed = (letter) => {
+    return getUsedCount(letter) >= getLetterCountInWord(letter);
+  };
+
   return (
     <div className="alphabet-keyboard">
-      {alphabet.map((letter) => (
+      {alphabet.map((letter, index) => (
         <button
           key={letter}
-          className="keyboard-letter"
+          className={`keyboard-letter ${isLetterUsed(letter) ? 'used' : ''}`}
           onClick={() => onLetterClick(letter)}
-          disabled={getUsedCount(letter) >= getLetterCountInWord(letter)}
+          disabled={isLetterUsed(letter)}
+          style={{ animationDelay: `${index * 0.02}s` }}
         >
           {letter}
         </button>
@@ -30,4 +34,3 @@ function OnScreenKeyboard({ onLetterClick, usedLetters, currentWord }) {
 }
 
 export default OnScreenKeyboard;
-
