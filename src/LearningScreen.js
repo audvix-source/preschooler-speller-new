@@ -25,6 +25,7 @@ function LearningScreen(props) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showReward, setShowReward] = useState(false);
   const [hadMistake, setHadMistake] = useState(false);
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
@@ -33,33 +34,21 @@ function LearningScreen(props) {
     try {
       const context = new (window.AudioContext || window.webkitAudioContext)();
       const now = context.currentTime;
-
-      // Create two oscillators to play a harmony
       const osc1 = context.createOscillator();
       const osc2 = context.createOscillator();
       const gainNode = context.createGain();
-
       osc1.connect(gainNode);
       osc2.connect(gainNode);
       gainNode.connect(context.destination);
-
       osc1.type = 'sine';
       osc2.type = 'sine';
-
-      // An encouraging, ascending C-Major harmony
-      // First chord (C and E)
-      osc1.frequency.setValueAtTime(523.25, now); // C5
-      osc2.frequency.setValueAtTime(659.25, now); // E5
-
-      // Second, higher chord (G and B)
-      osc1.frequency.setValueAtTime(783.99, now + 0.15); // G5
-      osc2.frequency.setValueAtTime(987.77, now + 0.15); // B5
-
-      // Control the volume to create a pleasant 'chime' sound
+      osc1.frequency.setValueAtTime(523.25, now);
+      osc2.frequency.setValueAtTime(659.25, now);
+      osc1.frequency.setValueAtTime(783.99, now + 0.15);
+      osc2.frequency.setValueAtTime(987.77, now + 0.15);
       gainNode.gain.setValueAtTime(0, now);
-      gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05); // Quick fade in
-      gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 1); // Slow fade out
-
+      gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 1);
       osc1.start(now);
       osc2.start(now);
       osc1.stop(now + 1);
@@ -69,19 +58,31 @@ function LearningScreen(props) {
     }
   };
 
-  // --- UPDATED: This function now calls playMagicSound() ---
   const handleCharacterSelect = (model) => {
     setChosenModel(model);
     setDisappearingSide(model === 'boy' ? 'right' : 'left');
-    playMagicSound(); // Play the sound effect
+    playMagicSound();
     setViewState('animating');
     setTimeout(() => { setViewState('activity'); }, 1500);
   };
 
+  // 1. MODIFIED: This is the only function that needs to change.
+  // It now specifically checks for 'Cleft Chin'.
   const handleNextWord = () => {
-    setWordIndex((prevIndex) => (prevIndex + 1) % categoryWords.length);
+    if (currentWord && currentWord.word === 'Cleft Chin') {
+      setShowComingSoonModal(true); // Trigger the modal
+    } else {
+      setWordIndex((prevIndex) => prevIndex + 1); // Go to the next word
+    }
   };
   
+  const handleCloseComingSoon = () => {
+    setShowComingSoonModal(false);
+    props.onNavigate('menu');
+  };
+  
+  // 2. REVERTED: This useEffect is back to its original state.
+  // The logic for the modal is no longer here.
   useEffect(() => {
     setIsSpelling(false);
     setCurrentLetterIndex(-1);
@@ -195,9 +196,11 @@ function LearningScreen(props) {
   };
   
   if (!currentWord) {
+    // This part should now be unreachable if 'Cleft Chin' is the last item
+    // But it's good to keep as a fallback.
     return (
       <div className="learning-screen-container" style={{backgroundColor: '#9370DB'}}>
-        <h1>Coming Soon!</h1>
+        <h1>End of Category!</h1>
         <p>Category: {props.category}</p>
         <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
       </div>
@@ -272,6 +275,8 @@ function LearningScreen(props) {
       
       {showReward && <div className="confetti-overlay"></div>}
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
+
+      <ComingSoonModal show={showComingSoonModal} onClose={handleCloseComingSoon} />
     </div>
   );
 }

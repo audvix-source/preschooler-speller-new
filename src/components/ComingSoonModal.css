@@ -59,11 +59,11 @@
 }
 
 .rainbow-left {
-  transform: scaleX(-1);
+  /* Normal direction */ 
 }
 
 .rainbow-right {
-  /* Normal direction */
+  transform: scaleX(-1);
 }
 
 .birds-container {
