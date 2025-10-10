@@ -1,11 +1,12 @@
-/* --- AlphabetScreen.css (Final Tweaks) --- */
+/* AlphabetScreen.css - Fixed bird background */
+
 .alphabet-screen-container {
   position: relative;
   width: 420px;
   height: 680px;
   border-radius: 20px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
-  overflow: hidden; 
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background-color: #3CB371;
@@ -17,7 +18,7 @@
 
 .top-section {
   width: 100%;
-  flex-grow: 1; 
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
@@ -39,7 +40,7 @@
   border-radius: 15px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .video-container iframe {
@@ -56,56 +57,91 @@
   margin-top: 8px;
 }
 
-.word-display-section { /* (This section for pop-up images is unchanged) */
-  position: relative; width: 100%; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+.word-display-section {
+  position: relative;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+
 .alphabet-screen-container .word-display-section img {
-  max-width: 250px; max-height: 250px; background-color: rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 10px;
+  max-width: 250px;
+  max-height: 250px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px;
 }
+
 .word-display-section .word-text {
-  font-size: 2.5em; font-weight: bold; margin-top: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-size: 2.5em;
+  font-weight: bold;
+  margin-top: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
+
 .close-word-button {
-  position: absolute; top: 0px; right: 0px; width: 30px; height: 30px; border-radius: 50%; border: none; background-color: #f44336; color: white; font-size: 20px; line-height: 30px; text-align: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f44336;
+  color: white;
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
-/* In AlphabetScreen.css */
-
-/* --- UPDATED: This container now holds the bird background image --- */
+/* FIXED: Bird background now contained within grid boundaries */
 .alphabet-grid {
+  position: relative; /* Added to contain the pseudo-element */
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   width: 100%;
-  max-width: 380px; /* Keep consistent with your layout */
+  max-width: 380px;
   align-self: center;
-  margin-top: auto; /* Pushes grid towards the bottom of the container */
+  margin-top: auto;
   padding: 15px;
-  
-  /* --- KEY CHANGES FOR THE BACKGROUND IMAGE --- */
-  background-image: url('./assets/pair-birds.png'); /* Ensure this path is correct */
-  background-size: cover; /* Make the image cover the grid area */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Don't repeat the image */
-  
-  /* You can optionally add a filter to the *entire* grid background for more fading: */
-  filter: grayscale(30%) brightness(120%) opacity(0.5); /* Adjust these values to control faintness/color */
-  
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  overflow: hidden; /* CRITICAL: Prevents background from extending beyond grid */
 }
 
-/* --- UPDATED: Tiles are now semi-transparent --- */
+/* Background image as pseudo-element for better control */
+.alphabet-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('./assets/pair-birds.png');
+  background-size: contain; /* Changed from 'cover' to 'contain' to fit within boundaries */
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3; /* Adjust opacity separately from tiles */
+  z-index: 0; /* Behind the tiles */
+  pointer-events: none; /* Allow clicks to pass through */
+}
+
+/* Letter tiles with proper stacking */
 .letter-tile {
+  position: relative; /* Creates stacking context */
+  z-index: 1; /* Above the background */
   display: flex;
   justify-content: center;
   align-items: center;
-  
-  /* --- KEY CHANGE: Semi-transparent background for the tiles themselves --- */
-  background-color: rgba(255, 255, 255, 0.6); /* This allows the grid's background image to show through */
-  border: 1px solid rgba(255, 255, 255, 0.8); /* Faint border */
-  
-  color: #333; /* Dark text color for better contrast against faint background */
+  background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque for readability */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #333;
   border-radius: 8px;
   font-size: 1.2em;
   font-weight: bold;
@@ -116,20 +152,20 @@
 
 .letter-tile:hover {
   transform: scale(1.1);
-  background-color: rgba(255, 255, 255, 0.9); /* Slightly less transparent on hover */
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .back-button {
-  /* --- CHANGED: Precise placement on the grid's last row --- */
-  grid-column: 3 / span 4; /* Starts at column 3, spans 4 columns */
-  grid-row: 5; /* Explicitly places it on the 5th row */
-
+  position: relative; /* Creates stacking context */
+  z-index: 1; /* Above the background */
+  grid-column: 3 / span 3;
+  grid-row: 5;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.1em; /* Matched to new tile font size */
+  font-size: 1.1em;
   color: white;
-  background-color: #f44336;
+  background-color: #CD853F;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -137,5 +173,5 @@
 }
 
 .back-button:hover {
-    background-color: #d32f2f;
+  background-color: #8B4513;
 }

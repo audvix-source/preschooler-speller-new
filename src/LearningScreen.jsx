@@ -15,7 +15,6 @@ function LearningScreen(props) {
   const [chosenModel, setChosenModel] = useState(null);
   const [disappearingSide, setDisappearingSide] = useState(null);
   const [wordIndex, setWordIndex] = useState(0);
-  
   const [isSpelling, setIsSpelling] = useState(false);
   const [currentLetterIndex, setCurrentLetterIndex] = useState(-1);
   const [filledLetters, setFilledLetters] = useState([]);
@@ -30,7 +29,7 @@ function LearningScreen(props) {
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
 
- const playMagicSound = () => {
+  const playMagicSound = () => {
     try {
       const context = new (window.AudioContext || window.webkitAudioContext)();
       const now = context.currentTime;
@@ -66,13 +65,11 @@ function LearningScreen(props) {
     setTimeout(() => { setViewState('activity'); }, 1500);
   };
 
-  // 1. MODIFIED: This is the only function that needs to change.
-  // It now specifically checks for 'Cleft Chin'.
   const handleNextWord = () => {
     if (currentWord && currentWord.word === 'Cleft Chin') {
-      setShowComingSoonModal(true); // Trigger the modal
+      setShowComingSoonModal(true);
     } else {
-      setWordIndex((prevIndex) => prevIndex + 1); // Go to the next word
+      setWordIndex((prevIndex) => prevIndex + 1);
     }
   };
   
@@ -81,8 +78,6 @@ function LearningScreen(props) {
     props.onNavigate('menu');
   };
   
-  // 2. REVERTED: This useEffect is back to its original state.
-  // The logic for the modal is no longer here.
   useEffect(() => {
     setIsSpelling(false);
     setCurrentLetterIndex(-1);
@@ -196,11 +191,9 @@ function LearningScreen(props) {
   };
   
   if (!currentWord) {
-    // This part should now be unreachable if 'Cleft Chin' is the last item
-    // But it's good to keep as a fallback.
     return (
       <div className="learning-screen-container" style={{backgroundColor: '#9370DB'}}>
-        <h1>End of Category!</h1>
+        <h1>Coming Soon!</h1>
         <p>Category: {props.category}</p>
         <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
       </div>
