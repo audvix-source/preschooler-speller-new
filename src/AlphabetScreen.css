@@ -1,5 +1,4 @@
-/* AlphabetScreen.css - Fixed bird background */
-
+/* Main container for the Alphabet Fun screen */
 .alphabet-screen-container {
   position: relative;
   width: 420px;
@@ -10,37 +9,30 @@
   display: flex;
   flex-direction: column;
   background-color: #3CB371;
-  color: white;
-  text-align: center;
   padding: 20px;
   box-sizing: border-box;
+  margin: 0 auto;
 }
 
+/* Section for the video or word display */
 .top-section {
-  width: 100%;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+  flex-shrink: 0;
+  margin-bottom: 20px;
 }
 
-.video-section {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.alphabet-title {
+.video-section .alphabet-title {
+  color: #f2e8cf;
   margin-bottom: 10px;
-  font-size: 1.8em;
 }
 
 .video-container {
   position: relative;
   width: 100%;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  background-color: #000;
+  border-radius: 12px;
   overflow: hidden;
-  flex-grow: 1;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .video-container iframe {
@@ -52,54 +44,22 @@
 }
 
 .credit-line {
-  font-size: 0.7em;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: 8px;
-}
-
-.word-display-section {
-  position: relative;
-  width: 100%;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.alphabet-screen-container .word-display-section img {
-  max-width: 250px;
-  max-height: 250px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 10px;
-}
-
-.word-display-section .word-text {
-  font-size: 2.5em;
-  font-weight: bold;
-  margin-top: 10px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-.close-word-button {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  background-color: #f44336;
-  color: white;
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 0.8em;
+  color: #a3b18a;
+  margin-top: 5px;
   text-align: center;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
-/* FIXED: Bird background now contained within grid boundaries */
+/* KEYBOARD WRAPPER - This has the border and background */
+.keyboard-wrapper {
+  margin-top: auto;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* KEYBOARD GRID - Grid layout only, no border */
 .alphabet-grid {
   position: relative; /* Added to contain the pseudo-element */
   display: grid;
@@ -124,54 +84,97 @@
   right: 0;
   bottom: 0;
   background-image: url('./assets/pair-birds.png');
-  background-size: contain; /* Changed from 'cover' to 'contain' to fit within boundaries */
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.3; /* Adjust opacity separately from tiles */
-  z-index: 0; /* Behind the tiles */
-  pointer-events: none; /* Allow clicks to pass through */
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
 }
 
-/* Letter tiles with proper stacking */
+/* Style for the individual letter tiles */
 .letter-tile {
-  position: relative; /* Creates stacking context */
-  z-index: 1; /* Above the background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.85); /* Slightly more opaque for readability */
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  color: #333;
-  border-radius: 8px;
-  font-size: 1.2em;
-  font-weight: bold;
+  position: relative;
+  z-index: 1;
+  width: 100%;
   aspect-ratio: 1 / 1;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  font-size: 1.5em;
+  font-weight: bold;
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  color: #dc0808;
+  transition: all 0.2s ease;
 }
 
 .letter-tile:hover {
-  transform: scale(1.1);
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
 }
 
-.back-button {
-  position: relative; /* Creates stacking context */
-  z-index: 1; /* Above the background */
-  grid-column: 3 / span 3;
-  grid-row: 5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.1em;
-  color: white;
-  background-color: #CD853F;
-  border: none;
-  border-radius: 8px;
+/* Style for the 'Back to Menu' button */
+.alphabet-grid .back-button {
+  position: relative;
+  z-index: 1;
+  grid-column: 3 / span 3; 
+  margin-top: 10px;
+  padding: 12px 0;
   cursor: pointer;
-  transition: background-color 0.2s;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  font-size: 1.2em;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  color: #dc0808;
+  transition: all 0.2s ease;
 }
 
-.back-button:hover {
-  background-color: #8B4513;
+.alphabet-grid .back-button:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+}
+
+/* Styles for when a word is being displayed */
+.word-display-section {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+}
+
+.word-display-section img {
+  max-width: 80%;
+  max-height: 200px;
+  border-radius: 12px;
+}
+
+.word-display-section .word-text {
+  font-size: 2em;
+  font-weight: bold;
+  color: #f2e8cf;
+  margin-top: 10px;
+}
+
+.close-word-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 1.8em;
+  cursor: pointer;
+  line-height: 1;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.close-word-button:hover {
+  background: rgba(255, 0, 0, 0.8);
+  transform: scale(1.1);
 }

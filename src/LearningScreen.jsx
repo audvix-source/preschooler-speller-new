@@ -66,19 +66,19 @@ function LearningScreen(props) {
   };
 
   const handleNextWord = () => {
-    if (currentWord && currentWord.word === 'Cleft Chin') {
-      setShowComingSoonModal(true);
-    } else {
-      setWordIndex((prevIndex) => prevIndex + 1);
-    }
-  };
+  if (currentWord && currentWord.word === 'Cleft Chin') {
+    setShowComingSoonModal(true);
+  } else {
+    setWordIndex((prevIndex) => prevIndex + 1);
+  }
+};
   
-  const handleCloseComingSoon = () => {
-    setShowComingSoonModal(false);
-    props.onNavigate('menu');
-  };
-  
-  useEffect(() => {
+const handleCloseComingSoon = () => {
+  setShowComingSoonModal(false);
+  props.onNavigate('menu');
+};
+
+    useEffect(() => {
     setIsSpelling(false);
     setCurrentLetterIndex(-1);
     setFilledLetters([]);

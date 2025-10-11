@@ -1,61 +1,58 @@
-/* CategoryMenuScreen.css */
 .category-menu-container {
-  position: relative; width: 420px; height: 680px;
-  border-radius: 20px; box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
-  overflow: auto; display: flex; flex-direction: column;
-  justify-content: flex-start; align-items: center;
-  background-size: cover; background-position: center;
-  color: white; padding: 20px; box-sizing: border-box;
-}
-.category-title {
-  color: white; font-size: 2em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-  margin-bottom: 20px; flex-shrink: 0; 
-}
-.category-buttons-grid {
-  display: flex; flex-direction: column; gap: 8px;
-  width: 100%; max-width: 300px; margin-bottom: 20px;
-  align-items: center;
-}
-
-/* --- UPDATED SELECTOR for Yellow Buttons --- */
-.category-menu-container .category-button {
-  width: 280px; 
-  padding: 8px 15px; 
-  font-size: 1.1em;
-  font-weight: bold; 
-  color: #333;
-  background-color: rgba(255, 215, 0, 0.8); 
-  border: none;
-  border-radius: 12px; 
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-  cursor: pointer; 
-  transition: all 0.2s ease-in-out;
-}
-.category-menu-container .category-button:hover {
-  transform: scale(1.03); background-color: rgba(255, 199, 0, 0.9);
-}
-
-/* --- UPDATED SELECTOR for Red Button --- */
-.category-menu-container .back-button {
-  margin-top: auto;
-  /* ADJUSTED: Make the button smaller */
-  width: 170px;   /* Reduce width (was 280px) */
-  height: 0px;  /* Reduce height (was 50px) */
-  
-  border-radius: 50%;
-  padding: 0;
-
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background-size: cover;
+  background-position: center;
+}
 
-  font-size: 1.75em;
-  font-weight: bold;
+.category-menu-container .category-title {
+  font-size: 2.5em;
   color: white;
-  background-color: rgba(244, 67, 54, 0.8);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin-bottom: 20px;
+}
+
+/* CORRECT (single column stack) */
+.category-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.category-button {
+  width: 100%;
+  padding: 20px;
+  font-size: 1.5em;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-menu-container .category-button:hover {
+  background-color: #ffde6a;
+  transform: translateY(-2px);
+}
+
+.back-button {
+  background-color: #f44336; /* Red color */
+  border-radius: 50%; /* Circular/egg shape */
+  width: 180px;
+  height: 80px;
+  font-size: 1.5em;
+  color: white;
   border: none;
   cursor: pointer;
-}
-.category-menu-container .back-button:hover { 
-  background-color: rgba(244, 67, 54, 1); 
+  margin-top: 30px;
 }

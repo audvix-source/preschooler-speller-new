@@ -2,16 +2,16 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px; /* Increased gap for better spacing */
-  padding: 15px; /* Added padding */
+  gap: 8px;
+  padding: 15px;
   max-width: 100%;
 }
 
 /* Default style for an active letter button */
 .alphabet-keyboard .keyboard-letter {
-  width: 45px; /* Slightly larger buttons */
+  width: 45px;
   height: 45px;
-  border: 2px solid rgba(255, 255, 255, 0.7); /* White border */
+  border: 2px solid rgba(255, 255, 255, 0.7);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -19,24 +19,23 @@
   font-size: 1.5em;
   font-weight: bold;
   
-  /* --- Style Fixes --- */
-  background-color: rgba(255, 255, 255, 0.25); /* Semi-transparent white background */
-  backdrop-filter: blur(4px); /* Frosted glass effect */
-  color: #dc0808 !important; /* This forces the color to be red */
-  transition: all 0.2s ease; /* Smooth transition for hover */
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  color: #dc0808 !important;
+  transition: all 0.2s ease;
 }
 
 /* Style for a button that has been used */
 .alphabet-keyboard .keyboard-letter:disabled {
-  background-color: rgba(0, 0, 0, 0.3); /* Darker transparent background */
+  background-color: rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.2);
   opacity: 0.8;
   cursor: not-allowed;
-  color: #ffffff !important; /* White color for used letters */
+  color: #ffffff !important;
 }
 
 /* Hover effect for active buttons */
 .alphabet-keyboard .keyboard-letter:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.5); /* Brighter on hover */
+  background-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
 }

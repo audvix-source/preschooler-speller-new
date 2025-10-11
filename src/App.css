@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  max-width: 540px; /* Tablet width */
+  margin: 0 auto;
+  border-radius: 20px; /* ROUNDED EDGES */
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .App-logo {
