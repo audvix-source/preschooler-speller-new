@@ -1,45 +1,27 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
 body {
   margin: 0;
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #444;
+  
+  /* These lines set up the full-screen container */
   display: flex;
   justify-content: center;
-  align-items: center;
+  width: 100vw;
   min-height: 100vh;
-  min-height: -webkit-fill-available; /* iOS Safari fix */
 }
 
 #root {
-  width: 420px; /* Fixed width */
-  height: 680px; /* Fixed height */
-  min-height: 100vh;
-  min-height: -webkit-fill-available; /* iOS Safari fix */
-  background-color: #444; /* Match body background to prevent black sliver */
-}
-
-/* Additional mobile fixes */
-@media screen and (max-width: 768px) {
-  body {
-    background-color: #444;
-  }
+  width: 100%;
+  max-width: 420px; /* Limits the app width on larger screens */
   
-  #root {
-    width: 100vw;
-    height: 100vh;
-    max-width: 420px;
-  }
+  /* This pushes the app down from the top */
+  margin-top: 5vh; 
+  margin-bottom: 5vh;
+
+  /* This is for the rounded corners and shadow */
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  overflow: hidden; /* This clips the content to the rounded corners */
 }

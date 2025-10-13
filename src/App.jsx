@@ -22,6 +22,8 @@ function App() {
     loadVoices();
   }, []);
 
+ // In App.jsx
+
   const speak = (text, forceGender = null) => {
     if (!('speechSynthesis' in window)) {
       console.error("Speech synthesis not supported.");
@@ -32,13 +34,28 @@ function App() {
     utterance.pitch = pitch;
     utterance.rate = speed;
 
+    // Get the latest list of voices directly from the browser
+    const allVoices = window.speechSynthesis.getVoices();
+    if (allVoices.length === 0) {
+        console.warn("Voices not loaded yet.");
+        // As a fallback, just speak with the default voice
+        window.speechSynthesis.speak(utterance);
+        return;
+    }
+
     const voiceType = forceGender || guideVoice;
 
-    if (voiceType === 'female') {
-      const femaleVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Zira')));
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
-      }
+    if (voiceType === 'male') {
+        // Find a suitable male voice
+        const maleVoice = allVoices.find(v => v.lang.startsWith('en') && (v.name.includes('Male') || v.name.includes('David')));
+        if (maleVoice) {
+            utterance.voice = maleVoice;
+        }
+    } else { // female
+        const femaleVoice = allVoices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Zira')));
+        if (femaleVoice) {
+            utterance.voice = femaleVoice;
+        }
     }
     
     window.speechSynthesis.speak(utterance);
