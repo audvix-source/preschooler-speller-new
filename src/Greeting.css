@@ -4,7 +4,11 @@
   top: 20px;
   left: 20px;
   z-index: 10;
+  text-align: left;           /* force text left-aligned */
+  align-items: flex-start;    /* ensure flex children align left if flexbox is used */
+  justify-content: flex-start;
 }
+
 
 .time-greeting {
   font-size: 1.2em;
