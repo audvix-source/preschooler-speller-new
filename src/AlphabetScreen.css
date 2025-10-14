@@ -1,30 +1,46 @@
-/* --- Final AlphabetScreen.css --- */
+/* --- AlphabetScreen Container --- */
 .alphabet-screen-container {
+  position: relative;
+  width: 420px;
+  height: 680px;
+  border-radius: 20px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
+  background-color: #3CB371;
+  color: white;
+  text-align: center;
   padding: 20px;
   box-sizing: border-box;
-  background-color: #3a5a40;
 }
+
+/* --- Top Section (video or word display) --- */
 .top-section {
+  width: 100%;
   flex-shrink: 0;
-  margin-bottom: 20px;
+  min-height: 200px;
 }
-.video-section .alphabet-title {
-  color: #f2e8cf;
+
+.video-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.alphabet-title {
   margin-bottom: 10px;
+  font-size: 1.8em;
 }
+
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%;
-  background-color: #000;
-  border-radius: 12px;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
+
 .video-container iframe {
   position: absolute;
   top: 0;
@@ -32,87 +48,219 @@
   width: 100%;
   height: 100%;
 }
+
 .credit-line {
-  font-size: 0.8em;
-  color: #a3b18a;
-  margin-top: 5px;
-  text-align: center;
+  font-size: 0.7em;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8px;
 }
-.keyboard-wrapper {
-  margin-top: auto;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 16px;
-  padding: 12px;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(5px);
-  width: 100%;
-  max-width: 380px;
-  align-self: center;
+
+/* --- Word Display Section --- */
+.word-display-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* glossy soft pink with gentle vertical gradient */
+  background: linear-gradient(
+    180deg,
+    rgb(239, 35, 239) 0%,   /* brighter pink top (glossy highlight) */
+    rgba(237, 62, 197, 0.998) 50%,  /* soft hot-pink middle tone */
+    rgba(239, 3, 223, 0.9) 100%  /* gentle fade to light pink bottom */
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.3),
+    inset 0 2px 8px rgba(255, 255, 255, 0.4); /* inner glow for glossy feel */
+  position: relative;
+
+  /* frosted glass consistency */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
+
+
+
+
+.word-display-section img {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: white;
+  padding: 10px;
+}
+
+.word-display-section .word-text {
+  font-size: 2em;
+  font-weight: bold;
+  color: white;
+  margin: 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.close-word-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 1.5em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  z-index: 10;
+}
+
+.close-word-button:hover {
+  background-color: #d32f2f;
+}
+
+/* --- Keyboard Grid: snug, balanced spacing under video --- */
 .alphabet-grid {
   position: relative;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  width: 100%;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2px;                /* tight, touching tiles */
+  width: 88%;
+  height: 76%;             /* micro-shrink: creates perfect gap under video */
+  align-self: center;
+  justify-self: center;
+  margin: 12px auto 0;     /* gentle top margin for breathing space */
+  padding: 4px;
+  border-radius: 15px;
   overflow: hidden;
-  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  background: transparent;
 }
+
+/* --- Keyboard Grid: proportionally reduced and centered --- */
+.alphabet-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2px;                /* tight tile spacing */
+  width: 84%;              /* slightly narrower grid */
+  height: 72%;             /* reduced overall height */
+  align-self: center;
+  justify-self: center;
+  margin: auto;             /* keeps it centered vertically */
+  padding: 6px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  background: transparent;
+}
+
+/* --- Bird background: scaled perfectly to grid --- */
 .alphabet-grid::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-image: url('./assets/pair-birds.png');
-  background-size: cover;
+  background-size: contain;   /* ensures image fits new grid size */
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.2;
-  z-index: -1;
+  opacity: 0.25;
+  filter: brightness(1.1) saturate(0.8);
+  border-radius: 15px;
   pointer-events: none;
+  z-index: 0;
 }
+
+
+/* --- Letter Tiles: same layout, softer blue letters --- */
 .letter-tile {
-  background-color: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
-  color: #007BFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  font-size: 1.2em;
-  font-weight: bold;
-  aspect-ratio: 1 / 1;
-  cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
+
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  border-radius: 5px;
+
+  /* softer, slightly thinner blue letters */
+  font-size: 1.5em;
+  font-weight: 600;          /* was 900 — now less bold */
+  color: #007BFF;            /* keep the bright friendly blue */
+  text-align: center;
+  line-height: 1;
+
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 1;
+  transition: transform 0.16s ease, background-color 0.16s ease, border 0.16s ease;
 }
+
 .letter-tile:hover {
-  transform: scale(1.1);
-  background-color: rgba(255, 255, 255, 0.9);
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
-.alphabet-back-button {
-  grid-column: 3 / span 3;
-  grid-row: 5;
-  background-color: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
-  color: #007BFF;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  font-size: 1.1em;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
+
+
+
+
+/* --- Back Button (frosted with red text) --- */
+.back-button {
+  grid-column: 6 / span 2;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
+
+  background: rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  color: #e53935;
+  font-size: 1.2em;
+  font-weight: 900;
+  border-radius: 6px;
+
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 1;
+  transition: transform 0.16s ease, background-color 0.16s ease, border 0.16s ease;
 }
-.alphabet-back-button:hover {
-  background-color: rgba(255, 255, 255, 0.5);
+
+.back-button:hover {
+  transform: scale(1.05);
+  background: rgba(255,255,255,0.38);
+  border: 1px solid rgba(255,255,255,0.6);
 }
-/* Styles for word display */
-.word-display-section { text-align: center; }
-.word-display-section img { max-width: 80%; max-height: 200px; border-radius: 12px; }
-.word-display-section .word-text { font-size: 2em; font-weight: bold; color: white; margin-top: 10px; }
-.close-word-button { position: absolute; top: 25px; right: 25px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 1.5em; cursor: pointer; }
+
+/* --- Animations --- */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.word-animate {
+  animation: slide-down 0.3s ease-out;
+}

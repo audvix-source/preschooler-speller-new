@@ -1,27 +1,21 @@
+/* index.css */
+
 body {
   margin: 0;
   font-family: sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #444;
-  
-  /* These lines set up the full-screen container */
+  background-color: #1a1a1a; /* dark neutral outside app */
+  color: white;
   display: flex;
   justify-content: center;
-  width: 100vw;
+  align-items: flex-start;
   min-height: 100vh;
 }
 
 #root {
   width: 100%;
-  max-width: 420px; /* Limits the app width on larger screens */
-  
-  /* This pushes the app down from the top */
-  margin-top: 5vh; 
-  margin-bottom: 5vh;
-
-  /* This is for the rounded corners and shadow */
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  overflow: hidden; /* This clips the content to the rounded corners */
+  max-width: 480px; /* keeps app centered like a mobile screen */
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
