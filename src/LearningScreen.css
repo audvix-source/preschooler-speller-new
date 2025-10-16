@@ -1,18 +1,21 @@
 /* --- LearningScreen.css (Final Pixel Polish) --- */
 
-/* Main Container - Tablet Dimensions */
+/* Main Container - Tablet Dimensions - UNIFORM SIZE */
 .learning-screen-container {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  height: 680px;
+  max-width: 420px; /* Match AlphabetScreen */
+  height: 100vh;
+  max-height: 680px; /* Match AlphabetScreen */
   margin: 0 auto;
+  background-color: #8DB600;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border-radius: 20px; /* Rounded edges */
 }
 
 /* Character Selection Screen (Unchanged) */

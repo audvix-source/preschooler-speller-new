@@ -5,11 +5,10 @@ import AlphabetScreen from './AlphabetScreen';
 import LearningScreen from './LearningScreen';
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('cover');
+  const [currentScreen, setCurrentScreen] = useState('cover'); // ← MUST BE 'cover'
   const [selectedCategory, setSelectedCategory] = useState('');
   const [guideVoice, setGuideVoice] = useState('male');
-
-  const [brightness, setBrightness] = useState(100); 
+  const [brightness, setBrightness] = useState(100);
   const [pitch, setPitch] = useState(1);
   const [speed, setSpeed] = useState(1);
   const [voices, setVoices] = useState([]);
@@ -27,20 +26,18 @@ function App() {
       console.error("Speech synthesis not supported.");
       return;
     }
-    window.speechSynthesis.cancel(); 
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.pitch = pitch;
     utterance.rate = speed;
 
     const voiceType = forceGender || guideVoice;
-
     if (voiceType === 'female') {
       const femaleVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Zira')));
       if (femaleVoice) {
         utterance.voice = femaleVoice;
       }
     }
-    
     window.speechSynthesis.speak(utterance);
   };
 
@@ -52,8 +49,8 @@ function App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'cover':
-        return <MainScreen 
-          onNavigate={navigateTo} 
+        return <MainScreen
+          onNavigate={navigateTo}
           speak={speak}
           setGuideVoice={setGuideVoice}
           settings={{ brightness, pitch, speed }}
@@ -66,7 +63,6 @@ function App() {
       case 'learning':
         return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
       default:
-        // Fallback to the cover screen if the state is unknown
         return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
     }
   };

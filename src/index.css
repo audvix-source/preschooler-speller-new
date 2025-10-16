@@ -18,23 +18,25 @@ body {
   background-color: #444;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* CHANGED from center to flex-start */
+  padding-top: 20px; /* ADD this for the top spacing */
   min-height: 100vh;
-  min-height: -webkit-fill-available; /* iOS Safari fix */
+  min-height: -webkit-fill-available;
 }
 
 #root {
-  width: 420px; /* Fixed width */
-  height: 680px; /* Fixed height */
+  width: 420px;
+  height: 680px;
   min-height: 100vh;
-  min-height: -webkit-fill-available; /* iOS Safari fix */
-  background-color: #444; /* Match body background to prevent black sliver */
+  min-height: -webkit-fill-available;
+  background-color: #444;
 }
 
 /* Additional mobile fixes */
 @media screen and (max-width: 768px) {
   body {
     background-color: #444;
+    padding-top: 20px; /* Smaller padding on mobile */
   }
   
   #root {

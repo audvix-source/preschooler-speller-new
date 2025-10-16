@@ -1,141 +1,180 @@
-/* --- AlphabetScreen.css (Final Tweaks) --- */
+/* Main container for the Alphabet Fun screen */
 .alphabet-screen-container {
-  position: relative;
-  width: 420px;
-  height: 680px;
-  border-radius: 20px;
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
-  overflow: hidden; 
   display: flex;
   flex-direction: column;
-  background-color: #3CB371;
-  color: white;
-  text-align: center;
+  height: 100vh;
+  max-height: 680px; /* Match other screens */
+  width: 100%;
+  max-width: 420px; /* Match other screens */
+  margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
-}
-
-.top-section {
-  width: 100%;
-  flex-grow: 1; 
-  display: flex;
-  flex-direction: column;
-}
-
-.video-section {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.alphabet-title {
-  margin-bottom: 10px;
-  font-size: 1.8em;
-}
-
-.video-container {
-  position: relative;
-  width: 100%;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #2db946;
+  border-radius: 20px; /* Rounded edges */
   overflow: hidden;
-  flex-grow: 1; 
+}
+
+/* Section for the video or word display */
+.top-section {
+  flex-shrink: 0;
+  margin-bottom: 20px;
+}
+
+.video-section .alphabet-title {
+  text-align: center;
+  width: 100%;
+  color: #f2e8cf;
+  margin-bottom: 10px;
 }
 
 .video-container iframe {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+}
+
+.video-container {
+  position: relative;
   width: 100%;
-  height: 100%;
+  padding-bottom: 70%; /* Try different values: 40%, 50%, 56.25% */
+  background-color: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .credit-line {
-  font-size: 0.7em;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: 8px;
+  font-size: 0.8em;
+  color: #a3b18a;
+  margin-top: 5px;
+  text-align: center;
 }
 
-.word-display-section { /* (This section for pop-up images is unchanged) */
-  position: relative; width: 100%; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.alphabet-screen-container .word-display-section img {
-  max-width: 250px; max-height: 250px; background-color: rgba(255, 255, 255, 0.2); border-radius: 10px; padding: 10px;
-}
-.word-display-section .word-text {
-  font-size: 2.5em; font-weight: bold; margin-top: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-.close-word-button {
-  position: absolute; top: 0px; right: 0px; width: 30px; height: 30px; border-radius: 50%; border: none; background-color: #f44336; color: white; font-size: 20px; line-height: 30px; text-align: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+/* KEYBOARD WRAPPER - This has the border and background */
+.keyboard-wrapper {
+  margin-top: auto;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* In AlphabetScreen.css */
-
-/* --- UPDATED: This container now holds the bird background image --- */
+/* KEYBOARD GRID - Grid layout only, no border */
 .alphabet-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 380px; /* Keep consistent with your layout */
-  align-self: center;
-  margin-top: auto; /* Pushes grid towards the bottom of the container */
-  padding: 15px;
-  
-  /* --- KEY CHANGES FOR THE BACKGROUND IMAGE --- */
-  background-image: url('./assets/pair-birds.png'); /* Ensure this path is correct */
-  background-size: cover; /* Make the image cover the grid area */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Don't repeat the image */
-  
-  /* You can optionally add a filter to the *entire* grid background for more fading: */
-  filter: grayscale(30%) brightness(120%) opacity(0.5); /* Adjust these values to control faintness/color */
-  
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  gap: 0; /* Remove all gaps */
+  padding: 0; /* Remove padding if any */
+  background-size: cover;
+  background-position: center;
 }
 
-/* --- UPDATED: Tiles are now semi-transparent --- */
+/* Dark overlay for bird background */
+.alphabet-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0.2;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.alphabet-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0; /* Remove all gaps */
+  padding: 0; /* Remove padding if any */
+  background-size: cover;
+  background-position: center;
+}
+
 .letter-tile {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  /* --- KEY CHANGE: Semi-transparent background for the tiles themselves --- */
-  background-color: rgba(255, 255, 255, 0.6); /* This allows the grid's background image to show through */
-  border: 1px solid rgba(255, 255, 255, 0.8); /* Faint border */
-  
-  color: #333; /* Dark text color for better contrast against faint background */
-  border-radius: 8px;
-  font-size: 1.2em;
+  aspect-ratio: 1;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: none; /* Remove border completely */
+  color: blue;
+  font-size: 1.5em;
   font-weight: bold;
-  aspect-ratio: 1 / 1;
-  cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
-}
-
-.letter-tile:hover {
-  transform: scale(1.1);
-  background-color: rgba(255, 255, 255, 0.9); /* Slightly less transparent on hover */
-}
-
-.back-button {
-  /* --- CHANGED: Precise placement on the grid's last row --- */
-  grid-column: 3 / span 4; /* Starts at column 3, spans 4 columns */
-  grid-row: 5; /* Explicitly places it on the 5th row */
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.1em; /* Matched to new tile font size */
-  color: white;
-  background-color: #f44336;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.back-button:hover {
-    background-color: #d32f2f;
+.letter-tile:hover,
+.letter-tile:active {
+  background-color: rgba(255, 255, 153, 0.6); /* Light yellow */
+}
+
+/* Style for the 'Back to Menu' button */
+.alphabet-grid .back-button {
+  position: relative;
+  z-index: 1;
+  grid-column: 3 / 6;
+  margin-top: 10px;
+  padding: 12px 0;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  font-size: 1.2em;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  color: #92043a;
+  transition: all 0.2s ease;
+}
+
+.alphabet-grid .back-button:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+}
+
+.word-display-section {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+}
+
+.word-display-section img {
+  max-width: 600px; /* Increased from 80% */
+  max-height: 240px; /* Increased from 200px */
+  border: 6px solid #4169E1; /* Blue border */
+  border-radius: 12px;
+  background-color: rgba(173, 216, 230, 0.3); /* Light blue background */
+  padding: 15px; /* Space between image and border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Optional shadow */
+}
+
+.word-display-section .word-text {
+  font-size: 2em;
+  font-weight: bold;
+  color: #f2e8cf;
+  margin-top: 10px;
+}
+
+.close-word-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 1.8em;
+  cursor: pointer;
+  line-height: 1;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.close-word-button:hover {
+  background: rgba(255, 0, 0, 0.8);
+  transform: scale(1.1);
 }

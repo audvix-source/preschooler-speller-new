@@ -1,10 +1,32 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .App {
   text-align: center;
+  margin-top: 40px; /* Use margin instead of padding */
+  min-height: calc(100vh - 40px); /* Adjust height accordingly */
+}
+
+.App {
+  text-align: center;
+  padding-top: 60px; /* Add space from top - adjust as needed */
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  padding-top: 40px !important; /* Force it with !important */
 }
 
 @media (prefers-reduced-motion: no-preference) {
