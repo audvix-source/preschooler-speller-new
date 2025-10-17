@@ -27,28 +27,47 @@ function LearningScreen(props) {
   const [hadMistake, setHadMistake] = useState(false);
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
-  const categoryWords = getWordsByCategory(props.category);
+  // Get all words for the category
+  const allCategoryWords = getWordsByCategory(props.category);
+  
+  // Filter to only HEAD PARTS for "Parts of the Body" category
+  const categoryWords = props.category === 'Parts of the Body' 
+    ? allCategoryWords.filter(word => word.id <= 217) // Up to "Cleft Chin" (id 217)
+    : allCategoryWords;
+
   const currentWord = categoryWords[wordIndex];
 
- const playMagicSound = () => {
+  const playMagicSound = () => {
     try {
       const context = new (window.AudioContext || window.webkitAudioContext)();
       const now = context.currentTime;
+
+      // Create two oscillators to play a harmony
       const osc1 = context.createOscillator();
       const osc2 = context.createOscillator();
       const gainNode = context.createGain();
+
       osc1.connect(gainNode);
       osc2.connect(gainNode);
       gainNode.connect(context.destination);
+
       osc1.type = 'sine';
       osc2.type = 'sine';
-      osc1.frequency.setValueAtTime(523.25, now);
-      osc2.frequency.setValueAtTime(659.25, now);
-      osc1.frequency.setValueAtTime(783.99, now + 0.15);
-      osc2.frequency.setValueAtTime(987.77, now + 0.15);
+
+      // An encouraging, ascending C-Major harmony
+      // First chord (C and E)
+      osc1.frequency.setValueAtTime(523.25, now); // C5
+      osc2.frequency.setValueAtTime(659.25, now); // E5
+
+      // Second, higher chord (G and B)
+      osc1.frequency.setValueAtTime(783.99, now + 0.15); // G5
+      osc2.frequency.setValueAtTime(987.77, now + 0.15); // B5
+
+      // Control the volume to create a pleasant 'chime' sound
       gainNode.gain.setValueAtTime(0, now);
-      gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05);
-      gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 1);
+      gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05); // Quick fade in
+      gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 1); // Slow fade out
+
       osc1.start(now);
       osc2.start(now);
       osc1.stop(now + 1);
@@ -61,28 +80,27 @@ function LearningScreen(props) {
   const handleCharacterSelect = (model) => {
     setChosenModel(model);
     setDisappearingSide(model === 'boy' ? 'right' : 'left');
-    playMagicSound();
+    playMagicSound(); // Play the sound effect
     setViewState('animating');
     setTimeout(() => { setViewState('activity'); }, 1500);
   };
 
-  // 1. MODIFIED: This is the only function that needs to change.
-  // It now specifically checks for 'Cleft Chin'.
   const handleNextWord = () => {
-    if (currentWord && currentWord.word === 'Cleft Chin') {
-      setShowComingSoonModal(true); // Trigger the modal
+    const nextIndex = (wordIndex + 1) % categoryWords.length;
+    
+    // Check if we've completed all head parts and should show Coming Soon modal
+    if (props.category === 'Parts of the Body' && nextIndex === 0) {
+      setShowComingSoonModal(true);
     } else {
-      setWordIndex((prevIndex) => prevIndex + 1); // Go to the next word
+      setWordIndex(nextIndex);
     }
   };
-  
+
   const handleCloseComingSoon = () => {
     setShowComingSoonModal(false);
-    props.onNavigate('menu');
+    props.onNavigate('menu'); // Return to category menu
   };
   
-  // 2. REVERTED: This useEffect is back to its original state.
-  // The logic for the modal is no longer here.
   useEffect(() => {
     setIsSpelling(false);
     setCurrentLetterIndex(-1);
@@ -196,11 +214,9 @@ function LearningScreen(props) {
   };
   
   if (!currentWord) {
-    // This part should now be unreachable if 'Cleft Chin' is the last item
-    // But it's good to keep as a fallback.
     return (
       <div className="learning-screen-container" style={{backgroundColor: '#9370DB'}}>
-        <h1>End of Category!</h1>
+        <h1>Coming Soon!</h1>
         <p>Category: {props.category}</p>
         <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
       </div>
@@ -275,7 +291,8 @@ function LearningScreen(props) {
       
       {showReward && <div className="confetti-overlay"></div>}
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
-
+      
+      {/* Coming Soon Modal */}
       <ComingSoonModal show={showComingSoonModal} onClose={handleCloseComingSoon} />
     </div>
   );

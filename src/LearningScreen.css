@@ -13,10 +13,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border-radius: 20px;
 }
 
 /* Character Selection Screen (Unchanged) */
-.character-selection-container { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; height: 100%; width: 100%; padding: 40px 15px; box-sizing: border-box; }
+.character-selection-container { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; height: 100%; width: 100%; padding: 40px 15px; box-sizing: border-box; border-radius: inherit;  overflow: hidden;}
 .character-selection-container.hidden { display: none; }
 .selection-title { font-size: 2.3em; color: white; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); white-space: nowrap; text-align: center; flex-shrink: 0; margin-bottom: 0; }
 .character-container { display: flex; flex-direction: row; justify-content: center; align-items: flex-end; gap: 10px; width: 100%; margin-top: 120px; margin-bottom: 0; }
@@ -51,11 +52,11 @@
 .next-word-button:hover { background-color: #FFC700; }
 
 /* Game Container */
-.game-container { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%; max-width: 380px; }
+.game-container { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%; max-width: 380px; border-radius: inherit;  overflow: hidden; }
 .game-container.challenge-mode { justify-content: flex-start; }
 
 /* Image Container */
-.word-image-container { display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 0; min-height: 200px; transition: min-height 0.3s ease; }
+.word-image-container { display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 0; min-height: 200px; transition: min-height 0.3s ease; border-radius: inherit;  overflow: hidden; }
 .word-image-container.spelling-mode { min-height: 150px; }
 .game-container.challenge-mode .word-image-container { min-height: auto; }
 .activity-image { max-width: 80%; max-height: 300px; object-fit: contain; display: block; transition: max-height 0.3s ease; }

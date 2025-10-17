@@ -43,3 +43,10 @@ body {
     max-width: 420px;
   }
 }
+/* safe global approach */
+.app-root, /* your app wrapper, or 'body' if none */
+#root,
+body {
+  padding-top: 1vh; /* create top breathing room */
+  box-sizing: border-box;
+}
