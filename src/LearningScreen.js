@@ -6,6 +6,7 @@ import boyModel from './assets/boy-model.png';
 import girlModel from './assets/girl-model.png';
 import MagicalTransition from './components/MagicalTransition';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
+import ComingSoonModal from './components/ComingSoonModal';
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -14,76 +15,92 @@ function LearningScreen(props) {
   const [chosenModel, setChosenModel] = useState(null);
   const [disappearingSide, setDisappearingSide] = useState(null);
   const [wordIndex, setWordIndex] = useState(0);
-  
+
   const [isSpelling, setIsSpelling] = useState(false);
-  const [currentLetterIndex, setCurrentLetterIndex] = useState(-1);
   const [filledLetters, setFilledLetters] = useState([]);
+  const [currentLetterIndex, setCurrentLetterIndex] = useState(-1);
   const [challengeMode, setChallengeMode] = useState(false);
   const [challengeLetters, setChallengeLetters] = useState([]);
   const [showHints, setShowHints] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showReward, setShowReward] = useState(false);
   const [hadMistake, setHadMistake] = useState(false);
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
 
- const playMagicSound = () => {
+  // 🎵 Sound effects
+  const playMagicSound = () => {
     try {
-      const context = new (window.AudioContext || window.webkitAudioContext)();
-      const now = context.currentTime;
-
-      // Create two oscillators to play a harmony
-      const osc1 = context.createOscillator();
-      const osc2 = context.createOscillator();
-      const gainNode = context.createGain();
-
-      osc1.connect(gainNode);
-      osc2.connect(gainNode);
-      gainNode.connect(context.destination);
-
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
       osc1.type = 'sine';
       osc2.type = 'sine';
-
-      // An encouraging, ascending C-Major harmony
-      // First chord (C and E)
-      osc1.frequency.setValueAtTime(523.25, now); // C5
-      osc2.frequency.setValueAtTime(659.25, now); // E5
-
-      // Second, higher chord (G and B)
-      osc1.frequency.setValueAtTime(783.99, now + 0.15); // G5
-      osc2.frequency.setValueAtTime(987.77, now + 0.15); // B5
-
-      // Control the volume to create a pleasant 'chime' sound
-      gainNode.gain.setValueAtTime(0, now);
-      gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05); // Quick fade in
-      gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 1); // Slow fade out
-
+      osc1.frequency.setValueAtTime(523.25, now);
+      osc2.frequency.setValueAtTime(659.25, now);
+      osc1.frequency.setValueAtTime(783.99, now + 0.15);
+      osc2.frequency.setValueAtTime(987.77, now + 0.15);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.4, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.00001, now + 1);
       osc1.start(now);
       osc2.start(now);
       osc1.stop(now + 1);
       osc2.stop(now + 1);
     } catch (e) {
-      console.error("Magic sound error:", e);
+      console.error('Magic sound error:', e);
     }
   };
 
-  // --- UPDATED: This function now calls playMagicSound() ---
+  const playErrorSound = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(523.25, ctx.currentTime);
+      o.frequency.setValueAtTime(392.00, ctx.currentTime + 0.1);
+      g.gain.setValueAtTime(0.3, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      o.start(ctx.currentTime);
+      o.stop(ctx.currentTime + 0.4);
+    } catch (e) {
+      console.error('Error sound error:', e);
+    }
+  };
+
   const handleCharacterSelect = (model) => {
     setChosenModel(model);
     setDisappearingSide(model === 'boy' ? 'right' : 'left');
-    playMagicSound(); // Play the sound effect
+    playMagicSound();
     setViewState('animating');
-    setTimeout(() => { setViewState('activity'); }, 1500);
+    setTimeout(() => setViewState('activity'), 1500);
   };
 
   const handleNextWord = () => {
-    setWordIndex((prevIndex) => (prevIndex + 1) % categoryWords.length);
+    if (currentWord && currentWord.word === 'Cleft Chin') {
+      setShowComingSoonModal(true);
+    } else {
+      setWordIndex(prev => prev + 1);
+    }
   };
-  
+
+  const handleCloseComingSoon = () => {
+    setShowComingSoonModal(false);
+    props.onNavigate('menu');
+  };
+
   useEffect(() => {
     setIsSpelling(false);
-    setCurrentLetterIndex(-1);
     setFilledLetters([]);
     setChallengeMode(false);
     setChallengeLetters([]);
@@ -92,15 +109,15 @@ function LearningScreen(props) {
     setShowReward(false);
     setHadMistake(false);
   }, [wordIndex]);
-  
+
   const getCurrentImage = () => {
     if (!currentWord || !currentWord.image) return null;
-    if (typeof currentWord.image === 'object' && currentWord.image !== null) {
+    if (typeof currentWord.image === 'object') {
       return chosenModel ? currentWord.image[chosenModel] : null;
     }
     return currentWord.image;
   };
-  
+
   const imageFileName = getCurrentImage();
 
   const handleSpellWord = async () => {
@@ -114,91 +131,130 @@ function LearningScreen(props) {
     for (let i = 0; i < letters.length; i++) {
       setCurrentLetterIndex(i);
       await props.speak(letters[i]);
-      setFilledLetters(prev => { const newRevealed = [...prev]; newRevealed[i] = letters[i]; return newRevealed; });
+      setFilledLetters(prev => {
+        const copy = [...prev];
+        copy[i] = letters[i];
+        return copy;
+      });
       await wait(800);
     }
     setCurrentLetterIndex(-1);
-    await wait(800);
     await props.speak(`${word}!`);
     setTimeout(() => setIsSpelling(false), 1000);
   };
 
   const handleAcceptChallenge = () => {
     setChallengeMode(true);
-    setFilledLetters(Array(currentWord.word.length).fill(null));
-    setChallengeLetters(Array(currentWord.word.length).fill(''));
+    const len = currentWord.word.length;
+    setFilledLetters(Array(len).fill(null));
+    setChallengeLetters(Array(len).fill(''));
+    setShowHints(Array(len).fill(false));
     setHadMistake(false);
   };
 
+  // 🧩 Updated logic: shows '?' in top row for wrong letters
   const handleKeyboardLetter = (letter) => {
     if (isCompleted) return;
     props.speak(letter);
-    const nextEmptyIndex = challengeLetters.findIndex(l => l === '');
-    if (nextEmptyIndex !== -1) {
-      const newLetters = [...challengeLetters];
-      newLetters[nextEmptyIndex] = letter;
-      setChallengeLetters(newLetters);
-      if (newLetters.join('') === currentWord.word.toUpperCase()) {
-        setIsCompleted(true);
-        setTimeout(triggerReward, 500);
-      } else if (letter !== currentWord.word.toUpperCase()[nextEmptyIndex]) {
-        playErrorSound();
-        setHadMistake(true);
-        setShowHints(prev => { const newHints = [...prev]; newHints[nextEmptyIndex] = true; return newHints; });
+
+    const word = currentWord.word.toUpperCase();
+    const upperLetter = letter.toUpperCase();
+    const correctPositions = [...word]
+      .map((l, i) => (l === upperLetter ? i : -1))
+      .filter(i => i !== -1);
+
+    const nextEmpty = challengeLetters.findIndex(l => l === '');
+
+    if (correctPositions.includes(nextEmpty)) {
+      // ✅ Correct letter
+      playMagicSound();
+      setChallengeLetters(prev => {
+        const copy = [...prev];
+        copy[nextEmpty] = upperLetter;
+        return copy;
+      });
+      setFilledLetters(prev => {
+        const copy = [...prev];
+        copy[nextEmpty] = upperLetter;
+        return copy;
+      });
+    } else {
+      // ❌ Wrong letter
+      playErrorSound();
+      setHadMistake(true);
+
+      if (nextEmpty !== -1) {
+        setFilledLetters(prev => {
+          const copy = [...prev];
+          copy[nextEmpty] = '?'; // show ?
+          return copy;
+        });
+        setShowHints(prev => {
+          const copy = [...prev];
+          copy[nextEmpty] = true;
+          return copy;
+        });
       }
     }
+
+    // ✅ Check for completion
+    setTimeout(() => {
+      const completed = challengeLetters.map((l, i) => l || (correctPositions.includes(i) ? upperLetter : ''));
+      if (completed.join('') === word) {
+        setIsCompleted(true);
+        setTimeout(triggerReward, 500);
+      }
+    }, 200);
   };
 
   const handleHintClick = (index) => {
     if (!showHints[index]) return;
     const correctLetter = currentWord.word.toUpperCase()[index];
     props.speak(correctLetter);
-    const newFilled = [...filledLetters];
-    newFilled[index] = correctLetter;
-    setFilledLetters(newFilled);
-    setShowHints(prev => { const newHints = [...prev]; newHints[index] = false; return newHints; });
-    const newChallengeLetters = [...challengeLetters];
-    newChallengeLetters[index] = correctLetter;
-    setChallengeLetters(newChallengeLetters);
-  };
-  
-  const playErrorSound = () => {
-    try {
-      const context = new (window.AudioContext || window.webkitAudioContext)();
-      const o = context.createOscillator();
-      const g = context.createGain();
-      o.connect(g);
-      g.connect(context.destination);
-      o.type = 'sine';
-      o.frequency.setValueAtTime(523.25, context.currentTime);
-      o.frequency.setValueAtTime(392.00, context.currentTime + 0.1);
-      g.gain.setValueAtTime(0.3, context.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.4);
-      o.start(context.currentTime);
-      o.stop(context.currentTime + 0.4);
-    } catch (e) {
-      console.error("Audio error:", e);
-    }
+    playMagicSound();
+
+    setFilledLetters(prev => {
+      const copy = [...prev];
+      copy[index] = correctLetter;
+      return copy;
+    });
+
+    setChallengeLetters(prev => {
+      const copy = [...prev];
+      copy[index] = correctLetter;
+      return copy;
+    });
+
+    setShowHints(prev => {
+      const copy = [...prev];
+      copy[index] = false;
+      return copy;
+    });
   };
 
   const triggerReward = () => {
     setShowReward(true);
     const congratulations = ["Excellent!", "Amazing!", "You did it!"];
     const encouragement = ["Good work!", "Nice try!"];
-    const message = hadMistake ? encouragement[Math.floor(Math.random() * encouragement.length)] : congratulations[Math.floor(Math.random() * congratulations.length)];
+    const message = hadMistake
+      ? encouragement[Math.floor(Math.random() * encouragement.length)]
+      : congratulations[Math.floor(Math.random() * congratulations.length)];
     props.speak(message);
     setTimeout(() => {
       setShowReward(false);
       handleNextWord();
     }, 3000);
   };
-  
+
+  // ✅ The component’s render output starts here
   if (!currentWord) {
     return (
-      <div className="learning-screen-container" style={{backgroundColor: '#9370DB'}}>
-        <h1>Coming Soon!</h1>
+      <div className="learning-screen-container" style={{ backgroundColor: '#9370DB' }}>
+        <h1>End of Category!</h1>
         <p>Category: {props.category}</p>
-        <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
+        <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>
+          Back to Menu
+        </button>
       </div>
     );
   }
@@ -208,69 +264,81 @@ function LearningScreen(props) {
       <div className={`character-selection-container ${viewState !== 'selecting' ? 'hidden' : ''}`}>
         <h1 className="selection-title">Choose a playmate!</h1>
         <div className="character-container">
-          <div className="character-model" onClick={() => handleCharacterSelect('boy')}><img src={boyModel} alt="Boy"/></div>
-          <div className="character-model" onClick={() => handleCharacterSelect('girl')}><img src={girlModel} alt="Girl"/></div>
+          <div className="character-model" onClick={() => handleCharacterSelect('boy')}>
+            <img src={boyModel} alt="Boy" />
+          </div>
+          <div className="character-model" onClick={() => handleCharacterSelect('girl')}>
+            <img src={girlModel} alt="Girl" />
+          </div>
         </div>
-        <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>
-          Back to Menu
-        </button>
+        <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
       </div>
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
         <div className="top-button-row">
-            <button className="back-button" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
-            <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
+          <button className="back-button" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
+          <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
         </div>
+
         <div className={`game-container ${challengeMode ? 'challenge-mode' : ''}`}>
-          <div className={`word-image-container ${isSpelling ? 'spelling-mode' : ''}`}>
+          <div className="word-image-container">
             {imageFileName && (
-              (() => {
-                  const isLongWord = currentWord.word.length > 7;
-                  const imageClass = `activity-image ${isSpelling || (challengeMode && isLongWord) ? 'small' : ''}`;
-                  return <img src={require(`./assets/${imageFileName}`)} alt={currentWord.word} className={imageClass} />;
-              })()
+              <img
+                src={require(`./assets/${imageFileName}`)}
+                alt={currentWord.word}
+                className="activity-image"
+              />
             )}
           </div>
-          <div className={`word-blanks-container ${isSpelling ? 'spelling-mode' : ''}`}>
-            {currentWord.word.split('').map((letter, index) => (
-              <div key={index} className={`letter-blank ${filledLetters[index] ? 'filled' : ''} ${currentLetterIndex === index ? 'current' : ''}`} onClick={() => handleHintClick(index)} style={{ cursor: showHints[index] ? 'pointer' : 'default' }}>
-                {showHints[index] ? '?' : (filledLetters[index] || '')}
+
+          <div className="word-blanks-container">
+            {currentWord.word.split('').map((_, i) => (
+              <div
+                key={i}
+                className={`letter-blank ${filledLetters[i] ? 'filled' : ''}`}
+                onClick={() => handleHintClick(i)}
+              >
+                {showHints[i] ? '?' : (filledLetters[i] || '')}
               </div>
             ))}
           </div>
+
           {!challengeMode && (
             <div className="button-row">
-              <button className="hear-word-button" onClick={handleSpellWord} disabled={isSpelling}>🔊 Hear the Word</button>
-              {!isSpelling && (
-                <button className="challenge-button" onClick={handleAcceptChallenge}>Accept Challenge</button>
-              )}
+              <button className="hear-word-button" onClick={handleSpellWord}>🔊 Hear the Word</button>
+              <button className="challenge-button" onClick={handleAcceptChallenge}>Accept Challenge</button>
             </div>
           )}
         </div>
-        
+
         {challengeMode && (
           <div className="challenge-section">
             <div className="challenge-blanks-container">
-              {currentWord.word.split('').map((char, index) => (
+              {currentWord.word.split('').map((char, i) =>
                 char === ' '
-                  ? <div key={index} className="word-space"></div>
-                  : <div key={index} className="challenge-blank">{challengeLetters[index]}</div>
-              ))}
-            </div>
-            {!isCompleted && (
-              <OnScreenKeyboard onLetterClick={handleKeyboardLetter} usedLetters={challengeLetters.filter(l=>l!=='')} currentWord={currentWord} />
-            )}
-            {isCompleted && (
-                <div className="completion-message">
-                  <h2>🎉 Perfect! 🎉</h2>
-                </div>
+                  ? <div key={i} className="word-space"></div>
+                  : <div key={i} className="challenge-blank">{challengeLetters[i]}</div>
               )}
+            </div>
+
+            {!isCompleted && (
+              <OnScreenKeyboard
+                onLetterClick={handleKeyboardLetter}
+                usedLetters={challengeLetters.filter(l => l !== '')}
+                currentWord={currentWord}
+              />
+            )}
+
+            {isCompleted && (
+              <div className="completion-message"><h2>🎉 Perfect! 🎉</h2></div>
+            )}
           </div>
         )}
       </div>
-      
+
       {showReward && <div className="confetti-overlay"></div>}
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
+      <ComingSoonModal show={showComingSoonModal} onClose={handleCloseComingSoon} />
     </div>
   );
 }

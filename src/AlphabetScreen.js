@@ -23,7 +23,7 @@ function AlphabetScreen(props) {
   };
 
   return (
-    <div className="alphabet-screen-container">
+    <div className="app-screen alphabet-screen-container">
       {/* Top Section - Show Video OR Word Image */}
       <div className="top-section">
         {!selectedWord ? (

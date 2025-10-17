@@ -1,21 +1,18 @@
 /* --- LearningScreen.css (Final Pixel Polish) --- */
 
-/* Main Container - Tablet Dimensions - UNIFORM SIZE */
+/* Main Container - Tablet Dimensions */
 .learning-screen-container {
   position: relative;
   width: 100%;
-  max-width: 420px; /* Match AlphabetScreen */
-  height: 100vh;
-  max-height: 680px; /* Match AlphabetScreen */
+  max-width: 420px;
+  height: 680px;
   margin: 0 auto;
-  background-color: #8DB600;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-radius: 20px; /* Rounded edges */
 }
 
 /* Character Selection Screen (Unchanged) */
@@ -123,3 +120,18 @@
 @keyframes fadeInOut { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
 .back-button-fixed { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); padding: 12px 30px; font-size: 1.2em; background-color: rgba(244, 67, 54, 0.9); color: white; border: none; border-radius: 12px; cursor: pointer; z-index: 20; }
 .back-button-fixed:hover { background-color: rgba(244, 67, 54, 1); }
+
+.question-mark {
+  background-color: #ffeb3b !important;
+  animation: flash 0.8s;
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.letter-blank.question-mark:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s;
+}

@@ -45,3 +45,16 @@ body {
     max-width: 420px;
   }
 }
+.app-screen {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 680px;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+}
