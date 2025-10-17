@@ -144,6 +144,12 @@ function LearningScreen(props) {
   };
 
   const handleAcceptChallenge = () => {
+    if (!currentWord || currentWord.word.length > 7) {
+      // Skip challenge for words longer than 7 letters and notify user
+      props.speak("This word is too long for a challenge. Try a shorter one!");
+      playErrorSound();
+      return;
+    }
     setChallengeMode(true);
     const len = currentWord.word.length;
     setFilledLetters(Array(len).fill(null));
