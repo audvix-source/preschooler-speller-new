@@ -15,7 +15,6 @@ function LearningScreen(props) {
   const [chosenModel, setChosenModel] = useState(null);
   const [disappearingSide, setDisappearingSide] = useState(null);
   const [wordIndex, setWordIndex] = useState(0);
-
   const [isSpelling, setIsSpelling] = useState(false);
   const [filledLetters, setFilledLetters] = useState([]);
   const [currentLetterIndex, setCurrentLetterIndex] = useState(-1);
@@ -86,6 +85,10 @@ function LearningScreen(props) {
     setTimeout(() => setViewState('activity'), 1500);
   };
 
+  const handlePreviousWord = () => {
+    setWordIndex(prev => prev > 0 ? prev - 1 : categoryWords.length - 1);
+  };
+
   const handleNextWord = () => {
     if (currentWord && currentWord.word === 'Cleft Chin') {
       setShowComingSoonModal(true);
@@ -102,6 +105,7 @@ function LearningScreen(props) {
   useEffect(() => {
     setIsSpelling(false);
     setFilledLetters([]);
+    setCurrentLetterIndex(-1);
     setChallengeMode(false);
     setChallengeLetters([]);
     setShowHints([]);
@@ -145,7 +149,6 @@ function LearningScreen(props) {
 
   const handleAcceptChallenge = () => {
     if (!currentWord || currentWord.word.length > 7) {
-      // Skip challenge for words longer than 7 letters and notify user
       props.speak("This word is too long for a challenge. Try a shorter one!");
       playErrorSound();
       return;
@@ -158,21 +161,17 @@ function LearningScreen(props) {
     setHadMistake(false);
   };
 
-  // 🧩 Updated logic: shows '?' in top row for wrong letters
   const handleKeyboardLetter = (letter) => {
     if (isCompleted) return;
     props.speak(letter);
-
     const word = currentWord.word.toUpperCase();
     const upperLetter = letter.toUpperCase();
     const correctPositions = [...word]
       .map((l, i) => (l === upperLetter ? i : -1))
       .filter(i => i !== -1);
-
     const nextEmpty = challengeLetters.findIndex(l => l === '');
 
     if (correctPositions.includes(nextEmpty)) {
-      // ✅ Correct letter
       playMagicSound();
       setChallengeLetters(prev => {
         const copy = [...prev];
@@ -185,14 +184,12 @@ function LearningScreen(props) {
         return copy;
       });
     } else {
-      // ❌ Wrong letter
       playErrorSound();
       setHadMistake(true);
-
       if (nextEmpty !== -1) {
         setFilledLetters(prev => {
           const copy = [...prev];
-          copy[nextEmpty] = '?'; // show ?
+          copy[nextEmpty] = '?';
           return copy;
         });
         setShowHints(prev => {
@@ -203,7 +200,6 @@ function LearningScreen(props) {
       }
     }
 
-    // ✅ Check for completion
     setTimeout(() => {
       const completed = challengeLetters.map((l, i) => l || (correctPositions.includes(i) ? upperLetter : ''));
       if (completed.join('') === word) {
@@ -218,19 +214,16 @@ function LearningScreen(props) {
     const correctLetter = currentWord.word.toUpperCase()[index];
     props.speak(correctLetter);
     playMagicSound();
-
     setFilledLetters(prev => {
       const copy = [...prev];
       copy[index] = correctLetter;
       return copy;
     });
-
     setChallengeLetters(prev => {
       const copy = [...prev];
       copy[index] = correctLetter;
       return copy;
     });
-
     setShowHints(prev => {
       const copy = [...prev];
       copy[index] = false;
@@ -252,7 +245,6 @@ function LearningScreen(props) {
     }, 3000);
   };
 
-  // ✅ The component’s render output starts here
   if (!currentWord) {
     return (
       <div className="learning-screen-container" style={{ backgroundColor: '#9370DB' }}>
@@ -281,27 +273,31 @@ function LearningScreen(props) {
       </div>
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
-        <div className="top-button-row">
+        {/* Top Navigation Bar with 3 buttons */}
+        <div className="top-nav-bar">
           <button className="back-button" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
+          {wordIndex > 0 && (
+            <button className="previous-word-button" onClick={handlePreviousWord}>Previous Word</button>
+          )}
           <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
         </div>
 
         <div className={`game-container ${challengeMode ? 'challenge-mode' : ''}`}>
-          <div className="word-image-container">
+          <div className={`word-image-container ${isSpelling ? 'spelling-mode' : ''}`}>
             {imageFileName && (
               <img
                 src={require(`./assets/${imageFileName}`)}
                 alt={currentWord.word}
-                className="activity-image"
+                className={`activity-image ${isSpelling ? 'small' : ''}`}
               />
             )}
           </div>
 
-          <div className="word-blanks-container">
+          <div className={`word-blanks-container ${isSpelling ? 'spelling-mode' : ''}`}>
             {currentWord.word.split('').map((_, i) => (
               <div
                 key={i}
-                className={`letter-blank ${filledLetters[i] ? 'filled' : ''}`}
+                className={`letter-blank ${filledLetters[i] ? 'filled' : ''} ${currentLetterIndex === i ? 'current' : ''}`}
                 onClick={() => handleHintClick(i)}
               >
                 {showHints[i] ? '?' : (filledLetters[i] || '')}
@@ -326,7 +322,6 @@ function LearningScreen(props) {
                   : <div key={i} className="challenge-blank">{challengeLetters[i]}</div>
               )}
             </div>
-
             {!isCompleted && (
               <OnScreenKeyboard
                 onLetterClick={handleKeyboardLetter}
@@ -334,7 +329,6 @@ function LearningScreen(props) {
                 currentWord={currentWord}
               />
             )}
-
             {isCompleted && (
               <div className="completion-message"><h2>🎉 Perfect! 🎉</h2></div>
             )}

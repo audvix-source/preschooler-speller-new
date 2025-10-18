@@ -3,14 +3,14 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-height: 680px; /* Match other screens */
+  max-height: 680px;
   width: 100%;
-  max-width: 420px; /* Match other screens */
+  max-width: 420px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
   background-color: #2db946;
-  border-radius: 20px; /* Rounded edges */
+  border-radius: 20px;
   overflow: hidden;
 }
 
@@ -39,7 +39,7 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 70%; /* Try different values: 40%, 50%, 56.25% */
+  padding-bottom: 70%;
   background-color: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -66,10 +66,11 @@
 .alphabet-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0; /* Remove all gaps */
-  padding: 0; /* Remove padding if any */
+  gap: 0;
+  padding: 0;
   background-size: cover;
   background-position: center;
+  position: relative;
 }
 
 /* Dark overlay for bird background */
@@ -86,29 +87,22 @@
   pointer-events: none;
 }
 
-.alphabet-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0; /* Remove all gaps */
-  padding: 0; /* Remove padding if any */
-  background-size: cover;
-  background-position: center;
-}
-
 .letter-tile {
   aspect-ratio: 1;
   background-color: rgba(255, 255, 255, 0.15);
-  border: none; /* Remove border completely */
+  border: none;
   color: blue;
   font-size: 1.5em;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
+  position: relative;
+  z-index: 1;
 }
 
 .letter-tile:hover,
 .letter-tile:active {
-  background-color: rgba(255, 255, 153, 0.6); /* Light yellow */
+  background-color: rgba(255, 255, 153, 0.6);
 }
 
 /* Style for the 'Back to Menu' button */
@@ -140,14 +134,56 @@
   padding: 20px;
 }
 
-.word-display-section img {
-  max-width: 600px; /* Increased from 80% */
-  max-height: 240px; /* Increased from 200px */
-  border: 6px solid #4169E1; /* Blue border */
+/* NEW: Glossy pink border frame wrapper */
+.word-image-frame {
+  display: inline-block;
+  position: relative;
+  border: 6px solid #4169E1; /* Blue outer border */
   border-radius: 12px;
-  background-color: rgba(173, 216, 230, 0.3); /* Light blue background */
-  padding: 15px; /* Space between image and border */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Optional shadow */
+  padding: 0;
+  background: linear-gradient(135deg, 
+    #FF1493 0%,
+    #FF69B4 25%, 
+    #FFB6C1 50%, 
+    #FF69B4 75%, 
+    #FF1493 100%
+  ); /* Vibrant glossy pink gradient */
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 2px 6px rgba(255, 255, 255, 0.6),
+    inset 0 -2px 4px rgba(139, 0, 139, 0.3); /* Enhanced glossy effect */
+}
+
+/* Inner pink border layer */
+.word-image-frame::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  border-radius: 8px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 105, 180, 0.2) 50%,
+    rgba(139, 0, 139, 0.3) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.word-image-frame img {
+  display: block;
+  position: relative;
+  max-width: 280px;
+  max-height: 220px;
+  border-radius: 6px;
+  background-color: rgba(173, 216, 230, 0.3); /* Light blue/pastel background */
+  padding: 15px; /* Space between image and pink border */
+  margin: 12px; /* Creates the pink border width */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 2;
 }
 
 .word-display-section .word-text {

@@ -43,10 +43,12 @@ function AlphabetScreen(props) {
         ) : (
           <div className="word-display-section">
             <button className="close-word-button" onClick={handleCloseWord}>×</button>
-            <img 
-              src={require(`./assets/${selectedWord.image}`)} 
-              alt={selectedWord.word}
-            />
+            <div className="word-image-frame">
+              <img
+                src={require(`./assets/${selectedWord.image}`)}
+                alt={selectedWord.word}
+              />
+            </div>
             <p className="word-text">{selectedWord.word}</p>
           </div>
         )}
