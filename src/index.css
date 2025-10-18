@@ -18,8 +18,8 @@ body {
   background-color: #444;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* CHANGED from center to flex-start */
-  padding-top: 20px; /* ADD this for the top spacing */
+  align-items: flex-start;
+  padding-top: 20px;
   min-height: 100vh;
   min-height: -webkit-fill-available;
 }
@@ -27,24 +27,28 @@ body {
 #root {
   width: 420px;
   height: 680px;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
+  max-height: 680px; /* Changed from min-height to max-height */
   background-color: #444;
+  border-radius: 20px; /* Added rounded corners */
+  overflow: hidden; /* Added to ensure content respects rounded corners */
 }
 
 /* Additional mobile fixes */
 @media screen and (max-width: 768px) {
   body {
     background-color: #444;
-    padding-top: 20px; /* Smaller padding on mobile */
+    padding-top: 20px;
   }
-  
+ 
   #root {
     width: 100vw;
     height: 100vh;
     max-width: 420px;
+    max-height: 680px; /* Changed from min-height */
+    border-radius: 20px; /* Keep rounded on mobile too */
   }
 }
+
 .app-screen {
   position: relative;
   width: 100%;

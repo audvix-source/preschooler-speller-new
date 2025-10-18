@@ -148,7 +148,7 @@ function LearningScreen(props) {
   };
 
   const handleAcceptChallenge = () => {
-    if (!currentWord || currentWord.word.length > 7) {
+    if (!currentWord || currentWord.word.length >= 7) {
       props.speak("This word is too long for a challenge. Try a shorter one!");
       playErrorSound();
       return;
@@ -245,6 +245,9 @@ function LearningScreen(props) {
     }, 3000);
   };
 
+  // Check if word is 7+ letters
+  const isLongWord = currentWord && currentWord.word.length >= 7;
+
   if (!currentWord) {
     return (
       <div className="learning-screen-container" style={{ backgroundColor: '#9370DB' }}>
@@ -274,12 +277,12 @@ function LearningScreen(props) {
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
         {/* Top Navigation Bar with Previous and Next buttons */}
-<div className="top-nav-bar">
-  {wordIndex > 0 && (
-    <button className="previous-word-button" onClick={handlePreviousWord}>Previous Word</button>
-  )}
-  <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
-</div>
+        <div className="top-nav-bar">
+          {wordIndex > 0 && (
+            <button className="previous-word-button" onClick={handlePreviousWord}>Previous Word</button>
+          )}
+          <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
+        </div>
 
         <div className={`game-container ${challengeMode ? 'challenge-mode' : ''}`}>
           <div className={`word-image-container ${isSpelling ? 'spelling-mode' : ''}`}>
@@ -305,9 +308,11 @@ function LearningScreen(props) {
           </div>
 
           {!challengeMode && (
-            <div className="button-row">
+            <div className={`button-row ${isLongWord ? 'centered' : ''}`}>
               <button className="hear-word-button" onClick={handleSpellWord}>🔊 Hear the Word</button>
-              <button className="challenge-button" onClick={handleAcceptChallenge}>Accept Challenge</button>
+              {!isLongWord && (
+                <button className="challenge-button" onClick={handleAcceptChallenge}>Accept Challenge</button>
+              )}
             </div>
           )}
         </div>
@@ -335,9 +340,9 @@ function LearningScreen(props) {
         )}
 
         {/* Back to Menu button at BOTTOM - RED BUTTON */}
-<button className="learning-back-button" onClick={() => props.onNavigate('menu')}>
-  Back to Menu
-</button>
+        <button className="learning-back-button" onClick={() => props.onNavigate('menu')}>
+          Back to Menu
+        </button>
       </div>
 
       {showReward && <div className="confetti-overlay"></div>}

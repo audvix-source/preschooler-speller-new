@@ -269,6 +269,15 @@
   flex-wrap: wrap; 
 }
 
+/* NEW: Center button when it's alone (for 7+ letter words) */
+.button-row.centered {
+  justify-content: center;
+}
+
+.button-row.centered .hear-word-button {
+  margin: 0 auto;
+}
+
 .hear-word-button, 
 .challenge-button { 
   padding: 8px 18px; 
