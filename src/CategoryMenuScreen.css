@@ -1,23 +1,41 @@
 /* CategoryMenuScreen.css */
 .category-menu-container {
-  position: relative; width: 420px; height: 680px;
-  border-radius: 20px; box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
-  overflow: auto; display: flex; flex-direction: column;
-  justify-content: flex-start; align-items: center;
-  background-size: cover; background-position: center;
-  color: white; padding: 20px; box-sizing: border-box;
+  position: relative; 
+  width: 420px; 
+  height: 680px;
+  border-radius: 20px; 
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: auto; 
+  display: flex; 
+  flex-direction: column;
+  justify-content: flex-start; 
+  align-items: center;
+  background-size: cover; 
+  background-position: center;
+  color: white; 
+  padding: 20px; 
+  box-sizing: border-box;
 }
+
 .category-title {
-  color: white; font-size: 2em; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-  margin-bottom: 20px; flex-shrink: 0; 
+  color: white; 
+  font-size: 2em; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px; 
+  flex-shrink: 0; 
 }
+
 .category-buttons-grid {
-  display: flex; flex-direction: column; gap: 8px;
-  width: 100%; max-width: 300px; margin-bottom: 20px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px;
+  width: 100%; 
+  max-width: 300px; 
+  margin-bottom: 20px;
   align-items: center;
 }
 
-/* --- UPDATED SELECTOR for Yellow Buttons --- */
+/* Yellow Category Buttons */
 .category-menu-container .category-button {
   width: 280px; 
   padding: 8px 15px; 
@@ -31,31 +49,50 @@
   cursor: pointer; 
   transition: all 0.2s ease-in-out;
 }
+
 .category-menu-container .category-button:hover {
-  transform: scale(1.03); background-color: rgba(255, 199, 0, 0.9);
+  transform: scale(1.03); 
+  background-color: rgba(255, 199, 0, 0.9);
 }
 
-/* --- UPDATED SELECTOR for Red Button --- */
+/* Red Egg-Shaped "Go Back" Button */
 .category-menu-container .back-button {
   margin-top: auto;
-  /* ADJUSTED: Make the button smaller */
-  width: 170px;   /* Reduce width (was 280px) */
-  height: 0px;  /* Reduce height (was 50px) */
-  
-  border-radius: 50%;
+  margin-bottom: 10px;
+  width: 180px;
+  height: 60px;
+  border-radius: 50% / 60%;
   padding: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  font-size: 1.75em;
+  font-size: 1.4em;
   font-weight: bold;
   color: white;
-  background-color: rgba(244, 67, 54, 0.8);
+  background: linear-gradient(145deg, #f44336, #d32f2f);
   border: none;
   cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  animation: pulse 2s ease-in-out infinite;
 }
+
 .category-menu-container .back-button:hover { 
-  background-color: rgba(244, 67, 54, 1); 
+  background: linear-gradient(145deg, #d32f2f, #b71c1c);
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.category-menu-container .back-button:active {
+  transform: scale(0.98);
+}
+
+/* Pulse Animation for the Go Back Button */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
+  }
 }

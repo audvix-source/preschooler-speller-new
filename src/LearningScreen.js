@@ -273,14 +273,13 @@ function LearningScreen(props) {
       </div>
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
-        {/* Top Navigation Bar with 3 buttons */}
-        <div className="top-nav-bar">
-          <button className="back-button" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
-          {wordIndex > 0 && (
-            <button className="previous-word-button" onClick={handlePreviousWord}>Previous Word</button>
-          )}
-          <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
-        </div>
+        {/* Top Navigation Bar with Previous and Next buttons */}
+<div className="top-nav-bar">
+  {wordIndex > 0 && (
+    <button className="previous-word-button" onClick={handlePreviousWord}>Previous Word</button>
+  )}
+  <button className="next-word-button" onClick={handleNextWord}>Next Word</button>
+</div>
 
         <div className={`game-container ${challengeMode ? 'challenge-mode' : ''}`}>
           <div className={`word-image-container ${isSpelling ? 'spelling-mode' : ''}`}>
@@ -334,6 +333,11 @@ function LearningScreen(props) {
             )}
           </div>
         )}
+
+        {/* Back to Menu button at BOTTOM - RED BUTTON */}
+<button className="learning-back-button" onClick={() => props.onNavigate('menu')}>
+  Back to Menu
+</button>
       </div>
 
       {showReward && <div className="confetti-overlay"></div>}

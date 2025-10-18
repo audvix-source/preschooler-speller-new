@@ -87,7 +87,19 @@
   display: flex; 
 }
 
-/* Top Button Row - Updated for Previous/Next */
+/* Top Navigation Bar - Contains all top buttons */
+.top-nav-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+/* Top Button Row - Previous/Next Word Buttons */
 .top-button-row { 
   display: flex; 
   justify-content: space-between; 
@@ -96,6 +108,32 @@
   max-width: 380px; 
   margin-bottom: 10px; 
   flex-shrink: 0; 
+}
+
+/* Back to Menu Button for Learning Screen - RED, positioned at bottom */
+.learning-back-button {
+  padding: 8px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  background-color: #F44336;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 180px;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.learning-back-button:hover {
+  background-color: #D32F2F;
+  transform: translateX(-50%) scale(1.02);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
 .previous-word-button,
@@ -111,12 +149,12 @@
 }
 
 .previous-word-button { 
-  color: #333; 
-  background-color: #FFD700; /* Yellow */
+  color: white; 
+  background-color: #FF8C00; /* Darker orange instead of yellow */
 }
 
 .previous-word-button:hover { 
-  background-color: #FFC700; 
+  background-color: #FF7700; 
   transform: scale(1.02);
 }
 
@@ -179,15 +217,18 @@
 /* Word Blanks & Buttons */
 .word-blanks-container { 
   display: flex; 
-  gap: 8px; 
+  gap: 4px; 
   justify-content: center; 
   flex-wrap: wrap; 
   margin: 0; 
-  position: relative; 
+  padding: 0;
+  position: relative;
+  line-height: 0;
+  row-gap: 0px;
 }
 
 .word-blanks-container.spelling-mode { 
-  margin: 5px 0; 
+  margin: 0;
 }
 
 .letter-blank { 
@@ -275,27 +316,33 @@
   flex-grow: 1;
   justify-content: flex-start;
   position: relative;
+  gap: 0;
 }
 
 .challenge-blanks-container { 
   display: flex; 
-  gap: 8px; 
+  gap: 4px; 
   justify-content: center; 
   flex-wrap: wrap; 
-  margin-bottom: 8px; 
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  row-gap: 0px;
 }
 
 .challenge-blank { 
-  width: 40px; 
-  height: 50px; 
+  width: 38px; 
+  height: 46px; 
   border: 2px solid #2196F3; 
   border-radius: 8px; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  font-size: 1.5em; 
+  font-size: 1.4em; 
   font-weight: bold; 
-  background-color: white; 
+  background-color: white;
+  margin: 0;
+  padding: 0;
 }
 
 .alphabet-keyboard {
@@ -304,8 +351,8 @@
   gap: 4px;
   width: 100%;
   max-width: 380px;
-  margin-top: auto;
-  margin-bottom: 8px;
+  margin-top: 0px;
+  margin-bottom: 65px;
 }
 
 .keyboard-letter { 
@@ -335,19 +382,20 @@
   color: #888; 
 }
 
-/* Back to Menu Button at Bottom (in Challenge Mode) */
+/* Back to Menu Button at Bottom - NEW STYLING */
 .back-button-bottom {
   width: 100%;
-  max-width: 280px;
-  padding: 10px 20px;
-  font-size: 1.1em;
+  max-width: 200px;
+  padding: 8px 16px;
+  font-size: 1em;
   font-weight: bold;
   background-color: #F44336;
   color: white;
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: auto;
+  margin-bottom: 15px;
   transition: all 0.2s ease;
 }
 
