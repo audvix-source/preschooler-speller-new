@@ -17,7 +17,7 @@
 /* Section for the video or word display */
 .top-section {
   flex-shrink: 0;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .video-section .alphabet-title {
@@ -131,66 +131,33 @@
 .word-display-section {
   position: relative;
   text-align: center;
-  padding: 20px;
+  padding: 10px;
 }
 
-/* NEW: Glossy pink border frame wrapper */
+/* SIMPLIFIED: Single thin pink border frame */
 .word-image-frame {
   display: inline-block;
-  position: relative;
-  border: 6px solid #4169E1; /* Blue outer border */
+  border: 3px solid #FF69B4; /* Single thin pink border */
   border-radius: 12px;
-  padding: 0;
-  background: linear-gradient(135deg, 
-    #FF1493 0%,
-    #FF69B4 25%, 
-    #FFB6C1 50%, 
-    #FF69B4 75%, 
-    #FF1493 100%
-  ); /* Vibrant glossy pink gradient */
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.3),
-    inset 0 2px 6px rgba(255, 255, 255, 0.6),
-    inset 0 -2px 4px rgba(139, 0, 139, 0.3); /* Enhanced glossy effect */
-}
-
-/* Inner pink border layer */
-.word-image-frame::before {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
-  border-radius: 8px;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 105, 180, 0.2) 50%,
-    rgba(139, 0, 139, 0.3) 100%
-  );
-  pointer-events: none;
-  z-index: 1;
+  padding: 8px; /* Small padding between border and image */
+  background-color: rgba(173, 216, 230, 0.3); /* Light blue/pastel background */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .word-image-frame img {
   display: block;
-  position: relative;
-  max-width: 280px;
-  max-height: 220px;
-  border-radius: 6px;
-  background-color: rgba(173, 216, 230, 0.3); /* Light blue/pastel background */
-  padding: 15px; /* Space between image and pink border */
-  margin: 12px; /* Creates the pink border width */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 2;
+  max-width: 260px; /* Reduced to fit better */
+  max-height: 240px; /* Reduced to fit better */
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
 .word-display-section .word-text {
   font-size: 2em;
   font-weight: bold;
   color: #f2e8cf;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .close-word-button {

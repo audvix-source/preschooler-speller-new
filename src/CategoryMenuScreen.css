@@ -8,7 +8,7 @@
   overflow: auto; 
   display: flex; 
   flex-direction: column;
-  justify-content: flex-start; 
+  justify-content: center; /* Changed from flex-start to center */
   align-items: center;
   background-size: cover; 
   background-position: center;
@@ -57,8 +57,8 @@
 
 /* Red Egg-Shaped "Go Back" Button */
 .category-menu-container .back-button {
-  margin-top: auto;
-  margin-bottom: 10px;
+  margin-top: 20px; /* Changed from auto to fixed spacing */
+  margin-bottom: 0;
   width: 180px;
   height: 60px;
   border-radius: 50% / 60%;
