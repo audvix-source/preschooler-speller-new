@@ -150,11 +150,11 @@
 
 .previous-word-button { 
   color: white; 
-  background-color: #FF8C00; /* Darker orange instead of yellow */
+  background-color: #FFD700; /* Gold color */
 }
 
 .previous-word-button:hover { 
-  background-color: #FF7700; 
+  background-color: #FFC700; /* Darker gold on hover */
   transform: scale(1.02);
 }
 
@@ -291,11 +291,11 @@
 
 .hear-word-button { 
   color: white; 
-  background-color: #4CAF50; 
+  background-color: #9C27B0; /* Changed to Purple */
 }
 
 .hear-word-button:hover:not(:disabled) { 
-  background-color: #45a049; 
+  background-color: #7B1FA2; /* Darker purple on hover */
   transform: scale(1.05); 
 }
 
