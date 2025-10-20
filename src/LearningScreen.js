@@ -8,6 +8,9 @@ import MagicalTransition from './components/MagicalTransition';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import ComingSoonModal from './components/ComingSoonModal';
 
+// ✅ Dynamically load all images from src/assets
+const images = require.context('./assets', false, /\.(png|jpg|jpeg|gif)$/);
+
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function LearningScreen(props) {
@@ -245,7 +248,6 @@ function LearningScreen(props) {
     }, 3000);
   };
 
-  // Check if word is 7+ letters
   const isLongWord = currentWord && currentWord.word.length >= 7;
 
   if (!currentWord) {
@@ -276,7 +278,7 @@ function LearningScreen(props) {
       </div>
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
-        {/* Top Navigation Bar with Previous and Next buttons */}
+        {/* Top Navigation Bar */}
         <div className="top-nav-bar">
           {wordIndex > 0 && (
             <button className="previous-word-button" onClick={handlePreviousWord}>Previous Word</button>
@@ -287,8 +289,9 @@ function LearningScreen(props) {
         <div className={`game-container ${challengeMode ? 'challenge-mode' : ''}`}>
           <div className={`word-image-container ${isSpelling ? 'spelling-mode' : ''}`}>
             {imageFileName && (
+              // ✅ Use dynamic loader here
               <img
-                src={require(`./assets/${imageFileName}`)}
+                src={images(`./${imageFileName}`)}
                 alt={currentWord.word}
                 className={`activity-image ${isSpelling ? 'small' : ''}`}
               />
@@ -339,7 +342,6 @@ function LearningScreen(props) {
           </div>
         )}
 
-        {/* Back to Menu button at BOTTOM - RED BUTTON */}
         <button className="learning-back-button" onClick={() => props.onNavigate('menu')}>
           Back to Menu
         </button>
