@@ -54,7 +54,7 @@ function ComingSoonModal({ show, onClose }) {
         </div>
 
         <div className="coming-soon-message">
-          <p>✨ Check back in 2 weeks for more learning adventures! ✨</p>
+          <p>✨ Keep using the app and be surprised for newly added learning materials in a few weeks! ✨</p>
         </div>
 
         <button className="close-button" onClick={onClose}>

@@ -99,6 +99,16 @@
   flex-shrink: 0;
 }
 
+/* When Next Word button is alone (first word), match image width */
+.top-nav-bar:has(.next-word-button:only-child) {
+  max-width: 240px;
+}
+
+.top-nav-bar .next-word-button:only-child {
+  flex: 0 1 100%;
+  width: 100%;
+}
+
 /* Top Button Row - Previous/Next Word Buttons */
 .top-button-row { 
   display: flex; 
