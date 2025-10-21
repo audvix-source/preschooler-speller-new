@@ -27,7 +27,7 @@ const speak = (text, forceGender = null) => {
     return;
   }
   
-  console.log('Voice requested:', forceGender || guideVoice); // ADD ONLY THIS LINE
+  alert('Voice: ' + (forceGender || guideVoice)); // CHANGE THIS LINE
   
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
