@@ -78,7 +78,7 @@ function MainScreen(props) {
     setHasInteracted(true);
     setGuideVoice('female');
     setTimeout(() => {
-      const text = "Hi, I'm Maya, the parrot. how are you? Want me to assist you here? Just click on the gender button below me!";
+      const text = "Hi, I'm Maya, the parrot. how are you? Want me to assist you here? Just click on the gender button belo w me!";
       speak(text, 'female');
     }, 300);
   };

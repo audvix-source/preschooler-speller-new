@@ -21,11 +21,14 @@ function App() {
     loadVoices();
   }, []);
 
-  const speak = (text, forceGender = null) => {
+const speak = (text, forceGender = null) => {
   if (!('speechSynthesis' in window)) {
     console.error("Speech synthesis not supported.");
     return;
   }
+  
+  console.log('Voice requested:', forceGender || guideVoice); // ADD ONLY THIS LINE
+  
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.pitch = pitch;
@@ -42,7 +45,6 @@ function App() {
       utterance.voice = femaleVoice;
     }
   } else if (voiceType === 'male') {
-    // ADD THIS BLOCK FOR MALE VOICE
     const maleVoice = voices.find(v => 
       v.lang.startsWith('en') && 
       (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
@@ -77,7 +79,7 @@ function App() {
       case 'learning':
         return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
       default:
-        return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
+        return <  MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
     }
   };
 
