@@ -48,9 +48,7 @@ function App() {
       (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
     );
     
-    // SHOW WHAT WE FOUND
-    alert('Male voice found: ' + (maleVoice ? maleVoice.name : 'NONE'));
-    
+     
     if (maleVoice) {
       utterance.voice = maleVoice;
     }
