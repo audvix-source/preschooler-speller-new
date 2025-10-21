@@ -5,7 +5,7 @@ import AlphabetScreen from './AlphabetScreen';
 import LearningScreen from './LearningScreen';
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('cover'); // ← MUST BE 'cover'
+  const [currentScreen, setCurrentScreen] = useState('cover');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [guideVoice, setGuideVoice] = useState('male');
   const [brightness, setBrightness] = useState(100);
@@ -21,41 +21,41 @@ function App() {
     loadVoices();
   }, []);
 
-const speak = (text, forceGender = null) => {
-  if (!('speechSynthesis' in window)) {
-    console.error("Speech synthesis not supported.");
-    return;
-  }
-  
-  alert('Voice: ' + (forceGender || guideVoice)); // CHANGE THIS LINE
-  
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.pitch = pitch;
-  utterance.rate = speed;
+  const speak = (text, forceGender = null) => {
+    if (!('speechSynthesis' in window)) {
+      console.error("Speech synthesis not supported.");
+      return;
+    }
+    
+    alert('Voice: ' + (forceGender || guideVoice));
+    
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.pitch = pitch;
+    utterance.rate = speed;
 
-  const voiceType = forceGender || guideVoice;
-  
-  if (voiceType === 'female') {
-    const femaleVoice = voices.find(v => 
-      v.lang.startsWith('en') && 
-      (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
-    );
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
+    const voiceType = forceGender || guideVoice;
+    
+    if (voiceType === 'female') {
+      const femaleVoice = voices.find(v => 
+        v.lang.startsWith('en') && 
+        (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
+      );
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
+    } else if (voiceType === 'male') {
+      const maleVoice = voices.find(v => 
+        v.lang.startsWith('en') && 
+        (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
+      );
+      if (maleVoice) {
+        utterance.voice = maleVoice;
+      }
     }
-  } else if (voiceType === 'male') {
-    const maleVoice = voices.find(v => 
-      v.lang.startsWith('en') && 
-      (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
-    );
-    if (maleVoice) {
-      utterance.voice = maleVoice;
-    }
-  }
-  
-  window.speechSynthesis.speak(utterance);
-};
+    
+    window.speechSynthesis.speak(utterance);
+  };
 
   const navigateTo = (screen, category = '') => {
     setSelectedCategory(category);
@@ -79,7 +79,7 @@ const speak = (text, forceGender = null) => {
       case 'learning':
         return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
       default:
-        return <  MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
+        return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
     }
   };
 
