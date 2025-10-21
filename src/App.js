@@ -22,40 +22,42 @@ function App() {
   }, []);
 
   const speak = (text, forceGender = null) => {
-    if (!('speechSynthesis' in window)) {
-      console.error("Speech synthesis not supported.");
-      return;
-    }
-    
-    alert('Voice: ' + (forceGender || guideVoice));
-    
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.pitch = pitch;
-    utterance.rate = speed;
+  if (!('speechSynthesis' in window)) {
+    console.error("Speech synthesis not supported.");
+    return;
+  }
+  
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.pitch = pitch;
+  utterance.rate = speed;
 
-    const voiceType = forceGender || guideVoice;
-    
-    if (voiceType === 'female') {
-      const femaleVoice = voices.find(v => 
-        v.lang.startsWith('en') && 
-        (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
-      );
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
-      }
-    } else if (voiceType === 'male') {
-      const maleVoice = voices.find(v => 
-        v.lang.startsWith('en') && 
-        (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
-      );
-      if (maleVoice) {
-        utterance.voice = maleVoice;
-      }
+  const voiceType = forceGender || guideVoice;
+  
+  if (voiceType === 'female') {
+    const femaleVoice = voices.find(v => 
+      v.lang.startsWith('en') && 
+      (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
+    );
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
     }
+  } else if (voiceType === 'male') {
+    const maleVoice = voices.find(v => 
+      v.lang.startsWith('en') && 
+      (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
+    );
     
-    window.speechSynthesis.speak(utterance);
-  };
+    // SHOW WHAT WE FOUND
+    alert('Male voice found: ' + (maleVoice ? maleVoice.name : 'NONE'));
+    
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    }
+  }
+  
+  window.speechSynthesis.speak(utterance);
+};
 
   const navigateTo = (screen, category = '') => {
     setSelectedCategory(category);
