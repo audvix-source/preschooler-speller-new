@@ -7,7 +7,7 @@
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 20px 30px 20px; /* Added more bottom padding */
   box-sizing: border-box;
   background-color: #2db946;
   border-radius: 20px;
@@ -17,7 +17,12 @@
 /* Section for the video or word display */
 .top-section {
   flex-shrink: 0;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  
+}
+
+.video-section {
+  height: 100%; /* Fill available space */
 }
 
 .video-section .alphabet-title {
@@ -39,26 +44,28 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 70%;
+  padding-bottom: 85%;
   background-color: #000;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Remove or reduce the credit line margin if it exists */
 .credit-line {
   font-size: 0.8em;
   color: #a3b18a;
-  margin-top: 5px;
+  margin-top: 2px; /* Reduced from 5px */
+  margin-bottom: 0; /* Remove bottom margin */
   text-align: center;
 }
 
-/* KEYBOARD WRAPPER - This has the border and background */
+/* Also reduce the keyboard wrapper padding slightly if needed */
 .keyboard-wrapper {
-  margin-top: auto;
+  margin-top: 0px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
-  padding: 12px;
+  padding: 10px; /* Reduced from 12px to give more room */
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -110,12 +117,12 @@
   position: relative;
   z-index: 1;
   grid-column: 3 / 6;
-  margin-top: 10px;
-  padding: 12px 0;
+  margin-top: 5px; /* Reduced from 10px */
+  padding: 8px 0; /* Reduced from 12px */
   cursor: pointer;
   border: 2px solid rgba(255, 255, 255, 0.7);
   border-radius: 12px;
-  font-size: 1.2em;
+  font-size: 1.1em; /* Slightly smaller from 1.2em */
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(4px);
