@@ -7,7 +7,7 @@
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
-  padding: 20px 20px 30px 20px; /* Added more bottom padding */
+  padding: 20px 20px 30px 20px;
   box-sizing: border-box;
   background-color: #2db946;
   border-radius: 20px;
@@ -18,11 +18,10 @@
 .top-section {
   flex-shrink: 0;
   margin-bottom: 5px;
-  
 }
 
 .video-section {
-  height: 100%; /* Fill available space */
+  height: 100%;
 }
 
 .video-section .alphabet-title {
@@ -51,21 +50,19 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Remove or reduce the credit line margin if it exists */
 .credit-line {
   font-size: 0.8em;
   color: #a3b18a;
-  margin-top: 2px; /* Reduced from 5px */
-  margin-bottom: 0; /* Remove bottom margin */
+  margin-top: 2px;
+  margin-bottom: 0;
   text-align: center;
 }
 
-/* Also reduce the keyboard wrapper padding slightly if needed */
 .keyboard-wrapper {
-  margin-top: 0 px;
+  margin-top: 0px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
-  padding: 10px; /* Reduced from 12px to give more room */
+  padding: 10px;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -117,12 +114,12 @@
   position: relative;
   z-index: 1;
   grid-column: 3 / 6;
-  margin-top: 5px; /* Reduced from 10px */
-  padding: 8px 0; /* Reduced from 12px */
+  margin-top: 5px;
+  padding: 8px 0;
   cursor: pointer;
   border: 2px solid rgba(255, 255, 255, 0.7);
   border-radius: 12px;
-  font-size: 1.1em; /* Slightly smaller from 1.2em */
+  font-size: 1.1em;
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(4px);
@@ -144,17 +141,17 @@
 /* SIMPLIFIED: Single thin pink border frame */
 .word-image-frame {
   display: inline-block;
-  border: 3px solid #FF69B4; /* Single thin pink border */
+  border: 3px solid #FF69B4;
   border-radius: 12px;
-  padding: 8px; /* Small padding between border and image */
-  background-color: rgba(173, 216, 230, 0.3); /* Light blue/pastel background */
+  padding: 8px;
+  background-color: rgba(173, 216, 230, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .word-image-frame img {
   display: block;
-  max-width: 260px; /* Reduced to fit better */
-  max-height: 240px; /* Reduced to fit better */
+  max-width: 260px;
+  max-height: 240px;
   width: 100%;
   height: auto;
   border-radius: 8px;
@@ -187,28 +184,4 @@
 .close-word-button:hover {
   background: rgba(255, 0, 0, 0.8);
   transform: scale(1.1);
-}
-/* ===== MOBILE/TABLET ONLY - Touch devices only ===== */
-
-/* Target actual mobile devices with touch screens */
-@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
-  .keyboard-wrapper {
-    margin-top: 12px;
-    margin-bottom: 15px;
-  }
-  
-  .alphabet-screen-container {
-    padding: 20px 20px 20px 20px;
-  }
-}
-
-/* For very small phones */
-@media (max-width: 420px) and (hover: none) and (pointer: coarse) {
-  .keyboard-wrapper {
-    margin-top: 15px;
-  }
-  
-  .alphabet-screen-container {
-    padding: 15px 15px 15px 15px;
-  }
 }

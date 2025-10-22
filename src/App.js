@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import MainScreen from './MainScreen';
 import CategoryMenuScreen from './CategoryMenuScreen';
 import AlphabetScreen from './AlphabetScreen';
@@ -81,9 +82,16 @@ function App() {
       default:
         return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
     }
-  };
+};
 
-  return <div className="App">{renderScreen()}</div>;
+  return (
+    <div className="App">
+      {renderScreen()}
+      
+      {/* VERCEL ANALYTICS CODE INSERTED HERE */}
+      <Analytics />
+    </div>
+  );
 }
 
 export default App;
