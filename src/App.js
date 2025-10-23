@@ -21,41 +21,56 @@ function App() {
     loadVoices();
   }, []);
 
-  const speak = (text, forceGender = null) => {
-  if (!('speechSynthesis' in window)) {
-    console.error("Speech synthesis not supported.");
-    return;
-  }
-  
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.pitch = pitch;
-  utterance.rate = speed;
+  // --- NEW GA4 SPA TRACKING EFFECT ---
+  useEffect(() => {
+    // Check if gtag function is available globally (from script in index.html)
+    if (typeof window.gtag === 'function') {
+      const pagePath = `/${currentScreen}`;
+      window.gtag('event', 'page_view', {
+        page_title: currentScreen.charAt(0).toUpperCase() + currentScreen.slice(1) + ' Screen',
+        page_path: pagePath,
+        send_to: 'G-WGSW8CZ35W' // Your specific Measurement ID
+      });
+    }
+  }, [currentScreen]); 
+  // Runs whenever the screen state changes
+  // --- END NEW GA4 SPA TRACKING EFFECT ---
 
-  const voiceType = forceGender || guideVoice;
-  
-  if (voiceType === 'female') {
-    const femaleVoice = voices.find(v => 
-      v.lang.startsWith('en') && 
-      (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
-    );
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
+  const speak = (text, forceGender = null) => {
+    if (!('speechSynthesis' in window)) {
+      console.error("Speech synthesis not supported.");
+      return;
     }
-  } else if (voiceType === 'male') {
-    const maleVoice = voices.find(v => 
-      v.lang.startsWith('en') && 
-      (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
-    );
-    
-     
-    if (maleVoice) {
-      utterance.voice = maleVoice;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.pitch = pitch;
+    utterance.rate = speed;
+
+    const voiceType = forceGender || guideVoice;
+
+    if (voiceType === 'female') {
+      const femaleVoice = voices.find(v =>
+        v.lang.startsWith('en') &&
+        (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
+      );
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
+    } else if (voiceType === 'male') {
+      const maleVoice = voices.find(v =>
+        v.lang.startsWith('en') &&
+        (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
+      );
+
+
+      if (maleVoice) {
+        utterance.voice = maleVoice;
+      }
     }
-  }
-  
-  window.speechSynthesis.speak(utterance);
-};
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   const navigateTo = (screen, category = '') => {
     setSelectedCategory(category);
@@ -63,28 +78,27 @@ function App() {
   };
 
   const renderScreen = () => {
-  switch (currentScreen) {
-    case 'cover':
-      return <MainScreen
-        onNavigate={navigateTo}
-        speak={speak}
-        setGuideVoice={setGuideVoice}
-        settings={{ brightness, pitch, speed }}
-        setters={{ setBrightness, setPitch, setSpeed }}
-      />;
-    case 'menu':
-      return <CategoryMenuScreen onNavigate={navigateTo} />;
-    case 'alphabet':
-      return <AlphabetScreen onNavigate={navigateTo} speak={speak} />;
-    case 'learning':
-      return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
-    default:
-      return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
-  }
-};
+    switch (currentScreen) {
+      case 'cover':
+        return <MainScreen
+          onNavigate={navigateTo}
+          speak={speak}
+          setGuideVoice={setGuideVoice}
+          settings={{ brightness, pitch, speed }}
+          setters={{ setBrightness, setPitch, setSpeed }}
+        />;
+      case 'menu':
+        return <CategoryMenuScreen onNavigate={navigateTo} />;
+      case 'alphabet':
+        return <AlphabetScreen onNavigate={navigateTo} speak={speak} />;
+      case 'learning':
+        return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
+      default:
+        return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
+    }
+  };
 
-// <--- THIS IS THE CRUCIAL MISSING PART --->
-return <div className="App">{renderScreen()}</div>;
-} // <--- AND THE CLOSING BRACE FOR function App()
+  return <div className="App">{renderScreen()}</div>;
+}
 
 export default App;
