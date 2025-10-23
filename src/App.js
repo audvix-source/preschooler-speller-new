@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Analytics } from '@vercel/analytics/react';
 import MainScreen from './MainScreen';
 import CategoryMenuScreen from './CategoryMenuScreen';
 import AlphabetScreen from './AlphabetScreen';
@@ -64,34 +63,28 @@ function App() {
   };
 
   const renderScreen = () => {
-    switch (currentScreen) {
-      case 'cover':
-        return <MainScreen
-          onNavigate={navigateTo}
-          speak={speak}
-          setGuideVoice={setGuideVoice}
-          settings={{ brightness, pitch, speed }}
-          setters={{ setBrightness, setPitch, setSpeed }}
-        />;
-      case 'menu':
-        return <CategoryMenuScreen onNavigate={navigateTo} />;
-      case 'alphabet':
-        return <AlphabetScreen onNavigate={navigateTo} speak={speak} />;
-      case 'learning':
-        return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
-      default:
-        return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
-    }
+  switch (currentScreen) {
+    case 'cover':
+      return <MainScreen
+        onNavigate={navigateTo}
+        speak={speak}
+        setGuideVoice={setGuideVoice}
+        settings={{ brightness, pitch, speed }}
+        setters={{ setBrightness, setPitch, setSpeed }}
+      />;
+    case 'menu':
+      return <CategoryMenuScreen onNavigate={navigateTo} />;
+    case 'alphabet':
+      return <AlphabetScreen onNavigate={navigateTo} speak={speak} />;
+    case 'learning':
+      return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
+    default:
+      return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
+  }
 };
 
-  return (
-    <div className="App">
-      {renderScreen()}
-      
-      {/* VERCEL ANALYTICS CODE INSERTED HERE */}
-      <Analytics />
-    </div>
-  );
-}
+// <--- THIS IS THE CRUCIAL MISSING PART --->
+return <div className="App">{renderScreen()}</div>;
+} // <--- AND THE CLOSING BRACE FOR function App()
 
 export default App;
