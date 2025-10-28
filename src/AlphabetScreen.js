@@ -7,8 +7,9 @@ function AlphabetScreen(props) {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const [selectedWord, setSelectedWord] = useState(null);
   const [letterProgress, setLetterProgress] = useState({});
+  const [activeLetter, setActiveLetter] = useState(null);
 
-  const handleLetterClick = (letter) => {
+const handleLetterClick = (letter) => {
   // Get all words starting with this letter
   const wordsForLetter = wordList.filter(item =>
     item.category === 'Alphabet Fun' &&
@@ -17,8 +18,14 @@ function AlphabetScreen(props) {
   
   if (wordsForLetter.length === 0) return;
   
-  // Track which word we're on for this letter
+  // Set this as the active letter
+  setActiveLetter(letter);
+  
+  // Track which word we're on for this letter (start at 0, not 1)
   const currentIndex = letterProgress[letter] || 0;
+  const foundWord = wordsForLetter[currentIndex];
+  
+  // Calculate next index for the NEXT click
   const nextIndex = (currentIndex + 1) % wordsForLetter.length;
   
   setLetterProgress({
@@ -26,18 +33,42 @@ function AlphabetScreen(props) {
     [letter]: nextIndex
   });
   
-  const foundWord = wordsForLetter[nextIndex];
   setSelectedWord({
     ...foundWord,
-    currentIndex: nextIndex,
-    totalCount: wordsForLetter.length
+    currentIndex: currentIndex,
+    totalCount: wordsForLetter.length,
+    letter: letter
   });
   props.speak(foundWord.word);
+  // NEW: If this was the last image, clear active letter after a moment
+  if (nextIndex >= wordsForLetter.length || currentIndex === wordsForLetter.length - 1) {
+    setTimeout(() => {
+      setActiveLetter(null);
+    }, 100);
+  }
 };
 
   const handleCloseWord = () => {
-    setSelectedWord(null);
-  };
+  setSelectedWord(null);
+  setActiveLetter(null);
+};
+
+  // NEW FUNCTION - Add this right after handleCloseWord
+const hasMoreImages = (letter) => {
+  // Only highlight the currently active letter
+  if (activeLetter !== letter) return false;
+  
+  const wordsForLetter = wordList.filter(item =>
+    item.category === 'Alphabet Fun' &&
+    item.word.toUpperCase().startsWith(letter)
+  );
+  
+  const currentProgress = letterProgress[letter] || 0;
+  
+  // Stop pulsing when we've reached or passed the last image
+  // currentProgress will be 5 after showing the 5th image
+  return currentProgress < wordsForLetter.length;
+};
 
   return (
   <div className="app-screen alphabet-screen-container">
@@ -92,15 +123,15 @@ function AlphabetScreen(props) {
         className="alphabet-grid"
         style={{ backgroundImage: `url(${birdBackground})` }}
       >
-        {alphabet.map(letter => (
-          <button
-            key={letter}
-            className="letter-tile"
-            onClick={() => handleLetterClick(letter)}
-          >
-            {letter}
-          </button>
-        ))}
+  {alphabet.map(letter => (
+  <button
+    key={letter}
+    className={`letter-tile ${hasMoreImages(letter) ? 'has-more' : ''}`}
+    onClick={() => handleLetterClick(letter)}
+  >
+    {letter}
+  </button>
+))}
         <button className="back-button" onClick={() => props.onNavigate('menu')}>
           Back to Menu
         </button>
