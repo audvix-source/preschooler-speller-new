@@ -185,3 +185,38 @@
   background: rgba(255, 0, 0, 0.8);
   transform: scale(1.1);
 }
+
+/* Progress dots for multiple words */
+.progress-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.progress-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 2px solid #FF69B4;
+  transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+  background-color: #FFD700;
+  transform: scale(1.3);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.tap-more-hint {
+  font-size: 1.2em;
+  color: #FFD700;
+  margin-top: 8px;
+  animation: gentle-bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
