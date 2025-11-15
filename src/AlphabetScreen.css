@@ -43,7 +43,7 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 85%;
+  padding-bottom: 80%;
   background-color: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -63,15 +63,15 @@
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(200, 220, 255, 0.7); /* Frosty blue tint */
 }
 
 /* KEYBOARD GRID - Grid layout only, no border */
 .alphabet-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0;
-  padding: 0;
+  gap: 3px; /* Increased from 2px to 8px for more space */
+  padding: 8px; /* Add padding around the grid */
   background-size: cover;
   background-position: center;
   position: relative;
@@ -86,15 +86,16 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  opacity: 0.2;
+  opacity: 0.2; /* Changed from 0.2 to 0.5 to make birds fainter */
   z-index: 0;
   pointer-events: none;
 }
 
 .letter-tile {
   aspect-ratio: 1;
-  background-color: rgba(255, 255, 255, 0.15);
-  border: none;
+  background-color: rgba(255, 255, 255, 0.01); /* Slightly more visible */
+  border: 3px solid rgba(255, 255, 255, 0.3); /* Subtle white borders */
+  border-radius: 8px; /* Rounded corners like the wrapper */
   color: blue;
   font-size: 1.5em;
   font-weight: bold;
@@ -107,6 +108,7 @@
 .letter-tile:hover,
 .letter-tile:active {
   background-color: rgba(255, 255, 153, 0.6);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Slightly more shadow on hover */
 }
 
 /* Style for the 'Back to Menu' button */
@@ -117,8 +119,8 @@
   margin-top: 5px;
   padding: 8px 0;
   cursor: pointer;
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
+  border: 4px solid rgba(0, 0, 255, 0.7);
+  border-radius: 25px;
   font-size: 1.1em;
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.25);
@@ -209,6 +211,45 @@
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
 
+.progress-dot.active.last {
+  background-color: rgba(255, 255, 255, 0.3); /* Remove yellow on last one */
+  transform: scale(1);
+  box-shadow: none;
+}
+
+/* Sequential pulsating effect for future dots */
+.progress-dot.future {
+  animation: sequential-pulse 2.5s ease-in-out infinite;
+}
+
+.progress-dot.future:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.progress-dot.future:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.progress-dot.future:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.progress-dot.future:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+@keyframes sequential-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  50% { 
+    transform: scale(1.4);
+    background-color: rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+  }
+}
+
 .tap-more-hint {
   font-size: 1.2em;
   color: #FFD700;
@@ -228,7 +269,7 @@
   border: 3px solid #FFD700 !important;
   transform: scale(1.1);
   z-index: 10 !important;
-  animation: soft-flash 1s ease-in-out infinite;
+  animation: soft-flash 2s ease-in-out infinite;
 }
 
 .letter-tile.has-more:hover,

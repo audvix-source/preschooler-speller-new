@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import './ComingSoonModal.css';
 import mayaImage from '../assets/maya-flying.png';
 import trebImage from '../assets/treb-flying.png';
@@ -17,15 +18,15 @@ function ComingSoonModal({ show, onClose }) {
 
   useEffect(() => {
     if (show) {
-      setCountdown(10); // Reset countdown when modal opens
+      setCountdown(10);
     }
   }, [show]);
 
   if (!show) return null;
 
-  return (
+  return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={onClose}>
-      <div className="app-screen modal-content" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="rainbow-header">
           <h2><span className="rainbow-left">🌈</span> More Fun Coming Soon! <span className="rainbow-right">🌈</span></h2>
         </div>
@@ -62,7 +63,8 @@ function ComingSoonModal({ show, onClose }) {
           <span className="countdown">{countdown}</span>
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

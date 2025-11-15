@@ -21,20 +21,16 @@ function App() {
     loadVoices();
   }, []);
 
-  // --- NEW GA4 SPA TRACKING EFFECT ---
   useEffect(() => {
-    // Check if gtag function is available globally (from script in index.html)
     if (typeof window.gtag === 'function') {
       const pagePath = `/${currentScreen}`;
       window.gtag('event', 'page_view', {
         page_title: currentScreen.charAt(0).toUpperCase() + currentScreen.slice(1) + ' Screen',
         page_path: pagePath,
-        send_to: 'G-WGSW8CZ35W' // Your specific Measurement ID
+        send_to: 'G-WGSW8CZ35W'
       });
     }
-  }, [currentScreen]); 
-  // Runs whenever the screen state changes
-  // --- END NEW GA4 SPA TRACKING EFFECT ---
+  }, [currentScreen]);
 
   const speak = (text, forceGender = null) => {
     if (!('speechSynthesis' in window)) {
@@ -62,7 +58,6 @@ function App() {
         v.lang.startsWith('en') &&
         (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
       );
-
 
       if (maleVoice) {
         utterance.voice = maleVoice;
