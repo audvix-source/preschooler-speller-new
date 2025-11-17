@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+// Remove ReactDOM import - we don't need it anymore
 import './ComingSoonModal.css';
 import mayaImage from '../assets/maya-flying.png';
 import trebImage from '../assets/treb-flying.png';
@@ -24,7 +24,8 @@ function ComingSoonModal({ show, onClose }) {
 
   if (!show) return null;
 
-  return ReactDOM.createPortal(
+  // Render normally without Portal
+  return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="rainbow-header">
@@ -63,8 +64,7 @@ function ComingSoonModal({ show, onClose }) {
           <span className="countdown">{countdown}</span>
         </button>
       </div>
-    </div>,
-    document.body
+    </div>
   );
 }
 

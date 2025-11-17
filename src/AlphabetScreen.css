@@ -43,7 +43,7 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 80%;
+  padding-bottom: 77%;
   background-color: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -70,8 +70,8 @@
 .alphabet-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 3px; /* Increased from 2px to 8px for more space */
-  padding: 8px; /* Add padding around the grid */
+  gap: 1px; /* Increased from 2px to 8px for more space */
+  padding: 1px; /* Add padding around the grid */
   background-size: cover;
   background-position: center;
   position: relative;
@@ -95,7 +95,7 @@
   aspect-ratio: 1;
   background-color: rgba(255, 255, 255, 0.01); /* Slightly more visible */
   border: 3px solid rgba(255, 255, 255, 0.3); /* Subtle white borders */
-  border-radius: 8px; /* Rounded corners like the wrapper */
+  border-radius: 14px; /* Rounded corners like the wrapper */
   color: blue;
   font-size: 1.5em;
   font-weight: bold;

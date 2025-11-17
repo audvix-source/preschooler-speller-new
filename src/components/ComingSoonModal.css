@@ -1,14 +1,15 @@
 .modal-overlay {
-  position: fixed;
-  top: 0;
+  position: fixed; /* Use fixed for full viewport coverage */
+  /* Remove position: -1px; which is invalid/nonsensical */
+  top: 0; /* Add top: 0 to ensure full coverage */
   left: 0;
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 10000; /* Much higher z-index to be above everything */
+  align-items: center; /* <--- CRITICAL CHANGE: Center it vertically */
+  z-index: 10000;
   animation: fadeIn 0.3s ease-in;
   padding: 0;
   margin: 0;
@@ -16,30 +17,31 @@
 
 .modal-content {
   background: linear-gradient(135deg, #87CEEB 0%, #98D8E8 100%);
-  border-radius: 30px;
+  border-radius: 20px;
   padding: 20px 25px;
   width: 420px;
   height: 680px;
-  max-width: 90vw; /* Responsive on smaller screens */
-  max-height: 90vh; /* Prevent overflow on short screens */
+  max-width: 420px;
+  max-height: 680px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.4s ease-out;
-  border: 8px solid #fff;
+  border: none;
   overflow-y: auto;
   position: relative;
+  margin: 0;
+  margin-top: -20px; /* Pull the content up */
 }
 
 @media screen and (max-width: 768px) {
   .modal-content {
     width: 100vw;
-    height: 95vh;
+    height: 100vh; /* <--- Change from 95vh to 100vh for full-screen */
     max-width: 100vw;
-    max-height: 95vh;
-    margin-top: 5vh;
-    border-radius: 0;
+    max-height: 100vh; /* <--- Change from 95vh to 100vh */
+    margin-top: 0; /* <--- CRITICAL CHANGE: REMOVE/set to 0 to eliminate gap */
+    border-radius: 20px;
     border: none;
     padding: 15px 20px;
   }
