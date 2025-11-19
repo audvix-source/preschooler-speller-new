@@ -79,7 +79,7 @@
   top: 0;
   left: 0;
   z-index: 5;
-  padding: 20px 20px 10px 20px;
+  padding: 32px 20px 20px 20px;
   box-sizing: border-box;
 }
 
@@ -87,7 +87,7 @@
   display: flex; 
 }
 
-/* Top Navigation Bar - Contains all top buttons */
+/* Top Navigation Bar */
 .top-nav-bar {
   display: flex;
   justify-content: center;
@@ -95,11 +95,10 @@
   gap: 10px;
   width: 100%;
   max-width: 380px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   flex-shrink: 0;
 }
 
-/* When Next Word button is alone (first word), match image width */
 .top-nav-bar:has(.next-word-button:only-child) {
   max-width: 240px;
 }
@@ -107,43 +106,6 @@
 .top-nav-bar .next-word-button:only-child {
   flex: 0 1 100%;
   width: 100%;
-}
-
-/* Top Button Row - Previous/Next Word Buttons */
-.top-button-row { 
-  display: flex; 
-  justify-content: space-between; 
-  gap: 10px; 
-  width: 100%; 
-  max-width: 380px; 
-  margin-bottom: 10px; 
-  flex-shrink: 0; 
-}
-
-/* Back to Menu Button for Learning Screen - RED, positioned at bottom */
-.learning-back-button {
-  padding: 8px 20px;
-  font-size: 1em;
-  font-weight: bold;
-  background-color: #F44336;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 180px;
-  z-index: 10;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.learning-back-button:hover {
-  background-color: #D32F2F;
-  transform: translateX(-50%) scale(1.02);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
 .previous-word-button,
@@ -160,17 +122,17 @@
 
 .previous-word-button { 
   color: white; 
-  background-color: #FFD700; /* Gold color */
+  background-color: #FFD700;
 }
 
 .previous-word-button:hover { 
-  background-color: #FFC700; /* Darker gold on hover */
+  background-color: #FFC700;
   transform: scale(1.02);
 }
 
 .next-word-button { 
   color: white; 
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
 }
 
 .next-word-button:hover { 
@@ -183,14 +145,16 @@
   display: flex; 
   flex-direction: column; 
   align-items: center; 
-  justify-content: center; 
-  flex-grow: 1; 
+  justify-content: flex-start;
+  flex-grow: 0;
   width: 100%; 
-  max-width: 380px; 
+  max-width: 380px;
+  margin-bottom: 12px;
 }
 
 .game-container.challenge-mode { 
-  justify-content: flex-start; 
+  justify-content: flex-start;
+  margin-bottom: 8px;
 }
 
 /* Image Container */
@@ -199,46 +163,51 @@
   justify-content: center; 
   align-items: center; 
   width: 100%; 
-  margin-bottom: 0; 
-  min-height: 200px; 
-  transition: min-height 0.3s ease; 
+  margin-bottom: 8px;
+  min-height: 170px;
+  transition: all 0.5s ease;
 }
 
 .word-image-container.spelling-mode { 
-  min-height: 150px; 
+  min-height: 130px;
+  transform: scale(0.75) translateY(-20px);
 }
 
 .game-container.challenge-mode .word-image-container { 
-  min-height: auto; 
+  min-height: auto;
+  margin-bottom: 6px;
 }
 
 .activity-image { 
   max-width: 80%; 
-  max-height: 300px; 
+  max-height: 240px;
   object-fit: contain; 
   display: block; 
-  transition: max-height 0.3s ease; 
+  transition: all 0.5s ease;
 }
 
 .activity-image.small {
-  max-height: 220px;
+  max-height: 200px;
+  transform: scale(0.85);
 }
 
-/* Word Blanks & Buttons */
+/* Word Blanks */
 .word-blanks-container { 
   display: flex; 
   gap: 4px; 
   justify-content: center; 
   flex-wrap: wrap; 
-  margin: 0; 
+  margin: 8px 0;
   padding: 0;
   position: relative;
   line-height: 0;
   row-gap: 0px;
+  transition: all 0.5s ease;
 }
 
 .word-blanks-container.spelling-mode { 
-  margin: 0;
+  margin: 15px 0;
+  transform: scale(1.15) translateY(10px);
 }
 
 .letter-blank { 
@@ -255,9 +224,22 @@
   transition: all 0.3s ease; 
 }
 
+.word-blanks-container.spelling-mode .letter-blank {
+  width: 46px;
+  height: 58px;
+  font-size: 1.8em;
+  border-width: 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 .word-space {
   width: 20px;
   height: 50px;
+}
+
+.word-blanks-container.spelling-mode .word-space {
+  width: 24px;
+  height: 58px;
 }
 
 .letter-blank.filled { 
@@ -271,6 +253,22 @@
   transform: scale(1.1); 
 }
 
+.question-mark {
+  background-color: #ffeb3b !important;
+  animation: flash 0.8s;
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.letter-blank.question-mark:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s;
+}
+
+/* Buttons */
 .button-row { 
   display: flex; 
   gap: 10px; 
@@ -279,7 +277,6 @@
   flex-wrap: wrap; 
 }
 
-/* NEW: Center button when it's alone (for 7+ letter words) */
 .button-row.centered {
   justify-content: center;
 }
@@ -301,11 +298,11 @@
 
 .hear-word-button { 
   color: white; 
-  background-color: #9C27B0; /* Changed to Purple */
+  background-color: #9C27B0;
 }
 
 .hear-word-button:hover:not(:disabled) { 
-  background-color: #7B1FA2; /* Darker purple on hover */
+  background-color: #7B1FA2;
   transform: scale(1.05); 
 }
 
@@ -324,9 +321,9 @@
   transform: scale(1.05); 
 }
 
-/* Challenge Section & Keyboard */
+/* Challenge Section */
 .challenge-section {
-  margin-top: 0;
+  margin-top: 10px;
   padding-top: 0;
   width: 100%;
   display: flex;
@@ -338,30 +335,34 @@
   gap: 0;
 }
 
-.challenge-blanks-container { 
-  display: flex; 
-  gap: 4px; 
-  justify-content: center; 
-  flex-wrap: wrap; 
-  margin: 0;
-  padding: 0;
-  line-height: 0;
-  row-gap: 0px;
+.instruction-box-keyboard {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #003366;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 15px;
+  margin-top: 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.4s ease-out;
+  white-space: pre-line;
+  width: 100%;
+  max-width: 380px;
+  line-height: 1.4;
+  min-height: 50px;
 }
 
-.challenge-blank { 
-  width: 38px; 
-  height: 46px; 
-  border: 2px solid #2196F3; 
-  border-radius: 8px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 1.4em; 
-  font-weight: bold; 
-  background-color: white;
-  margin: 0;
-  padding: 0;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .alphabet-keyboard {
@@ -371,7 +372,7 @@
   width: 100%;
   max-width: 380px;
   margin-top: 0px;
-  margin-bottom: 65px;
+  margin-bottom: 60px;
 }
 
 .keyboard-letter { 
@@ -401,11 +402,29 @@
   color: #888; 
 }
 
-/* Back to Menu Button at Bottom - NEW STYLING */
-.back-button-bottom {
-  width: 100%;
-  max-width: 200px;
-  padding: 8px 16px;
+.completion-message { 
+  text-align: center; 
+  padding: 15px 20px;
+  margin-top: 10px;
+  font-size: 1.3em; 
+  animation: celebrate 0.5s ease; 
+}
+
+.completion-message h2 {
+  margin: 0;
+  color: #4CAF50;
+  font-size: 1.4em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes celebrate { 
+  0% { transform: scale(0); } 
+  50% { transform: scale(1.15); } 
+  100% { transform: scale(1); } 
+}
+
+.learning-back-button {
+  padding: 8px 20px;
   font-size: 1em;
   font-weight: bold;
   background-color: #F44336;
@@ -413,29 +432,20 @@
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  margin-top: auto;
-  margin-bottom: 15px;
   transition: all 0.2s ease;
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 180px;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.back-button-bottom:hover {
+.learning-back-button:hover {
   background-color: #D32F2F;
-  transform: scale(1.02);
-}
-
-/* Completion Message, Overlays, and Fixed Button */
-.completion-message { 
-  text-align: center; 
-  padding: 20px; 
-  font-size: 1.5em; 
-  color: #4CAF50; 
-  animation: celebrate 0.5s ease; 
-}
-
-@keyframes celebrate { 
-  0% { transform: scale(0); } 
-  50% { transform: scale(1.2); } 
-  100% { transform: scale(1); } 
+  transform: translateX(-50%) scale(1.02);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
 .confetti-overlay { 
@@ -472,19 +482,4 @@
 
 .back-button-fixed:hover { 
   background-color: rgba(244, 67, 54, 1); 
-}
-
-.question-mark {
-  background-color: #ffeb3b !important;
-  animation: flash 0.8s;
-}
-
-@keyframes flash {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-.letter-blank.question-mark:hover {
-  transform: scale(1.1);
-  transition: transform 0.2s;
 }

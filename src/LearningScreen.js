@@ -14,6 +14,7 @@ const images = require.context('./assets', false);
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function LearningScreen(props) {
+  const [showInstructionBox, setShowInstructionBox] = useState(false);
   const [viewState, setViewState] = useState('selecting');
   const [chosenModel, setChosenModel] = useState(null);
   const [disappearingSide, setDisappearingSide] = useState(null);
@@ -115,6 +116,7 @@ function LearningScreen(props) {
     setIsCompleted(false);
     setShowReward(false);
     setHadMistake(false);
+    setShowInstructionBox(false);  // ADD THIS LINE
   }, [wordIndex]);
 
   const getCurrentImage = () => {
@@ -126,6 +128,51 @@ function LearningScreen(props) {
   };
 
   const imageFileName = getCurrentImage();
+
+const getSingularPluralHint = () => {
+  if (!currentWord) return null;
+  
+  const pluralWords = {
+    'Eyes': 'Eye',
+    'Ears': 'Ear', 
+    'Lips': 'Lip',
+    'Cheeks': 'Cheek',
+    'Dimples': 'Dimple',
+    'Eyebrows': 'Eyebrow',
+    'Eyelashes': 'Eyelash',
+    'Eyelids': 'Eyelid',
+    'Shoulders': 'Shoulder',
+    'Arms': 'Arm',
+    'Elbows': 'Elbow',
+    'Hands': 'Hand',
+    'Fingers': 'Finger',
+    'Nails': 'Nail',
+    'Palms': 'Palm',
+    'Hips': 'Hip',
+    'Feet': 'Foot',
+    'Teeth': 'Tooth'
+  };
+  
+  const word = currentWord.word;
+  if (pluralWords[word]) {
+    const singular = pluralWords[word].toLowerCase();
+    const plural = word.toLowerCase();
+    
+    // Special case for Lips
+    if (word === 'Lips') {
+      return `If pointing only to one (top or bottom), we say '${singular}.'\nBut if pointing to both, we say '${plural}.'`;
+    }
+    
+    // Special case for Teeth
+    if (word === 'Teeth') {
+      return `If pointing only to one, we say '${singular}.'\nBut if pointing to all, we say '${plural}.'`;
+    }
+    
+    // Default case
+    return `If pointing only to one, we say '${singular}.'\nBut if pointing to both, we say '${plural}.'`;
+  }
+  return null;
+};
 
   const handleSpellWord = async () => {
     if (!currentWord || isSpelling) return;
@@ -151,18 +198,19 @@ function LearningScreen(props) {
   };
 
   const handleAcceptChallenge = () => {
-    if (!currentWord || currentWord.word.length >= 7) {
-      props.speak("This word is too long for a challenge. Try a shorter one!");
-      playErrorSound();
-      return;
-    }
-    setChallengeMode(true);
-    const len = currentWord.word.length;
-    setFilledLetters(Array(len).fill(null));
-    setChallengeLetters(Array(len).fill(''));
-    setShowHints(Array(len).fill(false));
-    setHadMistake(false);
-  };
+  if (!currentWord || currentWord.word.length >= 7) {
+    props.speak("This word is too long for a challenge. Try a shorter one!");
+    playErrorSound();
+    return;
+  }
+  setChallengeMode(true);
+  const len = currentWord.word.length;
+  setFilledLetters(Array(len).fill(null));
+  setChallengeLetters(Array(len).fill(''));
+  setShowHints(Array(len).fill(false));
+  setHadMistake(false);
+  setShowInstructionBox(false);
+};
 
   const handleKeyboardLetter = (letter) => {
     if (isCompleted) return;
@@ -207,6 +255,7 @@ function LearningScreen(props) {
       const completed = challengeLetters.map((l, i) => l || (correctPositions.includes(i) ? upperLetter : ''));
       if (completed.join('') === word) {
         setIsCompleted(true);
+        setShowInstructionBox(true);  // ADD THIS LINE
         setTimeout(triggerReward, 500);
       }
     }, 200);
@@ -244,8 +293,7 @@ function LearningScreen(props) {
     props.speak(message);
     setTimeout(() => {
       setShowReward(false);
-      handleNextWord();
-    }, 3000);
+      }, 3000);
   };
 
   // Check if word is 7+ letters
@@ -291,8 +339,8 @@ function LearningScreen(props) {
           <div className={`word-image-container ${isSpelling ? 'spelling-mode' : ''}`}>
             {imageFileName && (
               <img
-              src={images(`./${imageFileName}`)}
-              alt={currentWord.word}
+                src={images(`./${imageFileName}`)}
+                alt={currentWord.word}
                 className={`activity-image ${isSpelling ? 'small' : ''}`}
               />
             )}
@@ -321,26 +369,32 @@ function LearningScreen(props) {
         </div>
 
         {challengeMode && (
-          <div className="challenge-section">
-            <div className="challenge-blanks-container">
-              {currentWord.word.split('').map((char, i) =>
-                char === ' '
-                  ? <div key={i} className="word-space"></div>
-                  : <div key={i} className="challenge-blank">{challengeLetters[i]}</div>
-              )}
-            </div>
-            {!isCompleted && (
-              <OnScreenKeyboard
-                onLetterClick={handleKeyboardLetter}
-                usedLetters={challengeLetters.filter(l => l !== '')}
-                currentWord={currentWord}
-              />
-            )}
-            {isCompleted && (
-              <div className="completion-message"><h2>🎉 Perfect! 🎉</h2></div>
-            )}
-          </div>
-        )}
+  <div className="challenge-section">
+    {showInstructionBox && getSingularPluralHint() && (
+      <div className="instruction-box-keyboard">
+        {getSingularPluralHint()}
+      </div>
+    )}
+    
+    {!isCompleted && (
+      <OnScreenKeyboard
+        onLetterClick={handleKeyboardLetter}
+        usedLetters={challengeLetters.filter(l => l !== '')}
+        currentWord={currentWord}
+      />
+    )}
+    {isCompleted && (
+      <div className="completion-message">
+        <h2>
+          {hadMistake 
+            ? ['🌟 Good Work! 🌟', '💪 Nice Try! 💪', '👏 Keep Going! 👏', '✨ Well Done! ✨'][Math.floor(Math.random() * 4)]
+            : ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'][Math.floor(Math.random() * 4)]
+          }
+        </h2>
+      </div>
+    )}
+  </div>
+)}
 
         {/* Back to Menu button at BOTTOM - RED BUTTON */}
         <button className="learning-back-button" onClick={() => props.onNavigate('menu')}>
