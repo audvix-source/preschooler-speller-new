@@ -372,7 +372,7 @@
   width: 100%;
   max-width: 380px;
   margin-top: 0px;
-  margin-bottom: 60px;
+  margin-bottom: 45px; /* From 60px reduce keyboard bottom margin on mobile */
 }
 
 .keyboard-letter { 
@@ -434,7 +434,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: absolute;
-  bottom: 32px;
+  bottom: 15px; /* From 35px reduce bottom margin on mobile */
   left: 50%;
   transform: translateX(-50%);
   min-width: 180px;
@@ -483,3 +483,10 @@
 .back-button-fixed:hover { 
   background-color: rgba(244, 67, 54, 1); 
 }
+
+/* Mobile-specific adjustments */
+@media only screen and (max-width: 768px) {
+  .activity-view {
+    padding: 32px 20px 10px 20px; /* Reduce bottom padding on mobile */
+  }
+  }

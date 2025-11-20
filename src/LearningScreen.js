@@ -163,9 +163,9 @@ const getSingularPluralHint = () => {
       return `If pointing only to one (top or bottom), we say '${singular}.'\nBut if pointing to both, we say '${plural}.'`;
     }
     
-    // Special case for Teeth
+    // Special case for Teeth - UPDATED
     if (word === 'Teeth') {
-      return `If pointing only to one, we say '${singular}.'\nBut if pointing to all, we say '${plural}.'`;
+      return `If pointing only to one, we say '${singular}.'\nBut if to two or more, we say '${plural}.'`;
     }
     
     // Default case
