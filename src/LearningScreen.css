@@ -14,57 +14,57 @@
 }
 
 /* Character Selection Screen */
-.character-selection-container { 
-  display: flex; 
-  flex-direction: column; 
-  justify-content: flex-start; 
-  align-items: center; 
-  height: 100%; 
-  width: 100%; 
-  padding: 40px 15px; 
-  box-sizing: border-box; 
+.character-selection-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 40px 15px;
+  box-sizing: border-box;
 }
 
-.character-selection-container.hidden { 
-  display: none; 
+.character-selection-container.hidden {
+  display: none;
 }
 
-.selection-title { 
-  font-size: 2.3em; 
-  color: white; 
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); 
-  white-space: nowrap; 
-  text-align: center; 
-  flex-shrink: 0; 
-  margin-bottom: 0; 
+.selection-title {
+  font-size: 2.3em;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+  margin-bottom: 0;
 }
 
-.character-container { 
-  display: flex; 
-  flex-direction: row; 
-  justify-content: center; 
-  align-items: flex-end; 
-  gap: 10px; 
-  width: 100%; 
-  margin-top: 120px; 
-  margin-bottom: 0; 
+.character-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 10px;
+  width: 100%;
+  margin-top: 120px;
+  margin-bottom: 0;
 }
 
-.character-model { 
-  cursor: pointer; 
-  transition: transform 0.3s ease; 
+.character-model {
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-.character-model:hover { 
-  transform: scale(1.08); 
+.character-model:hover {
+  transform: scale(1.08);
 }
 
-.character-model img { 
-  width: 180px; 
-  height: 360px; 
-  object-fit: contain; 
-  display: block; 
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)); 
+.character-model img {
+  width: 180px;
+  height: 360px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
 /* Activity View */
@@ -79,12 +79,13 @@
   top: 0;
   left: 0;
   z-index: 5;
-  padding: 32px 20px 20px 20px;
+  /* FIX IMAGE 3: Adjust padding to accommodate keyboard at bottom */
+  padding: 32px 20px 30px 20px;
   box-sizing: border-box;
 }
 
-.activity-view.visible { 
-  display: flex; 
+.activity-view.visible {
+  display: flex;
 }
 
 /* Top Navigation Bar */
@@ -95,7 +96,7 @@
   gap: 10px;
   width: 100%;
   max-width: 380px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   flex-shrink: 0;
 }
 
@@ -109,94 +110,97 @@
 }
 
 .previous-word-button,
-.next-word-button { 
-  padding: 8px 16px; 
-  font-size: 1em; 
-  font-weight: bold; 
-  border: none; 
-  border-radius: 12px; 
-  cursor: pointer; 
-  flex: 1; 
+.next-word-button {
+  padding: 8px 16px;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  flex: 1;
   transition: all 0.2s ease;
 }
 
-.previous-word-button { 
-  color: white; 
+.previous-word-button {
+  color: white;
   background-color: #FFD700;
 }
 
-.previous-word-button:hover { 
+.previous-word-button:hover {
   background-color: #FFC700;
   transform: scale(1.02);
 }
 
-.next-word-button { 
-  color: white; 
+.next-word-button {
+  color: white;
   background-color: #4CAF50;
 }
 
-.next-word-button:hover { 
-  background-color: #45a049; 
+.next-word-button:hover {
+  background-color: #45a049;
   transform: scale(1.02);
 }
 
-/* Game Container */
-.game-container { 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
+/* Game Container - FIX IMAGE 3: Better space management */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: flex-start;
   flex-grow: 0;
-  width: 100%; 
+  flex-shrink: 1;
+  width: 100%;
   max-width: 380px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-.game-container.challenge-mode { 
+.game-container.challenge-mode {
   justify-content: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
-/* Image Container */
-.word-image-container { 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  width: 100%; 
-  margin-bottom: 8px;
-  min-height: 170px;
+/* Image Container - FIX IMAGE 3: Reduce image size */
+.word-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+  min-height: 200px; /* Increased from 140px */
+  flex-grow: 0;
   transition: all 0.5s ease;
 }
 
-.word-image-container.spelling-mode { 
-  min-height: 130px;
-  transform: scale(0.75) translateY(-20px);
+.word-image-container.spelling-mode {
+  min-height: 110px;
+  transform: scale(0.7) translateY(-15px);
 }
 
-.game-container.challenge-mode .word-image-container { 
+.game-container.challenge-mode .word-image-container {
   min-height: auto;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
-.activity-image { 
-  max-width: 80%; 
-  max-height: 240px;
-  object-fit: contain; 
-  display: block; 
+/* FIX IMAGE 3: Make images bigger */
+.activity-image {
+  max-width: 85%; /* Increased from 75% */
+  max-height: 280px; /* Increased from 200px */
+  object-fit: contain;
+  display: block;
   transition: all 0.5s ease;
 }
 
 .activity-image.small {
-  max-height: 200px;
-  transform: scale(0.85);
+  max-height: 150px;
+  transform: scale(0.8);
 }
 
 /* Word Blanks */
-.word-blanks-container { 
-  display: flex; 
-  gap: 4px; 
-  justify-content: center; 
-  flex-wrap: wrap; 
+.word-blanks-container {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
   margin: 8px 0;
   padding: 0;
   position: relative;
@@ -205,23 +209,23 @@
   transition: all 0.5s ease;
 }
 
-.word-blanks-container.spelling-mode { 
-  margin: 15px 0;
-  transform: scale(1.15) translateY(10px);
+.word-blanks-container.spelling-mode {
+  margin: 12px 0; /* Reduced from 15px */
+  transform: scale(1.1) translateY(8px);
 }
 
-.letter-blank { 
-  width: 40px; 
-  height: 50px; 
-  border: 2px solid #333; 
-  border-radius: 8px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 1.5em; 
-  font-weight: bold; 
-  background-color: white; 
-  transition: all 0.3s ease; 
+.letter-blank {
+  width: 40px;
+  height: 50px;
+  border: 2px solid #333;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  background-color: white;
+  transition: all 0.3s ease;
 }
 
 .word-blanks-container.spelling-mode .letter-blank {
@@ -242,15 +246,15 @@
   height: 58px;
 }
 
-.letter-blank.filled { 
-  background-color: #90EE90; 
-  border-color: #228B22; 
+.letter-blank.filled {
+  background-color: #90EE90;
+  border-color: #228B22;
 }
 
-.letter-blank.current { 
-  background-color: #FFD700; 
-  border-color: #FFA500; 
-  transform: scale(1.1); 
+.letter-blank.current {
+  background-color: #FFD700;
+  border-color: #FFA500;
+  transform: scale(1.1);
 }
 
 .question-mark {
@@ -269,12 +273,12 @@
 }
 
 /* Buttons */
-.button-row { 
-  display: flex; 
-  gap: 10px; 
-  justify-content: center; 
-  margin-top: 10px; 
-  flex-wrap: wrap; 
+.button-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 8px; /* Reduced from 10px */
+  flex-wrap: wrap;
 }
 
 .button-row.centered {
@@ -285,45 +289,45 @@
   margin: 0 auto;
 }
 
-.hear-word-button, 
-.challenge-button { 
-  padding: 8px 18px; 
-  font-size: 1em; 
-  font-weight: bold; 
-  border: none; 
-  border-radius: 12px; 
-  cursor: pointer; 
-  transition: all 0.2s ease; 
+.hear-word-button,
+.challenge-button {
+  padding: 8px 18px;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.hear-word-button { 
-  color: white; 
+.hear-word-button {
+  color: white;
   background-color: #9C27B0;
 }
 
-.hear-word-button:hover:not(:disabled) { 
+.hear-word-button:hover:not(:disabled) {
   background-color: #7B1FA2;
-  transform: scale(1.05); 
+  transform: scale(1.05);
 }
 
-.hear-word-button:disabled { 
-  background-color: #cccccc; 
-  cursor: not-allowed; 
+.hear-word-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
-.challenge-button { 
-  color: white; 
-  background-color: #FF9800; 
+.challenge-button {
+  color: white;
+  background-color: #FF9800;
 }
 
-.challenge-button:hover { 
-  background-color: #F57C00; 
-  transform: scale(1.05); 
+.challenge-button:hover {
+  background-color: #F57C00;
+  transform: scale(1.05);
 }
 
-/* Challenge Section */
+/* Challenge Section - FIX IMAGE 3: Better spacing */
 .challenge-section {
-  margin-top: 10px;
+  margin-top: 0px;
   padding-top: 0;
   width: 100%;
   display: flex;
@@ -338,20 +342,20 @@
 .instruction-box-keyboard {
   background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   color: #003366;
-  padding: 12px 20px;
+  padding: 10px 18px; /* Reduced from 12px 20px */
   border-radius: 12px;
-  font-size: 1em;
+  font-size: 0.95em; /* Slightly smaller */
   font-weight: bold;
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px; /* Reduced from 15px */
   margin-top: 0;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.4s ease-out;
   white-space: pre-line;
   width: 100%;
   max-width: 380px;
-  line-height: 1.4;
-  min-height: 50px;
+  line-height: 1.3;
+  min-height: 45px; /* Reduced from 50px */
 }
 
 @keyframes slideIn {
@@ -365,6 +369,7 @@
   }
 }
 
+/* FIX IMAGE 3: Ensure keyboard stays within bounds */
 .alphabet-keyboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -372,42 +377,97 @@
   width: 100%;
   max-width: 380px;
   margin-top: 0px;
-  margin-bottom: 45px; /* From 60px reduce keyboard bottom margin on mobile */
+  margin-bottom: 30px; /* Ensures 1/3 inch from bottom */
 }
 
-.keyboard-letter { 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 1em; 
-  font-weight: bold; 
-  background-color: white; 
-  color: #333; 
-  border: 1px solid #ccc; 
-  border-radius: 8px; 
-  cursor: pointer; 
-  aspect-ratio: 1 / 1; 
-  transition: background-color 0.2s, transform 0.2s; 
+/* On-Screen Keyboard Component Styles */
+.on-screen-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 380px;
+  margin-top: 0;
+  margin-bottom: 30px; /* Ensures 1/3 inch from bottom */
+  padding: 0 10px; /* Added padding to prevent touching sides */
 }
 
-.keyboard-letter:hover:not(:disabled) { 
-  background-color: #f0f0f0; 
-  transform: translateY(-2px); 
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
 }
 
-.keyboard-letter:disabled { 
-  background-color: #e9ecef; 
-  opacity: 0.7; 
-  cursor: not-allowed; 
-  color: #888; 
+.on-screen-keyboard .keyboard-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  font-weight: bold;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px;
+  min-width: 38px;
+  height: 42px;
+  transition: background-color 0.2s, transform 0.2s;
+  flex: 1;
+  max-width: 42px;
 }
 
-.completion-message { 
-  text-align: center; 
+.on-screen-keyboard .keyboard-letter:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.on-screen-keyboard .keyboard-letter:active:not(:disabled) {
+  transform: translateY(0);
+  background-color: #e0e0e0;
+}
+
+.on-screen-keyboard .keyboard-letter:disabled {
+  background-color: #e9ecef;
+  opacity: 0.7;
+  cursor: not-allowed;
+  color: #888;
+}
+
+.keyboard-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  font-weight: bold;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.keyboard-letter:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.keyboard-letter:disabled {
+  background-color: #e9ecef;
+  opacity: 0.7;
+  cursor: not-allowed;
+  color: #888;
+}
+
+.completion-message {
+  text-align: center;
   padding: 15px 20px;
   margin-top: 10px;
-  font-size: 1.3em; 
-  animation: celebrate 0.5s ease; 
+  font-size: 1.3em;
+  animation: celebrate 0.5s ease;
 }
 
 .completion-message h2 {
@@ -417,12 +477,13 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes celebrate { 
-  0% { transform: scale(0); } 
-  50% { transform: scale(1.15); } 
-  100% { transform: scale(1); } 
+@keyframes celebrate {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
+/* Back Button (Red Button) */
 .learning-back-button {
   padding: 8px 20px;
   font-size: 1em;
@@ -434,7 +495,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: absolute;
-  bottom: 15px; /* From 35px reduce bottom margin on mobile */
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   min-width: 180px;
@@ -448,45 +509,84 @@
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
-.confetti-overlay { 
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  pointer-events: none; 
-  z-index: 1000; 
-  background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%); 
-  animation: fadeInOut 3s ease; 
+.confetti-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+  animation: fadeInOut 3s ease;
 }
 
-@keyframes fadeInOut { 
-  0%, 100% { opacity: 0; } 
-  50% { opacity: 1; } 
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
 }
 
-.back-button-fixed { 
-  position: absolute; 
-  bottom: 40px; 
-  left: 50%; 
-  transform: translateX(-50%); 
-  padding: 12px 30px; 
-  font-size: 1.2em; 
-  background-color: rgba(244, 67, 54, 0.9); 
-  color: white; 
-  border: none; 
-  border-radius: 12px; 
-  cursor: pointer; 
-  z-index: 20; 
+.back-button-fixed {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 30px;
+  font-size: 1.2em;
+  background-color: rgba(244, 67, 54, 0.9);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 20;
 }
 
-.back-button-fixed:hover { 
-  background-color: rgba(244, 67, 54, 1); 
+.back-button-fixed:hover {
+  background-color: rgba(244, 67, 54, 1);
 }
 
 /* Mobile-specific adjustments */
 @media only screen and (max-width: 768px) {
+  .learning-screen-container {
+    height: 100vh; /* Use full viewport height on mobile */
+    max-height: none; /* Remove 680px limit */
+  }
+  
   .activity-view {
-    padding: 32px 20px 10px 20px; /* Reduce bottom padding on mobile */
+    padding: 20px 20px 30px 20px; /* Reduced top padding from 32px to 20px */
   }
+  
+  /* Make image bigger on mobile to push keyboard down */
+  .activity-image {
+    max-width: 90%;
+    max-height: 320px; /* Reduced from 340px */
   }
+  
+  .word-image-container {
+    min-height: 240px; /* Reduced from 260px */
+    margin-bottom: 10px; /* Reduced spacing */
+  }
+  
+  /* Character selection adjustments */
+  .character-selection-container {
+    padding: 30px 15px; /* Reduced top padding from 40px */
+  }
+  
+  .selection-title {
+    margin-bottom: 20px; /* Add space below title */
+  }
+  
+  .character-container {
+    margin-top: 60px; /* Reduced from 80px */
+    margin-bottom: 60px; /* Increased from 40px to push button down */
+  }
+  
+  .character-model img {
+    width: 170px; /* Slightly bigger than 160px */
+    height: 340px; /* Slightly bigger than 320px */
+  }
+  
+  .back-button-fixed {
+    bottom: 40px; /* Back to 40px from bottom */
+  }
+}

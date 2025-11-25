@@ -2,13 +2,12 @@
 .alphabet-screen-container {
   display: flex;
   flex-direction: column;
-  height: auto;           /* NEW: Let content define height */
-  min-height: 100vh;      /* NEW: Ensure it always covers full mobile screen vertically */
+  height: 100vh;
   max-height: 680px;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
-  padding: 20px 20px 30px 20px;
+  padding: 27px 20px;  /* This ensures 30px at top and bottom */
   box-sizing: border-box;
   background-color: #2db946;
   border-radius: 20px;
@@ -18,18 +17,28 @@
 /* Section for the video or word display */
 .top-section {
   flex-shrink: 0;
-  margin-bottom: 5px;
+  flex-grow: 0;
+  margin-bottom: 12px;  /* Reduced from 15px to 12px */
+  min-height: 280px;
+  max-height: 340px;  /* Reduced from 350px to 340px */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .video-section {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;  /* Add this */
 }
 
 .video-section .alphabet-title {
   text-align: center;
   width: 100%;
   color: #f2e8cf;
-  margin-bottom: 10px;
+  flex-shrink: 0;  /* Add this */
+  margin-bottom: 15px; /* Increased from 10px */
 }
 
 .video-container iframe {
@@ -44,12 +53,22 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 77%;
+  padding-bottom: 90%; /* Increased from 77% to make video bigger */
   background-color: #000;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
+
+/* ADD THIS NEW RULE to make the iframe fill more space */
+  .video-container iframe {
+    position: absolute;
+    top: -15%;  /* Move video up to crop top black bars */
+    left: -5%;  /* Move video left to crop side black bars */
+    width: 120% !important;  /* Make video bigger than container */
+    height: 130% !important;  /* Make video taller than container */
+    border: none;
+  }
 
 .credit-line {
   font-size: 0.8em;
@@ -60,22 +79,32 @@
 }
 
 .keyboard-wrapper {
-  margin-top: 0px;
+  margin-top: 10px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
-  padding: 10px;
-  background-color: rgba(200, 220, 255, 0.7); /* Frosty blue tint */
+  padding: 8px;
+  background-color: rgba(200, 220, 255, 0.7);
+  margin-bottom: 0;
+  flex-shrink: 1;  /* Changed from 0 to 1 - allows it to shrink if needed */
+  max-height: 250px;  /* ADD THIS - limits keyboard height */
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;  /* ADD THIS - prevents overflow */
 }
 
 /* KEYBOARD GRID - Grid layout only, no border */
 .alphabet-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px; /* Increased from 2px to 8px for more space */
-  padding: 1px; /* Add padding around the grid */
+  gap: 1px;
+  padding: 1px;
   background-size: cover;
   background-position: center;
   position: relative;
+  padding-bottom: 5px;
+  max-height: 220px;  /* ADD THIS - limits grid height - increased from 200 */
+  overflow: hidden;  /* ADD THIS */
 }
 
 /* Dark overlay for bird background */
@@ -87,29 +116,40 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  opacity: 0.2; /* Changed from 0.2 to 0.5 to make birds fainter */
+  opacity: 0.2;
   z-index: 0;
   pointer-events: none;
 }
 
 .letter-tile {
+  /* Change button children to stack image and letter */
   aspect-ratio: 1;
-  background-color: rgba(255, 255, 255, 0.01); /* Slightly more visible */
-  border: 3px solid rgba(255, 255, 255, 0.3); /* Subtle white borders */
-  border-radius: 14px; /* Rounded corners like the wrapper */
+  background-color: rgba(255, 255, 255, 0.01);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 14px;
   color: blue;
-  font-size: 1.5em;
+  font-size: 1.8em;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.letter-icon {
+  width: 70%; /* Adjust size of the image relative to the button */
+  height: auto;
+  margin-bottom: 2px; /* Small space between image and letter text */
 }
 
 .letter-tile:hover,
 .letter-tile:active {
   background-color: rgba(255, 255, 153, 0.6);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Slightly more shadow on hover */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* Style for the 'Back to Menu' button */
@@ -117,7 +157,8 @@
   position: relative;
   z-index: 1;
   grid-column: 3 / 6;
-  margin-top: 5px;
+  margin-top: 1px;
+  margin-bottom: 10px;  /* ADD THIS - gives space at bottom */
   padding: 8px 0;
   cursor: pointer;
   border: 4px solid rgba(0, 0, 255, 0.7);
@@ -139,32 +180,46 @@
   position: relative;
   text-align: center;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Added to match video section height */
 }
 
-/* SIMPLIFIED: Single thin pink border frame */
+/* Adjustments for the Image Element (Image 2) */
 .word-image-frame {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 3px solid #FF69B4;
   border-radius: 12px;
-  padding: 8px;
+  padding: 15px;
   background-color: rgba(173, 216, 230, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%; /* Changed from 90% as per your preference */
+  min-height: 200px;
 }
 
 .word-image-frame img {
   display: block;
-  max-width: 260px;
-  max-height: 240px;
-  width: 100%;
+  max-width: 100%;
+  max-height: 220px;
+  width: auto;
   height: auto;
+  object-fit: contain;
   border-radius: 8px;
 }
 
 .word-display-section .word-text {
-  font-size: 2em;
+  font-size: 1.8em; /* Reduced from 2em */
   font-weight: bold;
   color: #f2e8cf;
-  margin-top: 5px;
+  margin-top: 8px;
+  margin-bottom: 5px;
 }
 
 .close-word-button {
@@ -194,7 +249,8 @@
   display: flex;
   gap: 8px;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 8px;
+  margin-bottom: 10px;
 }
 
 .progress-dot {
@@ -213,7 +269,7 @@
 }
 
 .progress-dot.active.last {
-  background-color: rgba(255, 255, 255, 0.3); /* Remove yellow on last one */
+  background-color: rgba(255, 255, 255, 0.3);
   transform: scale(1);
   box-shadow: none;
 }
@@ -240,11 +296,11 @@
 }
 
 @keyframes sequential-pulse {
-  0%, 100% { 
+  0%, 100% {
     transform: scale(1);
     background-color: rgba(255, 255, 255, 0.3);
   }
-  50% { 
+  50% {
     transform: scale(1.4);
     background-color: rgba(255, 215, 0, 0.6);
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
@@ -265,7 +321,7 @@
 
 /* Highlight letter tiles that have more images - with soft flash */
 .letter-tile.has-more {
-  background-color: #FF69B4 !important; /* Softer hot pink */
+  background-color: #FF69B4 !important;
   color: white !important;
   border: 3px solid #FFD700 !important;
   transform: scale(1.1);
@@ -275,7 +331,7 @@
 
 .letter-tile.has-more:hover,
 .letter-tile.has-more:active {
-  background-color: #FF1493 !important; /* Slightly darker on hover */
+  background-color: #FF1493 !important;
 }
 
 @keyframes soft-flash {
@@ -285,8 +341,48 @@
     opacity: 1;
   }
   50% {
-    background-color: #FFB6C1; /* Light pink flash */
+    background-color: #FFB6C1;
     box-shadow: 0 0 20px rgba(255, 182, 193, 0.8);
     opacity: 0.85;
+  }
+}
+
+/* Mobile-specific adjustments */
+/* This prevents the desktop max-height from restricting mobile display */
+@media only screen and (max-width: 768px) {
+  .alphabet-screen-container {
+    height: 100vh; /* Use full viewport height on mobile */
+    max-height: none; /* Allow full screen height on mobile */
+    /* The 30px padding should be maintained from general styles */
+  }
+  
+  /* Target the video/word image section on mobile */
+  .top-section {
+    /* Use a fixed height or a large min-height to push the keyboard down */
+    min-height: 350px; /* Increased from 280px to push content down */
+    flex-grow: 1; /* CRITICAL: Makes video/image section expand to fill space */
+    margin-bottom: 25px;  /* Changed to exactly 25px */
+  }
+  
+  .video-container {
+    padding-bottom: 7/* Increased from 65% to make video bigger */5%; /* Increased from 65% to make video bigger */
+  }
+  
+  .word-display-section {
+    padding: 5px 10px; /* Reduced padding to bring everything up */
+  }
+  
+  .word-image-frame {
+    min-height: 240px; /* Reduced from 260px */
+    margin-top: 5px; /* Reduced from 10px */
+  }
+  
+  .word-image-frame img {
+    max-height: 260px; /* Reduced from 280px */
+  }
+  
+  .keyboard-wrapper {
+    /* Ensure the keyboard section doesn't grow on mobile either */
+    flex-grow: 0;
   }
 }

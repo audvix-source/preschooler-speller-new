@@ -1,5 +1,5 @@
 {
-  "name": "preschooler-speller-new",
+  "name": "preschooler-speller-experimental",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,6 +10,7 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-scripts": "5.0.1",
+    "sharp": "^0.34.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -35,5 +36,18 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/audvix-source/preschooler-speller-new.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/audvix-source/preschooler-speller-new/issues"
+  },
+  "homepage": "."
 }
