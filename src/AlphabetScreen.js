@@ -4,14 +4,19 @@ import { wordList } from './wordList.js';
 import birdBackground from './assets/pair-birds.png';
 
 // 1. DYNAMIC IMAGE CONTEXT SETUP (Fixes "Cannot find module" error)
-const imageContext = require.context('./assets', false, /\.(png|jpe?g|svg)$/);
+// Import all images dynamically
+const importAll = (r) => {
+  let images = {};
+  r.keys().forEach((item) => { 
+    images[item.replace('./', '')] = r(item); 
+  });
+  return images;
+};
+
+const images = importAll(require.context('./assets', false, /\.(png|jpe?g|svg)$/));
+
 const getImagePath = (fileName) => {
-  try {
-    return imageContext(`./${fileName}`);
-  } catch (e) {
-    console.error(`Error loading image: ${fileName}`, e);
-    return null;
-  }
+  return images[fileName] || null;
 };
 // -------------------------------------------------------------------
 
