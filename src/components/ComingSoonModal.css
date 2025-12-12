@@ -1,6 +1,16 @@
+/* ===================================================================
+   COMINGSOONMODAL.CSS - MOBILE-FIRST
+   Base styles are for mobile, then desktop overrides at the bottom
+   =================================================================== */
+
+/* ===================================================================
+   GENERAL BASE STYLES (Applied to all devices)
+   =================================================================== */
+
 /* ==================================== */
 /* MODAL OVERLAY & CONTENT STYLES */
 /* ==================================== */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -10,17 +20,17 @@
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
-  align-items: center; /* Ensures the modal is vertically centered on desktop */
+  align-items: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease-in;
 }
 
 .modal-content {
   background: linear-gradient(135deg, #87CEEB 0%, #98D8E8 100%);
-  border-radius: 30px; /* Restored from working version */
-  padding: 20px 25px;
-  width: 420px;
-  height: 680px;
+  border-radius: 20px;
+  padding: 15px 20px;
+  width: 95vw;
+  height: 95vh;
   max-width: 420px;
   max-height: 680px;
   display: flex;
@@ -28,31 +38,14 @@
   justify-content: space-between;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.4s ease-out;
-  border: 8px solid #fff; /* Restored the white border to fix sharp edges */
-  /* Remove hacky margin-top adjustments */
-}
-
-@media screen and (max-width: 768px) {
-.modal-content {
-/* NEW: Apply constraints and center the modal on mobile */
-width: 95vw; /* Use 95vw to ensure it fits the viewport */
- height: 95vh;
- max-width: 420px; 
- max-height: 680px; 
- 
- /* NEW: Re-apply the border radius */
- border-radius: 20px;
- border: 8px solid #fff; /* Re-apply border for visual framing */
-    
- /* Override the aggressive mobile full-screen settings */
- margin-top: 0; 
- padding: 15px 20px;
- }
+  border: 8px solid #fff;
+  margin-top: 0;
 }
 
 /* ==================================== */
 /* HEADER STYLES */
 /* ==================================== */
+
 .rainbow-header {
   text-align: center;
   margin-bottom: 10px;
@@ -81,6 +74,7 @@ width: 95vw; /* Use 95vw to ensure it fits the viewport */
 /* ==================================== */
 /* BIRD & SPEECH BUBBLE STYLES */
 /* ==================================== */
+
 .birds-container {
   display: flex;
   flex-direction: column;
@@ -176,6 +170,7 @@ width: 95vw; /* Use 95vw to ensure it fits the viewport */
 /* ==================================== */
 /* COMING SOON MESSAGE & BUTTON */
 /* ==================================== */
+
 .coming-soon-message {
   text-align: center;
   margin: 10px 0;
@@ -230,8 +225,9 @@ width: 95vw; /* Use 95vw to ensure it fits the viewport */
 }
 
 /* ==================================== */
-/* ANIMATIONS (Identical) */
+/* ANIMATIONS */
 /* ==================================== */
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -277,5 +273,18 @@ width: 95vw; /* Use 95vw to ensure it fits the viewport */
   }
   50% {
     transform: translateY(-15px) scale(1.1);
+  }
+}
+
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
+   =================================================================== */
+
+@media only screen and (min-width: 769px) {
+  .modal-content {
+    width: 420px;
+    height: 680px;
+    padding: 20px 25px;
+    border-radius: 30px;
   }
 }

@@ -1,13 +1,21 @@
+/* ===================================================================
+   MOBILE-FIRST CSS STRUCTURE
+   Base styles are for mobile, then desktop overrides at the bottom
+   =================================================================== */
+
+/* ===================================================================
+   GENERAL BASE STYLES (Applied to all devices)
+   =================================================================== */
+
 /* Main container for the Alphabet Fun screen */
 .alphabet-screen-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-height: 680px;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
-  padding: 30px 20px;  /* This ensures 30px at top and bottom */
+  padding: 30px 20px;
   box-sizing: border-box;
   background-color: #2db946;
   border-radius: 20px;
@@ -18,59 +26,52 @@
 .top-section {
   flex-shrink: 0;
   flex-grow: 0;
-  margin-bottom: 15px; /* CHANGE from 12px to 15px - more space below */
-  height: 325px; /* CHANGE: Replace min-height and max-height with fixed height */
+  margin-bottom: 25px;
+  height: auto;
+  min-height: 340px;
+  max-height: 360px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  width: 92%; /* ADD THIS - makes it narrower */
-  margin-left: auto; /* ADD THIS - centers it */
-  margin-right: auto; /* ADD THIS - centers it */
+  width: 92%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .video-section {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;  /* Add this */
+  justify-content: flex-start;
 }
 
 .video-section .alphabet-title {
   text-align: center;
   width: 100%;
   color: #f2e8cf;
-  flex-shrink: 0;  /* Add this */
-  margin-bottom:15px; /* CHANGE from 15px to 10px - tighter spacing */}
-
-.video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100% !important;
-  height: 100% !important;
-  border: none;
+  flex-shrink: 0;
+  margin-bottom: 15px;
 }
 
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 75%; /* Decreased from 90% to make video bigger */
+  padding-bottom: 90%;
   background-color: #000;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* ADD THIS NEW RULE to make the iframe fill more space */
-  .video-container iframe {
-    position: absolute;
-    top: -15%;  /* Move video up to crop top black bars */
-    left: -5%;  /* Move video left to crop side black bars */
-    width: 120% !important;  /* Make video bigger than container */
-    height: 130% !important;  /* Make video taller than container */
-    border: none;
-    border-radius: 12px; /* ADD THIS - rounds iframe corners too */
-  }
+.video-container iframe {
+  position: absolute;
+  top: -15%;
+  left: -5%;
+  width: 120% !important;
+  height: 130% !important;
+  border: none;
+  border-radius: 12px;
+}
 
 .credit-line {
   font-size: 0.8em;
@@ -80,38 +81,40 @@
   text-align: center;
 }
 
+/* Keyboard wrapper - contains the grid and back button */
 .keyboard-wrapper {
-  margin-top: -10px; /* CHANGE from 10px to -10px - pulls grid up */
+  margin-top: 0px;
+  margin-bottom: 30px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
-  padding: 10px; /* CHANGE from 15px to 10px - less padding, tiles closer to edge */
+  padding: 8px;
   background-color: rgba(200, 220, 255, 0.7);
-  margin-bottom: 30px; /* CHANGE from 10px to 30px - adds 1/3 inch bottom margin */
-  flex-shrink: 0;  /* Back to 0 from 1 - allows it to shrink if needed */
-  max-height: 280px; /* Back to 250px from 280px - makes grid size perfect for bottom */
-  min-height: 280px; /* ADD THIS - locks the height so it doesn't move */
+  flex-shrink: 0;
+  flex-grow: 0;
+  max-height: 240px;
+  min-height: 240px;
   height: auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;  /* ADD THIS - prevents overflow */
-  width: 92%; /* ADD THIS - makes it narrower to match video */
-  margin-left: auto; /* ADD THIS - centers it */
-  margin-right: auto; /* ADD THIS - centers it */
+  overflow: hidden;
+  width: 92%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* KEYBOARD GRID - Grid layout only, no border */
+/* Keyboard grid - letter tiles layout */
 .alphabet-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px; /* CHANGE from 4px to 1px - less gap, bigger tiles */
-  padding: 1px; /* CHANGE from 6px to 4px - less padding, bigger tiles */
-  background-size: cover; /* CHANGE from 80% to contain - fills frame without duplication */
-  background-repeat: no-repeat; /* ADD THIS - prevents duplication */
+  gap: 3px;
+  padding: 3px;
+  padding-bottom: 60px;
+  background-size: cover;
+  background-repeat: no-repeat;
   background-position: center;
   position: relative;
-  padding-bottom: 60px; /* CHANGE from 55px to 60px - more space for button */
-  max-height: 280px;  /* ADD THIS - limits grid height - increased from 200 */
-  overflow: visible;  /* Changed from 'hidden' */
+  max-height: 230px;
+  overflow: visible;
 }
 
 /* Dark overlay for bird background */
@@ -128,14 +131,14 @@
   pointer-events: none;
 }
 
+/* Individual letter tiles */
 .letter-tile {
-  /* Change button children to stack image and letter */
   aspect-ratio: 1;
   background-color: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.3); /* CHANGE from 3px to 1px - thinner border for bigger tile area */
-  border-radius: 12px; /* CHANGE from 14px to 12px */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
   color: blue;
-  font-size: 2.0em;
+  font-size: 1.6em;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -148,9 +151,9 @@
 }
 
 .letter-icon {
-  width: 70%; /* Adjust size of the image relative to the button */
+  width: 70%;
   height: auto;
-  margin-bottom: 2px; /* Small space between image and letter text */
+  margin-bottom: 2px;
 }
 
 .letter-tile:hover,
@@ -159,16 +162,44 @@
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* Style for the 'Back to Menu' button */
+/* Highlight letter tiles that have more images */
+.letter-tile.has-more {
+  background-color: #FF69B4 !important;
+  color: white !important;
+  border: 3px solid #FFD700 !important;
+  transform: scale(1.1);
+  z-index: 10 !important;
+  animation: soft-flash 2s ease-in-out infinite;
+}
+
+.letter-tile.has-more:hover,
+.letter-tile.has-more:active {
+  background-color: #FF1493 !important;
+}
+
+@keyframes soft-flash {
+  0%, 100% {
+    background-color: #FF69B4;
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.6);
+    opacity: 1;
+  }
+  50% {
+    background-color: #FFB6C1;
+    box-shadow: 0 0 20px rgba(255, 182, 193, 0.8);
+    opacity: 0.85;
+  }
+}
+
+/* Back to Menu button */
 .alphabet-grid .back-button {
-  position: absolute; /* CHANGED from relative */
-  bottom: 3px; /* CHANGE from 8px to 3px - brings button down */
-  left: 50%; /* NEW */
-  transform: translateX(-50%); /* NEW */
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1;
-  width: calc(100% - 100px); /* CHANGE from 80px to 100px - makes button shorter */
-   max-width: 180px; /* CHANGE from 200px to 180px - makes button shorter */
-  padding: 8px 0; /* CHANGE from 10px to 8px - slightly less tall */
+  width: calc(100% - 60px);
+  max-width: 150px;
+  padding: 8px 0;
   cursor: pointer;
   border: 4px solid rgba(0, 0, 255, 0.7);
   border-radius: 25px;
@@ -182,21 +213,22 @@
 
 .alphabet-grid .back-button:hover {
   background-color: rgba(255, 255, 255, 0.5);
-  transform: translateX(-50%) scale(1.02); /* CHANGE - combine both transforms */
+  transform: translateX(-50%) scale(1.02);
 }
 
+/* Word display section (when showing images for letters) */
 .word-display-section {
   position: relative;
   text-align: center;
-  padding: 10px;
+  padding: 5px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%; /* Added to match video section height */
+  height: 100%;
 }
 
-/* Adjustments for the Image Element (Image 2) */
+/* Frame for word images */
 .word-image-frame {
   display: flex;
   align-items: center;
@@ -206,18 +238,18 @@
   padding: 15px;
   background-color: rgba(173, 216, 230, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  margin-top: 10px;
+  margin-top: 5px;
   margin-left: auto;
   margin-right: auto;
-  width: 60%; /* Changed from 90% as per your preference */
-  min-height: 200px;
-   max-height: 200px; /* ADD THIS LINE - new */
+  width: 60%;
+  min-height: 220px;
+  max-height: 240px;
 }
 
 .word-image-frame img {
   display: block;
   max-width: 100%;
-  max-height: 170px;
+  max-height: 240px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -225,13 +257,14 @@
 }
 
 .word-display-section .word-text {
-  font-size: 1.8em; /* Reduced from 2em */
+  font-size: 1.8em;
   font-weight: bold;
   color: #f2e8cf;
   margin-top: 8px;
   margin-bottom: 5px;
 }
 
+/* Close button for word display */
 .close-word-button {
   position: absolute;
   top: 10px;
@@ -329,85 +362,65 @@
   50% { transform: translateY(-5px); }
 }
 
-/* Highlight letter tiles that have more images - with soft flash */
-.letter-tile.has-more {
-  background-color: #FF69B4 !important;
-  color: white !important;
-  border: 3px solid #FFD700 !important;
-  transform: scale(1.1);
-  z-index: 10 !important;
-  animation: soft-flash 2s ease-in-out infinite;
-}
 
-.letter-tile.has-more:hover,
-.letter-tile.has-more:active {
-  background-color: #FF1493 !important;
-}
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
+   Only applied when screen is wider than mobile
+   =================================================================== */
 
-@keyframes soft-flash {
-  0%, 100% {
-    background-color: #FF69B4;
-    box-shadow: 0 0 10px rgba(255, 105, 180, 0.6);
-    opacity: 1;
-  }
-  50% {
-    background-color: #FFB6C1;
-    box-shadow: 0 0 20px rgba(255, 182, 193, 0.8);
-    opacity: 0.85;
-  }
-}
-
-/* Mobile-specific adjustments */
-/* This prevents the desktop max-height from restricting mobile display */
-@media only screen and (max-width: 768px) {
+@media only screen and (min-width: 769px) {
   .alphabet-screen-container {
-    height: 100vh; /* Use full viewport height on mobile */
-    max-height: none; /* Allow full screen height on mobile */
-    /* The 30px padding should be maintained from general styles */
+    max-height: 680px;
+    height: 100vh;
   }
   
-  /* Target the video/word image section on mobile */
   .top-section {
-    /* Use a fixed height or a large min-height to push the keyboard down */
-    min-height: 350px; /* Increased from 280px to push content down */
-    flex-grow: 0; /* CRITICAL: Makes video/image section expand to fill space */
-    margin-bottom: 25px;  /* Changed to exactly 25px */
+    margin-bottom: 15px;
+    height: 325px;
+    min-height: auto;
+    max-height: none;
   }
   
   .video-container {
-    padding-bottom: 75%; /* Increased from 65% to make video bigger */
+    padding-bottom: 75%;
   }
   
   .word-display-section {
-    padding: 5px 10px; /* Reduced padding to bring everything up */
+    padding: 10px;
   }
   
   .word-image-frame {
-    min-height: 240px; /* Reduced from 260px */
-    margin-top: 5px; /* Reduced from 10px */
+    min-height: 200px;
+    max-height: 200px;
+    margin-top: 10px;
   }
-
-   /* ADD THIS - Keep padding-bottom for mobile */
-  .alphabet-grid {
-    gap: 4px;
-    padding: 4px;
-    padding-bottom: 50px; /* NEW - add this line */
-  }
-  
-  /* ADD THIS - Mobile back button */
-  .alphabet-grid .back-button {
-    bottom: 8px;
-    width: calc(100% - 60px);
-    max-width: 150px;
-  }    
   
   .word-image-frame img {
-    max-height: 260px; /* Reduced from 280px */
+    max-height: 170px;
   }
   
   .keyboard-wrapper {
-    /* Ensure the keyboard section doesn't grow on mobile either */
-    flex-grow: 0;
-     flex-shrink: 0;  /* Make sure it doesn't shrink */
+    margin-top: -10px;
+    padding: 10px;
+    max-height: 280px;
+    min-height: 280px;
+  }
+  
+  .alphabet-grid {
+    gap: 1px;
+    padding: 1px;
+    padding-bottom: 60px;
+    max-height: 280px;
+  }
+  
+  .letter-tile {
+    font-size: 2.0em;
+  }
+  
+  .alphabet-grid .back-button {
+    bottom: 3px;
+    width: calc(100% - 100px);
+    max-width: 180px;
+    font-size: 1.1em;
   }
 }

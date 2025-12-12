@@ -1,4 +1,12 @@
-/* Greeting.css */
+/* ===================================================================
+   GREETING.CSS - MOBILE-FIRST
+   Base styles are for mobile, then desktop overrides at the bottom
+   =================================================================== */
+
+/* ===================================================================
+   GENERAL BASE STYLES (Applied to all devices)
+   =================================================================== */
+
 .greeting-container {
   position: absolute;
   top: 20px;
@@ -11,10 +19,19 @@
   font-weight: bold;
   color: rgb(3, 160, 66);
   margin: 0;
-  }
+}
 
 .date-greeting {
   font-size: 0.9em;
   color: rgb(3, 160, 66);
   margin: 5px 0 0 0;
-  }
+}
+
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
+   =================================================================== */
+
+@media only screen and (min-width: 769px) {
+  /* No desktop-specific overrides needed for greeting component */
+  /* Keeping this section for consistency across all CSS files */
+}

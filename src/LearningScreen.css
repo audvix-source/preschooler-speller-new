@@ -1,9 +1,18 @@
+/* ===================================================================
+   LEARNINGSCREEN.CSS - MOBILE-FIRST
+   Base styles are for mobile, then desktop overrides at the bottom
+   =================================================================== */
+
+/* ===================================================================
+   GENERAL BASE STYLES (Applied to all devices)
+   =================================================================== */
+
 /* Main Container - Tablet Dimensions */
 .learning-screen-container {
   position: relative;
   width: 100%;
   max-width: 420px;
-  height: 680px;
+  height: 100vh;
   margin: 0 auto;
   background-size: cover;
   background-position: center;
@@ -21,7 +30,7 @@
   align-items: center;
   height: 100%;
   width: 100%;
-  padding: 40px 15px;
+  padding: 30px 15px;
   box-sizing: border-box;
 }
 
@@ -36,7 +45,7 @@
   white-space: nowrap;
   text-align: center;
   flex-shrink: 0;
-  margin-bottom: 0;
+  margin-bottom: 20px;
 }
 
 .character-container {
@@ -46,8 +55,8 @@
   align-items: flex-end;
   gap: 10px;
   width: 100%;
-  margin-top: 120px;
-  margin-bottom: 0;
+  margin-top: 60px;
+  margin-bottom: 60px;
 }
 
 .character-model {
@@ -60,8 +69,8 @@
 }
 
 .character-model img {
-  width: 180px;
-  height: 360px;
+  width: 170px;
+  height: 340px;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
@@ -79,8 +88,7 @@
   top: 0;
   left: 0;
   z-index: 5;
-  /* FIX IMAGE 3: Adjust padding to accommodate keyboard at bottom */
-  padding: 32px 20px 30px 20px;
+  padding: 20px 20px 30px 20px;
   box-sizing: border-box;
 }
 
@@ -141,7 +149,7 @@
   transform: scale(1.02);
 }
 
-/* Game Container - FIX IMAGE 3: Better space management */
+/* Game Container */
 .game-container {
   display: flex;
   flex-direction: column;
@@ -159,14 +167,14 @@
   margin-bottom: 4px;
 }
 
-/* Image Container - FIX IMAGE 3: Reduce image size */
+/* Image Container */
 .word-image-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-bottom: 15px;
-  min-height: 200px; /* Increased from 140px */
+  margin-bottom: 10px;
+  min-height: 240px;
   flex-grow: 0;
   transition: all 0.5s ease;
 }
@@ -181,10 +189,10 @@
   margin-bottom: 4px;
 }
 
-/* FIX IMAGE 3: Make images bigger */
+/* Activity Images */
 .activity-image {
-  max-width: 85%; /* Increased from 75% */
-  max-height: 280px; /* Increased from 200px */
+  max-width: 90%;
+  max-height: 320px;
   object-fit: contain;
   display: block;
   transition: all 0.5s ease;
@@ -210,7 +218,7 @@
 }
 
 .word-blanks-container.spelling-mode {
-  margin: 12px 0; /* Reduced from 15px */
+  margin: 12px 0;
   transform: scale(1.1) translateY(8px);
 }
 
@@ -277,7 +285,7 @@
   display: flex;
   gap: 10px;
   justify-content: center;
-  margin-top: 8px; /* Reduced from 10px */
+  margin-top: 8px;
   flex-wrap: wrap;
 }
 
@@ -325,7 +333,7 @@
   transform: scale(1.05);
 }
 
-/* Challenge Section - FIX IMAGE 3: Better spacing */
+/* Challenge Section */
 .challenge-section {
   margin-top: 0px;
   padding-top: 0;
@@ -342,12 +350,12 @@
 .instruction-box-keyboard {
   background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   color: #003366;
-  padding: 10px 18px; /* Reduced from 12px 20px */
+  padding: 10px 18px;
   border-radius: 12px;
-  font-size: 0.95em; /* Slightly smaller */
+  font-size: 0.95em;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 10px; /* Reduced from 15px */
+  margin-bottom: 10px;
   margin-top: 0;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.4s ease-out;
@@ -355,7 +363,7 @@
   width: 100%;
   max-width: 380px;
   line-height: 1.3;
-  min-height: 45px; /* Reduced from 50px */
+  min-height: 45px;
 }
 
 @keyframes slideIn {
@@ -369,7 +377,7 @@
   }
 }
 
-/* FIX IMAGE 3: Ensure keyboard stays within bounds */
+/* Alphabet Keyboard (Grid) */
 .alphabet-keyboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -377,7 +385,7 @@
   width: 100%;
   max-width: 380px;
   margin-top: 0px;
-  margin-bottom: 30px; /* Ensures 1/3 inch from bottom */
+  margin-bottom: 30px;
 }
 
 /* On-Screen Keyboard Component Styles */
@@ -388,8 +396,8 @@
   width: 100%;
   max-width: 380px;
   margin-top: 0;
-  margin-bottom: 30px; /* Ensures 1/3 inch from bottom */
-  padding: 0 10px; /* Added padding to prevent touching sides */
+  margin-bottom: 30px;
+  padding: 0 10px;
 }
 
 .keyboard-row {
@@ -545,48 +553,95 @@
   background-color: rgba(244, 67, 54, 1);
 }
 
-/* Mobile-specific adjustments */
-@media only screen and (max-width: 768px) {
+/* Magic Effect - Smoke Particles */
+.magic-container {
+  position: absolute;
+  bottom: 80px;
+  height: 300px;
+  width: 50%;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.magic-container.left {
+  left: 0;
+}
+
+.magic-container.right {
+  right: 0;
+}
+
+.smoke-particle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background-color: rgba(220, 220, 220, 0.7);
+  border-radius: 50%;
+  filter: blur(15px);
+  opacity: 0;
+  animation: smoke-rise 1.5s ease-out forwards;
+  animation-delay: calc(var(--delay) * 0.5s);
+}
+
+@keyframes smoke-rise {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--x) * 1px - 50%), -300px) scale(3);
+  }
+}
+
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
+   =================================================================== */
+
+@media only screen and (min-width: 769px) {
   .learning-screen-container {
-    height: 100vh; /* Use full viewport height on mobile */
-    max-height: none; /* Remove 680px limit */
+    height: 680px;
   }
-  
-  .activity-view {
-    padding: 20px 20px 30px 20px; /* Reduced top padding from 32px to 20px */
-  }
-  
-  /* Make image bigger on mobile to push keyboard down */
-  .activity-image {
-    max-width: 90%;
-    max-height: 320px; /* Reduced from 340px */
-  }
-  
-  .word-image-container {
-    min-height: 240px; /* Reduced from 260px */
-    margin-bottom: 10px; /* Reduced spacing */
-  }
-  
-  /* Character selection adjustments */
+
   .character-selection-container {
-    padding: 30px 15px; /* Reduced top padding from 40px */
+    padding: 40px 15px;
   }
-  
+
   .selection-title {
-    margin-bottom: 20px; /* Add space below title */
+    margin-bottom: 0;
   }
-  
+
   .character-container {
-    margin-top: 60px; /* Reduced from 80px */
-    margin-bottom: 60px; /* Increased from 40px to push button down */
+    margin-top: 120px;
+    margin-bottom: 0;
   }
-  
+
   .character-model img {
-    width: 170px; /* Slightly bigger than 160px */
-    height: 340px; /* Slightly bigger than 320px */
+    width: 180px;
+    height: 360px;
   }
-  
+
+  .activity-view {
+    padding: 32px 20px 30px 20px;
+  }
+
+  .activity-image {
+    max-width: 85%;
+    max-height: 280px;
+  }
+
+  .word-image-container {
+    min-height: 200px;
+    margin-bottom: 15px;
+  }
+
   .back-button-fixed {
-    bottom: 40px; /* Back to 40px from bottom */
+    bottom: 40px;
   }
 }

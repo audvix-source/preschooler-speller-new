@@ -1,3 +1,12 @@
+/* ===================================================================
+   INDEX.CSS - MOBILE-FIRST (Global/Root Styles)
+   Base styles are for mobile, then desktop overrides at the bottom
+   =================================================================== */
+
+/* ===================================================================
+   GENERAL BASE STYLES (Applied to all devices)
+   =================================================================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -24,29 +33,15 @@ body {
   min-height: -webkit-fill-available;
 }
 
+/* Mobile-first #root styles */
 #root {
-  width: 420px;
-  height: 680px;
-  max-height: 680px; /* Changed from min-height to max-height */
+  width: 100vw;
+  height: 100vh;
+  max-width: 420px;
+  max-height: 680px;
   background-color: #444;
-  border-radius: 20px; /* Added rounded corners */
-  overflow: hidden; /* Added to ensure content respects rounded corners */
-}
-
-/* Additional mobile fixes */
-@media screen and (max-width: 768px) {
-  body {
-    background-color: #444;
-    padding-top: 20px;
-  }
- 
-  #root {
-    width: 100vw;
-    height: 100vh;
-    max-width: 420px;
-    max-height: 680px; /* Changed from min-height */
-    border-radius: 20px; /* Keep rounded on mobile too */
-  }
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .app-screen {
@@ -61,4 +56,15 @@ body {
   background-position: center;
   display: flex;
   flex-direction: column;
+}
+
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
+   =================================================================== */
+
+@media only screen and (min-width: 769px) {
+  #root {
+    width: 420px;
+    height: 680px;
+  }
 }

@@ -1,3 +1,12 @@
+/* ===================================================================
+   SETTINGS.CSS - MOBILE-FIRST
+   Base styles are for mobile, then desktop overrides at the bottom
+   =================================================================== */
+
+/* ===================================================================
+   GENERAL BASE STYLES (Applied to all devices)
+   =================================================================== */
+
 /* Remove any inherited styles */
 * {
   margin: 0;
@@ -68,10 +77,9 @@
 
 .setting-option {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
   margin: 0;
   width: 100%;
 }
@@ -79,9 +87,9 @@
 .setting-option label {
   font-size: 17px;
   font-weight: bold;
-  text-align: left;
+  text-align: center;
   color: #000;
-  min-width: 90px;
+  min-width: auto;
   flex-shrink: 0;
 }
 
@@ -90,6 +98,7 @@
   align-items: center;
   gap: 6px;
   flex: 1;
+  width: 100%;
 }
 
 .slider-container span {
@@ -114,20 +123,21 @@
   max-width: 100px;
 }
 
-/* Smaller screens - stack vertically */
-@media (max-width: 379px) {
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
+   =================================================================== */
+
+@media only screen and (min-width: 769px) {
+  /* Larger screens - horizontal layout */
   .setting-option {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
   }
-  
+
   .setting-option label {
-    text-align: center;
-    min-width: auto;
-  }
-  
-  .slider-container {
-    width: 100%;
+    text-align: left;
+    min-width: 90px;
   }
 }
