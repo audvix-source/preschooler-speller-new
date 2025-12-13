@@ -56,7 +56,7 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 90%;
+  padding-bottom: 100%;
   background-color: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -66,8 +66,8 @@
 .video-container iframe {
   position: absolute;
   top: -15%;
-  left: -5%;
-  width: 120% !important;
+  left: -10%;
+  width: 130% !important;
   height: 130% !important;
   border: none;
   border-radius: 12px;
