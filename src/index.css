@@ -7,6 +7,34 @@
    GENERAL BASE STYLES (Applied to all devices)
    =================================================================== */
 
+
+   body {
+  margin: 0;
+  padding: 0;
+  background-color: #444;
+  overflow: hidden;
+}
+
+#root {
+  background-color: #444;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  
+  #root {
+    width: 100vw;
+    height: 100vh;
+    margin: 0 auto; /* Centers the container */
+    border-radius: 20px;
+    overflow: hidden;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -58,6 +86,13 @@ body {
   flex-direction: column;
 }
 
+@media screen and (max-width: 768px) {
+  #root {
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+}
+
 /* ===================================================================
    DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
    =================================================================== */
@@ -66,5 +101,24 @@ body {
   #root {
     width: 420px;
     height: 680px;
+  }
+}
+
+html, body {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+@media only screen and (max-width: 768px) {
+  html {
+    background-color: #444; /* Match your app background */
+    border-radius: 20px;
+  }
+  
+  body {
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
   }
 }

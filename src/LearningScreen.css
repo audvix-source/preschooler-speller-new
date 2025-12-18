@@ -20,6 +20,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border-radius: 20px; /* ADD THIS LINE */
 }
 
 /* Character Selection Screen */
@@ -648,3 +649,17 @@
     bottom: 40px;
   }
 }
+
+@media only screen and (max-width: 768px) {
+  .learning-screen-container {
+    border-radius: 20px !important; /* Round all corners */
+    overflow: hidden !important; /* Force clipping */
+  }
+  
+  /* Also ensure the activity view respects the rounded corners */
+  .activity-view {
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+}
+

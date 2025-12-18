@@ -5,13 +5,45 @@ import AlphabetScreen from './AlphabetScreen';
 import LearningScreen from './LearningScreen';
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('cover');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [guideVoice, setGuideVoice] = useState('male');
-  const [brightness, setBrightness] = useState(100);
-  const [pitch, setPitch] = useState(1);
-  const [speed, setSpeed] = useState(1);
+  // Initialize state from localStorage or use defaults
+  const getSavedState = () => {
+    try {
+      const saved = localStorage.getItem('preschoolerSpellerState');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error('Error loading saved state:', e);
+      return null;
+    }
+  };
+
+  const savedState = getSavedState();
+
+  const [currentScreen, setCurrentScreen] = useState(savedState?.currentScreen || 'cover');
+  const [selectedCategory, setSelectedCategory] = useState(savedState?.selectedCategory || '');
+  const [guideVoice, setGuideVoice] = useState(savedState?.guideVoice || 'male');
+  const [brightness, setBrightness] = useState(savedState?.brightness || 100);
+  const [pitch, setPitch] = useState(savedState?.pitch || 1);
+  const [speed, setSpeed] = useState(savedState?.speed || 1);
   const [voices, setVoices] = useState([]);
+
+  // Auto-save state whenever it changes
+  useEffect(() => {
+    const stateToSave = {
+      currentScreen,
+      selectedCategory,
+      guideVoice,
+      brightness,
+      pitch,
+      speed,
+      lastSaved: new Date().toISOString()
+    };
+    
+    try {
+      localStorage.setItem('preschoolerSpellerState', JSON.stringify(stateToSave));
+    } catch (e) {
+      console.error('Error saving state:', e);
+    }
+  }, [currentScreen, selectedCategory, guideVoice, brightness, pitch, speed]);
 
   useEffect(() => {
     const loadVoices = () => {
