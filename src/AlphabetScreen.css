@@ -58,8 +58,8 @@
   width: 100%;
   padding-bottom: 85%;
   background-color: #000;
-  border-radius: 12px;
-  overflow: hidden;
+  border-radius: 14px !important; /* Increased from 12px */
+  overflow: hidden !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
@@ -69,8 +69,7 @@
   left:-3%;
   width: 115% !important;
   height: 130% !important;
-  border: none;
-  border-radius: 12px;
+  border-radius: 14px !important;
 }
 
 .credit-line {

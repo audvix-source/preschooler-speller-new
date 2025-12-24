@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AlphabetScreen.css';
 import { wordList } from './wordList.js';
 import birdBackground from './assets/pair-birds.png';
@@ -22,29 +22,59 @@ const getImagePath = (fileName) => {
 
 function AlphabetScreen(props) {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  
+  // Load saved state
+  const getSavedAlphabetState = () => {
+    try {
+      const saved = localStorage.getItem('alphabetScreenState');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error('Error loading alphabet state:', e);
+      return null;
+    }
+  };
+
+  const savedState = getSavedAlphabetState();
+
   // STATE DEFINITIONS
-  const [selectedWord, setSelectedWord] = useState(null);
-  const [letterProgress, setLetterProgress] = useState({});
-  const [activeLetter, setActiveLetter] = useState(null);
+  const [selectedWord, setSelectedWord] = useState(savedState?.selectedWord || null);
+  const [letterProgress, setLetterProgress] = useState(savedState?.letterProgress || {});
+  const [activeLetter, setActiveLetter] = useState(savedState?.activeLetter || null);
+
+  // Auto-save state whenever it changes
+  useEffect(() => {
+    const stateToSave = {
+      selectedWord,
+      letterProgress,
+      activeLetter,
+      lastSaved: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem('alphabetScreenState', JSON.stringify(stateToSave));
+    } catch (e) {
+      console.error('Error saving alphabet state:', e);
+    }
+  }, [selectedWord, letterProgress, activeLetter]);
 
   // 2. HANDLER FUNCTION: GETS THE INITIAL ICON IMAGE FILENAME
-const getLetterIconSource = (letter) => {
-  // Finds the first word for this letter (e.g., 'Ape' for 'A')
-  const firstWord = wordList.find(item =>
-    item.category === 'Alphabet Fun' &&
-    item.word.toUpperCase().startsWith(letter.toUpperCase())
-  );
-  
-  // Debug log to check if images are being found
-  if (firstWord) {
-    console.log(`Letter ${letter}: Found image ${firstWord.image}`);
-  } else {
-    console.log(`Letter ${letter}: No image found`);
-  }
-  
-  // Returns only the filename (e.g., 'ape.png')
-  return firstWord ? firstWord.image : null;
-};
+  const getLetterIconSource = (letter) => {
+    // Finds the first word for this letter (e.g., 'Ape' for 'A')
+    const firstWord = wordList.find(item =>
+      item.category === 'Alphabet Fun' &&
+      item.word.toUpperCase().startsWith(letter.toUpperCase())
+    );
+    
+    // Debug log to check if images are being found
+    if (firstWord) {
+      console.log(`Letter ${letter}: Found image ${firstWord.image}`);
+    } else {
+      console.log(`Letter ${letter}: No image found`);
+    }
+    
+    // Returns only the filename (e.g., 'ape.png')
+    return firstWord ? firstWord.image : null;
+  };
 
   // 3. HANDLER FUNCTION: Handles clicking a letter tile
   const handleLetterClick = (letter) => {
@@ -84,6 +114,12 @@ const getLetterIconSource = (letter) => {
   const handleCloseWord = () => {
     setSelectedWord(null);
     setActiveLetter(null);
+  };
+
+  // Clear saved state when going back to menu
+  const handleBackToMenu = () => {
+    localStorage.removeItem('alphabetScreenState');
+    props.onNavigate('menu');
   };
 
   // 5. HELPER FUNCTION: Determines if a letter tile should pulse
@@ -156,18 +192,18 @@ const getLetterIconSource = (letter) => {
           className="alphabet-grid"
           style={{ backgroundImage: `url(${birdBackground})` }}
         >
-{alphabet.map(letter => {
-  return (
-    <button
-      key={letter}
-      className={`letter-tile ${hasMoreImages(letter) ? 'has-more' : ''}`}
-      onClick={() => handleLetterClick(letter)}
-    >
-      {letter}
-    </button>
-  );
-})}
-          <button className="back-button" onClick={() => props.onNavigate('menu')}>
+          {alphabet.map(letter => {
+            return (
+              <button
+                key={letter}
+                className={`letter-tile ${hasMoreImages(letter) ? 'has-more' : ''}`}
+                onClick={() => handleLetterClick(letter)}
+              >
+                {letter}
+              </button>
+            );
+          })}
+          <button className="back-button" onClick={handleBackToMenu}>
             Back to Menu
           </button>
         </div>

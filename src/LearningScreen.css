@@ -654,6 +654,7 @@
   .learning-screen-container {
     border-radius: 20px !important; /* Round all corners */
     overflow: hidden !important; /* Force clipping */
+    -webkit-border-radius: 20px !important;
   }
   
   /* Also ensure the activity view respects the rounded corners */

@@ -240,6 +240,7 @@ function LearningScreen(props) {
 
   const handleKeyboardLetter = (letter) => {
     if (isCompleted) return;
+    console.log("Letter clicked:", letter, "hadMistake:", hadMistake); // ADD THIS
     props.speak(letter);
     const word = currentWord.word.toUpperCase();
     const upperLetter = letter.toUpperCase();
@@ -262,6 +263,7 @@ function LearningScreen(props) {
       });
     } else {
       playErrorSound();
+      console.log("MISTAKE! Setting hadMistake to true"); // ADD THIS
       setHadMistake(true);
       if (nextEmpty !== -1) {
         setFilledLetters(prev => {
@@ -282,7 +284,13 @@ function LearningScreen(props) {
       if (completed.join('') === word) {
         setIsCompleted(true);
         setShowInstructionBox(true);
-        setTimeout(triggerReward, 500);
+
+        // Use the current filledLetters to check if there were mistakes (question marks)
+    const hasQuestionMarks = filledLetters.some(l => l === '?');
+    console.log("Completion detected! hasQuestionMarks:", hasQuestionMarks, "hadMistake:", hadMistake);
+    
+    // Pass the mistake status directly to triggerReward
+    setTimeout(() => triggerReward(hasQuestionMarks || hadMistake), 100);
       }
     }, 200);
   };
@@ -309,18 +317,30 @@ function LearningScreen(props) {
     });
   };
 
-  const triggerReward = () => {
-    setShowReward(true);
-    const congratulations = ["Excellent!", "Amazing!", "You did it!"];
-    const encouragement = ["Good work!", "Nice try!"];
-    const message = hadMistake
-      ? encouragement[Math.floor(Math.random() * encouragement.length)]
-      : congratulations[Math.floor(Math.random() * congratulations.length)];
+const triggerReward = (madeErrors) => {
+  console.log("triggerReward called! hadMistake:", hadMistake); // ADD THIS
+  setShowReward(true);
+  
+if (madeErrors) {
+    console.log("Playing encouragement");
+    const encouragement = [
+      "Good effort! Go for another try?",
+      "Nice try! Try again?",
+      "Keep going! One more time?"
+    ];
+    const message = encouragement[Math.floor(Math.random() * encouragement.length)];
     props.speak(message);
-    setTimeout(() => {
-      setShowReward(false);
-    }, 3000);
-  };
+  } else {
+    console.log("Playing congratulations");
+    const congratulations = ["Excellent!", "Amazing!", "You did it!"];
+    const message = congratulations[Math.floor(Math.random() * congratulations.length)];
+    props.speak(message);
+  }
+  
+  setTimeout(() => {
+    setShowReward(false);
+  }, 3000);
+};
 
   const isLongWord = currentWord && currentWord.word.length >= 7;
 
@@ -329,7 +349,10 @@ function LearningScreen(props) {
       <div className="learning-screen-container" style={{ backgroundColor: '#9370DB' }}>
         <h1>End of Category!</h1>
         <p>Category: {props.category}</p>
-        <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>
+        <button className="back-button-fixed" onClick={() => {
+          localStorage.removeItem(`learningState_${props.category}`);
+          props.onNavigate('menu');
+        }}>
           Back to Menu
         </button>
       </div>
@@ -348,7 +371,12 @@ function LearningScreen(props) {
             <img src={girlModel} alt="Girl" />
           </div>
         </div>
-        <button className="back-button-fixed" onClick={() => props.onNavigate('menu')}>Back to Menu</button>
+        <button className="back-button-fixed" onClick={() => {
+          localStorage.removeItem(`learningState_${props.category}`);
+          props.onNavigate('menu');
+        }}>
+          Back to Menu
+        </button>
       </div>
 
       <div className={`activity-view ${viewState === 'activity' ? 'visible' : ''}`}>
@@ -411,7 +439,7 @@ function LearningScreen(props) {
               <div className="completion-message">
                 <h2>
                   {hadMistake 
-                    ? ['🌟 Good Work! 🌟', '💪 Nice Try! 💪', '👏 Keep Going! 👏', '✨ Well Done! ✨'][Math.floor(Math.random() * 4)]
+                    ? '💪 Good effort! ⭐\nGo for another try? 🎯'
                     : ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'][Math.floor(Math.random() * 4)]
                   }
                 </h2>
@@ -421,12 +449,11 @@ function LearningScreen(props) {
         )}
 
         <button className="learning-back-button" onClick={() => {
-  // Clear saved learning state for this category
-  localStorage.removeItem(`learningState_${props.category}`);
-  props.onNavigate('menu');
-}}>
-  Back to Menu
-</button>
+          localStorage.removeItem(`learningState_${props.category}`);
+          props.onNavigate('menu');
+        }}>
+          Back to Menu
+        </button>
       </div>
 
       {showReward && <div className="confetti-overlay"></div>}
