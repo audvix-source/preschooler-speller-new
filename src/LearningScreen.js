@@ -40,11 +40,12 @@ function LearningScreen(props) {
   const [showHints, setShowHints] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [showReward, setShowReward] = useState(false);
-  const [hadMistake, setHadMistake] = useState(false);
+  const [mistakeCount, setMistakeCount] = useState(0);
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
+  const [encouragementMessage, setEncouragementMessage] = useState('');
 
   // Auto-save learning progress whenever key states change
   useEffect(() => {
@@ -144,8 +145,9 @@ function LearningScreen(props) {
     setShowHints([]);
     setIsCompleted(false);
     setShowReward(false);
-    setHadMistake(false);
+    setMistakeCount(0);
     setShowInstructionBox(false);
+    setEncouragementMessage(''); // ← ADD THIS LINE
   }, [wordIndex]);
 
   const getCurrentImage = () => {
@@ -234,13 +236,13 @@ function LearningScreen(props) {
     setFilledLetters(Array(len).fill(null));
     setChallengeLetters(Array(len).fill(''));
     setShowHints(Array(len).fill(false));
-    setHadMistake(false);
+    setMistakeCount(0);
     setShowInstructionBox(false);
   };
 
   const handleKeyboardLetter = (letter) => {
     if (isCompleted) return;
-    console.log("Letter clicked:", letter, "hadMistake:", hadMistake); // ADD THIS
+    
     props.speak(letter);
     const word = currentWord.word.toUpperCase();
     const upperLetter = letter.toUpperCase();
@@ -263,8 +265,9 @@ function LearningScreen(props) {
       });
     } else {
       playErrorSound();
-      console.log("MISTAKE! Setting hadMistake to true"); // ADD THIS
-      setHadMistake(true);
+      // Increment mistake count but DON'T show encouragement yet
+      setMistakeCount(prev => prev + 1);
+      
       if (nextEmpty !== -1) {
         setFilledLetters(prev => {
           const copy = [...prev];
@@ -285,12 +288,8 @@ function LearningScreen(props) {
         setIsCompleted(true);
         setShowInstructionBox(true);
 
-        // Use the current filledLetters to check if there were mistakes (question marks)
-    const hasQuestionMarks = filledLetters.some(l => l === '?');
-    console.log("Completion detected! hasQuestionMarks:", hasQuestionMarks, "hadMistake:", hadMistake);
-    
-    // Pass the mistake status directly to triggerReward
-    setTimeout(() => triggerReward(hasQuestionMarks || hadMistake), 100);
+        // Trigger reward with final mistake count
+        setTimeout(() => triggerReward(mistakeCount + (correctPositions.includes(nextEmpty) ? 0 : 1)), 100);
       }
     }, 200);
   };
@@ -300,47 +299,96 @@ function LearningScreen(props) {
     const correctLetter = currentWord.word.toUpperCase()[index];
     props.speak(correctLetter);
     playMagicSound();
+    
+    // Update all states
     setFilledLetters(prev => {
       const copy = [...prev];
       copy[index] = correctLetter;
       return copy;
     });
+    
     setChallengeLetters(prev => {
       const copy = [...prev];
       copy[index] = correctLetter;
       return copy;
     });
+    
     setShowHints(prev => {
       const copy = [...prev];
       copy[index] = false;
       return copy;
     });
+
+    // Check if word is now complete
+    setTimeout(() => {
+      const word = currentWord.word.toUpperCase();
+      const updatedLetters = [...challengeLetters];
+      updatedLetters[index] = correctLetter;
+      
+      // Check if all letters are filled
+      const isComplete = updatedLetters.every(l => l !== '');
+      
+      if (isComplete && updatedLetters.join('') === word) {
+        setIsCompleted(true);
+        setShowInstructionBox(true);
+        setTimeout(() => triggerReward(mistakeCount), 100);
+      }
+    }, 200);
   };
 
-const triggerReward = (madeErrors) => {
-  console.log("triggerReward called! hadMistake:", hadMistake); // ADD THIS
-  setShowReward(true);
-  
-if (madeErrors) {
-    console.log("Playing encouragement");
-    const encouragement = [
-      "Good effort! Go for another try?",
-      "Nice try! Try again?",
-      "Keep going! One more time?"
-    ];
-    const message = encouragement[Math.floor(Math.random() * encouragement.length)];
-    props.speak(message);
-  } else {
-    console.log("Playing congratulations");
-    const congratulations = ["Excellent!", "Amazing!", "You did it!"];
-    const message = congratulations[Math.floor(Math.random() * congratulations.length)];
-    props.speak(message);
-  }
-  
-  setTimeout(() => {
-    setShowReward(false);
-  }, 3000);
-};
+  const triggerReward = (finalMistakeCount) => {
+    console.log('triggerReward called with mistakeCount:', finalMistakeCount);
+    console.log('Word length:', currentWord.word.length);
+    console.log('Threshold:', Math.ceil(currentWord.word.length / 2));
+    
+    setShowReward(true);
+    
+    const wordLength = currentWord.word.length;
+    const threshold = Math.ceil(wordLength / 2);
+    
+    // Determine if mistakes exceeded the threshold
+    const hadManyMistakes = finalMistakeCount > threshold;
+    
+    console.log('hadManyMistakes:', hadManyMistakes);
+    
+    if (finalMistakeCount > 0) {
+      // Had mistakes - choose message based on threshold
+     if (hadManyMistakes) {
+    // Exceeded threshold - randomly select ONE message and use it for both voice and display
+  const encouragement = [
+    "Good effort! Try again?",
+    "Nice try! Give it another shot?",
+    "You can do it! Go, go, go!"
+  ];
+  const message = encouragement[Math.floor(Math.random() * encouragement.length)];
+  setEncouragementMessage(message); // ← STORE THE MESSAGE
+  console.log('Playing encouragement:', message);
+  // Remove the punctuation for speech
+  props.speak(message);
+      } else {
+        // Had mistakes but within threshold - gentle encouragement
+        const gentleEncouragement = [
+          "Almost perfect! Try once more?",
+          "So close! One more try?",
+          "Great job! Can you get them all?"
+        ];
+        const message = gentleEncouragement[Math.floor(Math.random() * gentleEncouragement.length)];
+        setEncouragementMessage(message); // ← STORE THIS TOO
+        console.log('Playing gentle encouragement:', message);
+        props.speak(message);
+      }
+    } else {
+      // Perfect - no mistakes
+      const congratulations = ["Excellent!", "Amazing!", "You did it!", "Perfect!"];
+      const message = congratulations[Math.floor(Math.random() * congratulations.length)];
+      console.log('Playing congratulations:', message);
+      props.speak(message);
+    }
+    
+    setTimeout(() => {
+      setShowReward(false);
+    }, 3000);
+  };
 
   const isLongWord = currentWord && currentWord.word.length >= 7;
 
@@ -436,15 +484,17 @@ if (madeErrors) {
               />
             )}
             {isCompleted && (
-              <div className="completion-message">
-                <h2>
-                  {hadMistake 
-                    ? '💪 Good effort! ⭐\nGo for another try? 🎯'
-                    : ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'][Math.floor(Math.random() * 4)]
-                  }
-                </h2>
-              </div>
-            )}
+  <div className="completion-message">
+    <h2>
+      {mistakeCount > Math.ceil(currentWord.word.length / 2)
+        ? `💪 ${encouragementMessage} ⭐`
+        : mistakeCount > 0
+        ? `✨ ${encouragementMessage} ✨`
+        : ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'][Math.floor(Math.random() * 4)]
+      }
+    </h2>
+  </div>
+)}
           </div>
         )}
 

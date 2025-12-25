@@ -17,10 +17,11 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  overflow: hidden;
+  overflow: hidden; /* ← Make absolutely sure this is here */
   display: flex;
   flex-direction: column;
-  border-radius: 20px; /* ADD THIS LINE */
+  border-radius: 20px;
+  clip-path: inset(0 0 0 0 round 20px); /* ← ADD THIS LINE */
 }
 
 /* Character Selection Screen */
@@ -75,7 +76,7 @@
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-  margin-top: 50px; /* ADD THIS - pushes characters down in the park */
+  margin-top: 50px;
 }
 
 /* Activity View */
@@ -92,6 +93,8 @@
   z-index: 5;
   padding: 20px 20px 30px 20px;
   box-sizing: border-box;
+  border-radius: 20px; /* ← Add this if not present */
+  overflow: hidden; /* ← ADD THIS TOO */
 }
 
 .activity-view.visible {
@@ -406,8 +409,8 @@
   display: flex;
   justify-content: center;
   gap: 4px !important; 
-  width: 75% !important;     /* Changed from 90% */
-  max-width: 300px !important;  /* Changed from 340px */
+  width: 75% !important;
+  max-width: 300px !important;
   margin: 0 auto !important;
 }
 
@@ -423,11 +426,11 @@
   border-radius: 8px;
   cursor: pointer;
   padding: 10px;
-  min-width: 30px !important;   /* Smaller minimum */
+  min-width: 30px !important;
   height: 42px;
   transition: background-color 0.2s, transform 0.2s;
   flex: 1;
-  max-width:35px !important;  /* Reduce button size 42px; */
+  max-width:35px !important;
 }
 
 .on-screen-keyboard .keyboard-letter:hover:not(:disabled) {
@@ -453,7 +456,7 @@
   justify-content: center;
   font-size: 1em;
   font-weight: bold;
-  background-color: #3b0320; /*  */
+  background-color: #3b0320;
   color: #333;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -468,7 +471,7 @@
 }
 
 .keyboard-letter:disabled {
-  background-color: #f57171; /* Light yellow */
+  background-color: #f57171;
   opacity: 0.7;
   cursor: not-allowed;
   color: #888;
@@ -652,15 +655,22 @@
 
 @media only screen and (max-width: 768px) {
   .learning-screen-container {
-    border-radius: 20px !important; /* Round all corners */
-    overflow: hidden !important; /* Force clipping */
+    border-radius: 20px !important;
+    overflow: hidden !important;
     -webkit-border-radius: 20px !important;
   }
   
-  /* Also ensure the activity view respects the rounded corners */
   .activity-view {
     border-radius: 20px !important;
     overflow: hidden !important;
   }
+  .character-selection-container {
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+  
+  .game-container {
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
 }
-
