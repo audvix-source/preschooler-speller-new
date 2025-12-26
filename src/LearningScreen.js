@@ -46,6 +46,7 @@ function LearningScreen(props) {
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
   const [encouragementMessage, setEncouragementMessage] = useState('');
+  const [lastEncouragementIndex, setLastEncouragementIndex] = useState(-1);
 
   // Auto-save learning progress whenever key states change
   useEffect(() => {
@@ -147,7 +148,8 @@ function LearningScreen(props) {
     setShowReward(false);
     setMistakeCount(0);
     setShowInstructionBox(false);
-    setEncouragementMessage(''); // ← ADD THIS LINE
+    setEncouragementMessage(''); 
+    // Don't reset lastEncouragementIndex - let it keep cycling
   }, [wordIndex]);
 
   const getCurrentImage = () => {
@@ -354,21 +356,25 @@ function LearningScreen(props) {
     if (finalMistakeCount > 0) {
       // Had mistakes - choose message based on threshold
      if (hadManyMistakes) {
-    // Exceeded threshold - randomly select ONE message and use it for both voice and display
+    // Exceeded threshold - cycle through messages instead of random
   const encouragement = [
     "Good effort! Try again?",
     "Nice try! Give it another shot?",
     "You can do it! Go, go, go!"
   ];
-  const message = encouragement[Math.floor(Math.random() * encouragement.length)];
-  setEncouragementMessage(message); // ← STORE THE MESSAGE
-  console.log('Playing encouragement:', message);
-  // Remove the punctuation for speech
+
+  // Get next index in sequence
+  const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
+  const message = encouragement[nextIndex];
+  
+  setLastEncouragementIndex(nextIndex); // ← Store which one we used
+  setEncouragementMessage(message);
+  console.log('Playing encouragement:', message, 'index:', nextIndex);
   props.speak(message);
       } else {
         // Had mistakes but within threshold - gentle encouragement
         const gentleEncouragement = [
-          "Almost perfect! Try once more?",
+          "Doing good! Another try?",
           "So close! One more try?",
           "Great job! Can you get them all?"
         ];

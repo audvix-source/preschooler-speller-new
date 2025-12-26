@@ -24,6 +24,13 @@ body {
   margin-top: 40px;
   min-height: calc(100vh - 40px);
   padding-top: 60px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.App > div {
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .App-logo {
