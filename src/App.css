@@ -28,11 +28,6 @@ body {
   border-radius: 20px;
 }
 
-.App > div {
-  border-radius: 20px;
-  overflow: hidden;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;

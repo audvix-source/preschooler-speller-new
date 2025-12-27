@@ -15,7 +15,7 @@
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 20px 20px 30px 20px; /* ← CHANGE first value from 30px to 40px */
   box-sizing: border-box;
   background-color: #2db946;
   border-radius: 20px;
@@ -27,7 +27,7 @@
   flex-shrink: 0;
   flex-grow: 0;
   margin-bottom: 25px;
-  height: auto;
+  height: 345px; /* ← CHANGE from 'auto' to fixed height */
   min-height: 345px;
   max-height: 365px;
   display: flex;
@@ -43,6 +43,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  overflow: hidden; /* ← ADD THIS */
 }
 
 .video-section .alphabet-title {
@@ -56,7 +57,8 @@
 .video-container {
   position: relative;
   width: 100%;
-  padding-bottom: 85%;
+  padding-bottom: 0; /* ← CHANGE from 85% to 0 */
+  height: 260px; /* ← ADD fixed height */
   background-color: #000;
   border-radius: 14px !important; /* Increased from 12px */
   overflow: hidden !important;
@@ -70,6 +72,19 @@
   width: 115% !important;
   height: 130% !important;
   border-radius: 14px !important;
+  pointer-events: auto; /* ← ADD THIS */
+}
+
+.video-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: #000;
+  border-radius: 0 0 14px 14px;
+  z-index: 1;
 }
 
 .credit-line {
@@ -150,7 +165,7 @@
 }
 
 .letter-icon {
-  width: 70%;
+  width: 95%;
   height: auto;
   margin-bottom: 2px;
 }
@@ -234,21 +249,21 @@
   justify-content: center;
   border: 3px solid #FF69B4;
   border-radius: 12px;
-  padding: 15px;
+  padding: 10px; /* ← REDUCE from 15px */
   background-color: rgba(173, 216, 230, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   margin-top: 5px;
   margin-left: auto;
   margin-right: auto;
-  width: 60%;
+  width: 50%;
   min-height: 220px;
   max-height: 240px;
 }
 
 .word-image-frame img {
   display: block;
-  max-width: 110%;
-  max-height: 240px;
+  max-width: 120%; /* ← CHANGE from 110% */
+  max-height: 220px; /* ← INCREASE from 240px gives more height */
   width: auto;
   height: auto;
   object-fit: contain;
@@ -371,21 +386,60 @@
   .alphabet-screen-container {
     max-height: 680px;
     height: 100vh;
+    padding-top: 25px; /* ← ADD THIS LINE */
   }
+
+   /* ADD THIS */
+  .video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 0;
+  height: 260px;
+  background-color: #000;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 3px solid #000; /* ← ADD solid border same color as background */
+}
   
+  .video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block; /* ← ADD THIS */
+}
+
+.video-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 3px solid #000;
+  border-radius: 14px;
+  pointer-events: none;
+  z-index: 1;
+}
+
   .top-section {
     margin-bottom: 25px;
     height: 325px;
-    min-height: auto;
-    max-height: none;
-  }
-  
-  .video-container {
-    padding-bottom: 85%;
+    min-height: 325px;
+    max-height: 325px;
   }
   
   .word-display-section {
     padding: 10px;
+  }
+
+   /* ADD THIS */
+  .letter-icon {
+    width: 95% !important;
+    max-width: none !important;
   }
   
   .word-image-frame {
