@@ -1,0 +1,508 @@
+/* ===================================================================
+   REWARD SCREEN (Game-style intro)
+   =================================================================== */
+
+.reward-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: rewardFadeIn 0.5s ease;
+  padding: 20px;
+  overflow: hidden;
+}
+
+@keyframes rewardFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reward-sparkles {
+  font-size: 3em;
+  animation: sparkleFloat 2s ease-in-out infinite;
+  margin-bottom: 20px;
+}
+
+.reward-sparkles.bottom {
+  margin-top: 20px;
+  margin-bottom: 0;
+  animation-delay: 1s;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(180deg);
+  }
+}
+
+.reward-container {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: 6px solid #FFD700;
+  border-radius: 25px;
+  padding: 0;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: rewardBounce 0.6s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes rewardBounce {
+  0% {
+    transform: scale(0) rotate(-10deg);
+  }
+  60% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Top Banner */
+.reward-banner {
+  background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+  padding: 12px;
+  text-align: center;
+  border-radius: 19px 19px 0 0;
+  border-bottom: 4px solid #FFD700;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.banner-text {
+  font-size: 1.8em;
+  font-weight: 900;
+  color: #FFD700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
+}
+
+/* Main Reward Box */
+.reward-box {
+  padding: 30px 20px;
+  position: relative;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.reward-subtitle {
+  font-size: 0.95em;
+  color: #B0E0E6;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Reward Circle (Trophy) */
+.reward-circle {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #9B59B6 0%, #6C3483 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid #FFD700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 -5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: trophyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes trophyPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.8);
+  }
+}
+
+.trophy-icon {
+  font-size: 5em;
+  animation: trophySpin 3s ease-in-out infinite;
+}
+
+@keyframes trophySpin {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+/* Floating Sparkles */
+.sparkle {
+  position: absolute;
+  font-size: 1.5em;
+  animation: sparkleOrbit 3s ease-in-out infinite;
+}
+
+.sparkle-1 {
+  top: 10px;
+  left: 10px;
+  animation-delay: 0s;
+}
+
+.sparkle-2 {
+  top: 10px;
+  right: 10px;
+  animation-delay: 1s;
+}
+
+.sparkle-3 {
+  bottom: 10px;
+  left: 50%;
+  animation-delay: 2s;
+}
+
+@keyframes sparkleOrbit {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(10px, -10px) scale(1.3);
+    opacity: 0.7;
+  }
+}
+
+.reward-title {
+  font-size: 1.8em;
+  font-weight: 900;
+  color: #FFD700;
+  text-align: center;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.reward-description {
+  font-size: 1em;
+  color: #B0E0E6;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Multiplier Badge */
+.multiplier-badge {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+  border: 4px solid #FFD700;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  animation: badgePop 1s ease-in-out infinite;
+}
+
+@keyframes badgePop {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+.multiplier-icon {
+  font-size: 2em;
+}
+
+/* Bottom Button */
+.reward-okay-button {
+  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.6em;
+  font-weight: 900;
+  border-radius: 0 0 19px 19px;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.reward-okay-button:hover {
+  background: linear-gradient(135deg, #3AE63A 0%, #2DAA2D 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(50, 205, 50, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.reward-okay-button:active {
+  transform: translateY(0);
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* ===================================================================
+   GRAMMAR RULES SCREEN (After clicking SHOW ME)
+   =================================================================== */
+
+.grammar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.grammar-game-container {
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
+  border-radius: 25px;
+  padding: 25px 20px;
+  max-width: 95%;
+  width: 380px;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.5s ease;
+  border: 6px solid #FFD700;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.grammar-header-game {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.grammar-header-game h1 {
+  color: #FF6347;
+  font-size: 1.6em;
+  margin: 0 0 8px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grammar-subtitle-game {
+  color: #2C3E50;
+  font-size: 1.05em;
+  font-weight: 600;
+  margin: 0;
+}
+
+.grammar-content-game {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Rules Card */
+.rules-card {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 3px solid #4A90E2;
+}
+
+.grammar-table-game {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grammar-table-game th {
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  color: white;
+  padding: 10px 8px;
+  font-size: 1em;
+  text-align: center;
+}
+
+.grammar-table-game th:first-child {
+  border-radius: 8px 0 0 0;
+}
+
+.grammar-table-game th:last-child {
+  border-radius: 0 8px 0 0;
+}
+
+.grammar-table-game td {
+  padding: 12px 8px;
+  border-bottom: 2px solid #E8F4F8;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.grammar-table-game tr:last-child td {
+  border-bottom: none;
+}
+
+.grammar-table-game tr:hover {
+  background: #FFF9E6;
+}
+
+.emoji-large {
+  display: block;
+  font-size: 2em;
+  margin-bottom: 5px;
+}
+
+.grammar-table-game strong {
+  display: block;
+  color: #E74C3C;
+  font-size: 1.1em;
+  margin-bottom: 3px;
+}
+
+.example-small {
+  display: block;
+  font-size: 0.75em;
+  color: #7F8C8D;
+  font-style: italic;
+}
+
+/* Special Card */
+.special-card {
+  background: linear-gradient(135deg, #FFE5B4 0%, #FFD700 100%);
+  border-radius: 15px;
+  padding: 15px;
+  border: 3px solid #FFA500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.special-card h3 {
+  text-align: center;
+  color: #8B4513;
+  margin: 0 0 12px 0;
+  font-size: 1.2em;
+}
+
+.special-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.special-item-game {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.special-emoji-large {
+  font-size: 2em;
+  flex-shrink: 0;
+}
+
+.special-text-game {
+  font-size: 0.95em;
+  color: #2C3E50;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.special-text-game strong {
+  color: #E74C3C;
+}
+
+/* Continue Button */
+.continue-game-button {
+  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 15px 35px;
+  font-size: 1.4em;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+  transition: all 0.3s ease;
+  margin-top: 15px;
+  width: 100%;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.continue-game-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(50, 205, 50, 0.6);
+}
+
+.continue-game-button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reward-container {
+    max-width: 95%;
+  }
+
+  .banner-text {
+    font-size: 1.5em;
+  }
+
+  .reward-circle {
+    width: 130px;
+    height: 130px;
+  }
+
+  .trophy-icon {
+    font-size: 4em;
+  }
+
+  .grammar-game-container {
+    padding: 20px 15px;
+  }
+
+  .grammar-header-game h1 {
+    font-size: 1.4em;
+  }
+
+  .grammar-table-game th {
+    font-size: 0.9em;
+  }
+
+  .emoji-large {
+    font-size: 1.6em;
+  }
+}

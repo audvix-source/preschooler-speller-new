@@ -5,6 +5,7 @@ import parkBackground from './assets/park-background.png';
 import boyModel from './assets/boy-model.png';
 import girlModel from './assets/girl-model.png';
 import MagicalTransition from './components/MagicalTransition';
+import GrammarRulePage from './components/GrammarRulePage';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import ComingSoonModal from './components/ComingSoonModal';
 
@@ -41,6 +42,7 @@ function LearningScreen(props) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showReward, setShowReward] = useState(false);
   const [mistakeCount, setMistakeCount] = useState(0);
+  const [showGrammarRule, setShowGrammarRule] = useState(false);
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
   const categoryWords = getWordsByCategory(props.category);
@@ -340,62 +342,63 @@ function LearningScreen(props) {
 
   const triggerReward = (finalMistakeCount) => {
     console.log('triggerReward called with mistakeCount:', finalMistakeCount);
-    console.log('Word length:', currentWord.word.length);
-    console.log('Threshold:', Math.ceil(currentWord.word.length / 2));
     
     setShowReward(true);
-    
+
     const wordLength = currentWord.word.length;
     const threshold = Math.ceil(wordLength / 2);
-    
-    // Determine if mistakes exceeded the threshold
     const hadManyMistakes = finalMistakeCount > threshold;
     
-    console.log('hadManyMistakes:', hadManyMistakes);
+    // 1. Handle Grammar Rule Trigger
+    if (currentWord.word === 'Eyes' && finalMistakeCount === 0) {
+      setTimeout(() => {
+        setShowGrammarRule(true);
+      }, 2500);
+    }
     
+    // 2. Handle Audio Feedback logic
     if (finalMistakeCount > 0) {
-      // Had mistakes - choose message based on threshold
-     if (hadManyMistakes) {
-    // Exceeded threshold - cycle through messages instead of random
-  const encouragement = [
-    "Good effort! Try again?",
-    "Nice try! Give it another shot?",
-    "You can do it! Go, go, go!"
-  ];
-
-  // Get next index in sequence
-  const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
-  const message = encouragement[nextIndex];
-  
-  setLastEncouragementIndex(nextIndex); // ← Store which one we used
-  setEncouragementMessage(message);
-  console.log('Playing encouragement:', message, 'index:', nextIndex);
-  props.speak(message);
+      if (hadManyMistakes) {
+        // Exceeded threshold - cycle through messages
+        const encouragement = [
+          "Good effort! Try again?",
+          "Nice try! Give it another shot?",
+          "You can do it! Go, go, go!"
+        ];
+        const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
+        const message = encouragement[nextIndex];
+        
+        setLastEncouragementIndex(nextIndex);
+        setEncouragementMessage(message);
+        props.speak(message);
       } else {
-        // Had mistakes but within threshold - gentle encouragement
+        // Had mistakes but within threshold
         const gentleEncouragement = [
           "Doing good! Another try?",
           "So close! One more try?",
           "Great job! Can you get them all?"
         ];
-        const message = gentleEncouragement[Math.floor(Math.random() * gentleEncouragement.length)];
-        setEncouragementMessage(message); // ← STORE THIS TOO
-        console.log('Playing gentle encouragement:', message);
+        const nextIndex = (lastEncouragementIndex + 1) % gentleEncouragement.length;
+        const message = gentleEncouragement[nextIndex];
+        
+        setLastEncouragementIndex(nextIndex);
+        setEncouragementMessage(message);
         props.speak(message);
       }
     } else {
       // Perfect - no mistakes
       const congratulations = ["Excellent!", "Amazing!", "You did it!", "Perfect!"];
       const message = congratulations[Math.floor(Math.random() * congratulations.length)];
-      console.log('Playing congratulations:', message);
       props.speak(message);
     }
-    
+
+    // 3. Clear reward effect after 3 seconds
     setTimeout(() => {
       setShowReward(false);
     }, 3000);
-  };
+  }; // <--- THIS WAS MISSING OR MISPLACED
 
+  // Logic for UI rendering
   const isLongWord = currentWord && currentWord.word.length >= 7;
 
   if (!currentWord) {
@@ -475,15 +478,11 @@ function LearningScreen(props) {
         </div>
 
         {challengeMode && (
-          <div className="challenge-section">
-            {showInstructionBox && getSingularPluralHint() && (
-              <div className="instruction-box-keyboard">
-                {getSingularPluralHint()}
-              </div>
-            )}
-            
-            {!isCompleted && (
-              <OnScreenKeyboard
+  <div className="challenge-section">
+    {/* Yellow box removed - now using separate grammar page */}
+    
+    {!isCompleted && (
+      <OnScreenKeyboard
                 onLetterClick={handleKeyboardLetter}
                 usedLetters={challengeLetters.filter(l => l !== '')}
                 currentWord={currentWord}
@@ -514,6 +513,12 @@ function LearningScreen(props) {
 
       {showReward && <div className="confetti-overlay"></div>}
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
+       {showGrammarRule && (
+        <GrammarRulePage 
+          onContinue={() => setShowGrammarRule(false)}
+          speak={props.speak}
+        />
+      )}
       <ComingSoonModal show={showComingSoonModal} onClose={handleCloseComingSoon} />
     </div>
   );

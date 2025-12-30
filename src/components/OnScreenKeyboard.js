@@ -11,8 +11,12 @@ function OnScreenKeyboard({ onLetterClick, usedLetters, currentWord }) {
   const row3 = alphabet.slice(18);    // S-Z
 
   const isLetterUsed = (letter) => {
-    return usedLetters.includes(letter.toUpperCase());
-  };
+  const word = currentWord.word.toUpperCase();
+  const letterCount = word.split('').filter(l => l === letter).length;
+  const usedCount = usedLetters.filter(l => l === letter).length;
+  
+  return usedCount >= letterCount; // Only disable if all instances are used
+};
 
   return (
     <div className="on-screen-keyboard">

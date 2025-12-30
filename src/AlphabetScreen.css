@@ -97,7 +97,7 @@
 
 /* Keyboard wrapper - contains the grid and back button */
 .keyboard-wrapper {
-  margin-top: 0px;
+  margin-top: 8px;
   margin-bottom: 30px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 20px;
@@ -249,7 +249,7 @@
   justify-content: center;
   border: 3px solid #FF69B4;
   border-radius: 12px;
-  padding: 10px; /* ← REDUCE from 15px */
+  padding: 25px; /* ← REDUCE from 15px */
   background-color: rgba(173, 216, 230, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   margin-top: 5px;
@@ -445,7 +445,7 @@
   .word-image-frame {
     min-height: 200px;
     max-height: 200px;
-    margin-top: 10px;
+    margin-top: 15px;
   }
   
   .word-image-frame img {

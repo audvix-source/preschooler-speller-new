@@ -550,7 +550,7 @@
 
 .back-button-fixed {
   position: absolute;
-  bottom: 80px;
+  bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 30px;
