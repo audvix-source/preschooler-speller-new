@@ -517,7 +517,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: absolute;
-  bottom: 30px;
+  bottom: 30px !important;
   left: 50%;
   transform: translateX(-50%);
   min-width: 180px;

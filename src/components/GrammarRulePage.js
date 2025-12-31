@@ -17,42 +17,55 @@ function GrammarRulePage({ onContinue, speak }) {
   if (!showRules) {
     return (
       <div className="reward-overlay">
-        <div className="reward-sparkles">✨✨✨</div>
+        {/* Confetti Shower - OUTSIDE the box */}
+        <div className="confetti-container">
+          <div className="confetti" style={{ left: '10%', animationDelay: '0s' }}>🎉</div>
+          <div className="confetti" style={{ left: '20%', animationDelay: '0.2s' }}>⭐</div>
+          <div className="confetti" style={{ left: '30%', animationDelay: '0.4s' }}>🎊</div>
+          <div className="confetti" style={{ left: '40%', animationDelay: '0.6s' }}>✨</div>
+          <div className="confetti" style={{ left: '60%', animationDelay: '0.3s' }}>🎉</div>
+          <div className="confetti" style={{ left: '70%', animationDelay: '0.5s' }}>⭐</div>
+          <div className="confetti" style={{ left: '80%', animationDelay: '0.7s' }}>🎊</div>
+          <div className="confetti" style={{ left: '90%', animationDelay: '0.1s' }}>✨</div>
+        </div>
+        
+        {/* ONE LONG BOX STRIP */}
         <div className="reward-container">
-          {/* Top Banner */}
+          {/* Top Banner - REMEMBER with cascading letters */}
           <div className="reward-banner">
-            <span className="banner-text">REMEMBER!</span>
+            <span className="banner-text">
+              <span className="letter-cascade" style={{ '--delay': '0s' }}>R</span>
+              <span className="letter-cascade" style={{ '--delay': '0.1s' }}>E</span>
+              <span className="letter-cascade" style={{ '--delay': '0.2s' }}>M</span>
+              <span className="letter-cascade" style={{ '--delay': '0.3s' }}>E</span>
+              <span className="letter-cascade" style={{ '--delay': '0.4s' }}>M</span>
+              <span className="letter-cascade" style={{ '--delay': '0.5s' }}>B</span>
+              <span className="letter-cascade" style={{ '--delay': '0.6s' }}>E</span>
+              <span className="letter-cascade" style={{ '--delay': '0.7s' }}>R</span>
+              <span className="letter-cascade" style={{ '--delay': '0.8s' }}>!</span>
+            </span>
           </div>
 
-          {/* Main Reward Box */}
+          {/* Main Reward Box - Blue section */}
           <div className="reward-box">
             <div className="reward-subtitle">YOU UNLOCKED</div>
             
-            {/* Coin/Trophy Display */}
+            {/* Trophy Circle */}
             <div className="reward-circle">
               <div className="trophy-icon">🏆</div>
-              <div className="sparkle sparkle-1">⭐</div>
-              <div className="sparkle sparkle-2">⭐</div>
-              <div className="sparkle sparkle-3">⭐</div>
             </div>
 
             <div className="reward-title">Grammar Tip!</div>
             <div className="reward-description">
               Special rules about body parts
             </div>
-
-            {/* Multiplier Badge */}
-            <div className="multiplier-badge">
-              <span className="multiplier-icon">💡</span>
-            </div>
           </div>
 
-          {/* Bottom Button */}
+          {/* Bottom Button - Part of the same box strip */}
           <button className="reward-okay-button" onClick={handleViewRules}>
             SHOW ME!
           </button>
         </div>
-        <div className="reward-sparkles bottom">✨✨✨</div>
       </div>
     );
   }
@@ -103,7 +116,7 @@ function GrammarRulePage({ onContinue, speak }) {
                 </tr>
                 <tr>
                   <td>
-                    <span className="emoji-large">👄</span>
+                    <span className="emoji-large special-lip">👄</span>
                     <strong>Lip</strong>
                     <span className="example-small">(upper/lower)</span>
                   </td>
@@ -142,7 +155,8 @@ function GrammarRulePage({ onContinue, speak }) {
               <div className="special-item-game">
                 <span className="special-emoji-large">💇</span>
                 <span className="special-text-game">
-                  <strong>Hair</strong> stays <strong>Hair</strong>
+                  <strong>Hair</strong> stays <strong>Hair</strong><br/>
+                  <span className="sub-rule">But: 2 white <strong>hairs</strong> (countable)</span>
                 </span>
               </div>
             </div>

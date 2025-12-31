@@ -353,7 +353,7 @@ function LearningScreen(props) {
     if (currentWord.word === 'Eyes' && finalMistakeCount === 0) {
       setTimeout(() => {
         setShowGrammarRule(true);
-      }, 2500);
+      }, 750); // ← CHANGE from 2500 to 750 (0.75 seconds)2500);
     }
     
     // 2. Handle Audio Feedback logic
@@ -389,6 +389,7 @@ function LearningScreen(props) {
       // Perfect - no mistakes
       const congratulations = ["Excellent!", "Amazing!", "You did it!", "Perfect!"];
       const message = congratulations[Math.floor(Math.random() * congratulations.length)];
+      setEncouragementMessage(''); // ← ADD THIS - clear message for perfect
       props.speak(message);
     }
 
@@ -491,12 +492,12 @@ function LearningScreen(props) {
             {isCompleted && (
   <div className="completion-message">
     <h2>
-      {mistakeCount > Math.ceil(currentWord.word.length / 2)
-        ? `💪 ${encouragementMessage} ⭐`
-        : mistakeCount > 0
-        ? `✨ ${encouragementMessage} ✨`
-        : ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'][Math.floor(Math.random() * 4)]
-      }
+      {encouragementMessage 
+  ? (mistakeCount > Math.ceil(currentWord.word.length / 2)
+      ? `💪 ${encouragementMessage} ⭐`
+      : `✨ ${encouragementMessage} ✨`)
+  : ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'][Math.floor(Math.random() * 4)]
+}
     </h2>
   </div>
 )}
