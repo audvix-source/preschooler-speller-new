@@ -1,4 +1,7 @@
-/* REWARD SCREEN - Game-style intro */
+/* ===================================================================
+   REWARD SCREEN (REMEMBER PAGE) - Full Screen for Mobile & Tablet
+   =================================================================== */
+
 .reward-overlay {
   position: fixed;
   top: 0;
@@ -14,11 +17,18 @@
   animation: rewardFadeIn 0.5s ease;
   padding: 20px;
   overflow: hidden;
-  width: 100vw; /* ← ADD */
-  height: 100vh; /* ← ADD */
+  width: 100vw;
+  height: 100vh;
 }
 
-/* Tablet/Desktop: Make it centered with border */
+/* Remove all tablet constraints - keep it full screen */
+@media only screen and (min-width: 769px) {
+  .reward-overlay {
+    /* REMOVE all the limiting styles - stay full screen */
+    padding: 20px;
+  }
+}
+
 @keyframes rewardFadeIn {
   from {
     opacity: 0;
@@ -59,18 +69,24 @@
   }
 }
 
-/* Main Container - ONE LONG BOX */
+/* ===================================================================
+   MAIN CONTAINER - ONE LONG STRIP DESIGN (Image 2 request)
+   =================================================================== */
+
 .reward-container {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  border: 6px solid #FFD700;
+  background: transparent; /* ← CHANGE: Remove background, let sections show */
+  border: none; /* ← CHANGE: Remove border */
   border-radius: 25px;
   padding: 0;
   width: 90%;
   max-width: 350px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: none; /* ← CHANGE: Remove outer shadow */
   animation: rewardBounce 0.6s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* ← CHANGE: Let shadow show */
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* ← ADD: No gaps between sections */
 }
 
 @keyframes rewardBounce {
@@ -85,22 +101,28 @@
   }
 }
 
-/* Top Banner - Full Width */
+/* ===================================================================
+   TOP BANNER - "REMEMBER!" (Green section)
+   =================================================================== */
+
 .reward-banner {
-  background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%); /* ← CHANGE: Green instead of red */
   padding: 12px;
   text-align: center;
   border-radius: 19px 19px 0 0;
-  border-bottom: 4px solid #FFD700;
+  border: 6px solid #FFD700; /* ← ADD: Gold border all around */
+  border-bottom: none; /* ← ADD: Remove bottom border to connect */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   width: 100%;
   box-sizing: border-box;
+  position: relative;
+  z-index: 3;
 }
 
 .banner-text {
   font-size: 1.8em;
   font-weight: 900;
-  color: #FFD700;
+  color: white; /* ← CHANGE: White text on green */
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
   letter-spacing: 2px;
   display: inline-block;
@@ -114,22 +136,29 @@
 
 @keyframes letterLight {
   0%, 80%, 100% {
-    color: #FFD700;
+    color: white;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
     transform: scale(1);
   }
   40% {
-    color: #FFFFFF;
+    color: #FFD700;
     text-shadow: 0 0 20px #FFD700, 0 0 30px #FFA500, 3px 3px 6px rgba(0, 0, 0, 0.5);
     transform: scale(1.4);
   }
 }
 
-/* Main Reward Box */
+/* ===================================================================
+   MIDDLE BOX - Blue section with trophy (Front facade)
+   =================================================================== */
+
 .reward-box {
   padding: 30px 20px;
   position: relative;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-left: 6px solid #FFD700; /* ← ADD: Gold border on sides */
+  border-right: 6px solid #FFD700; /* ← ADD: Gold border on sides */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4); /* ← ADD: Deep shadow to show depth */
+  z-index: 2; /* ← ADD: Layer in front */
 }
 
 .reward-subtitle {
@@ -199,22 +228,29 @@
   margin-bottom: 0;
 }
 
-/* Bottom Button - Part of the long strip */
+/* ===================================================================
+   BOTTOM BUTTON - "SHOW ME!" (Green section, connected strip)
+   =================================================================== */
+
 .reward-okay-button {
   background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
   color: white;
-  border: none;
+  border: 6px solid #FFD700; /* ← ADD: Gold border */
+  border-top: none; /* ← ADD: Remove top to connect */
   padding: 15px 40px;
   font-size: 1.6em;
   font-weight: 900;
   border-radius: 0 0 19px 19px;
   cursor: pointer;
   width: 100%;
+  box-sizing: border-box;
   box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   letter-spacing: 2px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   animation: buttonPulse 0.8s ease-in-out infinite;
+  position: relative;
+  z-index: 1; /* ← ADD: Behind the blue box */
 }
 
 @keyframes buttonPulse {
@@ -240,7 +276,10 @@
   box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* GRAMMAR RULES SCREEN */
+/* ===================================================================
+   GRAMMAR RULES SCREEN (Second page) - Full Screen
+   =================================================================== */
+
 .grammar-overlay {
   position: fixed;
   top: 0;
@@ -255,8 +294,15 @@
   animation: fadeIn 0.3s ease;
   padding: 15px;
   box-sizing: border-box;
-  width: 100vw; /* ← ADD */
-  height: 100vh; /* ← ADD */
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Remove tablet constraints - stay full screen */
+@media only screen and (min-width: 769px) {
+  .grammar-overlay {
+    padding: 20px;
+  }
 }
 
 @keyframes fadeIn {
@@ -266,16 +312,17 @@
 
 .grammar-game-container {
   background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
-  border-radius: 25px;
-  padding: 20px 15px 100px 15px; /* ← Even more bottom padding for mobile */
+  border-radius: 25px !important;
+  padding: 25px 20px 80px 20px;
   max-width: 95%;
   width: 380px;
-  max-height: 85vh; /* ← Smaller max height */;
+  max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
   animation: slideUp 0.5s ease;
   border: 6px solid #FFD700;
-  -webkit-overflow-scrolling: touch; /* ← ADD for smooth iOS scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
 @keyframes slideUp {
@@ -289,6 +336,7 @@
   }
 }
 
+/* Rest of grammar styles stay the same... */
 .grammar-header-game {
   text-align: center;
   margin-bottom: 20px;
@@ -307,6 +355,8 @@
   font-weight: 600;
   margin: 0;
 }
+
+/* Continue with all your existing grammar styles... */
 
 .grammar-content-game {
   display: flex;

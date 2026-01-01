@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './GrammarRulePage.css';
+import lipSingleImage from '../assets/lip-single.png'; // ← ADD THIS IMPORT
 
 function GrammarRulePage({ onContinue, speak }) {
   const [showRules, setShowRules] = useState(false);
@@ -17,7 +18,7 @@ function GrammarRulePage({ onContinue, speak }) {
   if (!showRules) {
     return (
       <div className="reward-overlay">
-        {/* Confetti Shower - OUTSIDE the box */}
+        {/* Confetti Shower */}
         <div className="confetti-container">
           <div className="confetti" style={{ left: '10%', animationDelay: '0s' }}>🎉</div>
           <div className="confetti" style={{ left: '20%', animationDelay: '0.2s' }}>⭐</div>
@@ -29,9 +30,7 @@ function GrammarRulePage({ onContinue, speak }) {
           <div className="confetti" style={{ left: '90%', animationDelay: '0.1s' }}>✨</div>
         </div>
         
-        {/* ONE LONG BOX STRIP */}
         <div className="reward-container">
-          {/* Top Banner - REMEMBER with cascading letters */}
           <div className="reward-banner">
             <span className="banner-text">
               <span className="letter-cascade" style={{ '--delay': '0s' }}>R</span>
@@ -46,22 +45,17 @@ function GrammarRulePage({ onContinue, speak }) {
             </span>
           </div>
 
-          {/* Main Reward Box - Blue section */}
           <div className="reward-box">
             <div className="reward-subtitle">YOU UNLOCKED</div>
-            
-            {/* Trophy Circle */}
             <div className="reward-circle">
               <div className="trophy-icon">🏆</div>
             </div>
-
             <div className="reward-title">Grammar Tip!</div>
             <div className="reward-description">
               Special rules about body parts
             </div>
           </div>
 
-          {/* Bottom Button - Part of the same box strip */}
           <button className="reward-okay-button" onClick={handleViewRules}>
             SHOW ME!
           </button>
@@ -116,7 +110,14 @@ function GrammarRulePage({ onContinue, speak }) {
                 </tr>
                 <tr>
                   <td>
-                    <span className="emoji-large special-lip">👄</span>
+                    <div className="lip-image-container">
+                      <img
+                        src={lipSingleImage}
+                        alt="Single Lip"
+                        className="lip-custom-image"
+                        style={{ width: '60px', height: '60px', objectFit: 'contain' }}
+                      />
+                    </div>
                     <strong>Lip</strong>
                     <span className="example-small">(upper/lower)</span>
                   </td>
