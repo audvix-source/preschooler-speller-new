@@ -1,5 +1,5 @@
 /* ===================================================================
-   REWARD SCREEN (REMEMBER PAGE) - Full Screen for Mobile & Tablet
+   REWARD SCREEN (REMEMBER PAGE) - Full Screen
    =================================================================== */
 
 .reward-overlay {
@@ -19,13 +19,18 @@
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  box-sizing: border-box;
 }
 
-/* Remove all tablet constraints - keep it full screen */
+/* Tablet/Desktop: Keep it within app container */
 @media only screen and (min-width: 769px) {
   .reward-overlay {
-    /* REMOVE all the limiting styles - stay full screen */
-    padding: 20px;
+    max-width: 420px;
+    margin: 0 auto;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 20px;
   }
 }
 
@@ -37,6 +42,20 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Tablet animation adjustment */
+@media only screen and (min-width: 769px) {
+  @keyframes rewardFadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
   }
 }
 
@@ -70,23 +89,24 @@
 }
 
 /* ===================================================================
-   MAIN CONTAINER - ONE LONG STRIP DESIGN (Image 2 request)
+   MAIN CONTAINER - ONE LONG STRIP (Green extends past blue)
    =================================================================== */
 
 .reward-container {
-  background: transparent; /* ← CHANGE: Remove background, let sections show */
-  border: none; /* ← CHANGE: Remove border */
+  background: transparent;
+  border: none;
   border-radius: 25px;
   padding: 0;
   width: 90%;
   max-width: 350px;
-  box-shadow: none; /* ← CHANGE: Remove outer shadow */
+  box-shadow: none;
   animation: rewardBounce 0.6s ease;
   position: relative;
-  overflow: visible; /* ← CHANGE: Let shadow show */
+  overflow: visible;
   display: flex;
   flex-direction: column;
-  gap: 0; /* ← ADD: No gaps between sections */
+  align-items: center; /* ← Center children */
+  gap: 0;
 }
 
 @keyframes rewardBounce {
@@ -102,27 +122,28 @@
 }
 
 /* ===================================================================
-   TOP BANNER - "REMEMBER!" (Green section)
+   TOP BANNER - "REMEMBER!" (Green - WIDER than blue box)
    =================================================================== */
 
 .reward-banner {
-  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%); /* ← CHANGE: Green instead of red */
-  padding: 12px;
+  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
+  padding: 12px 24px; /* ← Increased horizontal padding */
   text-align: center;
   border-radius: 19px 19px 0 0;
-  border: 6px solid #FFD700; /* ← ADD: Gold border all around */
-  border-bottom: none; /* ← ADD: Remove bottom border to connect */
+  border: 6px solid #FFD700;
+  border-bottom: none;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: 100%;
+  width: calc (80% + 4px); /* ← WIDER: extends 12px on each side */
   box-sizing: border-box;
   position: relative;
-  z-index: 3;
+  z-index: 1; /* ← BEHIND the blue box */
+  margin: 0;
 }
 
 .banner-text {
   font-size: 1.8em;
   font-weight: 900;
-  color: white; /* ← CHANGE: White text on green */
+  color: white;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
   letter-spacing: 2px;
   display: inline-block;
@@ -148,17 +169,20 @@
 }
 
 /* ===================================================================
-   MIDDLE BOX - Blue section with trophy (Front facade)
+   MIDDLE BOX - Blue section (Front facade - standard width)
    =================================================================== */
 
 .reward-box {
   padding: 30px 20px;
   position: relative;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  border-left: 6px solid #FFD700; /* ← ADD: Gold border on sides */
-  border-right: 6px solid #FFD700; /* ← ADD: Gold border on sides */
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4); /* ← ADD: Deep shadow to show depth */
-  z-index: 2; /* ← ADD: Layer in front */
+  border: 6px solid #FFD700; /* ← CHANGE: Add border all around */
+  border-radius: 15px; /* ← ADD: Round the corners */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 .reward-subtitle {
@@ -170,7 +194,6 @@
   letter-spacing: 1px;
 }
 
-/* Reward Circle (Trophy) */
 .reward-circle {
   width: 150px;
   height: 150px;
@@ -229,38 +252,39 @@
 }
 
 /* ===================================================================
-   BOTTOM BUTTON - "SHOW ME!" (Green section, connected strip)
+   BOTTOM BUTTON - "SHOW ME!" (Green - WIDER than blue box)
    =================================================================== */
 
 .reward-okay-button {
   background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
   color: white;
-  border: 6px solid #FFD700; /* ← ADD: Gold border */
-  border-top: none; /* ← ADD: Remove top to connect */
-  padding: 15px 40px;
+  border: 6px solid #FFD700;
+  border-top: none;
+  padding: 15px 24px; /* ← Increased horizontal padding */
   font-size: 1.6em;
   font-weight: 900;
   border-radius: 0 0 19px 19px;
   cursor: pointer;
-  width: 100%;
+  width: calc(80% + 4px); /* ← WIDER: extends 12px on each side */
   box-sizing: border-box;
   box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   letter-spacing: 2px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  animation: buttonPulse 0.8s ease-in-out infinite;
+  animation: gentleButtonPulse 2s ease-in-out infinite;
   position: relative;
-  z-index: 1; /* ← ADD: Behind the blue box */
+  z-index: 1; /* ← BEHIND the blue box */
+  margin: 0;
 }
 
-@keyframes buttonPulse {
+@keyframes gentleButtonPulse {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(50, 205, 50, 0.3), inset 0 -4px 0 rgba(0, 0, 0, 0.3);
   }
   50% {
-    transform: scale(1.08);
-    box-shadow: 0 10px 30px rgba(50, 205, 50, 0.8), inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(50, 205, 50, 0.5), inset 0 -4px 0 rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -298,16 +322,35 @@
   height: 100vh;
 }
 
-/* Remove tablet constraints - stay full screen */
+/* Tablet/Desktop: Keep it within app container */
 @media only screen and (min-width: 769px) {
   .grammar-overlay {
-    padding: 20px;
+    max-width: 420px;
+    margin: 0 auto;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 20px;
   }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* Tablet animation adjustment */
+@media only screen and (min-width: 769px) {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+  }
 }
 
 .grammar-game-container {
@@ -325,6 +368,24 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* Force rounded corners on tablet */
+@media (min-width: 769px) {
+  .grammar-game-container {
+    border-radius: 25px !important;
+    overflow: hidden !important;
+  }
+
+  .rules-card {
+    border-radius: 15px !important;
+    overflow: hidden !important;
+  }
+
+  .special-card {
+    border-radius: 15px !important;
+    overflow: hidden !important;
+  }
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(50px);
@@ -336,7 +397,6 @@
   }
 }
 
-/* Rest of grammar styles stay the same... */
 .grammar-header-game {
   text-align: center;
   margin-bottom: 20px;
@@ -355,8 +415,6 @@
   font-weight: 600;
   margin: 0;
 }
-
-/* Continue with all your existing grammar styles... */
 
 .grammar-content-game {
   display: flex;
@@ -499,13 +557,13 @@
   box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
   transition: all 0.3s ease;
   margin-top: 15px;
-  margin-bottom: 20px; /* ← ADD */
+  margin-bottom: 20px;
   width: 100%;
   letter-spacing: 1px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   animation: slowBlink 2s ease-in-out infinite;
-  position: relative; /* ← ADD */
-  z-index: 10; /* ← ADD */
+  position: relative;
+  z-index: 10;
 }
 
 @keyframes slowBlink {
@@ -530,84 +588,38 @@
   transform: scale(0.98);
 }
 
-/* Lip special styling */
-.special-lip {
-  position: relative;
-  display: inline-block;
-}
-
-.special-lip::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 65%; /* ← CHANGE from 60% to 65% - wider */
-  height: 38%; /* ← CHANGE from 35% to 38% - taller */
-  background: white;
-  border-radius: 0 0 50% 50%;
-  opacity: 0.95; /* ← CHANGE from 0.9 to 0.95 - more opaque */
-  border-top: none; /* ← ADD - remove top border */
-}
-
-/* Tablet specific - rounded corners */
-@media (min-width: 769px) {
-  .rules-card {
-    border-radius: 15px !important;
-    overflow: hidden !important;
-  }
-  
-  .special-card {
-    border-radius: 15px !important;
-    overflow: hidden !important;
-  }
-  
-  .grammar-table-game {
-    border-radius: 12px !important;
-    overflow: hidden !important;
-  }
-  
-  .grammar-table-game tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 12px !important;
-  }
-  
-  .grammar-table-game tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 12px !important;
-  }
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .reward-container {
     max-width: 95%;
   }
-  
+
   .banner-text {
     font-size: 1.5em;
   }
-  
+
   .reward-circle {
     width: 130px;
     height: 130px;
   }
-  
+
   .trophy-icon {
     font-size: 4em;
   }
-  
+
   .grammar-game-container {
     padding: 20px 15px;
   }
-  
+
   .grammar-header-game h1 {
     font-size: 1.4em;
   }
-  
+
   .grammar-table-game th {
     font-size: 0.9em;
   }
-  
+
   .emoji-large {
-    font-size: 1.8em; /* ← Slightly bigger for mobile */
+    font-size: 1.8em;
   }
 }

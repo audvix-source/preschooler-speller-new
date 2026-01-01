@@ -31,6 +31,23 @@
   border-radius: 20px;
 }
 
+/* Hide learning screen when grammar overlays are active */
+.learning-screen-container.grammar-active {
+  display: none !important;
+}
+
+/* Ensure grammar overlays are truly full screen and on top of everything */
+.reward-overlay,
+.grammar-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important; /* ← Very high z-index */
+}
 /* Character Selection Screen */
 .character-selection-container {
   display: flex;
@@ -623,6 +640,16 @@
     height: 680px;
   }
 
+  .reward-overlay,
+  .grammar-overlay {
+    max-width: 420px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    border-radius: 20px !important;
+  }
+}
+
   .character-selection-container {
     padding: 40px 15px;
   }
@@ -668,7 +695,6 @@
   .back-button-fixed {
     bottom: 40px;
   }
-}
 
 @media only screen and (max-width: 768px) {
   .learning-screen-container {
