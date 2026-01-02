@@ -129,14 +129,14 @@ function GrammarRulePage({ onContinue, speak }) {
                 </tr>
                 <tr>
                   <td>
-                    <span className="emoji-large">😊</span>
+                    <span className="emoji-large">😊😊</span>
                     <strong>Cheek</strong>
-                    <span className="example-small">(left or right)</span>
+                    <span className="example-small">(left or right painted red)</span>
                   </td>
                   <td>
-                    <span className="emoji-large">😊😊</span>
+                    <span className="emoji-large">😊</span>
                     <strong>Cheeks</strong>
-                    <span className="example-small">(both)</span>
+                    <span className="example-small">(both sides red)</span>
                   </td>
                 </tr>
               </tbody>

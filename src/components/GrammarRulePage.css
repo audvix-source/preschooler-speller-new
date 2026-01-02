@@ -58,7 +58,44 @@
   position: absolute;
   top: -50px;
   font-size: 2em;
-  animation: confettiFall 3s ease-in infinite;
+  animation: confettiFall 1.5s ease-in infinite; /* ← Much faster */
+}
+
+/* Staggered delays for continuous confetti */
+.confetti:nth-child(1) { animation-delay: 0s; }
+.confetti:nth-child(2) { animation-delay: 0.15s; }
+.confetti:nth-child(3) { animation-delay: 0.3s; }
+.confetti:nth-child(4) { animation-delay: 0.45s; }
+.confetti:nth-child(5) { animation-delay: 0.6s; }
+.confetti:nth-child(6) { animation-delay: 0.75s; }
+.confetti:nth-child(7) { animation-delay: 0.9s; }
+.confetti:nth-child(8) { animation-delay: 1.05s; }
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* FAST SPINNING ENTRY FOR GRAMMAR CONTAINER */
+@keyframes slideUp {
+  from {
+    transform: translateY(100px) rotate(-360deg) scale(0.3); /* ← CHANGE: Fast spin from bottom */
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.grammar-game-container {
+  animation: slideUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important; /* ← CHANGE: Faster with bounce */
 }
 
 @keyframes confettiFall {
@@ -76,19 +113,31 @@
   padding: 0;
   width: 90%;
   max-width: 350px;
-  animation: rewardBounce 0.6s ease;
   position: relative;
   overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0;
+  animation: rewardBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
 }
 
 @keyframes rewardBounce {
-  0% { transform: scale(0) rotate(-10deg); }
-  60% { transform: scale(1.1) rotate(5deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  0% {
+    transform: scale(0) rotate(-360deg); /* ← Fast full spin */
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15) rotate(15deg); /* ← Bigger bounce */
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.reward-container {
+  animation: rewardBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important; /* ← Force faster with bounce */
 }
 
 /* TOP BANNER - "REMEMBER!" */
@@ -210,6 +259,7 @@
 /* ===================================================================
    GRAMMAR RULES SCREEN (The Page with the Scrollbar)
    =================================================================== */
+/* GRAMMAR OVERLAY - Match main screen dimensions exactly */
 .grammar-overlay {
   position: fixed;
   top: 0;
@@ -224,129 +274,193 @@
   animation: fadeIn 0.3s ease;
   padding: 15px;
   box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
 }
 
+/* Tablet/Desktop: Match main screen size EXACTLY */
 @media only screen and (min-width: 769px) {
   .grammar-overlay {
-    max-width: 420px;
-    margin: 0 auto;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 20px;
+    max-width: 420px !important;
+    height: 680px !important;
+    min-height: 680px !important;
+    max-height: 680px !important; /* ← ADD: Lock the height */
+    left: 50% !important;
+    right: auto !important;
+    top: 0 !important; /* ← ADD: Anchor to top */
+    transform: translateX(-50%) !important;
+    border-radius: 20px !important;
+    padding: 30px 15px;
+    overflow: hidden !important; /* ← ADD: No overflow */
   }
 }
 
+/* GRAMMAR CONTAINER - Centered with balanced spacing */
 .grammar-game-container {
   background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
   border-radius: 25px !important;
-  padding: 20px 15px 40px 15px; 
-  max-width: 95%;
-  width: 380px;
-  max-height: 80vh; 
-  overflow-y: auto !important; /* ENABLE SCROLLING */
-  overflow-x: hidden;
+  padding: 0; /* ← Remove padding, add to sections instead */
+  max-width: 90%;
+  width: 350px;
+  max-height: 85vh; /* ← Slightly reduced */
+  overflow: hidden; /* ← Hide overflow on container */
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.5s ease;
+  animation: slideUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   border: 6px solid #FFD700;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #FFA500 transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ← Space out sections evenly */
 }
 
-/* THE SLIDER (SCROLLBAR) STYLING */
-.grammar-game-container::-webkit-scrollbar {
-  width: 10px;
-  display: block;
+/* HEADER - Fixed at top with padding */
+.grammar-header-game {
+  text-align: center;
+  padding: 20px 15px 10px 15px; /* ← Add internal padding */
+  margin: 0;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%); /* ← Match container */
 }
 
-.grammar-game-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 10px;
+.grammar-header-game h1 {
+  color: #FF6347;
+  font-size: 1.3em; /* ← Slightly smaller */
+  margin: 0 0 5px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.grammar-game-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #FFA500 0%, #FF6347 100%);
-  border-radius: 10px;
-  border: 2px solid #FFF9E6;
+.grammar-subtitle-game {
+  color: #2C3E50;
+  font-size: 0.9em; /* ← Slightly smaller */
+  font-weight: 600;
+  margin: 0;
 }
 
-@media (min-width: 769px) {
-  .grammar-game-container {
-    border-radius: 25px !important;
-    overflow-y: auto !important; /* Fixed: was hiding the scrollbar before */
-  }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.grammar-header-game { text-align: center; margin-bottom: 20px; }
-.grammar-header-game h1 { color: #FF6347; font-size: 1.6em; }
-.grammar-subtitle-game { color: #2C3E50; font-size: 1.05em; font-weight: 600; }
-
+/* CONTENT - Scrollable middle section */
 .grammar-content-game {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px; /* ← Reduced gap */
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 15px 15px; /* ← Internal padding */
+  
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-/* Rules Card */
+.grammar-content-game::-webkit-scrollbar {
+  width: 6px;
+}
+
+.grammar-content-game::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.grammar-content-game::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.grammar-content-game::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* BUTTON - Fixed at bottom with padding */
+.continue-game-button {
+  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
+  color: white;
+  border: none;
+  border-radius: 0 0 19px 19px; /* ← Match container radius */
+  padding: 15px 30px;
+  font-size: 1.2em; /* ← Slightly smaller */
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+  transition: all 0.3s ease;
+  margin: 0; /* ← No margin */
+  width: 100%;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: slowBlink 2s ease-in-out infinite;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Compact card spacing */
 .rules-card {
   background: white;
   border-radius: 15px;
-  padding: 15px;
+  padding: 10px; /* ← Reduced */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 3px solid #4A90E2;
 }
 
-.grammar-table-game { width: 100%; border-collapse: collapse; }
-.grammar-table-game th {
-  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-  color: white;
-  padding: 10px 8px;
-}
-
-.grammar-table-game td {
-  padding: 12px 8px;
-  border-bottom: 2px solid #E8F4F8;
-  text-align: center;
-}
-
-.emoji-large { font-size: 2em; display: block; }
-.grammar-table-game strong { color: #E74C3C; font-size: 1.1em; }
-
-/* Special Card */
 .special-card {
   background: linear-gradient(135deg, #FFE5B4 0%, #FFD700 100%);
   border-radius: 15px;
-  padding: 15px;
+  padding: 10px; /* ← Reduced */
   border: 3px solid #FFA500;
-  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.special-card h3 {
+  text-align: center;
+  color: #8B4513;
+  margin: 0 0 8px 0; /* ← Reduced */
+  font-size: 1em; /* ← Smaller */
+}
+
+.special-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* ← Reduced */
 }
 
 .special-item-game {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px; /* ← Reduced */
+  padding: 8px; /* ← Reduced */
   background: white;
   border-radius: 10px;
-  margin-top: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Continue Button */
-.continue-game-button {
-  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
+.grammar-table-game td {
+  padding: 8px 6px; /* ← Reduced */
+  border-bottom: 2px solid #E8F4F8;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.grammar-table-game th {
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
   color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 15px 35px;
-  font-size: 1.4em;
-  font-weight: 900;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-  box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
+  padding: 8px 6px; /* ← Reduced */
+  font-size: 0.9em; /* ← Smaller */
+  text-align: center;
+}
+
+.emoji-large {
+  display: block;
+  font-size: 1.8em; /* ← Slightly smaller */
+  margin-bottom: 5px;
+}
+
+/* REWARD OVERLAY - Match dimensions too */
+@media only screen and (min-width: 769px) {
+  .reward-overlay {
+    max-width: 420px !important;
+    height: 680px !important;
+    min-height: 680px !important;
+    max-height: 680px !important; /* ← ADD */
+    left: 50% !important;
+    right: auto !important;
+    top: 0 !important; /* ← ADD */
+    transform: translateX(-50%) !important;
+    border-radius: 20px !important;
+    overflow: hidden !important; /* ← ADD */
+  }
 }

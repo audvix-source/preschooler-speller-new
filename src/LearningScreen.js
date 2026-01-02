@@ -207,12 +207,12 @@ function LearningScreen(props) {
   };
 
   const handleSpellWord = async () => {
-    if (!currentWord || isSpelling) return;
-    setIsSpelling(true);
-    const word = currentWord.word;
-    const letters = word.toUpperCase().split('');
-    setFilledLetters(Array(letters.length).fill(null));
-    await props.speak(`Let's spell ${word}`);
+   if (!currentWord || isSpelling) return;
+   setIsSpelling(true);
+   const word = currentWord.word;
+   const letters = word.toUpperCase().split('');
+   setFilledLetters(Array(letters.length).fill(null));
+   await props.speak(`Let's spell ${currentWord.powerWord || word}`); // ← Use powerWord if available
     await wait(1500);
     for (let i = 0; i < letters.length; i++) {
       setCurrentLetterIndex(i);
