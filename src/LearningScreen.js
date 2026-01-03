@@ -387,10 +387,13 @@ function LearningScreen(props) {
       }
     } else {
       // Perfect - no mistakes
-      const congratulations = ["Excellent!", "Amazing!", "You did it!", "Perfect!"];
-      const message = congratulations[Math.floor(Math.random() * congratulations.length)];
-      setEncouragementMessage(''); // ← ADD THIS - clear message for perfect
-      props.speak(message);
+      // These must match EXACTLY what's displayed on screen
+        const displayMessages = ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'];
+        const spokenMessages = ['Perfect', 'Excellent', 'Amazing', 'You Did It'];
+        const randomIndex = Math.floor(Math.random() * 4);
+  
+        setEncouragementMessage(''); // No message for perfect
+        props.speak(spokenMessages[randomIndex]); // Speak without emojis
     }
 
     // 3. Clear reward effect after 3 seconds

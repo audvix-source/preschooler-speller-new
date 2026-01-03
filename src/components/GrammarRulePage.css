@@ -1,6 +1,7 @@
 /* ===================================================================
    REWARD SCREEN (REMEMBER PAGE) - Full Screen
    =================================================================== */
+
 .reward-overlay {
   position: fixed;
   top: 0;
@@ -21,13 +22,22 @@
   box-sizing: border-box;
 }
 
+/* Tablet/Desktop: Match main screen EXACTLY */
 @media only screen and (min-width: 769px) {
   .reward-overlay {
-    max-width: 420px;
+    max-width: 420px !important;
+    height: 680px !important;
+    min-height: 680px !important;
+    max-height: 680px !important;
     margin: 0 auto;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 20px;
+    left: 50% !important;
+    right: auto !important;
+    top: 50% !important; /* ← Center vertically */
+    transform: translate(-50%, -50%) !important; /* ← Center both ways */
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    -webkit-border-radius: 20px !important;
+    clip-path: none !important;
   }
 }
 
@@ -36,10 +46,11 @@
   to { opacity: 1; transform: scale(1); }
 }
 
+/* Tablet animation with centering */
 @media only screen and (min-width: 769px) {
   @keyframes rewardFadeIn {
-    from { opacity: 0; transform: translateX(-50%) scale(0.8); }
-    to { opacity: 1; transform: translateX(-50%) scale(1); }
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
 }
 
@@ -51,14 +62,15 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 1;
+  z-index: 10; /* ← INCREASE from z-index: 1 */
+  overflow: visible; /* ← ADD THIS */
 }
 
 .confetti {
   position: absolute;
   top: -50px;
   font-size: 2em;
-  animation: confettiFall 1.5s ease-in infinite; /* ← Much faster */
+  animation: confettiFall 1.5s ease-in infinite;
 }
 
 /* Staggered delays for continuous confetti */
@@ -72,40 +84,53 @@
 .confetti:nth-child(8) { animation-delay: 1.05s; }
 
 @keyframes confettiFall {
-  0% {
-    transform: translateY(-50px) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh) rotate(720deg);
-    opacity: 0;
-  }
-}
-
-/* FAST SPINNING ENTRY FOR GRAMMAR CONTAINER */
-@keyframes slideUp {
-  from {
-    transform: translateY(100px) rotate(-360deg) scale(0.3); /* ← CHANGE: Fast spin from bottom */
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) rotate(0deg) scale(1);
-    opacity: 1;
-  }
-}
-
-.grammar-game-container {
-  animation: slideUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important; /* ← CHANGE: Faster with bounce */
-}
-
-@keyframes confettiFall {
   0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
+/* ROCKET EXPLOSIONS AT TOP */
+.rocket-explosion-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  pointer-events: none;
+  z-index: 5000; /* ← Very high, above everything */
+  overflow: visible;
+}
+
+.rocket-explosion {
+  position: absolute;
+  top: 20px;
+  font-size: 3em;
+  animation: rocketExplode 1.2s ease-out forwards;
+  transform-origin: center;
+}
+
+@keyframes rocketExplode {
+  0% {
+    transform: scale(0.3) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    transform: scale(1.5) rotate(180deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(2) rotate(360deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3) rotate(720deg);
+    opacity: 0;
+  }
+}
+
 /* ===================================================================
-   MAIN CONTAINER - ONE LONG STRIP
+   MAIN CONTAINER - ONE LONG STRIP WITH SPINNING ANIMATION
    =================================================================== */
+
 .reward-container {
   background: transparent;
   border: none;
@@ -119,25 +144,21 @@
   flex-direction: column;
   align-items: center;
   gap: 0;
-  animation: rewardBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+  animation: rewardBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
-@keyframes rewardBounce {
+@keyframes rewardSpinBounce {
   0% {
-    transform: scale(0) rotate(-360deg); /* ← Fast full spin */
+    transform: scale(0) rotate(-720deg); /* ← Full 2 spins */
     opacity: 0;
   }
   70% {
-    transform: scale(1.15) rotate(15deg); /* ← Bigger bounce */
+    transform: scale(1.15) rotate(15deg);
   }
   100% {
     transform: scale(1) rotate(0deg);
     opacity: 1;
   }
-}
-
-.reward-container {
-  animation: rewardBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important; /* ← Force faster with bounce */
 }
 
 /* TOP BANNER - "REMEMBER!" */
@@ -259,6 +280,7 @@
 /* ===================================================================
    GRAMMAR RULES SCREEN (The Page with the Scrollbar)
    =================================================================== */
+
 /* GRAMMAR OVERLAY - Match main screen dimensions exactly */
 .grammar-overlay {
   position: fixed;
@@ -278,59 +300,88 @@
   height: 100vh;
 }
 
-/* Tablet/Desktop: Match main screen size EXACTLY */
+/* Tablet/Desktop: Match main screen size EXACTLY and CENTER */
 @media only screen and (min-width: 769px) {
   .grammar-overlay {
     max-width: 420px !important;
     height: 680px !important;
     min-height: 680px !important;
-    max-height: 680px !important; /* ← ADD: Lock the height */
+    max-height: 680px !important;
     left: 50% !important;
     right: auto !important;
-    top: 0 !important; /* ← ADD: Anchor to top */
-    transform: translateX(-50%) !important;
+    top: 50% !important; /* ← Center vertically */
+    bottom: auto !important;
+    transform: translate(-50%, -50%) !important; /* ← Center both ways */
     border-radius: 20px !important;
     padding: 30px 15px;
-    overflow: hidden !important; /* ← ADD: No overflow */
+    overflow: hidden !important;
+    margin: 0 !important;
+    -webkit-border-radius: 20px !important;
+    clip-path: none !important;
   }
 }
 
-/* GRAMMAR CONTAINER - Centered with balanced spacing */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Tablet animation with centering */
+@media only screen and (min-width: 769px) {
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+}
+
+/* GRAMMAR CONTAINER - Centered with balanced spacing AND SPINNING */
 .grammar-game-container {
   background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
   border-radius: 25px !important;
-  padding: 0; /* ← Remove padding, add to sections instead */
+  padding: 0;
   max-width: 90%;
   width: 350px;
-  max-height: 85vh; /* ← Slightly reduced */
-  overflow: hidden; /* ← Hide overflow on container */
+  max-height: 85vh;
+  overflow: hidden;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: slideUpSpin 0.5s ease forwards; /* ← Simple fade, no spin */
   border: 6px solid #FFD700;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* ← Space out sections evenly */
+  justify-content: space-between;
+}
+
+/* SPINNING ANIMATION FOR GRAMMAR PAGE 2 */
+@keyframes slideUpSpin {
+  from {
+    transform: translateY(100px) rotate(-360deg) scale(0.3);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
 }
 
 /* HEADER - Fixed at top with padding */
 .grammar-header-game {
   text-align: center;
-  padding: 20px 15px 10px 15px; /* ← Add internal padding */
+  padding: 20px 15px 10px 15px;
   margin: 0;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%); /* ← Match container */
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
 }
 
 .grammar-header-game h1 {
   color: #FF6347;
-  font-size: 1.3em; /* ← Slightly smaller */
+  font-size: 1.3em;
   margin: 0 0 5px 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .grammar-subtitle-game {
   color: #2C3E50;
-  font-size: 0.9em; /* ← Slightly smaller */
+  font-size: 0.9em;
   font-weight: 600;
   margin: 0;
 }
@@ -339,47 +390,33 @@
 .grammar-content-game {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* ← Reduced gap */
+  gap: 10px;
   flex-grow: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 15px 15px; /* ← Internal padding */
-  
-  /* Hide scrollbar but keep functionality */
+  padding: 15px 15px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-.grammar-content-game::-webkit-scrollbar {
-  width: 6px;
-}
+.grammar-content-game::-webkit-scrollbar { width: 6px; }
+.grammar-content-game::-webkit-scrollbar-track { background: transparent; }
+.grammar-content-game::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 10px; }
+.grammar-content-game::-webkit-scrollbar-button { display: none; }
 
-.grammar-content-game::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.grammar-content-game::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-}
-
-.grammar-content-game::-webkit-scrollbar-button {
-  display: none;
-}
-
-/* BUTTON - Fixed at bottom with padding */
+/* BUTTON - Fixed at bottom */
 .continue-game-button {
   background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
   color: white;
   border: none;
-  border-radius: 0 0 19px 19px; /* ← Match container radius */
+  border-radius: 0 0 19px 19px;
   padding: 15px 30px;
-  font-size: 1.2em; /* ← Slightly smaller */
+  font-size: 1.2em;
   font-weight: 900;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
   transition: all 0.3s ease;
-  margin: 0; /* ← No margin */
+  margin: 0;
   width: 100%;
   letter-spacing: 1px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -388,11 +425,16 @@
   box-sizing: border-box;
 }
 
+@keyframes slowBlink {
+  0%, 100% { opacity: 1; box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4); }
+  50% { opacity: 0.6; box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2); }
+}
+
 /* Compact card spacing */
 .rules-card {
   background: white;
   border-radius: 15px;
-  padding: 10px; /* ← Reduced */
+  padding: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 3px solid #4A90E2;
 }
@@ -400,7 +442,7 @@
 .special-card {
   background: linear-gradient(135deg, #FFE5B4 0%, #FFD700 100%);
   border-radius: 15px;
-  padding: 10px; /* ← Reduced */
+  padding: 10px;
   border: 3px solid #FFA500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -408,59 +450,149 @@
 .special-card h3 {
   text-align: center;
   color: #8B4513;
-  margin: 0 0 8px 0; /* ← Reduced */
-  font-size: 1em; /* ← Smaller */
+  margin: 0 0 8px 0;
+  font-size: 1em;
 }
 
 .special-grid {
   display: flex;
   flex-direction: column;
-  gap: 6px; /* ← Reduced */
+  gap: 6px;
 }
 
 .special-item-game {
   display: flex;
   align-items: center;
-  gap: 8px; /* ← Reduced */
-  padding: 8px; /* ← Reduced */
+  gap: 8px;
+  padding: 8px;
   background: white;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.grammar-table-game td {
-  padding: 8px 6px; /* ← Reduced */
-  border-bottom: 2px solid #E8F4F8;
-  text-align: center;
-  vertical-align: middle;
+.grammar-table-game {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .grammar-table-game th {
   background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
   color: white;
-  padding: 8px 6px; /* ← Reduced */
-  font-size: 0.9em; /* ← Smaller */
+  padding: 8px 6px;
+  font-size: 0.9em;
   text-align: center;
+}
+
+.grammar-table-game th:first-child {
+  border-radius: 8px 0 0 0;
+}
+
+.grammar-table-game th:last-child {
+  border-radius: 0 8px 0 0;
+}
+
+.grammar-table-game td {
+  padding: 8px 6px;
+  border-bottom: 2px solid #E8F4F8;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.grammar-table-game tr:last-child td {
+  border-bottom: none;
+}
+
+.grammar-table-game tr:hover {
+  background: #FFF9E6;
 }
 
 .emoji-large {
   display: block;
-  font-size: 1.8em; /* ← Slightly smaller */
+  font-size: 1.8em;
   margin-bottom: 5px;
 }
 
-/* REWARD OVERLAY - Match dimensions too */
+.grammar-table-game strong {
+  display: block;
+  color: #E74C3C;
+  font-size: 1.1em;
+  margin-bottom: 3px;
+}
+
+.example-small {
+  display: block;
+  font-size: 0.75em;
+  color: #7F8C8D;
+  font-style: italic;
+}
+
+.special-emoji-large {
+  font-size: 2em;
+  flex-shrink: 0;
+}
+
+.special-text-game {
+  font-size: 0.95em;
+  color: #2C3E50;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.special-text-game strong {
+  color: #E74C3C;
+}
+
+.sub-rule {
+  display: block;
+  font-size: 0.85em;
+  color: #7F8C8D;
+  font-weight: 500;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reward-container {
+    max-width: 95%;
+  }
+
+  .banner-text {
+    font-size: 1.5em;
+  }
+
+  .reward-circle {
+    width: 130px;
+    height: 130px;
+  }
+
+  .trophy-icon {
+    font-size: 4em;
+  }
+
+  .grammar-game-container {
+    padding: 0;
+  }
+
+  .grammar-header-game h1 {
+    font-size: 1.4em;
+  }
+
+  .grammar-table-game th {
+    font-size: 0.9em;
+  }
+
+  .emoji-large {
+    font-size: 1.8em;
+  }
+}
+
+/* FIX TABLET TOP CORNER ROUNDING */
 @media only screen and (min-width: 769px) {
-  .reward-overlay {
-    max-width: 420px !important;
-    height: 680px !important;
-    min-height: 680px !important;
-    max-height: 680px !important; /* ← ADD */
-    left: 50% !important;
-    right: auto !important;
-    top: 0 !important; /* ← ADD */
-    transform: translateX(-50%) !important;
-    border-radius: 20px !important;
-    overflow: hidden !important; /* ← ADD */
+  .reward-overlay,
+  .grammar-overlay {
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
   }
 }

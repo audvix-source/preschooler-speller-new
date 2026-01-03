@@ -1,9 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './GrammarRulePage.css';
-import lipSingleImage from '../assets/lip-single.png'; // ← ADD THIS IMPORT
+import lipSingleImage from '../assets/lip-single.png';
 
 function GrammarRulePage({ onContinue, speak }) {
   const [showRules, setShowRules] = useState(false);
+  const [rocketExplosions, setRocketExplosions] = useState([]);
+
+  // Trigger rocket explosions every 3 seconds (every alternate confetti cycle)
+  useEffect(() => {
+    if (!showRules) {
+      const explosionInterval = setInterval(() => {
+        // Create 3-5 rocket explosions at random positions at the top
+        const newExplosions = [];
+        const count = Math.floor(Math.random() * 3) + 3; // 3-5 rockets
+        
+        for (let i = 0; i < count; i++) {
+          newExplosions.push({
+            id: Date.now() + i,
+            left: Math.random() * 90 + 5, // 5-95% from left
+            delay: Math.random() * 0.3 // Stagger the explosions slightly
+          });
+        }
+        
+        setRocketExplosions(newExplosions);
+        
+        // Clear explosions after animation completes
+        setTimeout(() => setRocketExplosions([]), 1500);
+      }, 3000); // Every 3 seconds (every other confetti cycle since confetti is 1.5s)
+
+      return () => clearInterval(explosionInterval);
+    }
+  }, [showRules]);
 
   const handleViewRules = () => {
     if (speak) speak("Here's something important to remember!");
@@ -28,6 +55,22 @@ function GrammarRulePage({ onContinue, speak }) {
           <div className="confetti" style={{ left: '70%', animationDelay: '0.5s' }}>⭐</div>
           <div className="confetti" style={{ left: '80%', animationDelay: '0.7s' }}>🎊</div>
           <div className="confetti" style={{ left: '90%', animationDelay: '0.1s' }}>✨</div>
+        </div>
+
+        {/* Rocket Explosions at Top */}
+        <div className="rocket-explosion-container">
+          {rocketExplosions.map(explosion => (
+            <div
+              key={explosion.id}
+              className="rocket-explosion"
+              style={{
+                left: `${explosion.left}%`,
+                animationDelay: `${explosion.delay}s`
+              }}
+            >
+              🎆
+            </div>
+          ))}
         </div>
         
         <div className="reward-container">
