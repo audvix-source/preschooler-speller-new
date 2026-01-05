@@ -64,12 +64,12 @@ function GrammarRulePage({ onContinue, speak }) {
               key={explosion.id}
               className="rocket-explosion"
               style={{
-                left: `${explosion.left}%`,
-                animationDelay: `${explosion.delay}s`
-              }}
+              left: `${explosion.left}%`,
+              animationDelay: `${explosion.delay}s`
+          }}
             >
-              🎆
-            </div>
+             🚀
+        </div>
           ))}
         </div>
         

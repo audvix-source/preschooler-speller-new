@@ -89,40 +89,49 @@
 }
 
 /* ROCKET EXPLOSIONS AT TOP */
+/* ROCKET EXPLOSIONS - Flying up then exploding */
 .rocket-explosion-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 200px;
+  height: 100%;
   pointer-events: none;
-  z-index: 5000; /* ← Very high, above everything */
+  z-index: 5000;
   overflow: visible;
 }
 
 .rocket-explosion {
   position: absolute;
-  top: 20px;
-  font-size: 3em;
-  animation: rocketExplode 1.2s ease-out forwards;
-  transform-origin: center;
+  bottom: -50px; /* ← Start from bottom */
+  font-size: 2em;
+  animation: rocketFlyExplode 2s ease-out forwards;
 }
 
-@keyframes rocketExplode {
+@keyframes rocketFlyExplode {
   0% {
-    transform: scale(0.3) rotate(0deg);
-    opacity: 0;
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
   }
-  20% {
-    transform: scale(1.5) rotate(180deg);
+  40% {
+    /* Rocket flying up */
+    transform: translateY(-70vh) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    /* Start explosion */
+    transform: translateY(-70vh) scale(1.5) rotate(180deg);
     opacity: 1;
   }
   50% {
-    transform: scale(2) rotate(360deg);
+    /* Big explosion */
+    content: '💥';
+    transform: translateY(-70vh) scale(3) rotate(360deg);
     opacity: 1;
   }
   100% {
-    transform: scale(3) rotate(720deg);
+    /* Fade out */
+    transform: translateY(-70vh) scale(4) rotate(720deg);
     opacity: 0;
   }
 }
@@ -144,19 +153,23 @@
   flex-direction: column;
   align-items: center;
   gap: 0;
-  animation: rewardBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation: spinGrowBig 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; /* ← 2 seconds */
 }
 
-@keyframes rewardSpinBounce {
+@keyframes spinGrowBig {
   0% {
-    transform: scale(0) rotate(-720deg); /* ← Full 2 spins */
+    transform: scale(0.1) rotate(-1080deg); /* ← Very small, 3 full spins */
     opacity: 0;
   }
-  70% {
-    transform: scale(1.15) rotate(15deg);
+  60% {
+    transform: scale(1.1) rotate(10deg); /* ← Slight overshoot */
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95) rotate(-5deg); /* ← Bounce back */
   }
   100% {
-    transform: scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg); /* ← Final position */
     opacity: 1;
   }
 }
