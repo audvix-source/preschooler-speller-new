@@ -31,11 +31,6 @@
   border-radius: 20px;
 }
 
-/* Hide learning screen when grammar overlays are active */
-.learning-screen-container.grammar-active {
-  display: none !important;
-}
-
 /* Ensure grammar overlays are truly full screen and on top of everything */
 .reward-overlay,
 .grammar-overlay {

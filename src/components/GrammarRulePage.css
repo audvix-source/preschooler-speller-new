@@ -24,20 +24,19 @@
 
 /* Tablet/Desktop: Match main screen EXACTLY */
 @media only screen and (min-width: 769px) {
-  .reward-overlay {
-    max-width: 420px !important;
-    height: 680px !important;
-    min-height: 680px !important;
-    max-height: 680px !important;
-    margin: 0 auto;
-    left: 50% !important;
-    right: auto !important;
-    top: 50% !important; /* ← Center vertically */
-    transform: translate(-50%, -50%) !important; /* ← Center both ways */
+  .reward-overlay, 
+  .grammar-overlay {
+    position: absolute !important; /* Pins to parent container instead of window */
+    top: 0 !important;             /* Fixes the top height gap */
+    left: 0 !important;            /* Fixes the 'left half' issue */
+    width: 100% !important;        /* Covers full width of app container */
+    height: 100% !important;       /* Covers full height of app container */
+    max-width: 420px !important;   /* Matches your app width */
+    max-height: 680px !important;  /* Matches your app height */
+    margin: 0 !important;
+    transform: none !important;
     border-radius: 20px !important;
-    overflow: hidden !important;
-    -webkit-border-radius: 20px !important;
-    clip-path: none !important;
+    z-index: 3000;
   }
 }
 
@@ -62,15 +61,14 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 10; /* ← INCREASE from z-index: 1 */
-  overflow: visible; /* ← ADD THIS */
+  z-index: 5000; /* ← INCREASE from z-index: 1 */
 }
 
+/* Ensure reward emojis are visible and falling */
 .confetti {
-  position: absolute;
-  top: -50px;
+  z-index: 5001;
+  pointer-events: none;
   font-size: 2em;
-  animation: confettiFall 1.5s ease-in infinite;
 }
 
 /* Staggered delays for continuous confetti */
@@ -89,49 +87,59 @@
 }
 
 /* ROCKET EXPLOSIONS AT TOP */
-/* ROCKET EXPLOSIONS - Flying up then exploding */
+/* KWITIS FIRECRACKERS - Shooting up and exploding */
+/* Ensure the fireworks stay within bounds */
 .rocket-explosion-container {
-  position: fixed;
+  position: absolute; /* Changed from fixed to stay inside the overlay */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 5000;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .rocket-explosion {
   position: absolute;
-  bottom: -50px; /* ← Start from bottom */
-  font-size: 2em;
-  animation: rocketFlyExplode 2s ease-out forwards;
+  bottom: 50%; /* Start from middle */
+  font-size: 1.5em;
+  animation: kwitisExplode 1.8s ease-out forwards;
 }
 
-@keyframes rocketFlyExplode {
+@keyframes kwitisExplode {
   0% {
-    transform: translateY(0) scale(1) rotate(0deg);
+    content: '🎇';
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  30% {
+    /* Flying up with trail */
+    content: '🎇';
+    transform: translateY(-40vh) scale(1.2);
+    opacity: 1;
+  }
+  35% {
+    /* Reached top, about to explode */
+    content: '✨';
+    transform: translateY(-45vh) scale(1.5);
     opacity: 1;
   }
   40% {
-    /* Rocket flying up */
-    transform: translateY(-70vh) scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  45% {
-    /* Start explosion */
-    transform: translateY(-70vh) scale(1.5) rotate(180deg);
+    /* BIG EXPLOSION */
+    content: '💥';
+    transform: translateY(-45vh) scale(3);
     opacity: 1;
   }
   50% {
-    /* Big explosion */
-    content: '💥';
-    transform: translateY(-70vh) scale(3) rotate(360deg);
-    opacity: 1;
+    /* Sparkle burst */
+    content: '✨';
+    transform: translateY(-45vh) scale(4);
+    opacity: 0.8;
   }
   100% {
-    /* Fade out */
-    transform: translateY(-70vh) scale(4) rotate(720deg);
+    /* Fade away */
+    content: '✨';
+    transform: translateY(-50vh) scale(5);
     opacity: 0;
   }
 }
@@ -153,12 +161,12 @@
   flex-direction: column;
   align-items: center;
   gap: 0;
-  animation: spinGrowBig 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; /* ← 2 seconds */
+  animation: spinGrowBig 2s ease-out forwards; /* ← Changed easing */
 }
 
 @keyframes spinGrowBig {
   0% {
-    transform: scale(0.1) rotate(-1080deg); /* ← Very small, 3 full spins */
+    transform: scale(0.01) rotate(-1440deg); /* ← MUCH smaller: 0.1 to 0.01, MORE spins: 1080deg to 1440deg (4 full rotations) */
     opacity: 0;
   }
   60% {
@@ -169,7 +177,7 @@
     transform: scale(0.95) rotate(-5deg); /* ← Bounce back */
   }
   100% {
-    transform: scale(1) rotate(0deg); /* ← Final position */
+    transform: scale(1) rotate(0deg); /* ← Direct to final position */
     opacity: 1;
   }
 }
@@ -316,21 +324,19 @@
 /* Tablet/Desktop: Match main screen size EXACTLY and CENTER */
 @media only screen and (min-width: 769px) {
   .grammar-overlay {
+    position: fixed !important;
     max-width: 420px !important;
+    width: 420px !important;
     height: 680px !important;
     min-height: 680px !important;
     max-height: 680px !important;
-    left: 50% !important;
-    right: auto !important;
-    top: 50% !important; /* ← Center vertically */
-    bottom: auto !important;
-    transform: translate(-50%, -50%) !important; /* ← Center both ways */
-    border-radius: 20px !important;
-    padding: 30px 15px;
-    overflow: hidden !important;
+    left: calc(50vw - 210px) !important; /* ← Center by calculation */
+    top: calc(50vh - 340px) !important; /* ← Center by calculation */
+    transform: none !important; /* ← Remove transform */
     margin: 0 !important;
-    -webkit-border-radius: 20px !important;
-    clip-path: none !important;
+    padding: 30px 15px;
+    border-radius: 20px !important;
+    overflow: hidden !important;
   }
 }
 
@@ -410,6 +416,10 @@
   padding: 15px 15px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  overflow-y: auto !important; /* RESTORES THE SCROLLBAR */
+  flex: 1;
+  padding-right: 15px;         /* Adds space for the scrollbar to appear */
+  scrollbar-width: thin;           /* For Firefox */
 }
 
 .grammar-content-game::-webkit-scrollbar { width: 6px; }
@@ -583,9 +593,13 @@
     font-size: 4em;
   }
 
-  .grammar-game-container {
-    padding: 0;
-  }
+  /* Ensure the rules table content can scroll properly */
+.grammar-game-container {
+  max-height: 94%; /* Give it more vertical space */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;                /* Let children handle the scroll */
+}
 
   .grammar-header-game h1 {
     font-size: 1.4em;

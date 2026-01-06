@@ -9,13 +9,11 @@ import GrammarRulePage from './components/GrammarRulePage';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import ComingSoonModal from './components/ComingSoonModal';
 
-// Dynamically load all images from src/assets
 const images = require.context('./assets', false);
-
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function LearningScreen(props) {
-  // Load saved learning state for this category
+  // Load saved learning state
   const getSavedLearningState = () => {
     try {
       const saved = localStorage.getItem(`learningState_${props.category}`);
@@ -28,6 +26,7 @@ function LearningScreen(props) {
 
   const savedLearning = getSavedLearningState();
 
+  // All state declarations
   const [showInstructionBox, setShowInstructionBox] = useState(false);
   const [viewState, setViewState] = useState(savedLearning?.viewState || 'selecting');
   const [chosenModel, setChosenModel] = useState(savedLearning?.chosenModel || null);
@@ -43,14 +42,16 @@ function LearningScreen(props) {
   const [showReward, setShowReward] = useState(false);
   const [mistakeCount, setMistakeCount] = useState(0);
   const [showGrammarRule, setShowGrammarRule] = useState(false);
+  const [skipCelebration, setSkipCelebration] = useState(false);
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
-
-  const categoryWords = getWordsByCategory(props.category);
-  const currentWord = categoryWords[wordIndex];
+  const [completionMessage, setCompletionMessage] = useState('');
   const [encouragementMessage, setEncouragementMessage] = useState('');
   const [lastEncouragementIndex, setLastEncouragementIndex] = useState(-1);
 
-  // Auto-save learning progress whenever key states change
+  const categoryWords = getWordsByCategory(props.category);
+  const currentWord = categoryWords[wordIndex];
+
+  // Auto-save learning progress
   useEffect(() => {
     const learningState = {
       viewState,
@@ -58,7 +59,6 @@ function LearningScreen(props) {
       wordIndex,
       lastSaved: new Date().toISOString()
     };
-
     try {
       localStorage.setItem(`learningState_${props.category}`, JSON.stringify(learningState));
     } catch (e) {
@@ -66,7 +66,7 @@ function LearningScreen(props) {
     }
   }, [viewState, chosenModel, wordIndex, props.category]);
 
-  // 🎵 Sound effects
+  // Sound effects
   const playMagicSound = () => {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -150,8 +150,8 @@ function LearningScreen(props) {
     setShowReward(false);
     setMistakeCount(0);
     setShowInstructionBox(false);
-    setEncouragementMessage(''); 
-    // Don't reset lastEncouragementIndex - let it keep cycling
+    setEncouragementMessage('');
+    setCompletionMessage('');
   }, [wordIndex]);
 
   const getCurrentImage = () => {
@@ -164,55 +164,13 @@ function LearningScreen(props) {
 
   const imageFileName = getCurrentImage();
 
-  const getSingularPluralHint = () => {
-    if (!currentWord) return null;
-    
-    const pluralWords = {
-      'Eyes': 'Eye',
-      'Ears': 'Ear', 
-      'Lips': 'Lip',
-      'Cheeks': 'Cheek',
-      'Dimples': 'Dimple',
-      'Eyebrows': 'Eyebrow',
-      'Eyelashes': 'Eyelash',
-      'Eyelids': 'Eyelid',
-      'Shoulders': 'Shoulder',
-      'Arms': 'Arm',
-      'Elbows': 'Elbow',
-      'Hands': 'Hand',
-      'Fingers': 'Finger',
-      'Nails': 'Nail',
-      'Palms': 'Palm',
-      'Hips': 'Hip',
-      'Feet': 'Foot',
-      'Teeth': 'Tooth'
-    };
-    
-    const word = currentWord.word;
-    if (pluralWords[word]) {
-      const singular = pluralWords[word].toLowerCase();
-      const plural = word.toLowerCase();
-      
-      if (word === 'Lips') {
-        return `If pointing only to one (top or bottom), we say '${singular}.'\nBut if pointing to both, we say '${plural}.'`;
-      }
-      
-      if (word === 'Teeth') {
-        return `If pointing only to one, we say '${singular}.'\nBut if to two or more, we say '${plural}.'`;
-      }
-      
-      return `If pointing only to one, we say '${singular}.'\nBut if pointing to both, we say '${plural}.'`;
-    }
-    return null;
-  };
-
   const handleSpellWord = async () => {
-   if (!currentWord || isSpelling) return;
-   setIsSpelling(true);
-   const word = currentWord.word;
-   const letters = word.toUpperCase().split('');
-   setFilledLetters(Array(letters.length).fill(null));
-   await props.speak(`Let's spell ${currentWord.powerWord || word}`); // ← Use powerWord if available
+    if (!currentWord || isSpelling) return;
+    setIsSpelling(true);
+    const word = currentWord.word;
+    const letters = word.toUpperCase().split('');
+    setFilledLetters(Array(letters.length).fill(null));
+    await props.speak(`Let's spell ${word}`);
     await wait(1500);
     for (let i = 0; i < letters.length; i++) {
       setCurrentLetterIndex(i);
@@ -254,7 +212,7 @@ function LearningScreen(props) {
       .map((l, i) => (l === upperLetter ? i : -1))
       .filter(i => i !== -1);
     const nextEmpty = challengeLetters.findIndex(l => l === '');
-
+    
     if (correctPositions.includes(nextEmpty)) {
       playMagicSound();
       setChallengeLetters(prev => {
@@ -269,7 +227,6 @@ function LearningScreen(props) {
       });
     } else {
       playErrorSound();
-      // Increment mistake count but DON'T show encouragement yet
       setMistakeCount(prev => prev + 1);
       
       if (nextEmpty !== -1) {
@@ -285,14 +242,12 @@ function LearningScreen(props) {
         });
       }
     }
-
+    
     setTimeout(() => {
       const completed = challengeLetters.map((l, i) => l || (correctPositions.includes(i) ? upperLetter : ''));
       if (completed.join('') === word) {
         setIsCompleted(true);
         setShowInstructionBox(true);
-
-        // Trigger reward with final mistake count
         setTimeout(() => triggerReward(mistakeCount + (correctPositions.includes(nextEmpty) ? 0 : 1)), 100);
       }
     }, 200);
@@ -304,7 +259,6 @@ function LearningScreen(props) {
     props.speak(correctLetter);
     playMagicSound();
     
-    // Update all states
     setFilledLetters(prev => {
       const copy = [...prev];
       copy[index] = correctLetter;
@@ -322,14 +276,12 @@ function LearningScreen(props) {
       copy[index] = false;
       return copy;
     });
-
-    // Check if word is now complete
+    
     setTimeout(() => {
       const word = currentWord.word.toUpperCase();
       const updatedLetters = [...challengeLetters];
       updatedLetters[index] = correctLetter;
       
-      // Check if all letters are filled
       const isComplete = updatedLetters.every(l => l !== '');
       
       if (isComplete && updatedLetters.join('') === word) {
@@ -340,69 +292,81 @@ function LearningScreen(props) {
     }, 200);
   };
 
-  const triggerReward = (finalMistakeCount) => {
-    console.log('triggerReward called with mistakeCount:', finalMistakeCount);
-    
-    setShowReward(true);
-
-    const wordLength = currentWord.word.length;
-    const threshold = Math.ceil(wordLength / 2);
-    const hadManyMistakes = finalMistakeCount > threshold;
-    
-    // 1. Handle Grammar Rule Trigger
-    if (currentWord.word === 'Eyes' && finalMistakeCount === 0) {
+const triggerReward = (finalMistakeCount) => {
+  console.log('triggerReward called with mistakeCount:', finalMistakeCount);
+  
+  setShowReward(true);
+  const wordLength = currentWord.word.length;
+  const threshold = Math.ceil(wordLength / 2);
+  const hadManyMistakes = finalMistakeCount > threshold;
+  
+  // Handle Grammar Rule Trigger for "Eyes"
+  if (currentWord.word === 'Eyes') {
+    if (finalMistakeCount === 0) {
+      // Perfect score - show celebration first
       setTimeout(() => {
         setShowGrammarRule(true);
-      }, 750); // ← CHANGE from 2500 to 750 (0.75 seconds)2500);
-    }
-    
-    // 2. Handle Audio Feedback logic
-    if (finalMistakeCount > 0) {
-      if (hadManyMistakes) {
-        // Exceeded threshold - cycle through messages
-        const encouragement = [
-          "Good effort! Try again?",
-          "Nice try! Give it another shot?",
-          "You can do it! Go, go, go!"
-        ];
-        const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
-        const message = encouragement[nextIndex];
-        
-        setLastEncouragementIndex(nextIndex);
-        setEncouragementMessage(message);
-        props.speak(message);
-      } else {
-        // Had mistakes but within threshold
-        const gentleEncouragement = [
-          "Doing good! Another try?",
-          "So close! One more try?",
-          "Great job! Can you get them all?"
-        ];
-        const nextIndex = (lastEncouragementIndex + 1) % gentleEncouragement.length;
-        const message = gentleEncouragement[nextIndex];
-        
-        setLastEncouragementIndex(nextIndex);
-        setEncouragementMessage(message);
-        props.speak(message);
-      }
+        setSkipCelebration(false);
+      }, 750);
     } else {
-      // Perfect - no mistakes
-      // These must match EXACTLY what's displayed on screen
-        const displayMessages = ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'];
-        const spokenMessages = ['Perfect', 'Excellent', 'Amazing', 'You Did It'];
-        const randomIndex = Math.floor(Math.random() * 4);
-  
-        setEncouragementMessage(''); // No message for perfect
-        props.speak(spokenMessages[randomIndex]); // Speak without emojis
+      // Had mistakes - skip celebration, go straight to rules
+      setTimeout(() => {
+        setShowGrammarRule(true);
+        setSkipCelebration(true);
+      }, 750);
     }
+  }
+  
+  // Handle Audio Feedback AND set completion message
+  if (finalMistakeCount > 0) {
+    if (hadManyMistakes) {
+      const encouragement = [
+        "Good effort! Try again?",
+        "Nice try! Give it another shot?",
+        "You can do it! Go, go, go!"
+      ];
+      const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
+      const message = encouragement[nextIndex];
+      
+      setLastEncouragementIndex(nextIndex);
+      setEncouragementMessage(message);
+      setCompletionMessage(''); // ← CLEAR completion message for mistakes
+      props.speak(message);
+    } else {
+      const gentleEncouragement = [
+        "Doing good! Another try?",
+        "So close! One more try?",
+        "Great job! Can you get them all?"
+      ];
+      const nextIndex = (lastEncouragementIndex + 1) % gentleEncouragement.length;
+      const message = gentleEncouragement[nextIndex];
+      
+      setLastEncouragementIndex(nextIndex);
+      setEncouragementMessage(message);
+      setCompletionMessage(''); // ← CLEAR completion message for mistakes
+      props.speak(message);
+    }
+  } else {
+    // Perfect - no mistakes - MATCH display and speech
+    const messages = [
+      { display: '🎉 Perfect! 🎉', speak: 'Perfect' },
+      { display: '⭐ Excellent! ⭐', speak: 'Excellent' },
+      { display: '🏆 Amazing! 🏆', speak: 'Amazing' },
+      { display: '🎊 You Did It! 🎊', speak: 'You Did It' }
+    ];
+    
+    const chosen = messages[Math.floor(Math.random() * 4)];
+    
+    setCompletionMessage(chosen.display); // ← SET completion message for perfect
+    setEncouragementMessage(''); // ← CLEAR encouragement for perfect
+    props.speak(chosen.speak);
+  }
+  
+  setTimeout(() => {
+    setShowReward(false);
+  }, 3000);
+};
 
-    // 3. Clear reward effect after 3 seconds
-    setTimeout(() => {
-      setShowReward(false);
-    }, 3000);
-  }; // <--- THIS WAS MISSING OR MISPLACED
-
-  // Logic for UI rendering
   const isLongWord = currentWord && currentWord.word.length >= 7;
 
   if (!currentWord) {
@@ -421,8 +385,8 @@ function LearningScreen(props) {
   }
 
   return (
-    <div className="learning-screen-container" style={{ backgroundImage: `url(${parkBackground})` }}>
-      <div className={`character-selection-container ${viewState !== 'selecting' ? 'hidden' : ''}`}>
+  <div className="learning-screen-container" style={{ backgroundImage: `url(${parkBackground})` }}>  
+    <div className={`character-selection-container ${viewState !== 'selecting' ? 'hidden' : ''}`}>
         <h1 className="selection-title">Choose a playmate!</h1>
         <div className="character-container">
           <div className="character-model" onClick={() => handleCharacterSelect('boy')}>
@@ -463,7 +427,7 @@ function LearningScreen(props) {
             {currentWord.word.split('').map((_, i) => (
               <div
                 key={i}
-                className={`letter-blank ${filledLetters[i] ? 'filled' : ''} ${currentLetterIndex === i ? 'current' : ''}`}
+                className={`letter-blank ${filledLetters[i] ? 'filled' : ''} ${currentLetterIndex === i ? 'current' : ''} ${showHints[i] ? 'question-mark' : ''}`}
                 onClick={() => handleHintClick(i)}
               >
                 {showHints[i] ? '?' : (filledLetters[i] || '')}
@@ -482,28 +446,26 @@ function LearningScreen(props) {
         </div>
 
         {challengeMode && (
-  <div className="challenge-section">
-    {/* Yellow box removed - now using separate grammar page */}
-    
-    {!isCompleted && (
-      <OnScreenKeyboard
+          <div className="challenge-section">
+            {!isCompleted && (
+              <OnScreenKeyboard
                 onLetterClick={handleKeyboardLetter}
                 usedLetters={challengeLetters.filter(l => l !== '')}
                 currentWord={currentWord}
               />
             )}
-            {isCompleted && (
-  <div className="completion-message">
-    <h2>
-      {encouragementMessage 
-  ? (mistakeCount > Math.ceil(currentWord.word.length / 2)
-      ? `💪 ${encouragementMessage} ⭐`
-      : `✨ ${encouragementMessage} ✨`)
-  : ['🎉 Perfect! 🎉', '⭐ Excellent! ⭐', '🏆 Amazing! 🏆', '🎊 You Did It! 🎊'][Math.floor(Math.random() * 4)]
-}
-    </h2>
-  </div>
-)}
+        {isCompleted && (
+          <div className="completion-message">
+            <h2>
+              {encouragementMessage
+                ? (mistakeCount > Math.ceil(currentWord.word.length / 2)
+                    ? `💪 ${encouragementMessage} ⭐`
+                    : `✨ ${encouragementMessage} ✨`)
+                : (completionMessage || '🎉 Perfect! 🎉') // ← Fallback in case both are empty
+              }
+            </h2>
+          </div>
+        )}
           </div>
         )}
 
@@ -517,12 +479,18 @@ function LearningScreen(props) {
 
       {showReward && <div className="confetti-overlay"></div>}
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
-       {showGrammarRule && (
-        <GrammarRulePage 
-          onContinue={() => setShowGrammarRule(false)}
+      
+      {showGrammarRule && (
+        <GrammarRulePage
+          onContinue={() => {
+            setShowGrammarRule(false);
+            setSkipCelebration(false);
+          }}
           speak={props.speak}
+          skipCelebration={skipCelebration}
         />
       )}
+      
       <ComingSoonModal show={showComingSoonModal} onClose={handleCloseComingSoon} />
     </div>
   );
