@@ -66,9 +66,10 @@
 
 /* Ensure reward emojis are visible and falling */
 .confetti {
-  z-index: 5001;
-  pointer-events: none;
+  position: absolute;
+  top: -50px;
   font-size: 2em;
+  animation: confettiFall 1.5s ease-in infinite;
 }
 
 /* Staggered delays for continuous confetti */
@@ -334,7 +335,7 @@
     top: calc(50vh - 340px) !important; /* ← Center by calculation */
     transform: none !important; /* ← Remove transform */
     margin: 0 !important;
-    padding: 30px 15px;
+    padding: 0px !important;
     border-radius: 20px !important;
     overflow: hidden !important;
   }
@@ -370,6 +371,38 @@
   justify-content: space-between;
 }
 
+
+/* TILE LIGHTING ANIMATION - For error attempts */
+.tile-animation-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 2px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 10px;
+}
+
+.tile {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  animation: tileLightUp 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes tileLightUp {
+  0% {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+  }
+  100% {
+    background: rgba(255, 215, 0, 0.8);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
+}
 /* SPINNING ANIMATION FOR GRAMMAR PAGE 2 */
 @keyframes slideUpSpin {
   from {
