@@ -1,6 +1,7 @@
 /* ===================================================================
    REWARD SCREEN (REMEMBER PAGE) - Full Screen
-   =================================================================== */
+   ===================================================================
+*/
 
 .reward-overlay {
   position: fixed;
@@ -8,7 +9,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,12 +28,12 @@
   .grammar-overlay {
     margin-top: -20px !important;
     position: fixed !important;
-    top: 50% !important;  /* CHANGE from 0 to 50% */
+    top: 50% !important;
     left: 50% !important;
-    transform: translate(-50%, calc(-50% - 3px)) !important;  /* ADD - 10px offset */
+    transform: translate(-50%, calc(-50% - 3px)) !important;
     width: 420px !important;
-    height: 700px !important;  /* CHANGE from 680px to 700px */
-    max-height: 700px !important;  /* CHANGE from 680px to 700px */
+    height: 700px !important;
+    max-height: 700px !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
@@ -87,8 +88,8 @@
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-/* ROCKET EXPLOSIONS - REDUCED TO 0.5s */
-.rocket-explosion-container {
+/* FIREWORKS EXPLOSIONS - Changed from rockets */
+.fireworks-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -96,45 +97,39 @@
   height: 100%;
   pointer-events: none;
   overflow: hidden;
+  z-index: 4999;
 }
 
-.rocket-explosion {
+.firework {
   position: absolute;
-  bottom: 50%;
-  font-size: 1.5em;
-  animation: kwitisExplode 0.5s ease-out forwards;
+  top: 15%;
+  font-size: 3em;
+  animation: fireworkExplode 1.5s ease-out forwards;
 }
 
-@keyframes kwitisExplode {
+@keyframes fireworkExplode {
   0% {
-    transform: translateY(0) scale(1);
+    transform: scale(0);
     opacity: 1;
   }
-  30% {
-    transform: translateY(-30vh) scale(1.2);  /* CHANGE from -40vh */
-    opacity: 1;
-  }
-  35% {
-    transform: translateY(-35vh) scale(1.5);  /* CHANGE from -45vh */
-    opacity: 1;
-  }
-  40% {
-    transform: translateY(-35vh) scale(3);  /* CHANGE from -45vh */
+  20% {
+    transform: scale(1);
     opacity: 1;
   }
   50% {
-    transform: translateY(-35vh) scale(4);  /* CHANGE from -45vh */
+    transform: scale(2);
     opacity: 0.8;
   }
   100% {
-    transform: translateY(-40vh) scale(5);  /* CHANGE from -50vh */
+    transform: scale(3);
     opacity: 0;
   }
 }
 
 /* ===================================================================
    MAIN CONTAINER - ONE LONG STRIP WITH SPINNING ANIMATION
-   =================================================================== */
+   ===================================================================
+*/
 
 .reward-container {
   background: transparent;
@@ -151,7 +146,7 @@
   gap: 0;
   animation: spinGrowBig 2s ease-out forwards;
   z-index: 10;
-  }
+}
 
 @keyframes spinGrowBig {
   0% {
@@ -203,14 +198,14 @@
 }
 
 @keyframes letterLight {
-  0%, 80%, 100% { 
-    color: #FFD700; 
-    transform: scale(1); 
+  0%, 80%, 100% {
+    color: #FFD700;
+    transform: scale(1);
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
   }
-  40% { 
-    color: #FFD700; 
-    transform: scale(1.6); 
+  40% {
+    color: #FFD700;
+    transform: scale(1.6);
     text-shadow: 0 0 30px #FFD700, 0 0 60px #FFD700, 3px 3px 6px rgba(0, 0, 0, 0.5);
     filter: brightness(1.5);
   }
@@ -298,7 +293,8 @@
 
 /* ===================================================================
    GRAMMAR RULES SCREEN (The Page with the Scrollbar)
-   =================================================================== */
+   ===================================================================
+*/
 
 .grammar-overlay {
   position: fixed;
@@ -338,7 +334,7 @@
   width: 100%;
   max-width: 420px;
   height: 100%;
-  min-height: 700px;  /* ADD this */
+  min-height: 700px;
   margin: 0;
   padding: 0px !important;
   display: flex;
@@ -385,9 +381,9 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, calc(-50% - 3px));   /* Use -3px like others */
-  width: 420px;  /* Make it exact */
-  height: 700px;  /* Make it exact */
+  transform: translate(-50%, calc(-50% - 3px));
+  width: 420px;
+  height: 700px;
   max-width: 420px;
   max-height: 700px;
   display: grid;
@@ -574,6 +570,21 @@
   margin-bottom: 5px;
 }
 
+/* Image container for custom emojis */
+.emoji-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  height: 65px;
+}
+
+.emoji-image-container img {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+}
+
 .grammar-table-game strong {
   display: block;
   color: #E74C3C;
@@ -618,28 +629,22 @@
   .reward-container {
     max-width: 95%;
   }
-
   .banner-text {
     font-size: 1.5em;
   }
-
   .reward-circle {
     width: 130px;
     height: 130px;
   }
-
   .trophy-icon {
     font-size: 4em;
   }
-
   .grammar-header-game h1 {
     font-size: 1.4em;
   }
-
   .grammar-table-game th {
     font-size: 0.9em;
   }
-
   .emoji-large {
     font-size: 1.8em;
   }
@@ -647,7 +652,8 @@
 
 /* ===================================================================
    CHEST SCREEN - For Error Attempts (MAGICAL TREASURE SCENE)
-   =================================================================== */
+   ===================================================================
+*/
 
 .chest-overlay {
   position: fixed;
@@ -655,7 +661,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: 
+  background:
     radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
     linear-gradient(135deg, #FF6B35 0%, #F7931E 30%, #FDC830 60%, #FFD700 100%);
   display: flex;
@@ -756,11 +762,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;  /* ADD this */
+  justify-content: center;
   gap: 30px;
   z-index: 10;
   position: relative;
-  height: 100%;  /* ADD this */
+  height: 100%;
 }
 
 .chest-title {
@@ -819,7 +825,7 @@
   transform: translate(-50%, -50%);
   width: 300px;
   height: 300px;
-  background: 
+  background:
     linear-gradient(0deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%),
     linear-gradient(45deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%),
     linear-gradient(90deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%),
@@ -832,12 +838,14 @@
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Real chest container */
+/* Chest with image */
 .chest-real {
   position: relative;
-  width: 280px;
-  height: 250px;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: chestFloat 3s ease-in-out infinite;
 }
 
@@ -846,120 +854,11 @@
   50% { transform: translateY(-15px); }
 }
 
-/* Chest base (bottom part - static) */
-.chest-base {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.chest-real img {
   width: 100%;
-  height: 60%;
-  overflow: hidden;
-}
-
-.chest-base .chest-img {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: contain;
-  clip-path: inset(40% 0 0 0);
-}
-
-/* Chest lid (top part - animated) */
-.chest-lid-animated {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  overflow: hidden;
-  transform-origin: bottom center;
-  animation: openChestLid 3s ease-in-out infinite;
-  z-index: 2;
-}
-
-.chest-lid-animated .chest-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  clip-path: inset(0 0 60% 0);
-}
-
-@keyframes openChestLid {
-  0%, 65%, 100% {
-    transform: rotateX(0deg);
-  }
-  80%, 90% {
-    transform: rotateX(-35deg);
-  }
-}
-
-/* Light beam shooting from inside chest */
-.chest-light-beam {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 200px;
-  background: linear-gradient(180deg, 
-    rgba(255, 255, 200, 0.9) 0%,
-    rgba(255, 215, 0, 0.6) 30%,
-    transparent 100%);
-  clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
-  animation: lightBeamPulse 3s ease-in-out infinite;
-  opacity: 0;
-  z-index: 1;
-}
-
-@keyframes lightBeamPulse {
-  0%, 65% {
-    opacity: 0;
-    transform: translateX(-50%) scaleY(0);
-  }
-  75% {
-    opacity: 1;
-    transform: translateX(-50%) scaleY(1);
-  }
-  90%, 100% {
-    opacity: 0.8;
-    transform: translateX(-50%) scaleY(1);
-  }
-}
-
-/* Treasure spilling out */
-.treasure-pile {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 80px;
-}
-
-.treasure-coin {
-  position: absolute;
-  font-size: 2em;
-  animation: treasureBounce 2s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-}
-
-.treasure-coin:nth-child(1) { animation-delay: 0s; }
-.treasure-coin:nth-child(2) { animation-delay: 0.3s; }
-.treasure-coin:nth-child(3) { animation-delay: 0.6s; }
-.treasure-coin:nth-child(4) { animation-delay: 0.9s; }
-
-@keyframes treasureBounce {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(180deg);
-  }
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
 }
 
 .chest-banner-button {
@@ -1023,11 +922,4 @@
   .grammar-content-game {
     max-height: calc(680px - 200px);
   }
-}
-
-/* Additional chest image styles */
-.chest-img {
-  width: 100%;
-  height: auto;
-  display: block;
 }

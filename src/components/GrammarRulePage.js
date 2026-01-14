@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './GrammarRulePage.css';
 import lipSingleImage from '../assets/lip-single.png';
+import cheekSingleImage from '../assets/cheek-single.png';
+import cheeksImage from '../assets/cheeks.png';
+import chestImage from '../assets/treasure-chest.png'; // Your uploaded chest image
 
 function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   const [showRules, setShowRules] = useState(false);
   const [showTileAnimation, setShowTileAnimation] = useState(false);
   const [showChestScreen, setShowChestScreen] = useState(false);
-  const [rocketExplosions, setRocketExplosions] = useState([]);
+  const [fireworks, setFireworks] = useState([]);
   const [confettiWaves, setConfettiWaves] = useState([]);
 
   // Handle skipCelebration prop changes
@@ -21,41 +24,41 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     }
   }, [skipCelebration]);
 
-  // Rocket and confetti management for perfect score
+  // Fireworks and confetti management for perfect score
   useEffect(() => {
-    let rocketInterval;
+    let fireworksInterval;
     let confettiInterval;
-    
+   
     if (!showRules && !skipCelebration) {
-      // ROCKETS - Fire in pairs with delays
-      rocketInterval = setInterval(() => {
-        // First pair - outer rockets
+      // FIREWORKS - Explode at same height in sky
+      fireworksInterval = setInterval(() => {
+        // First pair - outer fireworks
         setTimeout(() => {
-          setRocketExplosions([
-            { id: Date.now(), left: 5, delay: 0 },
-            { id: Date.now() + 1, left: 95, delay: 0 }
+          setFireworks([
+            { id: Date.now(), left: 15, delay: 0 },
+            { id: Date.now() + 1, left: 85, delay: 0 }
           ]);
         }, 0);
 
-        // Second pair - center rockets (500ms later)
+        // Second pair - center fireworks (500ms later)
         setTimeout(() => {
-          setRocketExplosions(prev => [
+          setFireworks(prev => [
             ...prev,
             { id: Date.now() + 2, left: 35, delay: 0 },
             { id: Date.now() + 3, left: 65, delay: 0 }
           ]);
         }, 500);
 
-        // Clear all rockets after animations
-        setTimeout(() => setRocketExplosions([]), 2500);
+        // Clear all fireworks after animations
+        setTimeout(() => setFireworks([]), 2500);
       }, 3500); // Repeat every 3.5 seconds
 
-      // CONFETTI - Start falling after center rockets explode
+      // CONFETTI - Start falling after fireworks explode
       confettiInterval = setInterval(() => {
         // First wave
         setTimeout(() => {
           setConfettiWaves([{ id: Date.now(), wave: 1 }]);
-        }, 1000); // 1 second after rockets start
+        }, 1000);
 
         // Second wave (500ms later)
         setTimeout(() => {
@@ -68,7 +71,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     }
 
     return () => {
-      if (rocketInterval) clearInterval(rocketInterval);
+      if (fireworksInterval) clearInterval(fireworksInterval);
       if (confettiInterval) clearInterval(confettiInterval);
     };
   }, [showRules, skipCelebration]);
@@ -112,17 +115,56 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   if (showChestScreen) {
     return (
       <div className="chest-overlay">
+        {/* Floating coins background */}
+        <div className="floating-coins">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div
+              key={i}
+              className="coin"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            >
+              🪙
+            </div>
+          ))}
+        </div>
+
+        {/* Flower decorations */}
+        <div className="flower-decorations">
+          <div className="flower">🌸</div>
+          <div className="flower">🌺</div>
+          <div className="flower">🌼</div>
+          <div className="flower">🌷</div>
+        </div>
+
+        {/* Sparkle effects */}
+        <div className="sparkle-effects">
+          {Array.from({ length: 15 }).map((_, i) => (
+            <div
+              key={i}
+              className="sparkle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            >
+              ✨
+            </div>
+          ))}
+        </div>
+
         <div className="chest-container">
-          <div className="chest-image">
-            <div className="chest-glow"></div>
-            <div className="chest-body">
-              <div className="chest-lid-top"></div>
-              <div className="chest-lid-bottom"></div>
-              <div className="chest-main"></div>
-              <div className="chest-lock">🔓</div>
+          <div className="chest-image-wrapper">
+            <div className="chest-glow-pulse"></div>
+            <div className="treasure-rays"></div>
+            <div className="chest-real">
+              <img src={chestImage} alt="Treasure Chest" />
             </div>
           </div>
-          
+         
           <button className="chest-banner-button" onClick={handleChestClick}>
             <div className="banner-ribbon">
               <span>LET'S SEE IT!</span>
@@ -137,18 +179,18 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   if (!showRules) {
     return (
       <div className="reward-overlay">
-        {/* Rocket Explosions */}
-        <div className="rocket-explosion-container">
-          {rocketExplosions.map(exp => (
-            <div 
-              key={exp.id} 
-              className="rocket-explosion" 
-              style={{ 
-                left: `${exp.left}%`, 
-                animationDelay: `${exp.delay}s` 
+        {/* Fireworks Explosions */}
+        <div className="fireworks-container">
+          {fireworks.map(fw => (
+            <div
+              key={fw.id}
+              className="firework"
+              style={{
+                left: `${fw.left}%`,
+                animationDelay: `${fw.delay}s`
               }}
             >
-              🚀
+              🎆
             </div>
           ))}
         </div>
@@ -172,48 +214,36 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
         <div className="reward-container">
           <div className="reward-banner">
             <span className="banner-text">
-  {'REMEMBER!'.split('').map((letter, i) => (
-    <span key={i} className="letter-cascade" style={{ '--delay': `${i * 0.15}s` }}>
-      {letter}
-    </span>
-  ))}
-</span>
+              {'REMEMBER!'.split('').map((letter, i) => (
+                <span key={i} className="letter-cascade" style={{ '--delay': `${i * 0.15}s` }}>
+                  {letter}
+                </span>
+              ))}
+            </span>
           </div>
+
           <div className="reward-box">
             <div className="reward-subtitle">YOU UNLOCKED</div>
             <div className="reward-circle"><div className="trophy-icon">🏆</div></div>
             <div className="reward-title">Grammar Tip!</div>
             <div className="reward-description">Special rules about body parts</div>
           </div>
+
           <button className="reward-okay-button" onClick={handleViewRules}>SHOW ME!</button>
         </div>
       </div>
     );
   }
 
-  // Page 2 - Grammar Rules (with split animation)
+  // Page 2 - Grammar Rules
   return (
     <div className="grammar-overlay">
-      <div className="grammar-game-container split-animation">
-        {/* Top half - 10 parts falling */}
-        <div className="split-top">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={`top-${i}`} className="split-piece split-piece-top" style={{ '--index': i }} />
-          ))}
-        </div>
-        
-        {/* Bottom half - 10 parts rising */}
-        <div className="split-bottom">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={`bottom-${i}`} className="split-piece split-piece-bottom" style={{ '--index': i }} />
-          ))}
-        </div>
-
+      <div className="grammar-game-container grow-animation">
         <div className="grammar-header-game">
           <h1>💡 Grammar Rules 💡</h1>
           <p className="grammar-subtitle-game">Body parts often come in pairs!</p>
         </div>
-        
+       
         <div className="grammar-content-game">
           <div className="rules-card">
             <table className="grammar-table-game">
@@ -229,8 +259,8 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                 </tr>
                 <tr>
                   <td>
-                    <div className="lip-image-container">
-                      <img src={lipSingleImage} alt="Single Lip" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+                    <div className="emoji-image-container">
+                      <img src={lipSingleImage} alt="Single Lip" />
                     </div>
                     <strong>Lip</strong>
                   </td>
@@ -238,18 +268,23 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                 </tr>
                 <tr>
                   <td>
-                    <span className="emoji-large">😊😊</span>
+                    <div className="emoji-image-container">
+                      <img src={cheekSingleImage} alt="Single Cheek" />
+                    </div>
                     <strong>Cheek</strong>
+                    <span className="example-small">(either left or right)</span>
                   </td>
                   <td>
-                    <span className="emoji-large">😊</span>
+                    <div className="emoji-image-container">
+                      <img src={cheeksImage} alt="Both Cheeks" />
+                    </div>
                     <strong>Cheeks</strong>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          
+         
           <div className="special-card">
             <h3>✨ Special Words ✨</h3>
             <div className="special-grid">
@@ -259,12 +294,15 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
               </div>
               <div className="special-item-game">
                 <span className="special-emoji-large">💇</span>
-                <span className="special-text-game"><strong>Hair</strong> stays <strong>Hair</strong></span>
+                <span className="special-text-game">
+                  <strong>Hair</strong> stays <strong>Hair</strong>
+                  <span className="sub-rule">But for white or falling hair: 1 white hair, 2 white hairs</span>
+                </span>
               </div>
             </div>
           </div>
         </div>
-        
+       
         <button className="continue-game-button" onClick={handleContinue}>GOT IT! 🚀</button>
       </div>
     </div>
