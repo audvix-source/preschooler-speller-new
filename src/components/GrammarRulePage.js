@@ -131,12 +131,12 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
           ))}
         </div>
 
-        {/* Flower decorations */}
-        <div className="flower-decorations">
-          <div className="flower">🌸</div>
-          <div className="flower">🌺</div>
-          <div className="flower">🌼</div>
-          <div className="flower">🌷</div>
+        {/* Pirate decorations */}
+        <div className="pirate-decorations">
+          <div className="pirate-item">🏴‍☠️</div>
+          <div className="pirate-item">⚓</div>
+          <div className="pirate-item">🗡️</div>
+          <div className="pirate-item">🦜</div>
         </div>
 
         {/* Sparkle effects */}
@@ -268,8 +268,8 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                 </tr>
                 <tr>
                   <td>
-                    <div className="emoji-image-container">
-                      <img src={cheekSingleImage} alt="Single Cheek" />
+                    <div className="emoji-image-container" style={{ height: '85px' }}>
+                      <img src={cheekSingleImage} alt="Single Cheek" className="cheek-image-large" />
                     </div>
                     <strong>Cheek</strong>
                     <span className="example-small">(either left or right)</span>
@@ -296,7 +296,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                 <span className="special-emoji-large">💇</span>
                 <span className="special-text-game">
                   <strong>Hair</strong> stays <strong>Hair</strong>
-                  <span className="sub-rule">But for white or falling hair: 1 white hair, 2 white hairs</span>
+                  <span className="sub-rule">But for actual number of strands more than one, it's ok to say "3 white hair<strong>s</strong>"</span>
                 </span>
               </div>
             </div>
