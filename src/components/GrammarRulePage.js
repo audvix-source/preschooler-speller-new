@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './GrammarRulePage.css';
 import lipSingleImage from '../assets/lip-single.png';
-import cheekSingleImage from '../assets/cheek-single.png';
-import cheeksImage from '../assets/cheeks.png';
-import chestImage from '../assets/treasure-chest.png'; // Your uploaded chest image
+import cheekSectionImage from '../assets/cheek-section.png';
+import chestImage from '../assets/treasure-chest.png';
 
 function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   const [showRules, setShowRules] = useState(false);
@@ -87,9 +86,14 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     setShowRules(true);
   };
 
-  const handleContinue = () => {
+const handleContinue = () => {
     if (speak) speak("Awesome! Let's keep going!");
-    onContinue();
+    setShowRules(false);
+    setShowTileAnimation(true);
+    setTimeout(() => {
+      setShowTileAnimation(false);
+      onContinue();
+    }, 2000);
   };
 
   // Tile animation screen
@@ -163,6 +167,10 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
             <div className="chest-real">
               <img src={chestImage} alt="Treasure Chest" />
             </div>
+          </div>
+
+          <div className="treasure-subtitle">
+            <span>Something to treasure . . .</span>
           </div>
          
           <button className="chest-banner-button" onClick={handleChestClick}>
@@ -259,7 +267,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                 </tr>
                 <tr>
                   <td>
-                    <div className="emoji-image-container">
+                     <div className="emoji-image-container">
                       <img src={lipSingleImage} alt="Single Lip" />
                     </div>
                     <strong>Lip</strong>
@@ -267,18 +275,9 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                   <td><span className="emoji-large">💋</span> <strong>Lips</strong></td>
                 </tr>
                 <tr>
-                  <td>
-                    <div className="emoji-image-container" style={{ height: '85px' }}>
-                      <img src={cheekSingleImage} alt="Single Cheek" className="cheek-image-large" />
-                    </div>
-                    <strong>Cheek</strong>
-                    <span className="example-small">(either left or right)</span>
-                  </td>
-                  <td>
-                    <div className="emoji-image-container">
-                      <img src={cheeksImage} alt="Both Cheeks" />
-                    </div>
-                    <strong>Cheeks</strong>
+                  <td colSpan="2" style={{ padding: '0', border: 'none' }}>
+                    <img src={cheekSectionImage} alt="Cheek Section" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                  
                   </td>
                 </tr>
               </tbody>
