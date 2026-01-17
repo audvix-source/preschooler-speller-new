@@ -578,14 +578,62 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 5px;
-  height: 70px;
+  height: 50px;
 }
 
 .emoji-image-container img {
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
 }
+
+/* Code-generated cheek images */
+.cheek-single {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFB6C1, #FF69B4, #FF1493);
+  position: relative;
+  display: inline-block;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cheek-single::after {
+  content: '😊';
+  position: absolute;
+  font-size: 1.8em;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: grayscale(1) brightness(1.2);
+  opacity: 0.4;
+}
+
+.cheeks-double {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.cheek-left, .cheek-right {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}  
+
+.cheek-left::after, .cheek-right::after {
+  content: '😊';
+  position: absolute;
+  font-size: 2em;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: grayscale(1) brightness(1.2);
+  opacity: 0.4;
+}
+
+/* Larger cheek image */
 
 /* Larger cheek image */
 .cheek-image-large {

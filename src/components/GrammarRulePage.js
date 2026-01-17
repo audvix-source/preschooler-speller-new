@@ -14,12 +14,8 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   // Handle skipCelebration prop changes
   useEffect(() => {
     if (skipCelebration) {
-      // Show tile animation first
-      setShowTileAnimation(true);
-      setTimeout(() => {
-        setShowTileAnimation(false);
-        setShowChestScreen(true);
-      }, 2000);
+      // Go directly to chest screen
+      setShowChestScreen(true);
     }
   }, [skipCelebration]);
 
@@ -261,13 +257,9 @@ const handleContinue = () => {
                   <td><span className="emoji-large">👁️</span> <strong>Eye</strong></td>
                   <td><span className="emoji-large">👁️👁️</span> <strong>Eyes</strong></td>
                 </tr>
-                <tr>
-                  <td><span className="emoji-large">👂</span> <strong>Ear</strong></td>
-                  <td><span className="emoji-large">👂👂</span> <strong>Ears</strong></td>
-                </tr>
-                <tr>
+                 <tr>
                   <td>
-                     <div className="emoji-image-container">
+                    <div className="emoji-image-container">
                       <img src={lipSingleImage} alt="Single Lip" />
                     </div>
                     <strong>Lip</strong>
@@ -275,9 +267,18 @@ const handleContinue = () => {
                   <td><span className="emoji-large">💋</span> <strong>Lips</strong></td>
                 </tr>
                 <tr>
-                  <td colSpan="2" style={{ padding: '0', border: 'none' }}>
-                    <img src={cheekSectionImage} alt="Cheek Section" style={{ width: '100%', height: 'auto', display: 'block' }} />
-                  
+                  <td>
+                    <div className="emoji-image-container">
+                      <span className="emoji-large">😊</span>
+                    </div>
+                    <strong>Cheek</strong>
+                    <span className="example-small">(either left or right)</span>
+                  </td>
+                  <td>
+                    <div className="emoji-image-container">
+                      <span className="emoji-large">🥰</span>
+                    </div>
+                    <strong>Cheeks</strong>  
                   </td>
                 </tr>
               </tbody>
