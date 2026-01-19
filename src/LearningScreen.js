@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import scoreDB from './services/scoreDatabase';
 import './LearningScreen.css';
 import { getWordsByCategory } from './wordList.js';
 import parkBackground from './assets/park-background.png';
@@ -296,6 +297,23 @@ const triggerReward = (finalMistakeCount) => {
   console.log('triggerReward called with mistakeCount:', finalMistakeCount);
   
   setShowReward(true);
+
+   // Record attempt in database
+  const isCorrect = finalMistakeCount === 0;
+  scoreDB.recordLearningAttempt(currentWord.word, isCorrect)
+    .then(scoreData => {
+      console.log('Score recorded:', scoreData);
+    })
+    .catch(err => {
+      console.error('Error recording score:', err);
+    });
+  
+  // Record perfect score separately
+  if (finalMistakeCount === 0) {
+    scoreDB.recordPerfectScore(currentWord.word)
+      .catch(err => console.error('Error recording perfect score:', err));
+  }
+
   const wordLength = currentWord.word.length;
   const threshold = Math.ceil(wordLength / 2);
   const hadManyMistakes = finalMistakeCount > threshold;

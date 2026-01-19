@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import scoreDB from './services/scoreDatabase';
+import './App.css';
 import MainScreen from './MainScreen';
 import CategoryMenuScreen from './CategoryMenuScreen';
 import AlphabetScreen from './AlphabetScreen';
@@ -25,6 +27,20 @@ function App() {
   const [pitch, setPitch] = useState(savedState?.pitch || 1);
   const [speed, setSpeed] = useState(savedState?.speed || 1);
   const [voices, setVoices] = useState([]);
+
+  // Initialize database on app start
+  useEffect(() => {
+    const initDatabase = async () => {
+      try {
+        await scoreDB.init();
+        console.log('✅ Database initialized successfully');
+      } catch (error) {
+        console.error('❌ Database initialization failed:', error);
+      }
+    };
+    
+    initDatabase();
+  }, []);
 
   // Auto-save state whenever it changes
   useEffect(() => {
