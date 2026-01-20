@@ -42,6 +42,12 @@ function CategoryMenuScreen(props) {
           </button>
         ))}
       </div>
+      
+      {/* My Progress Button */}
+      <button className="progress-button" onClick={() => props.onNavigate('stats')}>
+        🏆 My Progress 🏆
+      </button>
+      
       <button className="back-button" onClick={() => props.onNavigate('cover')}>Go Back</button>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import StatsScreen from './components/StatsScreen';
 import scoreDB from './services/scoreDatabase';
 import './App.css';
 import MainScreen from './MainScreen';
@@ -136,6 +137,8 @@ function App() {
         return <AlphabetScreen onNavigate={navigateTo} speak={speak} />;
       case 'learning':
         return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
+      case 'stats':
+        return <StatsScreen onNavigate={navigateTo} speak={speak} />;
       default:
         return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
     }

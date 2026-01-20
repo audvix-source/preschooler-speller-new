@@ -331,7 +331,7 @@ const triggerReward = (finalMistakeCount) => {
       setTimeout(() => {
         setShowGrammarRule(true);
         setSkipCelebration(true);
-      }, 750);
+      }, 4000);
     }
   }
   
