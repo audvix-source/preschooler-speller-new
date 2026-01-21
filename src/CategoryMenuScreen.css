@@ -68,10 +68,10 @@
 
 /* Red Egg-Shaped "Go Back" Button */
 .category-menu-container .back-button {
-  margin-top: 15px;
-  margin-bottom: 0;
-  width: 200px;
-  height: 70px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: 220px;
+  height: 7px;
   border-radius: 50% / 60%;
   padding: 0;
   display: flex;
@@ -119,36 +119,51 @@
 
 /* My Progress Button */
 .progress-button {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  color: white;
-  border: 3px solid #FF6347;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-size: 1.2em;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: 220px;
+  height: 75px;
+  border-radius: 50% / 60%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
   font-weight: bold;
+  color: white;
+  background: linear-gradient(145deg, #f44336, #d32f2f);
+  border: none;
   cursor: pointer;
-  margin: 20px auto 10px auto;
-  display: block;
-  width: 280px;
-  max-width: 280px;
-  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
-  animation: progressPulse 2s ease-in-out infinite;
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.progress-button:hover {
+.category-menu-container .back-button:hover {
+  background: linear-gradient(145deg, #d32f2f, #b71c1c);
   transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.7);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-@keyframes progressPulse {
+.category-menu-container .back-button:active {
+  transform: scale(0.98);
+}
+
+/* Pulse Animation for the Go Back Button */
+@keyframes pulse {
   0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   }
   50% {
-    transform: scale(1.02);
-    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.7);
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
   }
+}
+
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
+   =================================================================== */
+
+@media only screen and (min-width: 769px) {
+  /* No desktop-specific overrides needed */
+  /* Category menu works consistently across all screen sizes */
 }

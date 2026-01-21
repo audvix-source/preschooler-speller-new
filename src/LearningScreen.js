@@ -50,6 +50,7 @@ function LearningScreen(props) {
   const [lastEncouragementIndex, setLastEncouragementIndex] = useState(-1);
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdownValue, setCountdownValue] = useState(3);
+  const [pendingGrammarRule, setPendingGrammarRule] = useState(false);
 
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
@@ -68,6 +69,23 @@ function LearningScreen(props) {
       console.error('Error saving learning state:', e);
     }
   }, [viewState, chosenModel, wordIndex, props.category]);
+
+  // Reset state when word changes
+  useEffect(() => {
+    setIsSpelling(false);
+    setFilledLetters([]);
+    setCurrentLetterIndex(-1);
+    setChallengeMode(false);
+    setChallengeLetters([]);
+    setShowHints([]);
+    setIsCompleted(false);
+    setShowReward(false);
+    setMistakeCount(0);
+    setShowInstructionBox(false);
+    setEncouragementMessage('');
+    setCompletionMessage('');
+    setPendingGrammarRule(false);
+  }, [wordIndex]);
 
   // Sound effects
   const playMagicSound = () => {
@@ -130,6 +148,14 @@ function LearningScreen(props) {
   };
 
   const handleNextWord = () => {
+    // Check if user is skipping "Eyes" without perfect score
+    if (currentWord && currentWord.word === 'Eyes' && pendingGrammarRule) {
+      setPendingGrammarRule(false);
+      setShowGrammarRule(true);
+      setSkipCelebration(true);
+      return; // Don't advance yet - grammar rule will handle it
+    }
+    
     if (currentWord && currentWord.word === 'Cleft Chin') {
       setShowComingSoonModal(true);
     } else {
@@ -141,21 +167,6 @@ function LearningScreen(props) {
     setShowComingSoonModal(false);
     props.onNavigate('menu');
   };
-
-  useEffect(() => {
-    setIsSpelling(false);
-    setFilledLetters([]);
-    setCurrentLetterIndex(-1);
-    setChallengeMode(false);
-    setChallengeLetters([]);
-    setShowHints([]);
-    setIsCompleted(false);
-    setShowReward(false);
-    setMistakeCount(0);
-    setShowInstructionBox(false);
-    setEncouragementMessage('');
-    setCompletionMessage('');
-  }, [wordIndex]);
 
   const getCurrentImage = () => {
     if (!currentWord || !currentWord.image) return null;
@@ -295,131 +306,138 @@ function LearningScreen(props) {
     }, 200);
   };
 
-const triggerReward = (finalMistakeCount) => {
-  console.log('triggerReward called with mistakeCount:', finalMistakeCount);
-  
-  setShowReward(true);
+  const triggerReward = (finalMistakeCount) => {
+    console.log('triggerReward called with mistakeCount:', finalMistakeCount);
+    
+    setShowReward(true);
 
-   // Record attempt in database
-  const isCorrect = finalMistakeCount === 0;
-  scoreDB.recordLearningAttempt(currentWord.word, isCorrect)
-    .then(scoreData => {
-      console.log('Score recorded:', scoreData);
-    })
-    .catch(err => {
-      console.error('Error recording score:', err);
-    });
-  
-  // Record perfect score separately
-  if (finalMistakeCount === 0) {
-    scoreDB.recordPerfectScore(currentWord.word)
-      .catch(err => console.error('Error recording perfect score:', err));
-  }
-
-  const wordLength = currentWord.word.length;
-  const threshold = Math.ceil(wordLength / 2);
-  const hadManyMistakes = finalMistakeCount > threshold;
-  
-  // Handle Grammar Rule Trigger for "Eyes"
-  if (currentWord.word === 'Eyes') {
+    // Record attempt in database
+    const isCorrect = finalMistakeCount === 0;
+    scoreDB.recordLearningAttempt(currentWord.word, isCorrect)
+      .then(scoreData => {
+        console.log('Score recorded:', scoreData);
+      })
+      .catch(err => {
+        console.error('Error recording score:', err);
+      });
+    
+    // Record perfect score separately
     if (finalMistakeCount === 0) {
-      // Perfect score - show celebration first
+      scoreDB.recordPerfectScore(currentWord.word)
+        .catch(err => console.error('Error recording perfect score:', err));
+    }
+
+    const wordLength = currentWord.word.length;
+    const threshold = Math.ceil(wordLength / 2);
+    const hadManyMistakes = finalMistakeCount > threshold;
+    
+    // Handle Grammar Rule Trigger for "Eyes"
+    if (currentWord.word === 'Eyes' && finalMistakeCount === 0) {
+      // Only show grammar rule if perfect score
       setTimeout(() => {
         setShowGrammarRule(true);
         setSkipCelebration(false);
       }, 750);
-    } else {
-      // Had mistakes - skip celebration, go straight to rules
-      setTimeout(() => {
-        setShowGrammarRule(true);
-        setSkipCelebration(true);
-      }, 4000);
     }
-  }
-  
-  // Handle Audio Feedback AND set completion message
- // Handle Audio Feedback AND set completion message
-  if (finalMistakeCount > 0) {
-    if (hadManyMistakes) {
-      const encouragement = [
-        "Good effort! Try again?",
-        "Nice try! Give it another shot?",
-        "You can do it! Go, go, go!"
-      ];
-      const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
-      const message = encouragement[nextIndex];
-
-      setLastEncouragementIndex(nextIndex);
-      setEncouragementMessage(message);
-      setCompletionMessage('');
-      props.speak(message);
-
-      // Reset for retry after audio finishes
-      setTimeout(() => {
-        setIsCompleted(false);
-        setFilledLetters(Array(currentWord.word.length).fill(null));
-        setChallengeLetters(Array(currentWord.word.length).fill(''));
-        setShowHints(Array(currentWord.word.length).fill(false));
-        setMistakeCount(0);
-      }, 2500);
-    } else {
-      const gentleEncouragement = [
-        "Doing good! Another try?",
-        "So close! One more try?",
-        "Great job! Can you get them all?"
-      ];
-      const nextIndex = (lastEncouragementIndex + 1) % gentleEncouragement.length;
-      const message = gentleEncouragement[nextIndex];
-
-      setLastEncouragementIndex(nextIndex);
-      setEncouragementMessage(message);
-      setCompletionMessage('');
-      props.speak(message);
-
-      // Reset for retry after audio finishes
-      setTimeout(() => {
-        setIsCompleted(false);
-        setFilledLetters(Array(currentWord.word.length).fill(null));
-        setChallengeLetters(Array(currentWord.word.length).fill(''));
-        setShowHints(Array(currentWord.word.length).fill(false));
-        setMistakeCount(0);
-      }, 2500);
-    }
-  } else {
-    // Perfect - no mistakes - MATCH display and speech
-    const messages = [
-      { display: '🎉 Perfect! 🎉', speak: 'Perfect' },
-      { display: '⭐ Excellent! ⭐', speak: 'Excellent' },
-      { display: '🏆 Amazing! 🏆', speak: 'Amazing' },
-      { display: '🎊 You Did It! 🎊', speak: 'You Did It' }
-    ];
-
-    const chosen = messages[Math.floor(Math.random() * 4)];
-
-    setCompletionMessage(chosen.display);
-    setEncouragementMessage('');
-    props.speak(chosen.speak);
-  }
-  
-  setTimeout(() => {
-    setShowReward(false);
     
-    // Auto-advance only if perfect AND no grammar rule to show
-    if (finalMistakeCount === 0 && currentWord.word !== 'Eyes') {
-      setShowCountdown(true);
-      setCountdownValue(3);
+    // Handle Audio Feedback AND set completion message
+    if (finalMistakeCount > 0) {
+      if (hadManyMistakes) {
+        const encouragement = [
+          "Good effort! Try again?",
+          "Nice try! Give it another shot?",
+          "You can do it! Go, go, go!"
+        ];
+        const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
+        const message = encouragement[nextIndex];
+
+        setLastEncouragementIndex(nextIndex);
+        setEncouragementMessage(message);
+        setCompletionMessage('');
+        props.speak(message);
+
+        // Reset for retry after audio finishes
+        setTimeout(() => {
+          setIsCompleted(false);
+          setFilledLetters(Array(currentWord.word.length).fill(null));
+          setChallengeLetters(Array(currentWord.word.length).fill(''));
+          setShowHints(Array(currentWord.word.length).fill(false));
+          setMistakeCount(0);
+          
+          // Mark that grammar rule is pending for "Eyes"
+          if (currentWord.word === 'Eyes') {
+            setPendingGrammarRule(true);
+          }
+        }, 2500);
+        
+      } else {
+        const gentleEncouragement = [
+          "Doing good! Another try?",
+          "So close! One more try?",
+          "Great job! Can you get them all?"
+        ];
+        const nextIndex = (lastEncouragementIndex + 1) % gentleEncouragement.length;
+        const message = gentleEncouragement[nextIndex];
+
+        setLastEncouragementIndex(nextIndex);
+        setEncouragementMessage(message);
+        setCompletionMessage('');
+        props.speak(message);
+
+        // Reset for retry after audio finishes
+        setTimeout(() => {
+          setIsCompleted(false);
+          setFilledLetters(Array(currentWord.word.length).fill(null));
+          setChallengeLetters(Array(currentWord.word.length).fill(''));
+          setShowHints(Array(currentWord.word.length).fill(false));
+          setMistakeCount(0);
+          
+          // Mark that grammar rule is pending for "Eyes"
+          if (currentWord.word === 'Eyes') {
+            setPendingGrammarRule(true);
+          }
+        }, 2500);
+      }
+    } else {
+      // Perfect - no mistakes - MATCH display and speech
+      const messages = [
+        { display: '🎉 Perfect! 🎉', speak: 'Perfect' },
+        { display: '⭐ Excellent! ⭐', speak: 'Excellent' },
+        { display: '🏆 Amazing! 🏆', speak: 'Amazing' },
+        { display: '🎊 You Did It! 🎊', speak: 'You Did It' }
+      ];
+
+      const chosen = messages[Math.floor(Math.random() * 4)];
+
+      setCompletionMessage(chosen.display);
+      setEncouragementMessage('');
+      props.speak(chosen.speak);
       
-      // Countdown animation
-      setTimeout(() => setCountdownValue(2), 1000);
-      setTimeout(() => setCountdownValue(1), 2000);
-      
-      setTimeout(() => {
-        setShowCountdown(false);
-        handleNextWord();
-      }, 3000);
+      // Clear pending grammar rule if "Eyes" is now perfect
+      if (currentWord.word === 'Eyes') {
+        setPendingGrammarRule(false);
+      }
     }
-  }, 3000);
-};
+    
+    setTimeout(() => {
+      setShowReward(false);
+      
+      // Auto-advance only if perfect AND no grammar rule to show
+      if (finalMistakeCount === 0 && currentWord.word !== 'Eyes') {
+        setShowCountdown(true);
+        setCountdownValue(3);
+        
+        // Countdown animation
+        setTimeout(() => setCountdownValue(2), 1000);
+        setTimeout(() => setCountdownValue(1), 2000);
+        
+        setTimeout(() => {
+          setShowCountdown(false);
+          handleNextWord();
+        }, 3000);
+      }
+    }, 3000);
+  };
 
   const isLongWord = currentWord && currentWord.word.length >= 7;
 
@@ -439,8 +457,8 @@ const triggerReward = (finalMistakeCount) => {
   }
 
   return (
-  <div className="learning-screen-container" style={{ backgroundImage: `url(${parkBackground})` }}>  
-    <div className={`character-selection-container ${viewState !== 'selecting' ? 'hidden' : ''}`}>
+    <div className="learning-screen-container" style={{ backgroundImage: `url(${parkBackground})` }}>  
+      <div className={`character-selection-container ${viewState !== 'selecting' ? 'hidden' : ''}`}>
         <h1 className="selection-title">Choose a playmate!</h1>
         <div className="character-container">
           <div className="character-model" onClick={() => handleCharacterSelect('boy')}>
@@ -508,18 +526,18 @@ const triggerReward = (finalMistakeCount) => {
                 currentWord={currentWord}
               />
             )}
-        {isCompleted && (
-          <div className="completion-message">
-            <h2>
-              {encouragementMessage
-                ? (mistakeCount > Math.ceil(currentWord.word.length / 2)
-                    ? `💪 ${encouragementMessage} ⭐`
-                    : `✨ ${encouragementMessage} ✨`)
-                : (completionMessage || '🎉 Perfect! 🎉') // ← Fallback in case both are empty
-              }
-            </h2>
-          </div>
-        )}
+            {isCompleted && (
+              <div className="completion-message">
+                <h2>
+                  {encouragementMessage
+                    ? (mistakeCount > Math.ceil(currentWord.word.length / 2)
+                        ? `💪 ${encouragementMessage} ⭐`
+                        : `✨ ${encouragementMessage} ✨`)
+                    : (completionMessage || '🎉 Perfect! 🎉')
+                  }
+                </h2>
+              </div>
+            )}
           </div>
         )}
 
@@ -531,7 +549,7 @@ const triggerReward = (finalMistakeCount) => {
         </button>
       </div>
 
-     {showReward && <div className="confetti-overlay"></div>}
+      {showReward && <div className="confetti-overlay"></div>}
       
       {showCountdown && (
         <div className="countdown-overlay">
@@ -550,22 +568,23 @@ const triggerReward = (finalMistakeCount) => {
             setShowGrammarRule(false);
             setSkipCelebration(false);
             
-            if (mistakeCount === 0) {
-              setShowCountdown(true);
-              setCountdownValue(3);
-              setTimeout(() => setCountdownValue(2), 1000);
-              setTimeout(() => setCountdownValue(1), 2000);
-              setTimeout(() => {
-                setShowCountdown(false);
-                handleNextWord();
-              }, 3000);
-            }
+            // Auto-advance after grammar rule
+            setShowCountdown(true);
+            setCountdownValue(3);
+            setTimeout(() => setCountdownValue(2), 1000);
+            setTimeout(() => setCountdownValue(1), 2000);
+            setTimeout(() => {
+              setShowCountdown(false);
+              handleNextWord();
+            }, 3000);
           }}
           speak={props.speak}
           skipCelebration={skipCelebration}
         />
       )}
-    </div> // This is the ONLY closing div needed here to close 'learning-screen-container'
+      
+      <ComingSoonModal show={showComingSoonModal} onClose={handleCloseComingSoon} />
+    </div>
   );
 }
 
