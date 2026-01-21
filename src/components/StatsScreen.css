@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -14,22 +14,24 @@
   border: 6px solid #FFD700;
   border-radius: 20px;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
+  width: 420px;
+  height: 680px;
+  padding: 15px;
   box-sizing: border-box;
-  max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0 auto;
 }
 
 .stats-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  padding: 5px 0;
 }
 
 .stats-header h1 {
   color: #FF6347;
-  font-size: 2em;
+  font-size: 1.5em;
   margin: 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -51,16 +53,17 @@
 }
 
 .rewards-grid {
-  display: grid;
+    display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .reward-card {
   background: linear-gradient(135deg, #FFE5B4 0%, #FFD700 100%);
   border: 3px solid #FFA500;
   border-radius: 12px;
-  padding: 15px 10px;
+  padding: 10px 5px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
@@ -86,19 +89,19 @@
 }
 
 .reward-icon {
-  font-size: 2.5em;
-  margin-bottom: 5px;
-}
-
-.reward-count {
-  font-size: 1.8em;
-  font-weight: 900;
-  color: #E74C3C;
+  font-size: 2em;
   margin-bottom: 3px;
 }
 
+.reward-count {
+  font-size: 1.5em;
+  font-weight: 900;
+  color: #E74C3C;
+  margin-bottom: 2px;
+}
+
 .reward-label {
-  font-size: 0.85em;
+  font-size: 0.75em;
   color: #2C3E50;
   font-weight: 600;
 }
@@ -304,4 +307,23 @@
   .stats-summary {
     grid-template-columns: 1fr;
   }
+}
+
+.stats-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.stats-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.stats-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 165, 0, 0.6);
+  border-radius: 10px;
+}
+
+.stats-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 165, 0, 0.8);
 }

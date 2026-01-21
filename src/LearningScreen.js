@@ -48,6 +48,8 @@ function LearningScreen(props) {
   const [completionMessage, setCompletionMessage] = useState('');
   const [encouragementMessage, setEncouragementMessage] = useState('');
   const [lastEncouragementIndex, setLastEncouragementIndex] = useState(-1);
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [countdownValue, setCountdownValue] = useState(3);
 
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
@@ -336,6 +338,7 @@ const triggerReward = (finalMistakeCount) => {
   }
   
   // Handle Audio Feedback AND set completion message
+ // Handle Audio Feedback AND set completion message
   if (finalMistakeCount > 0) {
     if (hadManyMistakes) {
       const encouragement = [
@@ -345,11 +348,20 @@ const triggerReward = (finalMistakeCount) => {
       ];
       const nextIndex = (lastEncouragementIndex + 1) % encouragement.length;
       const message = encouragement[nextIndex];
-      
+
       setLastEncouragementIndex(nextIndex);
       setEncouragementMessage(message);
-      setCompletionMessage(''); // ← CLEAR completion message for mistakes
+      setCompletionMessage('');
       props.speak(message);
+
+      // Reset for retry after audio finishes
+      setTimeout(() => {
+        setIsCompleted(false);
+        setFilledLetters(Array(currentWord.word.length).fill(null));
+        setChallengeLetters(Array(currentWord.word.length).fill(''));
+        setShowHints(Array(currentWord.word.length).fill(false));
+        setMistakeCount(0);
+      }, 2500);
     } else {
       const gentleEncouragement = [
         "Doing good! Another try?",
@@ -358,11 +370,20 @@ const triggerReward = (finalMistakeCount) => {
       ];
       const nextIndex = (lastEncouragementIndex + 1) % gentleEncouragement.length;
       const message = gentleEncouragement[nextIndex];
-      
+
       setLastEncouragementIndex(nextIndex);
       setEncouragementMessage(message);
-      setCompletionMessage(''); // ← CLEAR completion message for mistakes
+      setCompletionMessage('');
       props.speak(message);
+
+      // Reset for retry after audio finishes
+      setTimeout(() => {
+        setIsCompleted(false);
+        setFilledLetters(Array(currentWord.word.length).fill(null));
+        setChallengeLetters(Array(currentWord.word.length).fill(''));
+        setShowHints(Array(currentWord.word.length).fill(false));
+        setMistakeCount(0);
+      }, 2500);
     }
   } else {
     // Perfect - no mistakes - MATCH display and speech
@@ -372,16 +393,31 @@ const triggerReward = (finalMistakeCount) => {
       { display: '🏆 Amazing! 🏆', speak: 'Amazing' },
       { display: '🎊 You Did It! 🎊', speak: 'You Did It' }
     ];
-    
+
     const chosen = messages[Math.floor(Math.random() * 4)];
-    
-    setCompletionMessage(chosen.display); // ← SET completion message for perfect
-    setEncouragementMessage(''); // ← CLEAR encouragement for perfect
+
+    setCompletionMessage(chosen.display);
+    setEncouragementMessage('');
     props.speak(chosen.speak);
   }
   
   setTimeout(() => {
     setShowReward(false);
+    
+    // Auto-advance only if perfect AND no grammar rule to show
+    if (finalMistakeCount === 0 && currentWord.word !== 'Eyes') {
+      setShowCountdown(true);
+      setCountdownValue(3);
+      
+      // Countdown animation
+      setTimeout(() => setCountdownValue(2), 1000);
+      setTimeout(() => setCountdownValue(1), 2000);
+      
+      setTimeout(() => {
+        setShowCountdown(false);
+        handleNextWord();
+      }, 3000);
+    }
   }, 3000);
 };
 
@@ -495,7 +531,17 @@ const triggerReward = (finalMistakeCount) => {
         </button>
       </div>
 
-      {showReward && <div className="confetti-overlay"></div>}
+     {showReward && <div className="confetti-overlay"></div>}
+      
+      {showCountdown && (
+        <div className="countdown-overlay">
+          <div className="countdown-circle">
+            <span className="countdown-number">{countdownValue}</span>
+          </div>
+          <p className="countdown-text">Moving to next word...</p>
+        </div>
+      )}
+
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
       
       {showGrammarRule && (
@@ -503,14 +549,23 @@ const triggerReward = (finalMistakeCount) => {
           onContinue={() => {
             setShowGrammarRule(false);
             setSkipCelebration(false);
+            
+            if (mistakeCount === 0) {
+              setShowCountdown(true);
+              setCountdownValue(3);
+              setTimeout(() => setCountdownValue(2), 1000);
+              setTimeout(() => setCountdownValue(1), 2000);
+              setTimeout(() => {
+                setShowCountdown(false);
+                handleNextWord();
+              }, 3000);
+            }
           }}
           speak={props.speak}
           skipCelebration={skipCelebration}
         />
       )}
-      
-      <ComingSoonModal show={showComingSoonModal} onClose={handleCloseComingSoon} />
-    </div>
+    </div> // This is the ONLY closing div needed here to close 'learning-screen-container'
   );
 }
 
