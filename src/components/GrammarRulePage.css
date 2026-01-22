@@ -30,10 +30,10 @@
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
-    transform: translate(-50%, calc(-50% - 3px)) !important;
+    transform: translate(-50%, -50%) !important;
     width: 420px !important;
-    height: 700px !important;
-    max-height: 700px !important;
+    height: 680px !important;
+    max-height: 680px !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
@@ -335,7 +335,7 @@
   width: 100%;
   max-width: 420px;
   height: 100%;
-  min-height: 700px;
+  min-height: 680px;
   margin: 0;
   padding: 0px !important;
   display: flex;
@@ -348,10 +348,11 @@
 
 /* Tablet/Desktop exact sizing */
 @media only screen and (min-width: 769px) {
-  .grammar-game-container {
+    .grammar-game-container {
     width: 420px !important;
     height: 680px !important;
-    min-height: 700px !important;
+    min-height: 680px !important;
+    max-height: 680px !important;
     max-width: 420px !important;
   }
 }
@@ -458,10 +459,30 @@
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-.grammar-content-game::-webkit-scrollbar { width: 6px; }
-.grammar-content-game::-webkit-scrollbar-track { background: transparent; }
-.grammar-content-game::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 10px; }
-.grammar-content-game::-webkit-scrollbar-button { display: none; }
+.grammar-content-game::-webkit-scrollbar { 
+  width: 14px; 
+}
+
+.grammar-content-game::-webkit-scrollbar-track {
+  background: rgba(255, 215, 0, 0.2);
+  border-radius: 10px;
+  margin: 5px 0;
+  border: 2px solid rgba(255, 165, 0, 0.3);
+}
+
+.grammar-content-game::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.grammar-content-game::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+}
+
+.grammar-content-game::-webkit-scrollbar-button {
+  display: none;
+}
 
 /* BUTTON - Fixed at bottom */
 .continue-game-button {

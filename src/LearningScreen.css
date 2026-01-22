@@ -17,18 +17,17 @@
 
 /* Main Container - Tablet Dimensions */
 .learning-screen-container {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  height: 100vh;
-  margin: 0 auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  height: 680px;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden; /* ← Make absolutely sure this is here */
-  display: flex;
-  flex-direction: column;
   border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
 }
 
 /* Ensure grammar overlays are truly full screen and on top of everything */
