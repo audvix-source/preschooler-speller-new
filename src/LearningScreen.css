@@ -767,23 +767,98 @@
   }
 }
 
-@keyframes countdownPulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.6);
+/* Cycle through different animations for each number */
+.countdown-number {
+  font-size: 4em;
+  font-weight: 900;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Number 3 - Spinning Star Burst */
+.countdown-number {
+  animation: starBurst 1s ease-out;
+}
+
+@keyframes starBurst {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+    text-shadow: 0 0 0px #FFD700;
+    filter: hue-rotate(0deg);
   }
   50% {
-    transform: scale(1.05);
-    box-shadow: 0 15px 50px rgba(255, 215, 0, 0.9);
+    transform: scale(1.8) rotate(180deg);
+    text-shadow: 0 0 60px #FFD700, 0 0 100px #FFA500, 0 0 140px #FF6347;
+    filter: hue-rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+    text-shadow: 5px 5px 15px rgba(0, 0, 0, 0.6);
+    filter: hue-rotate(360deg);
   }
 }
 
-@keyframes countdownScale {
+/* Circle - Jelly Wobble with Rainbow Effect */
+@keyframes countdownPulse {
   0%, 100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
+    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.6);
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  }
+  25% {
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 15px 60px rgba(255, 99, 71, 0.8);
+    background: linear-gradient(135deg, #FF6347 0%, #FF1493 100%);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(0.95) rotate(-5deg);
+    box-shadow: 0 15px 60px rgba(78, 205, 196, 0.8);
+    background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  }
+  75% {
+    transform: scale(1.1) rotate(3deg);
+    box-shadow: 0 15px 60px rgba(149, 225, 211, 0.8);
+    background: linear-gradient(135deg, #95E1D3 0%, #7FCDCD 100%);
+  }
+}
+
+/* Text - Bouncy Pop */
+@keyframes textBlink {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.2);
+  }
+  50% {
+    transform: translateY(5px) scale(0.9);
+  }
+  70% {
+    transform: translateY(-5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Add sparkle particles around countdown */
+@keyframes sparkleFloat {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translate(20px, -30px) rotate(180deg) scale(1);
+  }
+  100% {
+    transform: translate(50px, -80px) rotate(360deg) scale(0);
+    opacity: 0;
   }
 }
 

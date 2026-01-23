@@ -50,9 +50,9 @@ class ScoreDatabase {
 
   // === ALPHABET SCORES ===
 
-  // Record alphabet attempt (correct or incorrect)
   async recordAlphabetAttempt(letter, isCorrect) {
-    const store = this.db.transaction(['alphabetScores'], 'readwrite').objectStore('alphabetScores');
+    const transaction = this.db.transaction(['alphabetScores', 'overallProgress', 'rewards'], 'readwrite');
+    const store = transaction.objectStore('alphabetScores');
     
     // Get existing score or create new
     const existing = await this.getRecord(store, letter);
@@ -77,19 +77,17 @@ class ScoreDatabase {
 
     await this.putRecord(store, updatedScore);
     
-    // Check for rewards
-    await this.checkRewards('alphabet', updatedScore.correctAttempts);
+    // Check for rewards in same transaction
+    await this.checkRewardsInTransaction(transaction, 'alphabet', updatedScore.correctAttempts);
     
     return updatedScore;
   }
 
-  // Get alphabet letter score
   async getAlphabetScore(letter) {
     const store = this.db.transaction(['alphabetScores'], 'readonly').objectStore('alphabetScores');
     return await this.getRecord(store, letter.toUpperCase());
   }
 
-  // Get all alphabet scores
   async getAllAlphabetScores() {
     const store = this.db.transaction(['alphabetScores'], 'readonly').objectStore('alphabetScores');
     return await this.getAllRecords(store);
@@ -98,7 +96,8 @@ class ScoreDatabase {
   // === LEARNING SCORES (Body Parts) ===
 
   async recordLearningAttempt(topic, isCorrect) {
-    const store = this.db.transaction(['learningScores'], 'readwrite').objectStore('learningScores');
+    const transaction = this.db.transaction(['learningScores', 'overallProgress', 'rewards'], 'readwrite');
+    const store = transaction.objectStore('learningScores');
     
     const existing = await this.getRecord(store, topic);
     
@@ -120,12 +119,11 @@ class ScoreDatabase {
     updatedScore.accuracy = Math.round((updatedScore.correctAttempts / updatedScore.totalAttempts) * 100);
 
     await this.putRecord(store, updatedScore);
-    await this.checkRewards('learning', updatedScore.correctAttempts);
+    await this.checkRewardsInTransaction(transaction, 'learning', updatedScore.correctAttempts);
     
     return updatedScore;
   }
 
-  // Record perfect score in learning section
   async recordPerfectScore(topic) {
     const store = this.db.transaction(['learningScores'], 'readwrite').objectStore('learningScores');
     const existing = await this.getRecord(store, topic);
@@ -136,7 +134,6 @@ class ScoreDatabase {
     }
   }
 
-  // Record grammar rule view
   async recordGrammarView(topic) {
     const store = this.db.transaction(['learningScores'], 'readwrite').objectStore('learningScores');
     const existing = await this.getRecord(store, topic);
@@ -150,20 +147,59 @@ class ScoreDatabase {
   // === OVERALL PROGRESS ===
 
   async getOverallProgress() {
-    const store = this.db.transaction(['overallProgress'], 'readonly').objectStore('overallProgress');
-    const progress = await this.getRecord(store, 'main');
-    
-    return progress || {
-      id: 'main',
-      totalStars: 0,
-      bronzeMedals: 0,
-      silverTrophies: 0,
-      goldCrowns: 0,
-      currentStreak: 0,
-      lastActiveDate: null,
-      totalCorrect: 0,
-      totalAttempts: 0
-    };
+    try {
+      const transaction = this.db.transaction(['overallProgress', 'learningScores'], 'readonly');
+      const progressStore = transaction.objectStore('overallProgress');
+      const learningStore = transaction.objectStore('learningScores');
+      
+      const progress = await this.getRecord(progressStore, 'main');
+      const allLearningScores = await this.getAllRecords(learningStore);
+      
+      // Calculate totals from learning scores
+      let totalCorrect = 0;
+      let totalAttempts = 0;
+      
+      allLearningScores.forEach(score => {
+        totalCorrect += score.correctAttempts || 0;
+        totalAttempts += score.totalAttempts || 0;
+      });
+      
+      const baseProgress = progress || {
+        id: 'main',
+        stars: 0,
+        bronze: 0,
+        silver: 0,
+        champion: 0,
+        dayStreak: 0,
+        lastActiveDate: null
+      };
+      
+      return {
+        ...baseProgress,
+        totalCorrect,
+        totalAttempts,
+        wordStats: allLearningScores.map(score => ({
+          word: score.topic,
+          correctAttempts: score.correctAttempts || 0,
+          totalAttempts: score.totalAttempts || 0,
+          perfectCount: score.perfectScores || 0,
+          accuracy: score.accuracy || 0
+        }))
+      };
+    } catch (error) {
+      console.error('Error getting overall progress:', error);
+      return {
+        id: 'main',
+        stars: 0,
+        bronze: 0,
+        silver: 0,
+        champion: 0,
+        dayStreak: 0,
+        totalCorrect: 0,
+        totalAttempts: 0,
+        wordStats: []
+      };
+    }
   }
 
   async updateOverallProgress(updates) {
@@ -174,49 +210,59 @@ class ScoreDatabase {
     return updated;
   }
 
-  // === REWARDS SYSTEM ===
+  // === REWARDS SYSTEM (Transaction-safe) ===
 
-  async checkRewards(category, correctCount) {
+  async checkRewardsInTransaction(transaction, category, correctCount) {
+    const progressStore = transaction.objectStore('overallProgress');
+    const rewardStore = transaction.objectStore('rewards');
+    
+    const progress = await this.getRecord(progressStore, 'main') || {
+      id: 'main',
+      stars: 0,
+      bronze: 0,
+      silver: 0,
+      champion: 0
+    };
+    
     const rewards = [];
     
     // Check milestones
     if (correctCount % 5 === 0 && correctCount > 0) {
       rewards.push({ type: 'star', level: 'minor', count: 1 });
-      await this.addReward('star', 1);
+      progress.stars = (progress.stars || 0) + 1;
     }
     
     if (correctCount % 10 === 0 && correctCount > 0) {
       rewards.push({ type: 'bronze', level: 'medium', count: 1 });
-      await this.addReward('bronze', 1);
+      progress.bronze = (progress.bronze || 0) + 1;
     }
     
     if (correctCount % 20 === 0 && correctCount > 0) {
       rewards.push({ type: 'silver', level: 'milestone', count: 1 });
-      await this.addReward('silver', 1);
+      progress.silver = (progress.silver || 0) + 1;
+    }
+    
+    if (correctCount % 50 === 0 && correctCount > 0) {
+      rewards.push({ type: 'champion', level: 'epic', count: 1 });
+      progress.champion = (progress.champion || 0) + 1;
+    }
+    
+    // Update progress
+    if (rewards.length > 0) {
+      await this.putRecord(progressStore, progress);
+      
+      // Record each reward
+      for (const reward of rewards) {
+        await this.putRecord(rewardStore, {
+          type: reward.type,
+          count: reward.count,
+          earnedDate: new Date().toISOString(),
+          isNew: true
+        });
+      }
     }
     
     return rewards;
-  }
-
-  async addReward(type, count = 1) {
-    const progress = await this.getOverallProgress();
-    
-    const updates = {};
-    if (type === 'star') updates.totalStars = (progress.totalStars || 0) + count;
-    if (type === 'bronze') updates.bronzeMedals = (progress.bronzeMedals || 0) + count;
-    if (type === 'silver') updates.silverTrophies = (progress.silverTrophies || 0) + count;
-    if (type === 'gold') updates.goldCrowns = (progress.goldCrowns || 0) + count;
-    
-    await this.updateOverallProgress(updates);
-    
-    // Record in rewards table for "new" tracking
-    const rewardStore = this.db.transaction(['rewards'], 'readwrite').objectStore('rewards');
-    await this.putRecord(rewardStore, {
-      type,
-      count,
-      earnedDate: new Date().toISOString(),
-      isNew: true
-    });
   }
 
   async getRecentRewards(hours = 24) {

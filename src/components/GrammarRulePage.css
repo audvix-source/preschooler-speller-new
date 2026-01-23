@@ -26,7 +26,6 @@
   .reward-overlay,
   .chest-overlay,
   .grammar-overlay {
-    margin-top: -20px !important;
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
@@ -88,7 +87,7 @@
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-/* FIREWORKS EXPLOSIONS - Changed from rockets */
+/* FIREWORKS EXPLOSIONS */
 .fireworks-container {
   position: absolute;
   top: 0;
@@ -126,11 +125,7 @@
   }
 }
 
-/* ===================================================================
-   MAIN CONTAINER - ONE LONG STRIP WITH SPINNING ANIMATION
-   ===================================================================
-*/
-
+/* MAIN CONTAINER - ONE LONG STRIP WITH SPINNING ANIMATION */
 .reward-container {
   background: transparent;
   border: none;
@@ -167,7 +162,6 @@
   }
 }
 
-/* TOP BANNER - "REMEMBER!" with running light animation */
 .reward-banner {
   background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
   padding: 12px 24px;
@@ -212,7 +206,6 @@
   }
 }
 
-/* MIDDLE BOX - Blue section */
 .reward-box {
   padding: 30px 20px;
   position: relative;
@@ -269,7 +262,6 @@
   font-weight: 600;
 }
 
-/* BOTTOM BUTTON - "SHOW ME!" */
 .reward-okay-button {
   background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
   color: white;
@@ -293,7 +285,7 @@
 }
 
 /* ===================================================================
-   GRAMMAR RULES SCREEN (The Page with the Scrollbar)
+   GRAMMAR RULES SCREEN
    ===================================================================
 */
 
@@ -318,7 +310,6 @@
   to { opacity: 1; }
 }
 
-/* Tablet animation with centering */
 @media only screen and (min-width: 769px) {
   @keyframes fadeIn {
     from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
@@ -326,7 +317,6 @@
   }
 }
 
-/* GRAMMAR CONTAINER - Centered with balanced spacing */
 .grammar-game-container {
   background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
   border: 6px solid #FFD700;
@@ -346,9 +336,8 @@
   box-sizing: border-box;
 }
 
-/* Tablet/Desktop exact sizing */
 @media only screen and (min-width: 769px) {
-    .grammar-game-container {
+  .grammar-game-container {
     width: 420px !important;
     height: 680px !important;
     min-height: 680px !important;
@@ -357,7 +346,6 @@
   }
 }
 
-/* GROWING DOT ANIMATION - Replaces split animation */
 .grow-animation {
   animation: growFromDot 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -378,16 +366,15 @@
   }
 }
 
-/* TILE LIGHTING ANIMATION - For error attempts - CENTERED */
 .tile-animation-container {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, calc(-50% - 3px));
+  transform: translate(-50%, -50%);
   width: 420px;
-  height: 700px;
+  height: 680px;
   max-width: 420px;
-  max-height: 700px;
+  max-height: 680px;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(8, 1fr);
@@ -396,13 +383,6 @@
   padding: 10px;
   box-sizing: border-box;
   border-radius: 20px;
-}
-
-@media only screen and (min-width: 769px) {
-  .tile-animation-container {
-    width: 420px !important;
-    height: 680px !important;
-  }
 }
 
 .tile {
@@ -422,7 +402,6 @@
   }
 }
 
-/* HEADER - Fixed at top with padding */
 .grammar-header-game {
   text-align: center;
   padding: 20px 15px 10px 15px;
@@ -445,7 +424,7 @@
   margin: 0;
 }
 
-/* CONTENT - Scrollable middle section */
+/* SCROLLABLE CONTENT WITH GOLDEN WIDE SCROLLBAR */
 .grammar-content-game {
   display: flex;
   flex-direction: column;
@@ -453,14 +432,12 @@
   flex-grow: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 15px 15px;
-  padding-right: 15px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  padding: 15px 8px 15px 15px;
 }
 
-.grammar-content-game::-webkit-scrollbar { 
-  width: 14px; 
+/* GOLDEN WIDE SCROLLBAR - MATCHES MY PROGRESS */
+.grammar-content-game::-webkit-scrollbar {
+  width: 14px;
 }
 
 .grammar-content-game::-webkit-scrollbar-track {
@@ -480,24 +457,18 @@
   background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
 }
 
-.grammar-content-game::-webkit-scrollbar-button {
-  display: none;
-}
-
-/* BUTTON - Fixed at bottom */
 .continue-game-button {
   background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
   color: white;
   border: none;
-  border-radius: 14 14 14px 14px;
+  border-radius: 0 0 14px 14px;
   padding: 20px 30px;
-  margin-bottom: 16px;
+  margin: 0;
   font-size: 1.2em;
   font-weight: 900;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(50, 205, 50, 0.4);
   transition: all 0.3s ease;
-  margin-top: 20px;
   width: 100%;
   letter-spacing: 1px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -511,7 +482,6 @@
   50% { opacity: 0.6; box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2); }
 }
 
-/* Compact card spacing */
 .rules-card {
   background: white;
   border-radius: 15px;
@@ -593,7 +563,6 @@
   margin-bottom: 5px;
 }
 
-/* Image container for custom emojis */
 .emoji-image-container {
   display: flex;
   justify-content: center;
@@ -606,61 +575,6 @@
   width: 50px;
   height: 50px;
   object-fit: contain;
-}
-
-/* Code-generated cheek images */
-.cheek-single {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #FFB6C1, #FF69B4, #FF1493);
-  position: relative;
-  display: inline-block;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.cheek-single::after {
-  content: '😊';
-  position: absolute;
-  font-size: 1.8em;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  filter: grayscale(1) brightness(1.2);
-  opacity: 0.4;
-}
-
-.cheeks-double {
-  display: flex;
-  gap: 5px;
-  justify-content: center;
-  align-items: center;
-}
-
-.cheek-left, .cheek-right {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}  
-
-.cheek-left::after, .cheek-right::after {
-  content: '😊';
-  position: absolute;
-  font-size: 2em;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  filter: grayscale(1) brightness(1.2);
-  opacity: 0.4;
-}
-
-/* Larger cheek image */
-
-/* Larger cheek image */
-.cheek-image-large {
-  width: 90px !important;
-  height: 90px !important;
-  margin-bottom: -10px;
 }
 
 .grammar-table-game strong {
@@ -702,37 +616,7 @@
   font-style: italic;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .reward-container {
-    max-width: 95%;
-  }
-  .banner-text {
-    font-size: 1.5em;
-  }
-  .reward-circle {
-    width: 130px;
-    height: 130px;
-  }
-  .trophy-icon {
-    font-size: 4em;
-  }
-  .grammar-header-game h1 {
-    font-size: 1.4em;
-  }
-  .grammar-table-game th {
-    font-size: 0.9em;
-  }
-  .emoji-large {
-    font-size: 1.8em;
-  }
-}
-
-/* ===================================================================
-   CHEST SCREEN - For Error Attempts (MAGICAL TREASURE SCENE)
-   ===================================================================
-*/
-
+/* CHEST SCREEN */
 .chest-overlay {
   position: fixed;
   top: 0;
@@ -752,7 +636,6 @@
   overflow: hidden;
 }
 
-/* Floating coins in background */
 .floating-coins {
   position: absolute;
   top: 0;
@@ -787,7 +670,6 @@
   }
 }
 
-/* Pirate decorations at top */
 .pirate-decorations {
   position: absolute;
   top: 20px;
@@ -809,7 +691,6 @@
   50% { transform: rotate(10deg) translateY(-10px); }
 }
 
-/* Sparkle effects */
 .sparkle-effects {
   position: absolute;
   top: 0;
@@ -863,7 +744,6 @@
   50% { transform: scale(1.05); }
 }
 
-/* Treasure subtitle banner */
 .treasure-subtitle {
   background: linear-gradient(135deg, #4169E1 0%, #1E90FF 100%);
   padding: 12px 40px;
@@ -883,7 +763,6 @@
   font-style: italic;
 }
 
-/* Chest image wrapper */
 .chest-image-wrapper {
   position: relative;
   width: 320px;
@@ -894,7 +773,6 @@
   margin-top: 72px;
 }
 
-/* Pulsing glow behind chest */
 .chest-glow-pulse {
   position: absolute;
   top: 50%;
@@ -917,7 +795,6 @@
   }
 }
 
-/* Treasure rays shooting out */
 .treasure-rays {
   position: absolute;
   top: 50%;
@@ -938,7 +815,6 @@
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Chest with image */
 .chest-real {
   position: relative;
   width: 300px;
@@ -1017,9 +893,27 @@
   letter-spacing: 2px;
 }
 
-/* Fix grammar container height */
-@media only screen and (min-width: 769px) {
-  .grammar-content-game {
-    max-height: calc(680px - 200px);
+@media (max-width: 768px) {
+  .reward-container {
+    max-width: 95%;
+  }
+  .banner-text {
+    font-size: 1.5em;
+  }
+  .reward-circle {
+    width: 130px;
+    height: 130px;
+  }
+  .trophy-icon {
+    font-size: 4em;
+  }
+  .grammar-header-game h1 {
+    font-size: 1.4em;
+  }
+  .grammar-table-game th {
+    font-size: 0.9em;
+  }
+  .emoji-large {
+    font-size: 1.8em;
   }
 }
