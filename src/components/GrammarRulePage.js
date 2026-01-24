@@ -24,51 +24,54 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     let fireworksInterval;
     let confettiInterval;
    
-    if (!showRules && !skipCelebration) {
-      // FIREWORKS - Explode at same height in sky
-      fireworksInterval = setInterval(() => {
-        // First pair - outer fireworks
-        setTimeout(() => {
-          setFireworks([
-            { id: Date.now(), left: 15, delay: 0 },
-            { id: Date.now() + 1, left: 85, delay: 0 }
-          ]);
-        }, 0);
+   if (!showRules && !skipCelebration) {
+  // Wait 500ms after component shows, then start fireworks
+  setTimeout(() => {
+    // FIREWORKS - Explode at same height in sky
+    fireworksInterval = setInterval(() => {
+      // First pair - outer fireworks
+      setTimeout(() => {
+        setFireworks([
+          { id: Date.now(), left: 15, delay: 0 },
+          { id: Date.now() + 1, left: 85, delay: 0 }
+        ]);
+      }, 0);
 
-        // Second pair - center fireworks (500ms later)
-        setTimeout(() => {
-          setFireworks(prev => [
-            ...prev,
-            { id: Date.now() + 2, left: 35, delay: 0 },
-            { id: Date.now() + 3, left: 65, delay: 0 }
-          ]);
-        }, 500);
+      // Second pair - center fireworks (500ms later)
+      setTimeout(() => {
+        setFireworks(prev => [
+          ...prev,
+          { id: Date.now() + 2, left: 35, delay: 0 },
+          { id: Date.now() + 3, left: 65, delay: 0 }
+        ]);
+      }, 500);
 
-        // Clear all fireworks after animations
-        setTimeout(() => setFireworks([]), 2500);
-      }, 3500); // Repeat every 3.5 seconds
+      // Clear all fireworks after animations
+      setTimeout(() => setFireworks([]), 2500);
+    }, 3500); // Repeat every 3.5 seconds
 
-      // CONFETTI - Start falling after fireworks explode
-      confettiInterval = setInterval(() => {
-        // First wave
-        setTimeout(() => {
-          setConfettiWaves([{ id: Date.now(), wave: 1 }]);
-        }, 1000);
+    // CONFETTI - Start falling after fireworks explode
+    confettiInterval = setInterval(() => {
+      // First wave
+      setTimeout(() => {
+        setConfettiWaves([{ id: Date.now(), wave: 1 }]);
+      }, 1000);
 
-        // Second wave (500ms later)
-        setTimeout(() => {
-          setConfettiWaves(prev => [...prev, { id: Date.now() + 1, wave: 2 }]);
-        }, 1500);
+      // Second wave (500ms later)
+      setTimeout(() => {
+        setConfettiWaves(prev => [...prev, { id: Date.now() + 1, wave: 2 }]);
+      }, 1500);
 
-        // Clear confetti
-        setTimeout(() => setConfettiWaves([]), 3000);
-      }, 3500);
-    }
+      // Clear confetti
+      setTimeout(() => setConfettiWaves([]), 3000);
+    }, 3500);
+  }, 500); // ← 500ms delay before fireworks start
+}
 
-    return () => {
-      if (fireworksInterval) clearInterval(fireworksInterval);
-      if (confettiInterval) clearInterval(confettiInterval);
-    };
+return () => {
+  if (fireworksInterval) clearInterval(fireworksInterval);
+  if (confettiInterval) clearInterval(confettiInterval);
+};
   }, [showRules, skipCelebration]);
 
   const handleViewRules = () => {
@@ -89,7 +92,7 @@ const handleContinue = () => {
     setTimeout(() => {
       setShowTileAnimation(false);
       onContinue();
-    }, 2000);
+    }, 2500);
   };
 
   // Tile animation screen
