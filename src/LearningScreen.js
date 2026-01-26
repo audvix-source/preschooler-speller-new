@@ -51,10 +51,12 @@ function LearningScreen(props) {
   const [showCountdown, setShowCountdown] = useState(false);
   const [countdownValue, setCountdownValue] = useState(3);
   const [pendingGrammarRule, setPendingGrammarRule] = useState(false);
+  const [countdownAnimation, setCountdownAnimation] = useState(1);
+  const [lastCountdownAnimation, setLastCountdownAnimation] = useState(0);
+  const [lastPowerWordIndex, setLastPowerWordIndex] = useState(-1);
 
   const categoryWords = getWordsByCategory(props.category);
   const currentWord = categoryWords[wordIndex];
-  const [countdownAnimation, setCountdownAnimation] = useState(1);
 
   // Auto-save learning progress
   useEffect(() => {
@@ -399,8 +401,8 @@ function LearningScreen(props) {
           }
         }, 2500);
       }
-     } else {
-      // Perfect - no mistakes - Expanded power words with no consecutive repeats
+    } else {
+      // Perfect - no mistakes - Chronological power words (no repeats)
       const messages = [
         { display: '🎉 Perfect! 🎉', speak: 'Perfect' },
         { display: '⭐ Excellent! ⭐', speak: 'Excellent' },
@@ -411,7 +413,7 @@ function LearningScreen(props) {
         { display: '💫 Brilliant! 💫', speak: 'Brilliant' },
         { display: '🎯 Outstanding! 🎯', speak: 'Outstanding' },
         { display: '👏 Fantastic! 👏', speak: 'Fantastic' },
-        { display: '🌈 Wonderful! 🌈', speak: 'Wonderful' },
+        { display: '✨ Wonderful! ✨', speak: 'Wonderful' },
         { display: '⭐ Superb! ⭐', speak: 'Superb' },
         { display: '🎪 Magnificent! 🎪', speak: 'Magnificent' },
         { display: '🏅 Champion! 🏅', speak: 'Champion' },
@@ -419,14 +421,11 @@ function LearningScreen(props) {
         { display: '🎨 Marvelous! 🎨', speak: 'Marvelous' }
       ];
       
-      // Ensure no consecutive repeats
-      let randomIndex;
-      do {
-        randomIndex = Math.floor(Math.random() * messages.length);
-      } while (randomIndex === lastEncouragementIndex && messages.length > 1);
+      // Use chronological order (cycles through 0-14, then repeats)
+      const nextIndex = (lastPowerWordIndex + 1) % messages.length;
+      setLastPowerWordIndex(nextIndex);
       
-      const chosen = messages[randomIndex];
-      setLastEncouragementIndex(randomIndex);
+      const chosen = messages[nextIndex];
       setCompletionMessage(chosen.display);
       setEncouragementMessage('');
       props.speak(chosen.speak);
@@ -438,23 +437,29 @@ function LearningScreen(props) {
     }
     
     setTimeout(() => {
-  setShowReward(false);
-  
-  if (finalMistakeCount === 0 && currentWord.word !== 'Eyes') {
-    setCountdownAnimation(Math.floor(Math.random() * 15) + 1); // Pick once!
-    setShowCountdown(true);
-    setCountdownValue(3);
-    
-    setTimeout(() => setCountdownValue(2), 1000);
-    setTimeout(() => setCountdownValue(1), 2000);
-    
-    setTimeout(() => {
-      setShowCountdown(false);
-      handleNextWord();
-    }, 3000);
-  }
-}, 1500);
-};
+      setShowReward(false);
+      
+      // Auto-advance only if perfect AND no grammar rule to show
+      if (finalMistakeCount === 0 && currentWord.word !== 'Eyes') {
+        // Use chronological order for countdown animations (1-15, then loop)
+        const nextAnimation = (lastCountdownAnimation % 15) + 1;
+        setLastCountdownAnimation(nextAnimation);
+        setCountdownAnimation(nextAnimation);
+        
+        setShowCountdown(true);
+        setCountdownValue(3);
+        
+        // Countdown animation
+        setTimeout(() => setCountdownValue(2), 1000);
+        setTimeout(() => setCountdownValue(1), 2000);
+        
+        setTimeout(() => {
+          setShowCountdown(false);
+          handleNextWord();
+        }, 3000);
+      }
+    }, 500);
+  };
 
   const isLongWord = currentWord && currentWord.word.length >= 7;
 
@@ -569,14 +574,13 @@ function LearningScreen(props) {
       {showReward && <div className="confetti-overlay"></div>}
       
       {showCountdown && (
-  <div className={`countdown-overlay countdown-animation-${countdownAnimation}`}>
-    
-    <div className="countdown-circle">
-      <span className="countdown-number">{countdownValue}</span>
-    </div>
-    <p className="countdown-text">Moving to next word...</p>
-  </div>
-)}
+        <div className={`countdown-overlay countdown-animation-${countdownAnimation}`}>
+          <div className="countdown-circle">
+            <span className="countdown-number">{countdownValue}</span>
+          </div>
+          <p className="countdown-text">Moving to next word...</p>
+        </div>
+      )}
 
       {viewState === 'animating' && disappearingSide && <MagicalTransition side={disappearingSide} />}
       
@@ -586,7 +590,11 @@ function LearningScreen(props) {
             setShowGrammarRule(false);
             setSkipCelebration(false);
             
-            // Auto-advance after grammar rule
+            // Use chronological order for countdown after grammar rule
+            const nextAnimation = (lastCountdownAnimation % 15) + 1;
+            setLastCountdownAnimation(nextAnimation);
+            setCountdownAnimation(nextAnimation);
+            
             setShowCountdown(true);
             setCountdownValue(3);
             setTimeout(() => setCountdownValue(2), 1000);
@@ -594,7 +602,7 @@ function LearningScreen(props) {
             setTimeout(() => {
               setShowCountdown(false);
               handleNextWord();
-            }, 2750);
+            }, 3000);
           }}
           speak={props.speak}
           skipCelebration={skipCelebration}

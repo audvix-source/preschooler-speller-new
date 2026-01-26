@@ -437,7 +437,7 @@
 
 /* GOLDEN WIDE SCROLLBAR - MATCHES MY PROGRESS */
 .grammar-content-game::-webkit-scrollbar {
-  width: 14px;
+  width: 11px;
 }
 
 .grammar-content-game::-webkit-scrollbar-track {
