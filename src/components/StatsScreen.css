@@ -82,14 +82,83 @@
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .reward-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .reward-card.blinking {
   animation: rewardBlink 1s ease-in-out infinite;
+}
+
+.reward-card.expanded {
+  grid-column: span 2;
+  min-height: 300px;
+}
+
+.reward-details {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  text-align: left;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.reward-details-header {
+  font-weight: bold;
+  font-size: 14px;
+  color: #8B4513;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.reward-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reward-detail-item {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.detail-body-part {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.detail-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #555;
+}
+
+.detail-accuracy {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.detail-date {
+  color: #7f8c8d;
+}
+
+.no-details {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 20px;
 }
 
 @keyframes rewardBlink {
@@ -346,4 +415,20 @@
   .stats-summary {
     grid-template-columns: 1fr;
   }
+}
+
+.learning-item.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.learning-item.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.learning-item.clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }

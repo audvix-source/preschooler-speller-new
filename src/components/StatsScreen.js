@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import scoreDB from '../services/scoreDatabase';
+import { getWordsByCategory } from '../wordList.js';  // ADD THIS LINE
 import './StatsScreen.css';
 
 function StatsScreen({ onNavigate, speak }) {
@@ -7,6 +8,8 @@ function StatsScreen({ onNavigate, speak }) {
   const [loading, setLoading] = useState(true);
   const [newRewards, setNewRewards] = useState([]);
   const [showNewRewardsBanner, setShowNewRewardsBanner] = useState(false);
+  const [expandedReward, setExpandedReward] = useState(null); // Track which reward card is expanded
+  const [rewardDetails, setRewardDetails] = useState({}); // Store details for each reward type
 
   useEffect(() => {
     loadStats();
@@ -68,6 +71,61 @@ function StatsScreen({ onNavigate, speak }) {
     setNewRewards([]);
   };
 
+  const handleRewardClick = async (rewardType) => {
+    if (expandedReward === rewardType) {
+      // Collapse if already expanded
+      setExpandedReward(null);
+    } else {
+      // Expand and load details
+      setExpandedReward(rewardType);
+      
+      // Load reward details if not already loaded
+      if (!rewardDetails[rewardType]) {
+        const details = await scoreDB.getRewardsByType(rewardType);
+        setRewardDetails(prev => ({ ...prev, [rewardType]: details }));
+      }
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const handleWordClick = (wordName) => {
+    if (speak) speak(`Let's practice ${wordName}!`);
+    
+    // Get the actual word list to find correct index
+    const bodyPartsWords = getWordsByCategory('Parts of the Body'); // Changed from 'Body Parts'
+    const wordIndex = bodyPartsWords.findIndex(w => w.word === wordName);
+    
+    if (wordIndex === -1) {
+      console.error('Word not found:', wordName);
+      return;
+    }
+    
+    // Save the word to resume from
+    localStorage.setItem('learningState_Parts of the Body', JSON.stringify({ // Changed key name
+      viewState: 'activity',
+      chosenModel: localStorage.getItem('lastChosenModel') || 'boy',
+      wordIndex: wordIndex,
+      lastSaved: new Date().toISOString()
+    }));
+    
+    // Navigate to Body Parts learning screen
+    onNavigate('learning', 'Parts of the Body'); // Changed from 'Body Parts'
+  };
+   
+
+  const getWordIndexByName = (wordName) => {
+    const bodyPartsWords = [
+      'Lips', 'Cheeks', 'Chin', 'Eyes', 'Eyebrows', 'Eyelashes', 
+      'Nose', 'Nostrils', 'Ears', 'Forehead', 'Hair', 'Cleft Chin'
+    ];
+    const index = bodyPartsWords.findIndex(w => w.toLowerCase() === wordName.toLowerCase());
+    return index !== -1 ? index : 0;
+  };
+
   if (loading) {
     return (
       <div className="stats-screen">
@@ -108,25 +166,120 @@ function StatsScreen({ onNavigate, speak }) {
           <div className="rewards-section">
             <h2>✨ My Rewards ✨</h2>
             <div className="rewards-grid">
-              <div className={`reward-card ${newRewards.some(r => r.type === 'stars') ? 'blinking' : ''}`}>
+              <div 
+                className={`reward-card ${newRewards.some(r => r.type === 'stars') ? 'blinking' : ''} ${expandedReward === 'star' ? 'expanded' : ''}`}
+                onClick={() => handleRewardClick('star')}
+              >
                 <div className="reward-icon">⭐</div>
                 <div className="reward-count">{stats.stars || 0}</div>
                 <div className="reward-label">Stars</div>
+                {expandedReward === 'star' && rewardDetails.star && (
+                  <div className="reward-details">
+                    <div className="reward-details-header">Achievement History</div>
+                    {rewardDetails.star.length > 0 ? (
+                      <div className="reward-details-list">
+                        {rewardDetails.star.map((detail, idx) => (
+                          <div key={idx} className="reward-detail-item">
+                            <div className="detail-body-part">{detail.bodyPart}</div>
+                            <div className="detail-info">
+                              <span className="detail-accuracy">{detail.accuracy}% accuracy</span>
+                              <span className="detail-date">{formatDate(detail.earnedDate)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="no-details">No stars earned yet!</div>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className={`reward-card ${newRewards.some(r => r.type === 'bronze') ? 'blinking' : ''}`}>
+
+              <div 
+                className={`reward-card ${newRewards.some(r => r.type === 'bronze') ? 'blinking' : ''} ${expandedReward === 'bronze' ? 'expanded' : ''}`}
+                onClick={() => handleRewardClick('bronze')}
+              >
                 <div className="reward-icon">🥉</div>
                 <div className="reward-count">{stats.bronze || 0}</div>
                 <div className="reward-label">Bronze</div>
+                {expandedReward === 'bronze' && rewardDetails.bronze && (
+                  <div className="reward-details">
+                    <div className="reward-details-header">Achievement History</div>
+                    {rewardDetails.bronze.length > 0 ? (
+                      <div className="reward-details-list">
+                        {rewardDetails.bronze.map((detail, idx) => (
+                          <div key={idx} className="reward-detail-item">
+                            <div className="detail-body-part">{detail.bodyPart}</div>
+                            <div className="detail-info">
+                              <span className="detail-accuracy">{detail.accuracy}% accuracy</span>
+                              <span className="detail-date">{formatDate(detail.earnedDate)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="no-details">No bronze medals earned yet!</div>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className={`reward-card ${newRewards.some(r => r.type === 'silver') ? 'blinking' : ''}`}>
+
+              <div 
+                className={`reward-card ${newRewards.some(r => r.type === 'silver') ? 'blinking' : ''} ${expandedReward === 'silver' ? 'expanded' : ''}`}
+                onClick={() => handleRewardClick('silver')}
+              >
                 <div className="reward-icon">🥈</div>
                 <div className="reward-count">{stats.silver || 0}</div>
                 <div className="reward-label">Silver</div>
+                {expandedReward === 'silver' && rewardDetails.silver && (
+                  <div className="reward-details">
+                    <div className="reward-details-header">Achievement History</div>
+                    {rewardDetails.silver.length > 0 ? (
+                      <div className="reward-details-list">
+                        {rewardDetails.silver.map((detail, idx) => (
+                          <div key={idx} className="reward-detail-item">
+                            <div className="detail-body-part">{detail.bodyPart}</div>
+                            <div className="detail-info">
+                              <span className="detail-accuracy">{detail.accuracy}% accuracy</span>
+                              <span className="detail-date">{formatDate(detail.earnedDate)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="no-details">No silver medals earned yet!</div>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className={`reward-card ${newRewards.some(r => r.type === 'champion') ? 'blinking' : ''}`}>
+
+              <div 
+                className={`reward-card ${newRewards.some(r => r.type === 'champion') ? 'blinking' : ''} ${expandedReward === 'champion' ? 'expanded' : ''}`}
+                onClick={() => handleRewardClick('champion')}
+              >
                 <div className="reward-icon">👑</div>
                 <div className="reward-count">{stats.champion || 0}</div>
                 <div className="reward-label">Champion</div>
+                {expandedReward === 'champion' && rewardDetails.champion && (
+                  <div className="reward-details">
+                    <div className="reward-details-header">Achievement History</div>
+                    {rewardDetails.champion.length > 0 ? (
+                      <div className="reward-details-list">
+                        {rewardDetails.champion.map((detail, idx) => (
+                          <div key={idx} className="reward-detail-item">
+                            <div className="detail-body-part">{detail.bodyPart}</div>
+                            <div className="detail-info">
+                              <span className="detail-accuracy">{detail.accuracy}% accuracy</span>
+                              <span className="detail-date">{formatDate(detail.earnedDate)}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="no-details">No champion crowns earned yet!</div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -152,7 +305,11 @@ function StatsScreen({ onNavigate, speak }) {
                   const stars = accuracy >= 80 ? '⭐⭐⭐' : accuracy >= 60 ? '⭐⭐' : accuracy >= 40 ? '⭐' : '';
                   
                   return (
-                    <div key={index} className="learning-item">
+                    <div 
+                      key={index} 
+                      className="learning-item clickable"
+                      onClick={() => handleWordClick(word.word)}
+                    >
                       <div className="learning-word">{word.word}</div>
                       <div className="learning-stats">
                         <div className="stat">
