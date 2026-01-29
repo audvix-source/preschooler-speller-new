@@ -10,3 +10,7 @@ dist/
 # Ignore editable or test image folders (local only)
 src/assets/images/originals/
 src/assets/images/temp/
+# Local Backups
+*.bak.js
+*backup.js
+wordList_backup.js

@@ -1,0 +1,83 @@
+.challenge-banner {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: 90%;
+  max-width: 380px;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.challenge-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  padding: 12px 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.banner-icon {
+  font-size: 1.5em;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.banner-text {
+  flex: 1;
+  font-size: 1em;
+  font-weight: bold;
+  color: #8B4513;
+}
+
+.banner-start-btn {
+  padding: 8px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  background: white;
+  color: #FF9800;
+  border: 2px solid #FF9800;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner-start-btn:hover {
+  background: #FF9800;
+  color: white;
+  transform: scale(1.05);
+}
+
+.banner-dismiss-btn {
+  padding: 4px 10px;
+  font-size: 1.5em;
+  background: transparent;
+  color: #8B4513;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.banner-dismiss-btn:hover {
+  color: #D32F2F;
+  transform: scale(1.2);
+}

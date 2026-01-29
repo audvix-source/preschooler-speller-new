@@ -478,3 +478,28 @@
     font-size: 1.1em;
   }
 }
+
+/* Letter Challenge Button */
+.letter-challenge-btn {
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
+  border: 2px solid #FFD700;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.4);
+}
+
+.letter-challenge-btn:hover {
+  background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(255, 152, 0, 0.6);
+}
+
+.letter-challenge-btn:active {
+  transform: translateY(0);
+}

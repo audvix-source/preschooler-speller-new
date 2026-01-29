@@ -53,6 +53,7 @@ function LearningScreen(props) {
   const [pendingGrammarRule, setPendingGrammarRule] = useState(false);
   const [countdownAnimation, setCountdownAnimation] = useState(1);
   const [lastCountdownAnimation, setLastCountdownAnimation] = useState(0);
+  const [lastCountdownDirection, setLastCountdownDirection] = useState('right'); // ADD THIS LINE
   const [lastPowerWordIndex, setLastPowerWordIndex] = useState(-1);
 
   const categoryWords = getWordsByCategory(props.category);
@@ -312,8 +313,6 @@ function LearningScreen(props) {
   const triggerReward = (finalMistakeCount) => {
     console.log('triggerReward called with mistakeCount:', finalMistakeCount);
     
-    setShowReward(true);
-
     // Record attempt in database
     const isCorrect = finalMistakeCount === 0;
     scoreDB.recordLearningAttempt(currentWord.word, isCorrect)
@@ -334,6 +333,7 @@ function LearningScreen(props) {
     const threshold = Math.ceil(wordLength / 2);
     const hadManyMistakes = finalMistakeCount > threshold;
     
+    setShowReward(true);
     // Handle Grammar Rule Trigger for "Eyes"
     if (currentWord.word === 'Eyes' && finalMistakeCount === 0) {
       // Only show grammar rule if perfect score
@@ -441,10 +441,27 @@ function LearningScreen(props) {
       
       // Auto-advance only if perfect AND no grammar rule to show
       if (finalMistakeCount === 0 && currentWord.word !== 'Eyes') {
-        // Use chronological order for countdown animations (1-15, then loop)
-        const nextAnimation = (lastCountdownAnimation % 15) + 1;
-        setLastCountdownAnimation(nextAnimation);
-        setCountdownAnimation(nextAnimation);
+        // Determine next direction (alternating)
+        const nextDirection = lastCountdownDirection === 'right' ? 'left' : 'center';
+        const directionAfterNext = nextDirection === 'left' ? 'center' : 'right';
+        
+        // Animation sets by rotation direction
+        const rightAnimations = [1, 4, 7, 10, 13];
+        const leftAnimations = [2, 5, 8, 11, 14];
+        const centerAnimations = [3, 6, 9, 12, 15];
+        
+        // Pick random animation from the appropriate direction set
+        let animationNumber;
+        if (nextDirection === 'right') {
+          animationNumber = rightAnimations[Math.floor(Math.random() * rightAnimations.length)];
+        } else if (nextDirection === 'left') {
+          animationNumber = leftAnimations[Math.floor(Math.random() * leftAnimations.length)];
+        } else { // center
+          animationNumber = centerAnimations[Math.floor(Math.random() * centerAnimations.length)];
+        }
+        
+        setLastCountdownDirection(directionAfterNext);
+        setCountdownAnimation(animationNumber);
         
         setShowCountdown(true);
         setCountdownValue(3);
@@ -456,7 +473,7 @@ function LearningScreen(props) {
         setTimeout(() => {
           setShowCountdown(false);
           handleNextWord();
-        }, 3000);
+       }, 3000);
       }
     }, 500);
   };
@@ -590,10 +607,27 @@ function LearningScreen(props) {
             setShowGrammarRule(false);
             setSkipCelebration(false);
             
-            // Use chronological order for countdown after grammar rule
-            const nextAnimation = (lastCountdownAnimation % 15) + 1;
-            setLastCountdownAnimation(nextAnimation);
-            setCountdownAnimation(nextAnimation);
+            // Determine next direction (alternating)
+const nextDirection = lastCountdownDirection === 'right' ? 'left' : 'center';
+const directionAfterNext = nextDirection === 'left' ? 'center' : 'right';
+
+// Animation sets by rotation direction
+const rightAnimations = [1, 4, 7, 10, 13];
+const leftAnimations = [2, 5, 8, 11, 14];
+const centerAnimations = [3, 6, 9, 12, 15];
+
+// Pick random animation from the appropriate direction set
+let animationNumber;
+if (nextDirection === 'right') {
+  animationNumber = rightAnimations[Math.floor(Math.random() * rightAnimations.length)];
+} else if (nextDirection === 'left') {
+  animationNumber = leftAnimations[Math.floor(Math.random() * leftAnimations.length)];
+} else { // center
+  animationNumber = centerAnimations[Math.floor(Math.random() * centerAnimations.length)];
+}
+
+setLastCountdownDirection(directionAfterNext);
+setCountdownAnimation(animationNumber);
             
             setShowCountdown(true);
             setCountdownValue(3);

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './AlphabetScreen.css';
 import { wordList } from './wordList.js';
 import birdBackground from './assets/pair-birds.png';
+import AlphabetChallenge from './components/AlphabetChallenge';
+import ChallengeBanner from './components/ChallengeBanner';
 
 // 1. DYNAMIC IMAGE CONTEXT SETUP (Fixes "Cannot find module" error)
 // Import all images dynamically
@@ -41,6 +43,12 @@ function AlphabetScreen(props) {
   const [letterProgress, setLetterProgress] = useState(savedState?.letterProgress || {});
   const [activeLetter, setActiveLetter] = useState(savedState?.activeLetter || null);
 
+  const [showChallenge, setShowChallenge] = useState(false);
+const [challengeMode, setChallengeMode] = useState(null); // 'random' or 'per-letter'
+const [challengeLetter, setChallengeLetter] = useState(null);
+const [showBanner, setShowBanner] = useState(false);
+const [bannerDismissed, setBannerDismissed] = useState(false);
+
   // Auto-save state whenever it changes
   useEffect(() => {
     const stateToSave = {
@@ -78,37 +86,40 @@ function AlphabetScreen(props) {
 
   // 3. HANDLER FUNCTION: Handles clicking a letter tile
   const handleLetterClick = (letter) => {
-    const wordsForLetter = wordList.filter(item =>
-      item.category === 'Alphabet Fun' &&
-      item.word.toUpperCase().startsWith(letter)
-    );
-    
-    if (wordsForLetter.length === 0) return;
-    
-    setActiveLetter(letter);
-    const currentIndex = letterProgress[letter] || 0;
-    const foundWord = wordsForLetter[currentIndex];
-    const nextIndex = (currentIndex + 1) % wordsForLetter.length;
-    
-    setLetterProgress({
-      ...letterProgress,
-      [letter]: nextIndex
-    });
-    
-    setSelectedWord({
-      ...foundWord,
-      currentIndex: currentIndex,
-      totalCount: wordsForLetter.length,
-      letter: letter
-    });
-    props.speak(foundWord.word);
-    
-    if (nextIndex === 0) {
-      setTimeout(() => {
-        setActiveLetter(null);
-      }, 100);
-    }
-  };
+  // If right-click or long-press, start per-letter challenge
+  // For now, we'll use regular click and add a challenge button in the word display
+  
+  const wordsForLetter = wordList.filter(item =>
+    item.category === 'Alphabet Fun' &&
+    item.word.toUpperCase().startsWith(letter)
+  );
+  
+  if (wordsForLetter.length === 0) return;
+  
+  setActiveLetter(letter);
+  const currentIndex = letterProgress[letter] || 0;
+  const foundWord = wordsForLetter[currentIndex];
+  const nextIndex = (currentIndex + 1) % wordsForLetter.length;
+  
+  setLetterProgress({
+    ...letterProgress,
+    [letter]: nextIndex
+  });
+  
+  setSelectedWord({
+    ...foundWord,
+    currentIndex: currentIndex,
+    totalCount: wordsForLetter.length,
+    letter: letter
+  });
+  props.speak(foundWord.word);
+  
+  if (nextIndex === 0) {
+    setTimeout(() => {
+      setActiveLetter(null);
+    }, 100);
+  }
+};
 
   // 4. HANDLER FUNCTION: Closes the word display
   const handleCloseWord = () => {
@@ -136,80 +147,133 @@ function AlphabetScreen(props) {
     return currentProgress < wordsForLetter.length;
   };
 
-  return (
-    <div className="app-screen alphabet-screen-container">
-      {/* Top Section - Show Video OR Word Image */}
-      <div className="top-section">
-        {/* Uses selectedWord (defined at line 18) */}
-        {!selectedWord ? (
-          <div className="video-section">
-            <h2 className="alphabet-title">Alphabet Fun</h2>
-            <div className="video-container">
-              <iframe
-                src="https://www.youtube.com/embed/71h8MZshGSs"
-                title="Alphabet Song"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <p className="credit-line">Video courtesy of CoComelon - Nursery Rhymes</p>
-          </div>
-        ) : (
-          <div className="word-display-section">
-            {/* Uses handleCloseWord (defined at line 76) */}
-            <button className="close-word-button" onClick={handleCloseWord}>×</button>
-            <div className="word-image-frame">
-              {/* Uses getImagePath (defined at line 10) */}
-              <img
-                src={getImagePath(selectedWord.image)}
-                alt={selectedWord.word}
-              />
-            </div>
-            <p className="word-text">{selectedWord.word}</p>
-            
-            {selectedWord.totalCount > 1 && (
-              <div className="progress-dots">
-                {Array.from({ length: selectedWord.totalCount }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`progress-dot ${i === selectedWord.currentIndex ? 'active' : ''}`}
-                  />
-                ))}
-              </div>
-            )}
-            
-            {selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1 && (
-               <p className="tap-more-hint">👆 Tap {selectedWord.word[0]} for more!</p>
-            )}
-          </div>
-        )}
-      </div>
+  const handleStartRandomChallenge = () => {
+  setShowBanner(false);
+  setChallengeMode('random');
+  setShowChallenge(true);
+  if (props.speak) props.speak("Random challenge! Let's go!");
+};
 
-      {/* Keyboard Grid Wrapper with Border (BOTTOM SECTION) */}
-      <div className="keyboard-wrapper">
-        <div
-          className="alphabet-grid"
-          style={{ backgroundImage: `url(${birdBackground})` }}
-        >
-          {alphabet.map(letter => {
-            return (
-              <button
-                key={letter}
-                className={`letter-tile ${hasMoreImages(letter) ? 'has-more' : ''}`}
-                onClick={() => handleLetterClick(letter)}
-              >
-                {letter}
-              </button>
-            );
-          })}
-          <button className="back-button" onClick={handleBackToMenu}>
-            Back to Menu
-          </button>
+const handleStartLetterChallenge = (letter) => {
+  setChallengeMode('per-letter');
+  setChallengeLetter(letter);
+  setShowChallenge(true);
+  if (props.speak) props.speak(`Let's practice ${letter} words!`);
+};
+
+const handleExitChallenge = () => {
+  setShowChallenge(false);
+  setChallengeMode(null);
+  setChallengeLetter(null);
+};
+
+const handleDismissBanner = () => {
+  setShowBanner(false);
+  setBannerDismissed(true);
+  localStorage.setItem('challengeBannerDismissed', 'true');
+};
+
+// If in challenge mode, show challenge component
+if (showChallenge) {
+  return (
+    <AlphabetChallenge
+      mode={challengeMode}
+      selectedLetter={challengeLetter}
+      onExit={handleExitChallenge}
+      speak={props.speak}
+    />
+  );
+}
+
+return (
+  <div className="app-screen alphabet-screen-container">
+    {/* Challenge Banner */}
+    {showBanner && !bannerDismissed && (
+      <ChallengeBanner
+        onStartChallenge={handleStartRandomChallenge}
+        onDismiss={handleDismissBanner}
+      />
+    )}
+
+    {/* Top Section - Show Video OR Word Image */}
+    <div className="top-section">
+      {!selectedWord ? (
+        <div className="video-section">
+          <h2 className="alphabet-title">Alphabet Fun</h2>
+          <div className="video-container">
+            <iframe
+              src="https://www.youtube.com/embed/71h8MZshGSs"
+              title="Alphabet Song"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <p className="credit-line">Video courtesy of CoComelon - Nursery Rhymes</p>
         </div>
+      ) : (
+        <div className="word-display-section">
+          <button className="close-word-button" onClick={handleCloseWord}>×</button>
+          <div className="word-image-frame">
+            <img
+              src={getImagePath(selectedWord.image)}
+              alt={selectedWord.word}
+            />
+          </div>
+          <p className="word-text">{selectedWord.word}</p>
+          
+          {selectedWord.totalCount > 1 && (
+            <div className="progress-dots">
+              {Array.from({ length: selectedWord.totalCount }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`progress-dot ${i === selectedWord.currentIndex ? 'active' : ''}`}
+                />
+              ))}
+            </div>
+          )}
+          
+          {selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1 && (
+             <p className="tap-more-hint">👆 Tap {selectedWord.word[0]} for more!</p>
+          )}
+
+          {/* Challenge button for this letter */}
+          {selectedWord.totalCount >= 3 && (
+            <button 
+              className="letter-challenge-btn"
+              onClick={() => handleStartLetterChallenge(selectedWord.letter)}
+            >
+              🎯 Challenge: {selectedWord.letter} Words
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+
+    {/* Keyboard Grid Wrapper with Border (BOTTOM SECTION) */}
+    <div className="keyboard-wrapper">
+      <div
+        className="alphabet-grid"
+        style={{ backgroundImage: `url(${birdBackground})` }}
+      >
+        {alphabet.map(letter => {
+          return (
+            <button
+              key={letter}
+              className={`letter-tile ${hasMoreImages(letter) ? 'has-more' : ''}`}
+              onClick={() => handleLetterClick(letter)}
+            >
+              {letter}
+            </button>
+          );
+        })}
+        <button className="back-button" onClick={handleBackToMenu}>
+          Back to Menu
+        </button>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default AlphabetScreen;

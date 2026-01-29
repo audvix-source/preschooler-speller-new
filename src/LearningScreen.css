@@ -509,7 +509,6 @@
   font-size: 1.4em;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
-
 @keyframes celebrate {
   0% { transform: scale(0); }
   50% { transform: scale(1.15); }
@@ -550,10 +549,9 @@
   height: 100%;
   pointer-events: none;
   z-index: 1000;
-  background: transparent; /* Changed from radial-gradient */
+  background: transparent;
   animation: fadeInOut 3s ease;
 }
-
 @keyframes fadeInOut {
   0%, 100% { opacity: 0; }
   50% { opacity: 1; }
@@ -628,7 +626,6 @@
 /* ===================================================================
    DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
    =================================================================== */
-
 @media only screen and (min-width: 769px) {
   .learning-screen-container {
     height: 680px;
@@ -642,24 +639,9 @@
     transform: translateX(-50%) !important;
     border-radius: 20px !important;
   }
-}
 
   .character-selection-container {
     padding: 40px 15px;
-  }
-
-   /* ADD THIS */
-  .character-container {
-    margin-top: 100px;
-    margin-bottom: 100px;
-  }
-  
-  .character-model img {
-    margin-top: 1px;
-  }
-
-  .selection-title {
-    margin-bottom: 0;
   }
 
   .character-container {
@@ -668,8 +650,13 @@
   }
 
   .character-model img {
+    margin-top: 1px;
     width: 180px;
     height: 360px;
+  }
+
+  .selection-title {
+    margin-bottom: 0;
   }
 
   .activity-view {
@@ -689,13 +676,16 @@
   .back-button-fixed {
     bottom: 40px;
   }
+}
 
+/* Keep this separate */
 @media only screen and (max-width: 768px) {
   .learning-screen-container {
     border-radius: 20px !important;
     overflow: hidden !important;
     -webkit-border-radius: 20px !important;
   }
+}
   
   .activity-view {
     border-radius: 20px !important;
@@ -710,7 +700,6 @@
     border-radius: 20px !important;
     overflow: hidden !important;
   }
-}
 
 /* Countdown Overlay for Auto-Advance */
 .countdown-overlay {
@@ -1052,20 +1041,6 @@
    PURE SINGLE-SHAPE ANIMATIONS - Each animation uses ONLY ONE shape
    No morphing, no mixed shapes - just color and movement variations
    =================================================================== */
-
-/* Animation 1: Triangle Only */
-.countdown-animation-1 .countdown-circle {
-  background: linear-gradient(135deg, #FF6B9D 0%, #C06C84 50%, #6C5B7B 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%) !important;
-  animation: triangle1 1.5s ease-in-out infinite !important;
-  border: 6px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-@keyframes triangle1 {
-  0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) brightness(1); }
-  50% { transform: rotate(15deg) scale(1.1); filter: hue-rotate(60deg) brightness(1.3); }
-}
 
 /* Animation 2: Square Only */
 .countdown-animation-2 .countdown-circle {
