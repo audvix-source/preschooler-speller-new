@@ -24,7 +24,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     let fireworksInterval;
     let confettiInterval;
    
-    if (!showRules && !skipCelebration) {
+    if (!showRules && !skipCelebration && !showTileAnimation && !showChestScreen) {
       // Start fireworks immediately when celebration screen appears
       // FIREWORKS - Explode at same height in sky
       fireworksInterval = setInterval(() => {
@@ -66,7 +66,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
       if (fireworksInterval) clearInterval(fireworksInterval);
       if (confettiInterval) clearInterval(confettiInterval);
     };
-  }, [showRules, skipCelebration]);
+  }, [showRules, skipCelebration, showTileAnimation, showChestScreen]);
 
   const handleViewRules = () => {
     if (speak) speak("Here's something important to remember!");
@@ -89,15 +89,16 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     }, 2500);
   };
 
-  // Tile animation screen
+  // ========== HEXAGONAL TILE ANIMATION SCREEN ==========
+  // This should render FIRST to take priority over everything else
   if (showTileAnimation) {
     return (
-      <div className="grammar-overlay">
-        <div className="tile-animation-container">
+      <div className="grammar-overlay hexagon-animation-overlay">
+        <div className="hexagon-tile-animation-container">
           {Array.from({ length: 48 }).map((_, i) => (
             <div
               key={i}
-              className="tile"
+              className="hexagon-tile"
               style={{
                 animationDelay: `${Math.random() * 1.5}s`
               }}

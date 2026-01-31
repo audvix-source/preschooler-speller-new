@@ -503,3 +503,92 @@
 .letter-challenge-btn:active {
   transform: translateY(0);
 }
+
+/* ===================================================================
+   PROGRESS INDICATOR - Shows how many images until mastery check
+   ===================================================================
+*/
+
+.progress-indicator {
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  padding: 12px 20px;
+  border-radius: 15px;
+  margin-top: 15px;
+  border: 3px solid #FFD700;
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+  text-align: center;
+}
+
+.progress-indicator p {
+  margin: 0;
+  color: white;
+  font-weight: 700;
+  font-size: 1em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.next-milestone {
+  margin-top: 5px !important;
+  font-size: 0.9em !important;
+  color: #FFD700 !important;
+  animation: milestonePulse 2s ease-in-out infinite;
+}
+
+@keyframes milestonePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .progress-indicator {
+    padding: 10px 15px;
+    margin-top: 10px;
+  }
+
+  .progress-indicator p {
+    font-size: 0.9em;
+  }
+
+  .next-milestone {
+    font-size: 0.8em !important;
+  }
+}
+
+/* ===================================================================
+   ADD THIS TO THE END OF AlphabetScreen.css
+   SNOOZE STATUS INDICATOR
+   ===================================================================
+*/
+
+.snooze-status {
+  margin-top: 5px !important;
+  font-size: 0.85em !important;
+  color: #FFA500 !important;
+  font-weight: 600 !important;
+  animation: snoozeGlow 2s ease-in-out infinite;
+}
+
+@keyframes snoozeGlow {
+  0%, 100% {
+    opacity: 0.8;
+    text-shadow: 0 0 5px rgba(255, 165, 0, 0.3);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
+  }
+}
+
+/* Mobile responsiveness for snooze status */
+@media (max-width: 768px) {
+  .snooze-status {
+    font-size: 0.75em !important;
+  }
+}

@@ -1,0 +1,508 @@
+/* ========================================
+   HEXAGON TRANSITION V3
+   - Touching hexagons (no gaps)
+   - 2x bigger hexagons
+   - White box = full 50% height
+   - All content in one screen
+   ======================================== */
+
+.hexagon-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  overflow: hidden;
+}
+
+/* Tablet/Desktop: Match main screen dimensions */
+@media only screen and (min-width: 769px) {
+  .hexagon-overlay {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 420px !important;
+    height: 680px !important;
+    max-height: 680px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 20px !important;
+  }
+}
+
+/* ========================================
+   HEXAGON BACKGROUND - TOUCHING HEXAGONS
+   ======================================== */
+
+.hexagon-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+}
+
+.hexagon-section {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hexagon-background.split .hexagon-section.top {
+  height: 50%;
+}
+
+.hexagon-background.split .hexagon-section.bottom {
+  height: 50%;
+}
+
+/* TOUCHING HEXAGONS - NO GAPS, 2X BIGGER */
+.hexagon-touching-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Fewer columns = bigger hexagons */
+  grid-template-rows: repeat(8, 1fr);    /* More rows for tight packing */
+  gap: 0px; /* NO GAP - hexagons touch */
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+/* HEXAGON TILES - 2X BIGGER */
+.hexagon-tile-touching {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+  animation: hexagonBlinkRunning 1.5s infinite ease-in-out;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  transform-origin: center;
+}
+
+@keyframes hexagonBlinkRunning {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+    background: linear-gradient(135deg, #ffd89b 0%, #f5576c 100%);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* ========================================
+   WHITE BOX - FULL 50% HEIGHT
+   ======================================== */
+
+.white-box-fullheight-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%; /* EXACTLY 50% */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* No padding - box fills the space */
+  animation: whiteBoxFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes whiteBoxFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Radial pulse background */
+.radial-pulse-bg {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+  animation: radialPulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes radialPulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.4;
+  }
+}
+
+.white-box-fullheight {
+  position: relative;
+  width: 94%;
+  max-width: 500px;
+  height: 90%; /* Almost full height */
+  background: white;
+  border-radius: 30px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 3px rgba(102, 126, 234, 0.1);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   ALL CONTENT IN ONE - ANIMATED
+   ======================================== */
+
+.prompt-all-in-one {
+  width: 100%;
+  height: 100%;
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   ANIMATED TITLE - LETTER POP
+   ======================================== */
+
+.animated-title {
+  font-family: 'Arial', sans-serif;
+  font-size: 3.5em;
+  font-weight: 900;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 15px 0;
+  text-align: center;
+  line-height: 1;
+}
+
+.letter-pop {
+  animation: letterPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
+}
+
+@keyframes letterPop {
+  0% {
+    transform: scale(0) translateY(-50px) rotate(-180deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   ANIMATED MESSAGE - WORD FADE
+   ======================================== */
+
+.animated-message {
+  font-family: 'Arial', sans-serif;
+  font-size: 1.3em;
+  color: #555;
+  margin: 0 0 20px 0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.word-fade {
+  display: inline-block;
+  animation: wordFadeIn 0.5s ease-out backwards;
+}
+
+@keyframes wordFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.highlight-number {
+  font-weight: 800;
+  color: #667eea;
+  font-size: 1.2em;
+}
+
+/* ========================================
+   MAIN ACTION BUTTONS
+   ======================================== */
+
+.main-action-buttons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 18px 20px;
+  border: none;
+  border-radius: 15px;
+  font-family: 'Arial', sans-serif;
+  font-size: 1.2em;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  animation: buttonSlideIn 0.6s ease-out backwards;
+}
+
+.action-btn:nth-child(1) {
+  animation-delay: 1.6s;
+}
+
+.action-btn:nth-child(2) {
+  animation-delay: 1.7s;
+}
+
+@keyframes buttonSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.action-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-icon {
+  font-size: 1.4em;
+  z-index: 1;
+}
+
+.btn-text {
+  z-index: 1;
+}
+
+.btn-go {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+}
+
+.btn-go:hover {
+  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+.btn-later {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
+}
+
+.btn-later:hover {
+  background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   ELEGANT DIVIDER
+   ======================================== */
+
+.elegant-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 10px 0;
+  animation: dividerFadeIn 0.5s ease-out 1.8s backwards;
+}
+
+@keyframes dividerFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ddd, transparent);
+}
+
+.divider-text {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.85em;
+  color: #999;
+  font-style: italic;
+}
+
+/* ========================================
+   DEFER OPTIONS
+   ======================================== */
+
+.defer-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.defer-btn {
+  width: 100%;
+  padding: 12px 18px;
+  border: 2px solid #E0E0E0;
+  background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
+  border-radius: 12px;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  animation: deferSlideIn 0.5s ease-out backwards;
+}
+
+.defer-btn:nth-child(1) {
+  animation-delay: 1.9s;
+}
+
+.defer-btn:nth-child(2) {
+  animation-delay: 2s;
+}
+
+@keyframes deferSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.defer-btn:hover {
+  background: linear-gradient(135deg, #F0F0F0 0%, #E8E8E8 100%);
+  border-color: #C0C0C0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.defer-btn:active {
+  transform: translateY(0);
+}
+
+.defer-icon {
+  font-size: 1.2em;
+}
+
+.defer-text {
+  font-weight: 600;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .hexagon-touching-grid {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+  }
+
+  .white-box-fullheight {
+    width: 96%;
+    height: 92%;
+  }
+
+  .prompt-all-in-one {
+    padding: 25px 20px;
+  }
+
+  .animated-title {
+    font-size: 2.8em;
+  }
+
+  .animated-message {
+    font-size: 1.1em;
+  }
+
+  .main-action-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .action-btn {
+    padding: 15px 20px;
+    font-size: 1.1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .animated-title {
+    font-size: 2.4em;
+  }
+
+  .animated-message {
+    font-size: 1em;
+  }
+
+  .action-btn {
+    font-size: 1em;
+    padding: 14px 18px;
+  }
+
+  .defer-btn {
+    font-size: 0.9em;
+    padding: 10px 14px;
+  }
+}
