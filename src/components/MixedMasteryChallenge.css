@@ -1,13 +1,13 @@
 /* ===================================================================
-   MASTERY CHALLENGE V3 - COLORFUL & BALANCED
-   - Thick 1/4 inch (~20px) golden border
-   - Multi-color sections (no plain white)
-   - Better spacing distribution
-   - Fixed emoji display
+   MASTERY CHALLENGE V4 - EXACT OVERLAY SIZE & LETTER HIGHLIGHTING
+   - Overlay matches exact app screen size
+   - Bigger emoji (no label showing word)
+   - Highlight only letters needed for the word
+   - Thicker border, colorful sections
    ===================================================================
 */
 
-.challenge-overlay {
+.challenge-overlay-fixed {
   position: fixed;
   top: 0;
   left: 0;
@@ -27,9 +27,9 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Tablet/Desktop: Match main screen dimensions */
+/* Tablet/Desktop: EXACT match to main screen */
 @media only screen and (min-width: 769px) {
-  .challenge-overlay {
+  .challenge-overlay-fixed {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
@@ -39,7 +39,7 @@
     max-height: 680px !important;
     margin: 0 !important;
     padding: 0 !important;
-    border-radius: 20px !important;
+    border-radius: 20px !important; /* SAME as app screen */
   }
 
   @keyframes challengeFadeIn {
@@ -68,13 +68,13 @@
   height: 100%;
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
 .confetti-piece {
   position: absolute;
   animation: floatConfetti 12s linear infinite;
-  opacity: 0.4;
+  opacity: 0.3;
   font-size: 1em;
 }
 
@@ -84,10 +84,10 @@
     opacity: 0;
   }
   10% {
-    opacity: 0.4;
+    opacity: 0.3;
   }
   90% {
-    opacity: 0.4;
+    opacity: 0.3;
   }
   100% {
     transform: translateY(calc(100vh + 50px)) rotate(360deg);
@@ -96,36 +96,27 @@
 }
 
 /* ========================================
-   MAIN CONTAINER - THICK BORDER & COLORFUL
+   MAIN CONTAINER - THICK BORDER & EXACT SIZE
    ======================================== */
 
-.challenge-container {
+.challenge-container-fixed {
   background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
-  border: 20px solid #FFD700; /* THICK 1/4 inch border */
-  border-radius: 30px;
+  border: 20px solid #FFD700; /* Thick 1/4 inch border */
+  border-radius: 20px; /* EXACT same as overlay */
   box-shadow: 
     0 25px 70px rgba(0, 0, 0, 0.4),
     inset 0 0 40px rgba(255, 215, 0, 0.15);
-  width: 95%;
-  max-width: 400px;
-  height: 95%;
-  max-height: 660px;
-  padding: 0; /* No internal padding - sections manage their own */
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  padding: 0;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 10;
-  overflow: hidden; /* No scroll - better distribution */
+  overflow: hidden;
   box-sizing: border-box;
-}
-
-@media only screen and (min-width: 769px) {
-  .challenge-container {
-    width: 100%;
-    max-width: 420px;
-    height: 100%;
-    max-height: 680px;
-  }
 }
 
 /* ========================================
@@ -138,10 +129,9 @@
   align-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 12px 20px;
-  border-radius: 0; /* Sharp edges to fit border */
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
   flex-shrink: 0;
-  height: 60px; /* Fixed height */
+  height: 60px;
 }
 
 .score-display, .accuracy-display {
@@ -169,20 +159,20 @@
 }
 
 /* ========================================
-   WORD CARD - SOFT BLUE GRADIENT
+   WORD CARD - BIGGER EMOJI, NO LABEL
    ======================================== */
 
 .word-card {
   background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
   border: 3px solid #667eea;
   border-radius: 15px;
-  padding: 12px;
+  padding: 20px;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
   margin: 10px 12px;
-  height: 140px; /* Fixed height for balance */
+  height: 160px; /* Increased for bigger emoji */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -213,20 +203,20 @@
 }
 
 /* ========================================
-   EMOJI - ALWAYS VISIBLE
+   EMOJI - HUGE SIZE, NO LABEL
    ======================================== */
 
 .word-emoji-display {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 8px;
-  min-height: 70px; /* Reserve space */
+  width: 100%;
+  height: 100%;
 }
 
-.emoji-large {
-  font-size: 4em; /* Visible size */
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+.emoji-huge {
+  font-size: 7em; /* MUCH BIGGER - was 4em */
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
   animation: subtleFloat 4s ease-in-out infinite;
   line-height: 1;
 }
@@ -236,28 +226,8 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
   }
-}
-
-/* ========================================
-   LETTER HINT - LIGHT PURPLE
-   ======================================== */
-
-.letter-hint {
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  font-size: 1em;
-  font-weight: 700;
-  color: #2C3E50;
-  background: linear-gradient(135deg, #E8EAF6 0%, #C5CAE9 100%);
-  padding: 6px 14px;
-  border-radius: 10px;
-  display: inline-block;
-  margin: 0 auto;
-  width: fit-content;
-  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.15);
-  border: 2px solid #667eea;
 }
 
 /* ========================================
@@ -292,7 +262,7 @@
 }
 
 .feedback-icon {
-  font-size: 4em;
+  font-size: 4.5em;
   margin-bottom: 10px;
   animation: iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
@@ -311,7 +281,7 @@
 
 .feedback-text {
   font-family: 'Arial', sans-serif;
-  font-size: 1.4em;
+  font-size: 1.5em;
   font-weight: 800;
   color: #2C3E50;
 }
@@ -382,7 +352,7 @@
 }
 
 /* ========================================
-   KEYBOARD - MINT GREEN GRADIENT
+   KEYBOARD - WITH HIGHLIGHTED NEEDED LETTERS
    ======================================== */
 
 .challenge-keyboard {
@@ -392,8 +362,7 @@
   padding: 12px;
   background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
   border-radius: 12px;
-  box-shadow: 
-    inset 0 2px 8px rgba(76, 175, 80, 0.1);
+  box-shadow: inset 0 2px 8px rgba(76, 175, 80, 0.1);
   flex-shrink: 0;
   margin: 10px 12px;
 }
@@ -412,7 +381,33 @@
   box-shadow: 0 2px 6px rgba(76, 175, 80, 0.15);
 }
 
-.keyboard-key:hover:not(:disabled) {
+/* HIGHLIGHT NEEDED LETTERS - YELLOW GLOW */
+.keyboard-key.needed-letter {
+  background: linear-gradient(135deg, #FFF9C4 0%, #FFF59D 100%);
+  border-color: #FBC02D;
+  border-width: 3px;
+  box-shadow: 
+    0 0 15px rgba(251, 192, 45, 0.6),
+    0 4px 10px rgba(251, 192, 45, 0.3);
+  animation: letterPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes letterPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 15px rgba(251, 192, 45, 0.6),
+      0 4px 10px rgba(251, 192, 45, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 
+      0 0 25px rgba(251, 192, 45, 0.8),
+      0 6px 15px rgba(251, 192, 45, 0.5);
+  }
+}
+
+.keyboard-key:hover:not(:disabled):not(.used) {
   background: linear-gradient(135deg, #81C784 0%, #66BB6A 100%);
   color: white;
   border-color: #4CAF50;
@@ -524,16 +519,16 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  .challenge-container {
-    border-width: 15px; /* Slightly thinner on mobile */
+  .challenge-container-fixed {
+    border-width: 15px;
   }
 
-  .emoji-large {
-    font-size: 3.5em;
+  .emoji-huge {
+    font-size: 6em;
   }
 
   .word-card {
-    height: 130px;
+    height: 150px;
     margin: 8px 10px;
   }
 
@@ -566,16 +561,16 @@
 }
 
 @media (max-width: 480px) {
-  .challenge-container {
+  .challenge-container-fixed {
     border-width: 12px;
   }
 
-  .emoji-large {
-    font-size: 3em;
+  .emoji-huge {
+    font-size: 5em;
   }
 
   .word-card {
-    height: 120px;
+    height: 130px;
   }
 
   .answer-box {

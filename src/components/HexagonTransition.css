@@ -1,9 +1,10 @@
 /* ========================================
-   HEXAGON TRANSITION V3
-   - Touching hexagons (no gaps)
-   - 2x bigger hexagons
-   - White box = full 50% height
-   - All content in one screen
+   HEXAGON TRANSITION V4 FINAL
+   - 8-sided octagons (not hexagons)
+   - Different tile colors (teal/coral)
+   - Light gold main box
+   - Increased padding from borders
+   - Defer box below (half size, lavender)
    ======================================== */
 
 .hexagon-overlay {
@@ -33,10 +34,10 @@
 }
 
 /* ========================================
-   HEXAGON BACKGROUND - TOUCHING HEXAGONS
+   OCTAGON BACKGROUND - DIFFERENT COLORS
    ======================================== */
 
-.hexagon-background {
+.octagon-background {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -45,75 +46,90 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
 }
 
-.hexagon-section {
+.octagon-section {
   width: 100%;
   height: 100%;
   position: relative;
   overflow: hidden;
 }
 
-.hexagon-background.split .hexagon-section.top {
+.octagon-background.split .octagon-section.top {
   height: 50%;
 }
 
-.hexagon-background.split .hexagon-section.bottom {
+.octagon-background.split .octagon-section.bottom {
   height: 50%;
 }
 
-/* TOUCHING HEXAGONS - NO GAPS, 2X BIGGER */
-.hexagon-touching-grid {
+/* OCTAGON GRID */
+.octagon-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr); /* Fewer columns = bigger hexagons */
-  grid-template-rows: repeat(8, 1fr);    /* More rows for tight packing */
-  gap: 0px; /* NO GAP - hexagons touch */
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 0px;
   width: 100%;
   height: 100%;
   padding: 0;
 }
 
-/* HEXAGON TILES - 2X BIGGER */
-.hexagon-tile-touching {
+/* OCTAGON TILES - 8-SIDED */
+.octagon-tile {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
-  animation: hexagonBlinkRunning 1.5s infinite ease-in-out;
+  clip-path: polygon(
+    30% 0%, 70% 0%, 
+    100% 30%, 100% 70%, 
+    70% 100%, 30% 100%, 
+    0% 70%, 0% 30%
+  );
+  animation: octagonBlink 1.5s infinite ease-in-out;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
   transform-origin: center;
 }
 
-@keyframes hexagonBlinkRunning {
+/* COLOR A: Teal/Turquoise - Different from background */
+.octagon-tile.color-a {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+}
+
+/* COLOR B: Coral/Peach - Alternating */
+.octagon-tile.color-b {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%);
+}
+
+@keyframes octagonBlink {
   0%, 100% {
-    opacity: 0.4;
+    opacity: 0.5;
     transform: scale(0.98);
-    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
   }
   50% {
     opacity: 1;
     transform: scale(1);
-    background: linear-gradient(135deg, #ffd89b 0%, #f5576c 100%);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 12px rgba(78, 205, 196, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.2);
   }
 }
 
 /* ========================================
-   WHITE BOX - FULL 50% HEIGHT
+   CONTENT AREA - INCREASED PADDING
    ======================================== */
 
-.white-box-fullheight-container {
+.content-area {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 50%; /* EXACTLY 50% */
+  height: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0; /* No padding - box fills the space */
-  animation: whiteBoxFadeIn 0.5s ease-out forwards;
+  justify-content: flex-start;
+  padding: 30px 25px; /* INCREASED padding from borders */
+  gap: 15px;
+  animation: contentFadeIn 0.5s ease-out forwards;
+  box-sizing: border-box;
 }
 
-@keyframes whiteBoxFadeIn {
+@keyframes contentFadeIn {
   from {
     opacity: 0;
   }
@@ -122,52 +138,133 @@
   }
 }
 
-/* Radial pulse background */
-.radial-pulse-bg {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
-  animation: radialPulse 3s ease-in-out infinite;
-  pointer-events: none;
-}
+/* ========================================
+   GOLD BOX CONTAINER
+   ======================================== */
 
-@keyframes radialPulse {
-  0%, 100% {
-    transform: scale(0.8);
-    opacity: 0.2;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.4;
-  }
-}
-
-.white-box-fullheight {
-  position: relative;
-  width: 94%;
-  max-width: 500px;
-  height: 90%; /* Almost full height */
-  background: white;
-  border-radius: 30px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.3),
-    0 0 0 3px rgba(102, 126, 234, 0.1);
-  overflow: hidden;
+.gold-box-container {
+  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ========================================
-   ALL CONTENT IN ONE - ANIMATED
-   ======================================== */
-
-.prompt-all-in-one {
+.gold-box {
   width: 100%;
   height: 100%;
-  padding: 35px 25px;
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFE4B5 100%); /* Light gold */
+  border-radius: 20px;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.25),
+    0 0 0 2px rgba(255, 215, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 18px;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   DEFER BOX - HALF SIZE, LAVENDER
+   ======================================== */
+
+.defer-box-container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: deferSlideUp 0.5s ease-out backwards;
+}
+
+@keyframes deferSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.defer-box {
+  width: 100%;
+  background: linear-gradient(135deg, #E8E4F3 0%, #D4C5F9 100%); /* Lavender */
+  border-radius: 15px;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(147, 112, 219, 0.2);
+  padding: 12px 15px;
+  box-sizing: border-box;
+}
+
+.defer-label {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.85em;
+  color: #6B5B95;
+  margin: 0 0 8px 0;
+  text-align: center;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.defer-options-grid {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.defer-option-btn {
+  flex: 1;
+  padding: 8px 6px;
+  border: 2px solid #9370DB;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
+  border-radius: 10px;
+  font-family: 'Arial', sans-serif;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(147, 112, 219, 0.15);
+}
+
+.defer-option-btn:hover {
+  background: linear-gradient(135deg, #F0F0F0 0%, #E0E0E0 100%);
+  border-color: #8A2BE2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(147, 112, 219, 0.25);
+}
+
+.defer-option-btn:active {
+  transform: translateY(0);
+}
+
+.defer-fraction {
+  font-size: 1.4em;
+  font-weight: 800;
+  color: #4B0082;
+}
+
+.defer-desc {
+  font-size: 0.75em;
+  font-weight: 600;
+  color: #6B5B95;
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* ========================================
+   PROMPT MAIN CONTENT
+   ======================================== */
+
+.prompt-main-content {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -176,18 +273,18 @@
 }
 
 /* ========================================
-   ANIMATED TITLE - LETTER POP
+   ANIMATED TITLE
    ======================================== */
 
 .animated-title {
   font-family: 'Arial', sans-serif;
-  font-size: 3.5em;
+  font-size: 2.8em;
   font-weight: 900;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin: 0 0 15px 0;
+  margin: 0 0 10px 0;
   text-align: center;
   line-height: 1;
 }
@@ -208,14 +305,14 @@
 }
 
 /* ========================================
-   ANIMATED MESSAGE - WORD FADE
+   ANIMATED MESSAGE
    ======================================== */
 
 .animated-message {
   font-family: 'Arial', sans-serif;
-  font-size: 1.3em;
+  font-size: 1.15em;
   color: #555;
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
   text-align: center;
   line-height: 1.6;
 }
@@ -239,7 +336,7 @@
 .highlight-number {
   font-weight: 800;
   color: #667eea;
-  font-size: 1.2em;
+  font-size: 1.15em;
 }
 
 /* ========================================
@@ -248,29 +345,28 @@
 
 .main-action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  margin-bottom: 15px;
 }
 
 .action-btn {
   flex: 1;
-  padding: 18px 20px;
+  padding: 14px 16px;
   border: none;
-  border-radius: 15px;
+  border-radius: 13px;
   font-family: 'Arial', sans-serif;
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
-  animation: buttonSlideIn 0.6s ease-out backwards;
+  animation: buttonSlideIn 0.5s ease-out backwards;
 }
 
 .action-btn:nth-child(1) {
@@ -284,7 +380,7 @@
 @keyframes buttonSlideIn {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-25px);
   }
   to {
     opacity: 1;
@@ -311,7 +407,7 @@
 }
 
 .btn-icon {
-  font-size: 1.4em;
+  font-size: 1.3em;
   z-index: 1;
 }
 
@@ -327,7 +423,7 @@
 .btn-go:hover {
   background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  box-shadow: 0 7px 20px rgba(76, 175, 80, 0.35);
 }
 
 .btn-later {
@@ -338,7 +434,7 @@
 .btn-later:hover {
   background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+  box-shadow: 0 7px 20px rgba(255, 152, 0, 0.35);
 }
 
 .action-btn:active {
@@ -346,163 +442,86 @@
 }
 
 /* ========================================
-   ELEGANT DIVIDER
-   ======================================== */
-
-.elegant-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  margin: 10px 0;
-  animation: dividerFadeIn 0.5s ease-out 1.8s backwards;
-}
-
-@keyframes dividerFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.divider-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #ddd, transparent);
-}
-
-.divider-text {
-  font-family: 'Arial', sans-serif;
-  font-size: 0.85em;
-  color: #999;
-  font-style: italic;
-}
-
-/* ========================================
-   DEFER OPTIONS
-   ======================================== */
-
-.defer-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.defer-btn {
-  width: 100%;
-  padding: 12px 18px;
-  border: 2px solid #E0E0E0;
-  background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
-  border-radius: 12px;
-  font-family: 'Arial', sans-serif;
-  font-size: 0.95em;
-  font-weight: 600;
-  color: #666;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  animation: deferSlideIn 0.5s ease-out backwards;
-}
-
-.defer-btn:nth-child(1) {
-  animation-delay: 1.9s;
-}
-
-.defer-btn:nth-child(2) {
-  animation-delay: 2s;
-}
-
-@keyframes deferSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.defer-btn:hover {
-  background: linear-gradient(135deg, #F0F0F0 0%, #E8E8E8 100%);
-  border-color: #C0C0C0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-}
-
-.defer-btn:active {
-  transform: translateY(0);
-}
-
-.defer-icon {
-  font-size: 1.2em;
-}
-
-.defer-text {
-  font-weight: 600;
-}
-
-/* ========================================
    RESPONSIVE DESIGN
    ======================================== */
 
 @media (max-width: 768px) {
-  .hexagon-touching-grid {
-    grid-template-columns: repeat(5, 1fr);
+  .octagon-grid {
+    grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(7, 1fr);
   }
 
-  .white-box-fullheight {
-    width: 96%;
-    height: 92%;
-  }
-
-  .prompt-all-in-one {
+  .content-area {
     padding: 25px 20px;
+    gap: 12px;
   }
 
-  .animated-title {
-    font-size: 2.8em;
+  .gold-box {
+    padding: 18px 15px;
   }
 
-  .animated-message {
-    font-size: 1.1em;
-  }
-
-  .main-action-buttons {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .action-btn {
-    padding: 15px 20px;
-    font-size: 1.1em;
-  }
-}
-
-@media (max-width: 480px) {
   .animated-title {
     font-size: 2.4em;
   }
 
   .animated-message {
+    font-size: 1.05em;
+  }
+
+  .main-action-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 13px 15px;
+    font-size: 1.05em;
+  }
+
+  .defer-box {
+    padding: 10px 12px;
+  }
+
+  .defer-label {
+    font-size: 0.8em;
+  }
+
+  .defer-options-grid {
+    gap: 6px;
+  }
+
+  .defer-option-btn {
+    padding: 7px 5px;
+  }
+
+  .defer-fraction {
+    font-size: 1.2em;
+  }
+
+  .defer-desc {
+    font-size: 0.7em;
+  }
+}
+
+@media (max-width: 480px) {
+  .animated-title {
+    font-size: 2.2em;
+  }
+
+  .animated-message {
     font-size: 1em;
   }
 
   .action-btn {
     font-size: 1em;
-    padding: 14px 18px;
+    padding: 12px 14px;
   }
 
-  .defer-btn {
-    font-size: 0.9em;
-    padding: 10px 14px;
+  .defer-fraction {
+    font-size: 1.1em;
+  }
+
+  .defer-desc {
+    font-size: 0.65em;
   }
 }

@@ -29,18 +29,13 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   // Generate mixed questions on mount
   useEffect(() => {
     const generateQuestions = () => {
-      console.log('Recent words:', recentWords); // Debug
+      console.log('Recent words:', recentWords);
       
-      // Categorize words by length
       const shortWords = recentWords.filter(w => w.word.length >= 3 && w.word.length <= 6);
       const longWords = recentWords.filter(w => w.word.length >= 7);
       
-      console.log('Short words:', shortWords); // Debug
-      console.log('Long words:', longWords); // Debug
-      
       const selectedQuestions = [];
       
-      // Try to get 3 spelling questions (short words)
       const spellingCount = Math.min(3, shortWords.length);
       for (let i = 0; i < spellingCount; i++) {
         if (shortWords[i]) {
@@ -51,7 +46,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         }
       }
       
-      // Try to get 2 recognition questions (long words)
       const recognitionCount = Math.min(2, longWords.length);
       for (let i = 0; i < recognitionCount; i++) {
         if (longWords[i]) {
@@ -62,7 +56,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         }
       }
       
-      // If we don't have enough questions, fill with whatever we have
       while (selectedQuestions.length < 5 && recentWords.length > 0) {
         const remaining = recentWords.filter(
           w => !selectedQuestions.find(q => q.word.word === w.word)
@@ -76,10 +69,8 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         });
       }
       
-      // Shuffle questions
       selectedQuestions.sort(() => Math.random() - 0.5);
       
-      console.log('Final questions:', selectedQuestions); // Debug
       setQuestions(selectedQuestions);
     };
 
@@ -97,7 +88,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     const newAnswer = [...userAnswer, letter];
     setUserAnswer(newAnswer);
 
-    // Check if answer is complete
     if (newAnswer.length === currentQuestion.word.word.length) {
       const userWord = newAnswer.join('').toLowerCase();
       const correctWord = currentQuestion.word.word.toLowerCase();
@@ -113,20 +103,17 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         if (speak) speak(`Not quite! It's ${currentQuestion.word.word}`);
       }
 
-      // Move to next question
       setTimeout(() => {
         moveToNextQuestion();
       }, 2000);
     }
   };
 
-  // Handle recognition answer
   const handleRecognitionAnswer = (correct) => {
     if (correct) {
       setScore(score + 1);
     }
     
-    // Move to next question
     setTimeout(() => {
       moveToNextQuestion();
     }, 500);
@@ -139,7 +126,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       setShowFeedback(false);
       setIsCorrect(false);
     } else {
-      // Challenge complete
       if (speak) speak(`Challenge complete! You scored ${score + (isCorrect ? 1 : 0)} out of ${totalQuestions}`);
       setTimeout(() => onExit(score + (isCorrect ? 1 : 0), totalQuestions), 2000);
     }
@@ -164,13 +150,19 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       'door': '🚪', 'egg': '🥚', 'elf': '🧝', 'fish': '🐠', 'frog': '🐸', 'fire': '🔥',
       'flower': '🌸', 'goat': '🐐', 'girl': '👧', 'hat': '🎩', 'horse': '🐴', 'hand': '✋',
       'heart': '❤️', 'igloo': '🏔️', 'jar': '🫙', 'jet': '✈️', 'kite': '🪁', 'king': '🤴',
-      'lion': '🦁', 'lamp': '💡', 'lemon': '🍋', 'moon': '🌙', 'mouse': '🐭', 'nail': '🔨',
-      'net': '🥅', 'nurse': '👩‍⚕️', 'ox': '🐂', 'pizza': '🍕', 'queen': '👸', 'quilt': '🛏️',
-      'rain': '🌧️', 'robot': '🤖', 'star': '⭐', 'sun': '☀️', 'tree': '🌳', 'truck': '🚚',
-      'vase': '🏺', 'vest': '🦺', 'watch': '⌚', 'whale': '🐋', 'yak': '🦬', 'yarn': '🧶',
-      'zebra': '🦓', 'zap': '⚡'
+      'lion': '🦁', 'lamp': '💡', 'lemon': '🍋', 'moon': '🌙', 'mouse': '🐭', 'monkey': '🐵',
+      'nail': '🔨', 'net': '🥅', 'nurse': '👩‍⚕️', 'ox': '🐂', 'pizza': '🍕', 'queen': '👸',
+      'quilt': '🛏️', 'rain': '🌧️', 'robot': '🤖', 'star': '⭐', 'sun': '☀️', 'tree': '🌳',
+      'truck': '🚚', 'vase': '🏺', 'vest': '🦺', 'watch': '⌚', 'whale': '🐋', 'yak': '🦬',
+      'yarn': '🧶', 'zebra': '🦓', 'zap': '⚡'
     };
     return emojiMap[word.toLowerCase()] || '📝';
+  };
+
+  // Get unique letters needed for the word
+  const getNeededLetters = (word) => {
+    if (!word) return [];
+    return [...new Set(word.toUpperCase().split(''))];
   };
 
   if (!currentQuestion) {
@@ -182,10 +174,11 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   }
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const neededLetters = currentQuestion.type === 'spelling' ? getNeededLetters(currentQuestion.word.word) : [];
 
   return (
-    <div className="challenge-overlay">
-      <div className="challenge-container">
+    <div className="challenge-overlay-fixed">
+      <div className="challenge-container-fixed">
         {/* Floating confetti */}
         <div className="challenge-confetti">
           {Array.from({ length: 15 }).map((_, i) => (
@@ -218,7 +211,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         {/* Question content */}
         <div className="question-content">
           {currentQuestion.type === 'recognition' ? (
-            // Recognition Challenge
             <RecognitionChallenge
               word={currentQuestion.word.word}
               wordImage={getImagePath(currentQuestion.word.image)}
@@ -230,15 +222,11 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
               speak={speak}
             />
           ) : (
-            // Spelling Challenge
             <>
               <div className={`word-card ${showFeedback ? (isCorrect ? 'correct' : 'incorrect') : ''}`}>
+                {/* BIGGER EMOJI - NO LABEL */}
                 <div className="word-emoji-display">
-                  <span className="emoji-large">{getWordVisual(currentQuestion.word.word)}</span>
-                </div>
-                
-                <div className="letter-hint">
-                  {currentQuestion.word.word[0].toUpperCase()} - {currentQuestion.word.word}
+                  <span className="emoji-huge">{getWordVisual(currentQuestion.word.word)}</span>
                 </div>
 
                 {showFeedback && (
@@ -266,11 +254,14 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                 ))}
               </div>
 
+              {/* KEYBOARD WITH HIGHLIGHTED NEEDED LETTERS */}
               <div className="challenge-keyboard">
                 {alphabet.map(letter => (
                   <button
                     key={letter}
-                    className={`keyboard-key ${userAnswer.includes(letter) ? 'used' : ''}`}
+                    className={`keyboard-key ${userAnswer.includes(letter) ? 'used' : ''} ${
+                      neededLetters.includes(letter) && !userAnswer.includes(letter) ? 'needed-letter' : ''
+                    }`}
                     onClick={() => handleLetterClick(letter)}
                     disabled={showFeedback}
                   >

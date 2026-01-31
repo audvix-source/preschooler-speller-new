@@ -4,9 +4,10 @@ import './HexagonTransition.css';
 const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
   const [phase, setPhase] = useState('fullscreen'); // fullscreen → transition → prompt
   const [showPrompt, setShowPrompt] = useState(false);
+  const [showDeferOptions, setShowDeferOptions] = useState(false);
 
   useEffect(() => {
-    // Phase 1: Full screen hexagons for 2 seconds
+    // Phase 1: Full screen octagons for 2 seconds
     const fullscreenTimer = setTimeout(() => {
       setPhase('transition');
     }, 2000);
@@ -17,9 +18,15 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
       setShowPrompt(true);
     }, 3500); // 2000 + 1500
 
+    // Phase 3: Show defer options 0.5s after prompt
+    const deferTimer = setTimeout(() => {
+      setShowDeferOptions(true);
+    }, 4000);
+
     return () => {
       clearTimeout(fullscreenTimer);
       clearTimeout(transitionTimer);
+      clearTimeout(deferTimer);
     };
   }, []);
 
@@ -35,23 +42,24 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
 
   const handleSnooze = (option) => {
     if (speak) {
-      if (option === 'half') speak("Got it! I'll remind you at 20 images.");
-      else speak("Perfect! I'll remind you when you finish all letters.");
+      if (option === 'third') speak("Got it! I'll remind you after 1/3 of images.");
+      else if (option === 'half') speak("Perfect! I'll remind you at halfway.");
+      else speak("Sounds good! I'll remind you when you finish all images.");
     }
     onSnooze(option);
   };
 
   return (
     <div className="hexagon-overlay">
-      {/* Phase 1 & 2: Hexagon tiles background (always visible) */}
-      <div className={`hexagon-background ${phase === 'transition' ? 'split' : ''}`}>
-        {/* Top half hexagons */}
-        <div className="hexagon-section top">
-          <div className="hexagon-touching-grid">
-            {Array.from({ length: 48 }).map((_, i) => (
+      {/* Phase 1 & 2: Octagon tiles background (always visible) */}
+      <div className={`octagon-background ${phase === 'transition' ? 'split' : ''}`}>
+        {/* Top half octagons */}
+        <div className="octagon-section top">
+          <div className="octagon-grid">
+            {Array.from({ length: 40 }).map((_, i) => (
               <div
                 key={`top-${i}`}
-                className="hexagon-tile-touching"
+                className={`octagon-tile ${i % 2 === 0 ? 'color-a' : 'color-b'}`}
                 style={{
                   animationDelay: `${(i * 0.05) % 2}s`,
                   animationDuration: `${1.2 + (i % 3) * 0.2}s`
@@ -61,13 +69,13 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
           </div>
         </div>
 
-        {/* Bottom half hexagons */}
-        <div className="hexagon-section bottom">
-          <div className="hexagon-touching-grid">
-            {Array.from({ length: 48 }).map((_, i) => (
+        {/* Bottom half octagons */}
+        <div className="octagon-section bottom">
+          <div className="octagon-grid">
+            {Array.from({ length: 40 }).map((_, i) => (
               <div
                 key={`bottom-${i}`}
-                className="hexagon-tile-touching"
+                className={`octagon-tile ${i % 2 === 0 ? 'color-a' : 'color-b'}`}
                 style={{
                   animationDelay: `${(i * 0.05) % 2}s`,
                   animationDuration: `${1.2 + (i % 3) * 0.2}s`
@@ -78,86 +86,89 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
         </div>
       </div>
 
-      {/* Phase 2 & 3: White box - FULL HEIGHT (50%) with ALL content inside */}
+      {/* Phase 2 & 3: Main content area */}
       {phase !== 'fullscreen' && (
-        <div className="white-box-fullheight-container">
-          {/* Radial gradient pulse background */}
-          <div className="radial-pulse-bg"></div>
-          
-          <div className="white-box-fullheight">
-            {/* Phase 3: ALL content appears at once with animations */}
-            {showPrompt && (
-              <div className="prompt-all-in-one">
-                {/* Main title with letter animation */}
-                <h1 className="animated-title">
-                  {'Progress!'.split('').map((letter, i) => (
-                    <span 
-                      key={i} 
-                      className="letter-pop"
-                      style={{ 
-                        animationDelay: `${i * 0.1}s`,
-                        display: letter === ' ' ? 'inline' : 'inline-block'
-                      }}
+        <div className="content-area">
+          {/* Light Gold Box - Main Prompt */}
+          <div className="gold-box-container">
+            <div className="gold-box">
+              {showPrompt && (
+                <div className="prompt-main-content">
+                  <h1 className="animated-title">
+                    {'Progress!'.split('').map((letter, i) => (
+                      <span 
+                        key={i} 
+                        className="letter-pop"
+                        style={{ 
+                          animationDelay: `${i * 0.1}s`,
+                          display: letter === ' ' ? 'inline' : 'inline-block'
+                        }}
+                      >
+                        {letter}
+                      </span>
+                    ))}
+                  </h1>
+
+                  <p className="animated-message">
+                    <span className="word-fade" style={{ animationDelay: '0.8s' }}>You've learned</span>{' '}
+                    <span className="word-fade highlight-number" style={{ animationDelay: '1s' }}>5 letters</span>
+                    <span className="word-fade" style={{ animationDelay: '1.2s' }}>!</span>
+                    <br />
+                    <span className="word-fade" style={{ animationDelay: '1.4s' }}>Ready for a quick challenge?</span>
+                  </p>
+                  
+                  <div className="main-action-buttons">
+                    <button 
+                      className="action-btn btn-go" 
+                      onClick={handleAccept}
                     >
-                      {letter}
-                    </span>
-                  ))}
-                </h1>
+                      <span className="btn-icon">🚀</span>
+                      <span className="btn-text">Let's Go!</span>
+                    </button>
+                    <button 
+                      className="action-btn btn-later" 
+                      onClick={handleDecline}
+                    >
+                      <span className="btn-icon">⏭️</span>
+                      <span className="btn-text">Later</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-                {/* Message with word animation */}
-                <p className="animated-message">
-                  <span className="word-fade" style={{ animationDelay: '0.8s' }}>You've learned</span>{' '}
-                  <span className="word-fade highlight-number" style={{ animationDelay: '1s' }}>5 letters</span>
-                  <span className="word-fade" style={{ animationDelay: '1.2s' }}>!</span>
-                  <br />
-                  <span className="word-fade" style={{ animationDelay: '1.4s' }}>Ready for a quick challenge?</span>
-                </p>
-                
-                {/* Main action buttons */}
-                <div className="main-action-buttons">
+          {/* Defer Options Box - Half size, below main box */}
+          {showDeferOptions && (
+            <div className="defer-box-container">
+              <div className="defer-box">
+                <p className="defer-label">Or remind me after...</p>
+                <div className="defer-options-grid">
                   <button 
-                    className="action-btn btn-go" 
-                    onClick={handleAccept}
+                    className="defer-option-btn" 
+                    onClick={() => handleSnooze('third')}
                   >
-                    <span className="btn-icon">🚀</span>
-                    <span className="btn-text">Let's Go!</span>
+                    <span className="defer-fraction">1/3</span>
+                    <span className="defer-desc">of images</span>
                   </button>
                   <button 
-                    className="action-btn btn-later" 
-                    onClick={handleDecline}
-                  >
-                    <span className="btn-icon">⏭️</span>
-                    <span className="btn-text">Later</span>
-                  </button>
-                </div>
-
-                {/* Elegant divider */}
-                <div className="elegant-divider">
-                  <span className="divider-line"></span>
-                  <span className="divider-text">or defer until</span>
-                  <span className="divider-line"></span>
-                </div>
-
-                {/* Defer/Snooze options */}
-                <div className="defer-options">
-                  <button 
-                    className="defer-btn" 
+                    className="defer-option-btn" 
                     onClick={() => handleSnooze('half')}
                   >
-                    <span className="defer-icon">📊</span>
-                    <span className="defer-text">20 images explored</span>
+                    <span className="defer-fraction">1/2</span>
+                    <span className="defer-desc">of images</span>
                   </button>
                   <button 
-                    className="defer-btn" 
-                    onClick={() => handleSnooze('complete')}
+                    className="defer-option-btn" 
+                    onClick={() => handleSnooze('all')}
                   >
-                    <span className="defer-icon">✅</span>
-                    <span className="defer-text">All letters complete</span>
+                    <span className="defer-fraction">✅</span>
+                    <span className="defer-desc">All done</span>
                   </button>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
