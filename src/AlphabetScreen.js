@@ -61,7 +61,9 @@ function AlphabetScreen(props) {
     console.log('Snooze until:', snoozeUntil);
     
     // Skip if user has snoozed
-    if (snoozeUntil === 'half' && viewedImages.length < 20) return;
+    const ONE_THIRD_MARK = Math.floor(260 / 3); // 87 images
+    if (snoozeUntil === 'third' && viewedImages.length < ONE_THIRD_MARK) return;
+    if (snoozeUntil === 'half' && viewedImages.length < 130) return;
     if (snoozeUntil === 'complete' && viewedImages.length < 260) return; // 26 letters × 10 images
     
     if (viewedImages.length > 0 && viewedImages.length % 5 === 0) {

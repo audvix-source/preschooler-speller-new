@@ -31,31 +31,35 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     const generateQuestions = () => {
       console.log('Recent words:', recentWords);
       
-      const shortWords = recentWords.filter(w => w.word.length >= 3 && w.word.length <= 6);
-      const longWords = recentWords.filter(w => w.word.length >= 7);
+      // SEPARATE: Easy words (3-6 letters) vs Hard words (7+ letters)
+      const easyWords = recentWords.filter(w => w.word.length >= 3 && w.word.length <= 6);
+      const hardWords = recentWords.filter(w => w.word.length >= 7);
       
       const selectedQuestions = [];
       
-      const spellingCount = Math.min(3, shortWords.length);
-      for (let i = 0; i < spellingCount; i++) {
-        if (shortWords[i]) {
+      // START WITH EASY SPELLING (3-6 letter words)
+      const easySpellingCount = Math.min(3, easyWords.length);
+      for (let i = 0; i < easySpellingCount; i++) {
+        if (easyWords[i]) {
           selectedQuestions.push({
             type: 'spelling',
-            word: shortWords[i]
+            word: easyWords[i]
           });
         }
       }
       
-      const recognitionCount = Math.min(2, longWords.length);
-      for (let i = 0; i < recognitionCount; i++) {
-        if (longWords[i]) {
+      // THEN ADD HARD RECOGNITION (7+ letter words - multiple choice, NO spelling)
+      const hardRecognitionCount = Math.min(2, hardWords.length);
+      for (let i = 0; i < hardRecognitionCount; i++) {
+        if (hardWords[i]) {
           selectedQuestions.push({
             type: 'recognition',
-            word: longWords[i]
+            word: hardWords[i]
           });
         }
       }
       
+      // Fill remaining slots if needed
       while (selectedQuestions.length < 5 && recentWords.length > 0) {
         const remaining = recentWords.filter(
           w => !selectedQuestions.find(q => q.word.word === w.word)
@@ -69,7 +73,8 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         });
       }
       
-      selectedQuestions.sort(() => Math.random() - 0.5);
+      // DON'T shuffle - keep easy spelling first, hard recognition after
+      // selectedQuestions.sort(() => Math.random() - 0.5); // REMOVED
       
       setQuestions(selectedQuestions);
     };
@@ -154,15 +159,23 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       'nail': '🔨', 'net': '🥅', 'nurse': '👩‍⚕️', 'ox': '🐂', 'pizza': '🍕', 'queen': '👸',
       'quilt': '🛏️', 'rain': '🌧️', 'robot': '🤖', 'star': '⭐', 'sun': '☀️', 'tree': '🌳',
       'truck': '🚚', 'vase': '🏺', 'vest': '🦺', 'watch': '⌚', 'whale': '🐋', 'yak': '🦬',
-      'yarn': '🧶', 'zebra': '🦓', 'zap': '⚡'
+      'yarn': '🧶', 'zebra': '🦓', 'zap': '⚡', 'zipper': '🤐', 'zigzag': '⚡', 'zeppelin': '🛩️'
     };
     return emojiMap[word.toLowerCase()] || '📝';
   };
 
-  // Get unique letters needed for the word
+  // Get ALL letters needed (including duplicates) for proper highlighting
   const getNeededLetters = (word) => {
     if (!word) return [];
-    return [...new Set(word.toUpperCase().split(''))];
+    // Return ALL letters (including duplicates) as uppercase
+    return word.toUpperCase().split('');
+  };
+
+  // Check if a letter is still needed (accounting for how many times it appears)
+  const isLetterStillNeeded = (letter, word, currentAnswer) => {
+    const totalNeeded = word.toUpperCase().split('').filter(l => l === letter).length;
+    const alreadyUsed = currentAnswer.filter(l => l === letter).length;
+    return alreadyUsed < totalNeeded;
   };
 
   if (!currentQuestion) {
@@ -224,19 +237,20 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           ) : (
             <>
               <div className={`word-card ${showFeedback ? (isCorrect ? 'correct' : 'incorrect') : ''}`}>
-                {/* BIGGER EMOJI - NO LABEL */}
+                {/* HUGE EMOJI - ALWAYS VISIBLE */}
                 <div className="word-emoji-display">
                   <span className="emoji-huge">{getWordVisual(currentQuestion.word.word)}</span>
                 </div>
 
+                {/* Show feedback without hiding emoji */}
                 {showFeedback && (
-                  <div className="feedback-overlay">
-                    <div className="feedback-icon">
+                  <div className="feedback-banner">
+                    <span className="feedback-icon-inline">
                       {isCorrect ? '✅' : '❌'}
-                    </div>
-                    <div className="feedback-text">
+                    </span>
+                    <span className="feedback-text-inline">
                       {isCorrect ? 'Perfect!' : `It's ${currentQuestion.word.word}`}
-                    </div>
+                    </span>
                   </div>
                 )}
               </div>
@@ -256,18 +270,24 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
 
               {/* KEYBOARD WITH HIGHLIGHTED NEEDED LETTERS */}
               <div className="challenge-keyboard">
-                {alphabet.map(letter => (
-                  <button
-                    key={letter}
-                    className={`keyboard-key ${userAnswer.includes(letter) ? 'used' : ''} ${
-                      neededLetters.includes(letter) && !userAnswer.includes(letter) ? 'needed-letter' : ''
-                    }`}
-                    onClick={() => handleLetterClick(letter)}
-                    disabled={showFeedback}
-                  >
-                    {letter}
-                  </button>
-                ))}
+                {alphabet.map(letter => {
+                  const isUsed = userAnswer.filter(l => l === letter).length >= 
+                                 currentQuestion.word.word.toUpperCase().split('').filter(l => l === letter).length;
+                  const isNeeded = isLetterStillNeeded(letter, currentQuestion.word.word, userAnswer);
+                  
+                  return (
+                    <button
+                      key={letter}
+                      className={`keyboard-key ${isUsed ? 'used' : ''} ${
+                        isNeeded ? 'needed-letter' : ''
+                      }`}
+                      onClick={() => handleLetterClick(letter)}
+                      disabled={showFeedback}
+                    >
+                      {letter}
+                    </button>
+                  );
+                })}
               </div>
             </>
           )}

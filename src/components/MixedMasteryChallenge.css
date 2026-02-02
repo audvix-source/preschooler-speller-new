@@ -100,9 +100,15 @@
    ======================================== */
 
 .challenge-container-fixed {
-  background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
-  border: 20px solid #FFD700; /* Thick 1/4 inch border */
-  border-radius: 20px; /* EXACT same as overlay */
+  /* PASTEL ABSTRACT BACKGROUND - Like Image 5 */
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(173, 216, 230, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 224, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 60% 70%, rgba(221, 160, 221, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, #FFF5F7 0%, #F0F8FF 50%, #FFFACD 100%);
+  border: 20px solid #FFD700;
+  border-radius: 20px;
   box-shadow: 
     0 25px 70px rgba(0, 0, 0, 0.4),
     inset 0 0 40px rgba(255, 215, 0, 0.15);
@@ -231,39 +237,38 @@
 }
 
 /* ========================================
-   FEEDBACK OVERLAY
+   FEEDBACK BANNER - DOESN'T HIDE EMOJI
    ======================================== */
 
-.feedback-overlay {
+.feedback-banner {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(5px);
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  animation: feedbackAppear 0.3s ease;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  padding: 8px 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: feedbackSlideUp 0.3s ease;
 }
 
-@keyframes feedbackAppear {
+@keyframes feedbackSlideUp {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: translateX(-50%) translateY(20px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateX(-50%) translateY(0);
   }
 }
 
-.feedback-icon {
-  font-size: 4.5em;
-  margin-bottom: 10px;
+.feedback-icon-inline {
+  font-size: 2em;
   animation: iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
@@ -279,9 +284,9 @@
   }
 }
 
-.feedback-text {
+.feedback-text-inline {
   font-family: 'Arial', sans-serif;
-  font-size: 1.5em;
+  font-size: 1.2em;
   font-weight: 800;
   color: #2C3E50;
 }
@@ -509,9 +514,19 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
-  overflow-y: auto;
+  overflow: hidden; /* NO SCROLLBAR - hide overflow */
   padding: 12px;
   box-sizing: border-box;
+}
+
+/* Hide scrollbar for all browsers */
+.question-content::-webkit-scrollbar {
+  display: none;
+}
+
+.question-content {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 /* ========================================

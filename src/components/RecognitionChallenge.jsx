@@ -80,7 +80,7 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
       // Y
       'yak': '🦬', 'yarn': '🧶', 'yogurt': '🥛', 'yacht': '⛵', 'yo-yo': '🪀',
       // Z
-      'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '🎈', 'zigzag': '〰️',
+      'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '🛩️', 'zigzag': '⚡',
       'zombie': '🧟', 'zoo': '🦁'
     };
 
@@ -160,9 +160,7 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
                 {choice.emoji}
               </div>
             </div>
-            <div className="choice-label">
-              {choice.word}
-            </div>
+            {/* LABEL REMOVED - Kids should identify by image only */}
             
             {/* Feedback icons */}
             {selectedChoice && (

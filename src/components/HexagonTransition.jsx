@@ -7,7 +7,7 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
   const [showDeferOptions, setShowDeferOptions] = useState(false);
 
   useEffect(() => {
-    // Phase 1: Full screen octagons for 2 seconds
+    // Phase 1: Full screen hexagons for 2 seconds
     const fullscreenTimer = setTimeout(() => {
       setPhase('transition');
     }, 2000);
@@ -16,7 +16,7 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
     const transitionTimer = setTimeout(() => {
       setPhase('prompt');
       setShowPrompt(true);
-    }, 3500); // 2000 + 1500
+    }, 3500);
 
     // Phase 3: Show defer options 0.5s after prompt
     const deferTimer = setTimeout(() => {
@@ -42,48 +42,28 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
 
   const handleSnooze = (option) => {
     if (speak) {
-      if (option === 'third') speak("Got it! I'll remind you after 1/3 of images.");
-      else if (option === 'half') speak("Perfect! I'll remind you at halfway.");
-      else speak("Sounds good! I'll remind you when you finish all images.");
+      if (option === 'quarter') {
+        speak("Got it! I'll remind you after one-fourth of the images. That's about 7 letters and 65 images.");
+      } else if (option === 'third') {
+        speak("Got it! I'll remind you after one-third of the images. That's about 9 letters and 87 images.");
+      } else if (option === 'half') {
+        speak("Perfect! I'll remind you after one-half of the images. That's about 13 letters and 130 images.");
+      } else {
+        speak("Sounds good! I'll remind you when you finish all 26 letters and 260 images.");
+      }
     }
     onSnooze(option);
   };
 
   return (
     <div className="hexagon-overlay">
-      {/* Phase 1 & 2: Octagon tiles background (always visible) */}
-      <div className={`octagon-background ${phase === 'transition' ? 'split' : ''}`}>
-        {/* Top half octagons */}
-        <div className="octagon-section top">
-          <div className="octagon-grid">
-            {Array.from({ length: 40 }).map((_, i) => (
-              <div
-                key={`top-${i}`}
-                className={`octagon-tile ${i % 2 === 0 ? 'color-a' : 'color-b'}`}
-                style={{
-                  animationDelay: `${(i * 0.05) % 2}s`,
-                  animationDuration: `${1.2 + (i % 3) * 0.2}s`
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom half octagons */}
-        <div className="octagon-section bottom">
-          <div className="octagon-grid">
-            {Array.from({ length: 40 }).map((_, i) => (
-              <div
-                key={`bottom-${i}`}
-                className={`octagon-tile ${i % 2 === 0 ? 'color-a' : 'color-b'}`}
-                style={{
-                  animationDelay: `${(i * 0.05) % 2}s`,
-                  animationDuration: `${1.2 + (i % 3) * 0.2}s`
-                }}
-              />
-            ))}
-          </div>
-        </div>
+      {/* Phase 1 & 2: Honeycomb background (pure CSS now) */}
+      <div className={`honeycomb-background ${phase === 'transition' ? 'split' : ''}`}>
+        {/* Top half */}
+        <div className="honeycomb-section top"></div>
+        
+        {/* Bottom half */}
+        <div className="honeycomb-section bottom"></div>
       </div>
 
       {/* Phase 2 & 3: Main content area */}
@@ -138,12 +118,19 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
             </div>
           </div>
 
-          {/* Defer Options Box - Half size, below main box */}
+          {/* Defer Options Box */}
           {showDeferOptions && (
             <div className="defer-box-container">
               <div className="defer-box">
                 <p className="defer-label">Or remind me after...</p>
                 <div className="defer-options-grid">
+                  <button 
+                    className="defer-option-btn" 
+                    onClick={() => handleSnooze('quarter')}
+                  >
+                    <span className="defer-fraction">1/4</span>
+                    <span className="defer-desc">of images</span>
+                  </button>
                   <button 
                     className="defer-option-btn" 
                     onClick={() => handleSnooze('third')}

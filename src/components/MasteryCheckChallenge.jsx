@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './MasteryCheckChallenge.css';
 import { wordList } from '../wordList.js';
+// 👈 INSERT THE NEW CODE HERE
+const importAll = (r) => {
+  let images = {};
+  r.keys().forEach((item) => { 
+    images[item.replace('./', '')] = r(item); 
+  });
+  return images;
+};
+
+// This specifically looks into your assets folder for the colorful drawings
+const quizImages = importAll(require.context('../assets', false, /\.(png|jpe?g|svg)$/));
+
+const getQuizImagePath = (fileName) => quizImages[fileName] || null;
+// ------------------------------------------------------------
 
 function MasteryCheckChallenge({ studiedLetters, onExit, speak }) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -130,7 +144,7 @@ function MasteryCheckChallenge({ studiedLetters, onExit, speak }) {
       'wagon': '🛒', 'watch': '⌚', 'whale': '🐋', 'wheel': '🎡',
       'xylophone': '🎹', 'x-ray': '🩻', 'x-box': '🎮',
       'yak': '🦬', 'yarn': '🧶', 'yogurt': '🥛', 'yatch': '⛵',
-      'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '🎈', 'zigzag': '〰️'
+      'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '\u{1F6A1}', 'zigzag': 'U+299A'
     };
 
     const wordLower = currentWord.word.toLowerCase();
@@ -175,6 +189,18 @@ function MasteryCheckChallenge({ studiedLetters, onExit, speak }) {
         <div className={`word-card ${showFeedback ? (isCorrect ? 'correct' : 'incorrect') : ''}`}>
           {/* Big emoji/image */}
           <div className="word-emoji-display">
+  {/* If the word has a filename in wordList, show the drawing. 
+      Otherwise, fall back to the emoji list. */}
+  {currentWord.image ? (
+    <img 
+      src={getQuizImagePath(currentWord.image)} 
+      alt="Guess the word" 
+      style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} 
+    />
+  ) : (
+    <span className="emoji-large">{getWordVisual()}</span>
+  )}
+</div>
             <span className="emoji-large">{getWordVisual()}</span>
           </div>
           
