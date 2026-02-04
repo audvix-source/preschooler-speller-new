@@ -1,9 +1,9 @@
 /* ========================================
    HEXAGON TRANSITION - PERFECT HONEYCOMB
-   Aligned to borders, matching Image 2
+   With BEM naming convention to prevent conflicts
    ======================================== */
 
-.hexagon-overlay {
+.hexagon-transition__overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -15,7 +15,7 @@
 
 /* Tablet/Desktop: Match main screen dimensions */
 @media only screen and (min-width: 769px) {
-  .hexagon-overlay {
+  .hexagon-transition__overlay {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
@@ -31,35 +31,30 @@
 
 /* ========================================
    HONEYCOMB BACKGROUND - USING IMAGE
-   Simple, beautiful, reliable!
    ======================================== */
 
-.honeycomb-background {
+.hexagon-transition__honeycomb-bg {
   position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  /* Purple gradient base */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  /* Honeycomb pattern overlay */
   background-image: 
     url('../assets/honeycomb-pattern.png'),
     linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   background-size: 
-    400px 400px,  /* Honeycomb pattern size */
-    100% 100%;     /* Gradient fills entire background */
+    400px 400px,
+    100% 100%;
   background-position: 
-    0 0,           /* Honeycomb starts at top-left */
-    0 0;           /* Gradient fills entire area */
+    0 0,
+    0 0;
   background-repeat: 
-    repeat,        /* Tile the honeycomb */
-    no-repeat;     /* Don't repeat gradient */
-  /* Subtle animation */
+    repeat,
+    no-repeat;
   animation: honeycombFloat 30s ease-in-out infinite;
 }
 
-/* Gentle floating animation */
 @keyframes honeycombFloat {
   0%, 100% {
     background-position: 0 0, 0 0;
@@ -71,29 +66,26 @@
   }
 }
 
-.honeycomb-section {
+.hexagon-transition__honeycomb-section {
   width: 100%;
   height: 100%;
   position: relative;
   overflow: hidden;
-  /* Background pattern is now in .honeycomb-background */
 }
 
-.honeycomb-background.split .honeycomb-section.top {
+.hexagon-transition__honeycomb-bg.split .hexagon-transition__honeycomb-section.top {
   height: 50%;
 }
 
-.honeycomb-background.split .honeycomb-section.bottom {
+.hexagon-transition__honeycomb-bg.split .hexagon-transition__honeycomb-section.bottom {
   height: 50%;
 }
-
-/* No more complex grid - using CSS background pattern */
 
 /* ========================================
    CONTENT AREA
    ======================================== */
 
-.content-area {
+.hexagon-transition__content-area {
   position: absolute;
   top: 0;
   left: 0;
@@ -105,20 +97,16 @@
   justify-content: flex-start;
   padding: 30px 25px;
   gap: 15px;
-  animation: contentFadeIn 0.5s ease-out forwards;
+  /* ✅ REMOVED ANIMATION - appears instantly now */
+  opacity: 1;
   box-sizing: border-box;
-}
-
-@keyframes contentFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 /* ========================================
    GOLD BOX
    ======================================== */
 
-.gold-box-container {
+.hexagon-transition__gold-box-container {
   width: 100%;
   flex: 1;
   display: flex;
@@ -126,7 +114,7 @@
   justify-content: center;
 }
 
-.gold-box {
+.hexagon-transition__gold-box {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, #FFF9E6 0%, #FFE4B5 100%);
@@ -143,16 +131,21 @@
 }
 
 /* ========================================
-   DEFER BOX
+   DEFER BOX WITH FADE ANIMATION
    ======================================== */
 
-.defer-box-container {
+.hexagon-transition__defer-box-container {
   width: 100%;
   height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: deferSlideUp 0.5s ease-out backwards;
+}
+
+/* Fade out animation when hiding */
+.hexagon-transition__defer-box-container.fade-out {
+  animation: deferFadeOut 0.3s ease-out forwards;
 }
 
 @keyframes deferSlideUp {
@@ -166,7 +159,18 @@
   }
 }
 
-.defer-box {
+@keyframes deferFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.hexagon-transition__defer-box {
   width: 100%;
   background: linear-gradient(135deg, #E8E4F3 0%, #D4C5F9 100%);
   border-radius: 15px;
@@ -177,7 +181,7 @@
   box-sizing: border-box;
 }
 
-.defer-label {
+.hexagon-transition__defer-label {
   font-family: 'Arial', sans-serif;
   font-size: 0.85em;
   color: #6B5B95;
@@ -187,13 +191,13 @@
   font-style: italic;
 }
 
-.defer-options-grid {
+.hexagon-transition__defer-options-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
 
-.defer-option-btn {
+.hexagon-transition__defer-option-btn {
   padding: 8px 6px;
   border: 2px solid #9370DB;
   background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
@@ -208,24 +212,24 @@
   box-shadow: 0 2px 5px rgba(147, 112, 219, 0.15);
 }
 
-.defer-option-btn:hover {
+.hexagon-transition__defer-option-btn:hover {
   background: linear-gradient(135deg, #F0F0F0 0%, #E0E0E0 100%);
   border-color: #8A2BE2;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(147, 112, 219, 0.25);
 }
 
-.defer-option-btn:active {
+.hexagon-transition__defer-option-btn:active {
   transform: translateY(0);
 }
 
-.defer-fraction {
+.hexagon-transition__defer-fraction {
   font-size: 1.3em;
   font-weight: 800;
   color: #4B0082;
 }
 
-.defer-desc {
+.hexagon-transition__defer-desc {
   font-size: 0.7em;
   font-weight: 600;
   color: #6B5B95;
@@ -237,7 +241,7 @@
    PROMPT CONTENT
    ======================================== */
 
-.prompt-main-content {
+.hexagon-transition__prompt-main-content {
   width: 100%;
   height: 100%;
   display: flex;
@@ -247,11 +251,7 @@
   box-sizing: border-box;
 }
 
-/* ========================================
-   ANIMATED TITLE - FIXED 'G' TAIL
-   ======================================== */
-
-.animated-title {
+.hexagon-transition__animated-title {
   font-family: 'Arial', sans-serif;
   font-size: 2.8em;
   font-weight: 900;
@@ -262,27 +262,23 @@
   padding-bottom: 8px;
 }
 
-.letter-pop {
-  animation: letterPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
+.hexagon-transition__letter-pop {
+  animation: letterPop 0.2s cubic-bezier(0.34, 1.2, 0.64, 1) backwards;
   display: inline-block;
 }
 
 @keyframes letterPop {
   0% {
-    transform: scale(0) translateY(-50px) rotate(-180deg);
+    transform: scale(0.8) translateY(-10px);
     opacity: 0;
   }
   100% {
-    transform: scale(1) translateY(0) rotate(0deg);
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
 
-/* ========================================
-   ANIMATED MESSAGE
-   ======================================== */
-
-.animated-message {
+.hexagon-transition__animated-message {
   font-family: 'Arial', sans-serif;
   font-size: 1.15em;
   color: #555;
@@ -291,7 +287,7 @@
   line-height: 1.6;
 }
 
-.word-fade {
+.hexagon-transition__word-fade {
   display: inline-block;
   animation: wordFadeIn 0.5s ease-out backwards;
 }
@@ -307,23 +303,23 @@
   }
 }
 
-.highlight-number {
+.hexagon-transition__highlight-number {
   font-weight: 800;
   color: #667eea;
   font-size: 1.15em;
 }
 
 /* ========================================
-   MAIN ACTION BUTTONS
+   ACTION BUTTONS
    ======================================== */
 
-.main-action-buttons {
+.hexagon-transition__main-action-buttons {
   display: flex;
   gap: 10px;
   width: 100%;
 }
 
-.action-btn {
+.hexagon-transition__action-btn {
   flex: 1;
   padding: 14px 16px;
   border: none;
@@ -343,11 +339,11 @@
   animation: buttonSlideIn 0.5s ease-out backwards;
 }
 
-.action-btn:nth-child(1) {
+.hexagon-transition__action-btn:nth-child(1) {
   animation-delay: 1.6s;
 }
 
-.action-btn:nth-child(2) {
+.hexagon-transition__action-btn:nth-child(2) {
   animation-delay: 1.7s;
 }
 
@@ -362,7 +358,7 @@
   }
 }
 
-.action-btn::before {
+.hexagon-transition__action-btn::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -375,43 +371,43 @@
   transition: width 0.6s, height 0.6s;
 }
 
-.action-btn:hover::before {
+.hexagon-transition__action-btn:hover::before {
   width: 300px;
   height: 300px;
 }
 
-.btn-icon {
+.hexagon-transition__btn-icon {
   font-size: 1.3em;
   z-index: 1;
 }
 
-.btn-text {
+.hexagon-transition__btn-text {
   z-index: 1;
 }
 
-.btn-go {
+.hexagon-transition__btn-go {
   background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
   color: white;
 }
 
-.btn-go:hover {
+.hexagon-transition__btn-go:hover {
   background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
   transform: translateY(-3px);
   box-shadow: 0 7px 20px rgba(76, 175, 80, 0.35);
 }
 
-.btn-later {
+.hexagon-transition__btn-later {
   background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
   color: white;
 }
 
-.btn-later:hover {
+.hexagon-transition__btn-later:hover {
   background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
   transform: translateY(-3px);
   box-shadow: 0 7px 20px rgba(255, 152, 0, 0.35);
 }
 
-.action-btn:active {
+.hexagon-transition__action-btn:active {
   transform: translateY(0);
 }
 
@@ -420,53 +416,48 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  .honeycomb-hex {
-    width: 52px;
-    height: 60px;
-  }
-
-  .content-area {
+  .hexagon-transition__content-area {
     padding: 25px 20px;
     gap: 12px;
   }
 
-  .gold-box {
+  .hexagon-transition__gold-box {
     padding: 18px 15px;
   }
 
-  .animated-title {
+  .hexagon-transition__animated-title {
     font-size: 2.4em;
   }
 
-  .animated-message {
+  .hexagon-transition__animated-message {
     font-size: 1.05em;
   }
 
-  .main-action-buttons {
+  .hexagon-transition__main-action-buttons {
     flex-direction: column;
     gap: 8px;
   }
 
-  .action-btn {
+  .hexagon-transition__action-btn {
     padding: 13px 15px;
     font-size: 1.05em;
   }
 
-  .defer-options-grid {
+  .hexagon-transition__defer-options-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
-  .animated-title {
+  .hexagon-transition__animated-title {
     font-size: 2.2em;
   }
 
-  .animated-message {
+  .hexagon-transition__animated-message {
     font-size: 1em;
   }
 
-  .action-btn {
+  .hexagon-transition__action-btn {
     font-size: 1em;
     padding: 12px 14px;
   }

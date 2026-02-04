@@ -1,0 +1,148 @@
+/* ===================================================================
+   BEE ANIMATION COMPONENT
+   Bees emerge from beehive and fly only in bottom half of screen
+   =================================================================== */
+
+.bee-animation-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%; /* Bottom half only */
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* ===================================================================
+   BEEHIVE - 3X BIGGER
+   =================================================================== */
+
+.bee-animation__beehive {
+  position: absolute;
+  top: -80px; /* ✅ PULLED WAY UP (was 40px) - gives bees room below */
+  left: 50%;
+  transform: translateX(-50%);
+  animation: beehiveGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  z-index: 10;
+}
+
+@keyframes beehiveGrow {
+  0% {
+    transform: translateX(-50%) scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===================================================================
+   BEES - FLY OUT FROM BEEHIVE CENTER
+   =================================================================== */
+
+.bee-animation__bee {
+  position: absolute;
+  /* Start from beehive FRONT HOLE (bottom center of beehive) */
+  top: 180px; /* ✅ Front hole position (-80px beehive top + 260px to hole) */
+  left: 50%;
+  width: var(--bee-size);
+  height: var(--bee-size);
+  transform-origin: center;
+  opacity: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  z-index: 5;
+}
+
+/* Flying bees - FLY OUT from center with curved paths */
+.bee-animation__bee--flying {
+  animation: 
+    beeFlyOut var(--duration) cubic-bezier(0.34, 1.2, 0.64, 1) forwards,
+    beeRotateFly 0.4s linear infinite;
+  animation-delay: var(--start-delay);
+}
+
+/* Fly OUT from beehive center with curve */
+@keyframes beeFlyOut {
+  0% {
+    transform: translate(-50%, 0) scale(0.3) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.5) rotate(var(--rotation));
+  }
+  40% {
+    transform: translate(
+      calc(-50% + var(--curve-x)),
+      calc(var(--curve-y))
+    ) scale(0.8) rotate(calc(var(--rotation) + 180deg));
+  }
+  70% {
+    transform: translate(
+      calc(-50% + var(--end-x) * 0.7),
+      calc(var(--end-y) * 0.7 + var(--zigzag))
+    ) scale(0.95) rotate(calc(var(--rotation) + 270deg));
+  }
+  100% {
+    transform: translate(
+      calc(-50% + var(--end-x)),
+      var(--end-y)
+    ) scale(1) rotate(calc(var(--rotation) + 360deg));
+    opacity: 1;
+  }
+}
+
+/* Bee rotation while flying */
+@keyframes beeRotateFly {
+  0% { 
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) brightness(1);
+  }
+  50% { 
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
+  }
+  100% { 
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) brightness(1);
+  }
+}
+
+/* ===================================================================
+   RESPONSIVE ADJUSTMENTS
+   =================================================================== */
+
+/* Tablet/Desktop - keep same proportions */
+@media only screen and (min-width: 769px) {
+  .bee-animation-container {
+    max-width: 420px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 20px 20px;
+  }
+}
+
+/* Mobile - slightly adjust beehive position */
+@media (max-width: 768px) {
+  .bee-animation__beehive {
+    top: 30px;
+  }
+  
+  .bee-animation__bee {
+    top: 180px; /* Adjusted for mobile */
+  }
+}
+
+/* ===================================================================
+   PERFORMANCE OPTIMIZATIONS
+   =================================================================== */
+
+.bee-animation__bee {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.bee-animation__beehive {
+  will-change: transform, opacity;
+}
