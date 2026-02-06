@@ -11,26 +11,16 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
   const [beeConfig, setBeeConfig] = useState({ count: 20, size: 40 });
 
   useEffect(() => {
-    // Phase 1: Full screen hexagons for 2 seconds
-    const fullscreenTimer = setTimeout(() => {
-      setPhase('transition');
-      // ✅ NEW: Show Progress box IMMEDIATELY when split starts (no delay!)
-      setShowPrompt(true);
-    }, 2000);
-
-    // Phase 2: Transition (split screen) for 1.5 seconds
-    const transitionTimer = setTimeout(() => {
-      setPhase('prompt');
-    }, 3500);
-
-    // Phase 3: Show defer options 1s after split starts
+    // ✅ INSTANT: Show everything immediately - no waiting!
+    setPhase('transition'); // Show honeycomb split immediately
+    setShowPrompt(true); // Show Progress box immediately
+    
+    // Show defer options 1s after initial display
     const deferTimer = setTimeout(() => {
       setShowDeferOptions(true);
-    }, 3000); // 2s (fullscreen) + 1s = 3s total
+    }, 1000);
 
     return () => {
-      clearTimeout(fullscreenTimer);
-      clearTimeout(transitionTimer);
       clearTimeout(deferTimer);
     };
   }, []);

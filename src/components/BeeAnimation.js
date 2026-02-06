@@ -1,65 +1,77 @@
 import React, { useEffect, useState } from 'react';
 import './BeeAnimation.css';
 import beehiveImage from '../assets/emojis/beehive-emoji.png';
+import branchImage from '../assets/emojis/branch-tree.png'; // ✅ UNCOMMENTED - file is now in place!
 import beeSwarmImage from '../assets/emojis/swarm-emoji.png';
 
 function BeeAnimation({ beeCount, beeSize, onComplete }) {
   const [bees, setBees] = useState([]);
 
   useEffect(() => {
-    // Generate bees with random properties
+    // Generate bees - FLY to RIGHT SIDE of Progress container
     const generatedBees = Array.from({ length: beeCount }).map((_, i) => ({
       id: i,
       startDelay: Math.random() * 0.5, // 0-0.5s delay for staggered launch
-      // Bees fly OUT from center (0, 0) to random positions
-      endX: (Math.random() - 0.5) * 350, // -175px to +175px horizontal spread
-      endY: Math.random() * 250 + 80, // 80px to 330px vertical spread (below beehive)
-      duration: 1.5 + Math.random() * 0.8, // 1.5-2.3s flight duration
-      zigzagIntensity: Math.random() * 40 + 15, // 15-55px zigzag amplitude
-      rotation: Math.random() * 360, // Random rotation
-      // Random flight curve for variety
-      curveX: (Math.random() - 0.5) * 100, // -50 to +50px curve in X
-      curveY: Math.random() * 80 + 40 // 40-120px curve in Y
+      // Bees fly: DOWN first, then UP and TO THE RIGHT SIDE (near Progress edge)
+      midX: (Math.random() - 0.5) * 40, // -20px to +20px (slight variation while going down)
+      midY: Math.random() * 100 + 60, // 60px to 160px DOWN first
+      endX: Math.random() * 80 + 140, // 140px to 220px to the right (RIGHT SIDE of Progress)
+      endY: -(Math.random() * 120 + 140), // -140px to -260px UP (HIGHER, near top of Progress)
+      duration: 2.8 + Math.random() * 0.4, // ✅ 2.8-3.2s flight (FULL 3 SECONDS!)
+      rotation: Math.random() * 360 // Random rotation
     }));
     
     setBees(generatedBees);
 
-    // Call onComplete after animation finishes
+    // Call onComplete after animation finishes (3.5s total - plenty of time!)
     const timer = setTimeout(() => {
       if (onComplete) onComplete();
-    }, 2500);
+    }, 3500); // ✅ Extended from 2800 to 3500
 
     return () => clearTimeout(timer);
   }, [beeCount, onComplete]);
 
   return (
     <div className="bee-animation-container">
-      {/* Beehive - 3X BIGGER (360px instead of 120px) */}
+      {/* Tree Branch - at LEFT SIDE */}
+      <div className="bee-animation__branch">
+        <img 
+          src={branchImage}  // ✅ Uses branch-tree.png (your lush tree)
+          alt="Tree Branch"
+          className="branch-image"
+          style={{
+            height: '450px',  // ✅ TALLER - 450px so crown extends above Progress
+            width: 'auto'
+          }}
+          key={Date.now()} // ✅ Forces reload of image on component mount
+        />
+      </div>
+
+      {/* Beehive - SEPARATE from tree, at LEFT SIDE */}
       <div className="bee-animation__beehive">
         <img 
-          src={beehiveImage} 
+          src={beehiveImage}  // ✅ Uses beehive-emoji.png
           alt="Beehive" 
           style={{ 
-            width: '360px',  // ✅ 3X BIGGER (was 120px)
-            height: 'auto' 
+            width: 'auto',
+            height: '300px'  // ✅ REDUCED from 360px to 300px (smaller!)
           }}
         />
       </div>
 
-      {/* Bees - FLY OUT from beehive center */}
+      {/* Bees - FLY DOWN THEN UP TO RIGHT SIDE of Progress */}
       {bees.map(bee => (
         <div
           key={bee.id}
-          className="bee-animation__bee bee-animation__bee--flying"
+          className="bee-animation__bee bee-animation__bee--to-right-side"
           style={{
             '--bee-size': `${beeSize}px`,
             '--start-delay': `${bee.startDelay}s`,
+            '--mid-x': `${bee.midX}px`,
+            '--mid-y': `${bee.midY}px`,
             '--end-x': `${bee.endX}px`,
             '--end-y': `${bee.endY}px`,
-            '--curve-x': `${bee.curveX}px`,
-            '--curve-y': `${bee.curveY}px`,
             '--duration': `${bee.duration}s`,
-            '--zigzag': `${bee.zigzagIntensity}px`,
             '--rotation': `${bee.rotation}deg`,
             animationDelay: `${bee.startDelay}s`
           }}

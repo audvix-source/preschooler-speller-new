@@ -97,9 +97,9 @@
   justify-content: flex-start;
   padding: 30px 25px;
   gap: 15px;
-  /* ✅ REMOVED ANIMATION - appears instantly now */
   opacity: 1;
   box-sizing: border-box;
+  z-index: 50; /* ✅ HIGH z-index - appears in FRONT of tree */
 }
 
 /* ========================================
@@ -128,6 +128,20 @@
   justify-content: center;
   padding: 20px 18px;
   box-sizing: border-box;
+  animation: goldBoxBlink 0.4s ease-in-out; /* ✅ Quick blink effect */
+}
+
+/* Quick blink animation - artistic touch */
+@keyframes goldBoxBlink {
+  0% {
+    opacity: 1;
+  }
+  15% {
+    opacity: 0.3; /* ✅ Quick dim */
+  }
+  30% {
+    opacity: 1;
+  }
 }
 
 /* ========================================

@@ -1,6 +1,6 @@
 /* ===================================================================
-   BEE ANIMATION COMPONENT
-   Bees emerge from beehive and fly only in bottom half of screen
+   BEE ANIMATION COMPONENT - ARTISTIC LAYOUT
+   Branch at left, beehive centered, bees fly to RIGHT SIDE
    =================================================================== */
 
 .bee-animation-container {
@@ -11,82 +11,125 @@
   height: 50%; /* Bottom half only */
   pointer-events: none;
   z-index: 100;
-  overflow: hidden;
+  overflow: visible; /* ✅ Changed from hidden - allows tree to extend above */
+  background: transparent; /* ✅ No background - prevents blue box glitch */
 }
 
 /* ===================================================================
-   BEEHIVE - 3X BIGGER
+   TREE BRANCH with TRUNK - AT LEFT BORDER (NEW IMAGE)
    =================================================================== */
 
-.bee-animation__beehive {
+.bee-animation__branch {
   position: absolute;
-  top: -80px; /* ✅ PULLED WAY UP (was 40px) - gives bees room below */
-  left: 50%;
-  transform: translateX(-50%);
-  animation: beehiveGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  z-index: 5; /* ✅ LOWER z-index - tree appears BEHIND Progress container */
+  animation: branchSway 3s ease-in-out infinite;
+  transform-origin: left bottom;
+  background: transparent; /* ✅ No background */
+}
+
+.branch-image {
+  object-fit: contain;
+  object-position: left bottom;
+  display: block;
+}
+
+.bee-animation__beehive {
+  position: absolute; /* ✅ Absolute to main container, not branch */
+  bottom: 50px; /* ✅ Raised UP by 0.5 inch (50px) - was 0 */
+  left: 96px; /* ✅ Moved RIGHT by 1 inch (96px) - was 0 */
+  transform: none;
+  animation: beehiveGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+             beehiveSwing 2.5s ease-in-out infinite 0.5s;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-  z-index: 10;
+  z-index: 7; /* ✅ Behind Progress (50) but in front of tree (5) */
 }
 
 @keyframes beehiveGrow {
   0% {
-    transform: translateX(-50%) scale(0);
+    transform: scale(0); /* ✅ Removed translateX(-50%) */
     opacity: 0;
   }
   100% {
-    transform: translateX(-50%) scale(1);
+    transform: scale(1); /* ✅ Removed translateX(-50%) */
     opacity: 1;
   }
 }
 
+@keyframes beehiveSwing {
+  0%, 100% {
+    transform: rotate(-2deg); /* ✅ Removed translateX(-50%) */
+  }
+  50% {
+    transform: rotate(2deg); /* ✅ Removed translateX(-50%) */
+  }
+}
+
 /* ===================================================================
-   BEES - FLY OUT FROM BEEHIVE CENTER
+   BEES - FLY to RIGHT SIDE of Progress Container
+   Bees will automatically adjust to beehive height position
    =================================================================== */
 
 .bee-animation__bee {
   position: absolute;
-  /* Start from beehive FRONT HOLE (bottom center of beehive) */
-  top: 180px; /* ✅ Front hole position (-80px beehive top + 260px to hole) */
-  left: 50%;
+  /* 🎯 START POSITION: From beehive FRONT HOLE 
+     Beehive moved: up 50px, right 96px
+     Bees need to match: bottom 210px (160+50), left adjusted by -96px */
+  bottom: 130px; /* ✅ Was 160px, now +50px to match raised beehive */
+  left: calc(50% - 40px); /* ✅ Moved LEFT by 1 inch (96px) to align with moved beehive */
   width: var(--bee-size);
   height: var(--bee-size);
   transform-origin: center;
   opacity: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  z-index: 5;
+  z-index: 15; /* Higher z-index so bees appear in front */
 }
 
-/* Flying bees - FLY OUT from center with curved paths */
-.bee-animation__bee--flying {
+/* Flying bees - FLY to RIGHT SIDE (artistic placement) */
+.bee-animation__bee--to-right-side {
   animation: 
-    beeFlyOut var(--duration) cubic-bezier(0.34, 1.2, 0.64, 1) forwards,
-    beeRotateFly 0.4s linear infinite;
+    beeFlyToRightSide var(--duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+    beeWingFlap 0.2s linear infinite;
   animation-delay: var(--start-delay);
 }
 
-/* Fly OUT from beehive center with curve */
-@keyframes beeFlyOut {
+/* Fly DOWN from hole, then UP to RIGHT SIDE of Progress container */
+@keyframes beeFlyToRightSide {
   0% {
+    /* Start at beehive hole */
     transform: translate(-50%, 0) scale(0.3) rotate(0deg);
     opacity: 0;
   }
   10% {
+    /* Emerge from hole */
     opacity: 1;
-    transform: translate(-50%, 0) scale(0.5) rotate(var(--rotation));
+    transform: translate(-50%, 0) scale(0.6) rotate(var(--rotation));
   }
-  40% {
+  35% {
+    /* Fly DOWN below beehive (midpoint) */
     transform: translate(
-      calc(-50% + var(--curve-x)),
-      calc(var(--curve-y))
-    ) scale(0.8) rotate(calc(var(--rotation) + 180deg));
+      calc(-50% + var(--mid-x)),
+      var(--mid-y)
+    ) scale(0.85) rotate(calc(var(--rotation) + 120deg));
   }
-  70% {
+  60% {
+    /* Start flying UP and to the RIGHT SIDE */
     transform: translate(
-      calc(-50% + var(--end-x) * 0.7),
-      calc(var(--end-y) * 0.7 + var(--zigzag))
-    ) scale(0.95) rotate(calc(var(--rotation) + 270deg));
+      calc(-50% + var(--end-x) * 0.5),
+      calc(var(--end-y) * 0.3)
+    ) scale(0.95) rotate(calc(var(--rotation) + 240deg));
+  }
+  85% {
+    /* Continue flying UP to RIGHT SIDE */
+    transform: translate(
+      calc(-50% + var(--end-x) * 0.85),
+      calc(var(--end-y) * 0.75)
+    ) scale(1) rotate(calc(var(--rotation) + 300deg));
   }
   100% {
+    /* Final position: RIGHT SIDE of Progress container, HIGH UP */
     transform: translate(
       calc(-50% + var(--end-x)),
       var(--end-y)
@@ -95,18 +138,42 @@
   }
 }
 
-/* Bee rotation while flying */
-@keyframes beeRotateFly {
-  0% { 
+/* Wing flapping effect */
+@keyframes beeWingFlap {
+  0%, 100% { 
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) brightness(1);
   }
   50% { 
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
-  }
-  100% { 
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) brightness(1);
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25)) brightness(1.05);
   }
 }
+
+/* ===================================================================
+   🎯 QUICK ADJUSTMENT GUIDE
+   =================================================================== */
+
+/* 
+TO MOVE BEEHIVE UP/DOWN:
+1. In .bee-animation__beehive, change top: 40px
+   - Lower number = higher position
+   - Higher number = lower position
+
+2. Update bee starting position:
+   - In .bee-animation__bee, change top: 240px
+   - Formula: beehive top + 200px
+   - Example: If beehive top is 20px, bee top should be 220px
+
+TO ADJUST BEEHIVE HEIGHT (make it shorter/taller):
+1. Go to BeeAnimation.js, line ~45
+2. Change height: 'auto' to height: '300px' (or your value)
+   - Smaller number = shorter beehive
+   - Larger number = taller beehive
+
+TO MOVE BRANCH UP/DOWN:
+1. In .bee-animation__branch, change top: 0
+   - Negative values move it up (e.g., top: -50px)
+   - Positive values move it down (e.g., top: 50px)
+*/
 
 /* ===================================================================
    RESPONSIVE ADJUSTMENTS
@@ -122,14 +189,18 @@
   }
 }
 
-/* Mobile - slightly adjust beehive position */
+/* Mobile - slightly adjust positions */
 @media (max-width: 768px) {
+  .bee-animation__branch {
+    height: 90%;
+  }
+  
   .bee-animation__beehive {
-    top: 30px;
+    top: 50px;
   }
   
   .bee-animation__bee {
-    top: 180px; /* Adjusted for mobile */
+    top: 250px; /* Adjusted for mobile beehive position */
   }
 }
 
@@ -145,4 +216,8 @@
 
 .bee-animation__beehive {
   will-change: transform, opacity;
+}
+
+.bee-animation__branch {
+  will-change: transform;
 }

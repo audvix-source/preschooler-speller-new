@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import scoreDB from '../services/scoreDatabase';
-import { getWordsByCategory } from '../wordList.js';  // ADD THIS LINE
+import { getWordsByCategory } from '../wordList.js';
 import './StatsScreen.css';
 
 function StatsScreen({ onNavigate, speak }) {
@@ -8,8 +8,9 @@ function StatsScreen({ onNavigate, speak }) {
   const [loading, setLoading] = useState(true);
   const [newRewards, setNewRewards] = useState([]);
   const [showNewRewardsBanner, setShowNewRewardsBanner] = useState(false);
-  const [expandedReward, setExpandedReward] = useState(null); // Track which reward card is expanded
-  const [rewardDetails, setRewardDetails] = useState({}); // Store details for each reward type
+  const [expandedReward, setExpandedReward] = useState(null);
+  const [rewardDetails, setRewardDetails] = useState({});
+  const [viewedRewards, setViewedRewards] = useState(new Set()); // ✅ NEW: Track which rewards have been viewed
 
   useEffect(() => {
     loadStats();
@@ -32,7 +33,7 @@ function StatsScreen({ onNavigate, speak }) {
       
       const rewards = [];
       if (currentRewards.stars > (lastViewedRewards.stars || 0)) {
-        rewards.push({ type: 'stars', count: currentRewards.stars - (lastViewedRewards.stars || 0) });
+        rewards.push({ type: 'star', count: currentRewards.stars - (lastViewedRewards.stars || 0) }); // ✅ Changed 'stars' to 'star'
       }
       if (currentRewards.bronze > (lastViewedRewards.bronze || 0)) {
         rewards.push({ type: 'bronze', count: currentRewards.bronze - (lastViewedRewards.bronze || 0) });
@@ -72,6 +73,9 @@ function StatsScreen({ onNavigate, speak }) {
   };
 
   const handleRewardClick = async (rewardType) => {
+    // ✅ Mark this reward as viewed (stops pulsing)
+    setViewedRewards(prev => new Set([...prev, rewardType]));
+    
     if (expandedReward === rewardType) {
       // Collapse if already expanded
       setExpandedReward(null);
@@ -87,6 +91,14 @@ function StatsScreen({ onNavigate, speak }) {
     }
   };
 
+  // ✅ Helper function to check if a reward should pulse
+  const shouldPulse = (rewardType) => {
+    // Don't pulse if already viewed
+    if (viewedRewards.has(rewardType)) return false;
+    // Pulse if there are new rewards of this type
+    return newRewards.some(r => r.type === rewardType);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -95,8 +107,7 @@ function StatsScreen({ onNavigate, speak }) {
   const handleWordClick = (wordName) => {
     if (speak) speak(`Let's practice ${wordName}!`);
     
-    // Get the actual word list to find correct index
-    const bodyPartsWords = getWordsByCategory('Parts of the Body'); // Changed from 'Body Parts'
+    const bodyPartsWords = getWordsByCategory('Parts of the Body');
     const wordIndex = bodyPartsWords.findIndex(w => w.word === wordName);
     
     if (wordIndex === -1) {
@@ -104,26 +115,14 @@ function StatsScreen({ onNavigate, speak }) {
       return;
     }
     
-    // Save the word to resume from
-    localStorage.setItem('learningState_Parts of the Body', JSON.stringify({ // Changed key name
+    localStorage.setItem('learningState_Parts of the Body', JSON.stringify({
       viewState: 'activity',
       chosenModel: localStorage.getItem('lastChosenModel') || 'boy',
       wordIndex: wordIndex,
       lastSaved: new Date().toISOString()
     }));
     
-    // Navigate to Body Parts learning screen
-    onNavigate('learning', 'Parts of the Body'); // Changed from 'Body Parts'
-  };
-   
-
-  const getWordIndexByName = (wordName) => {
-    const bodyPartsWords = [
-      'Lips', 'Cheeks', 'Chin', 'Eyes', 'Eyebrows', 'Eyelashes', 
-      'Nose', 'Nostrils', 'Ears', 'Forehead', 'Hair', 'Cleft Chin'
-    ];
-    const index = bodyPartsWords.findIndex(w => w.toLowerCase() === wordName.toLowerCase());
-    return index !== -1 ? index : 0;
+    onNavigate('learning', 'Parts of the Body');
   };
 
   if (loading) {
@@ -167,7 +166,7 @@ function StatsScreen({ onNavigate, speak }) {
             <h2>✨ My Rewards ✨</h2>
             <div className="rewards-grid">
               <div 
-                className={`reward-card ${newRewards.some(r => r.type === 'stars') ? 'blinking' : ''} ${expandedReward === 'star' ? 'expanded' : ''}`}
+                className={`reward-card ${shouldPulse('stars') ? 'blinking' : ''} ${expandedReward === 'star' ? 'expanded' : ''}`}
                 onClick={() => handleRewardClick('star')}
               >
                 <div className="reward-icon">⭐</div>
@@ -196,7 +195,7 @@ function StatsScreen({ onNavigate, speak }) {
               </div>
 
               <div 
-                className={`reward-card ${newRewards.some(r => r.type === 'bronze') ? 'blinking' : ''} ${expandedReward === 'bronze' ? 'expanded' : ''}`}
+                className={`reward-card ${shouldPulse('bronze') ? 'blinking' : ''} ${expandedReward === 'bronze' ? 'expanded' : ''}`}
                 onClick={() => handleRewardClick('bronze')}
               >
                 <div className="reward-icon">🥉</div>
@@ -225,7 +224,7 @@ function StatsScreen({ onNavigate, speak }) {
               </div>
 
               <div 
-                className={`reward-card ${newRewards.some(r => r.type === 'silver') ? 'blinking' : ''} ${expandedReward === 'silver' ? 'expanded' : ''}`}
+                className={`reward-card ${shouldPulse('silver') ? 'blinking' : ''} ${expandedReward === 'silver' ? 'expanded' : ''}`}
                 onClick={() => handleRewardClick('silver')}
               >
                 <div className="reward-icon">🥈</div>
@@ -254,7 +253,7 @@ function StatsScreen({ onNavigate, speak }) {
               </div>
 
               <div 
-                className={`reward-card ${newRewards.some(r => r.type === 'champion') ? 'blinking' : ''} ${expandedReward === 'champion' ? 'expanded' : ''}`}
+                className={`reward-card ${shouldPulse('champion') ? 'blinking' : ''} ${expandedReward === 'champion' ? 'expanded' : ''}`}
                 onClick={() => handleRewardClick('champion')}
               >
                 <div className="reward-icon">👑</div>
