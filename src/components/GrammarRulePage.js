@@ -23,29 +23,38 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   useEffect(() => {
     let fireworksInterval;
     let confettiInterval;
+    let initialTimer;
    
     if (!showRules && !skipCelebration) {
-      // Start fireworks immediately when celebration screen appears
-      // FIREWORKS - Explode at same height in sky
-      fireworksInterval = setInterval(() => {
-        // First pair - outer fireworks
-        setTimeout(() => {
-          setFireworks([
-            { id: Date.now(), left: 15, delay: 0 },
-            { id: Date.now() + 1, left: 85, delay: 0 }
-          ]);
-        }, 0);
-        // Second pair - center fireworks (500ms later)
-        setTimeout(() => {
-          setFireworks(prev => [
-            ...prev,
-            { id: Date.now() + 2, left: 35, delay: 0 },
-            { id: Date.now() + 3, left: 65, delay: 0 }
-          ]);
-        }, 500);
-        // Clear all fireworks after animations
-        setTimeout(() => setFireworks([]), 2500);
-      }, 3500); // Repeat every 3.5 seconds
+      // ✅ WAIT 2 SECONDS BEFORE FIRST FIREWORKS (after spinning animation completes)
+      initialTimer = setTimeout(() => {
+        const fireworksCycle = () => {
+          // FIRST: Center fireworks (explode first but at LOWER height - 15%)
+          setTimeout(() => {
+            setFireworks([
+              { id: Date.now(), left: 35, delay: 0, top: 15 }, // Center-left, LOW
+              { id: Date.now() + 1, left: 65, delay: 0, top: 15 } // Center-right, LOW
+            ]);
+          }, 0);
+          
+          // SECOND: Outer fireworks (explode second but at HIGHER height - 8%)
+          setTimeout(() => {
+            setFireworks(prev => [
+              ...prev,
+              { id: Date.now() + 2, left: 15, delay: 0, top: 8 }, // Far left, HIGH
+              { id: Date.now() + 3, left: 85, delay: 0, top: 8 } // Far right, HIGH
+            ]);
+          }, 500);
+          
+          // Clear all fireworks after animations
+          setTimeout(() => setFireworks([]), 2500);
+        };
+        
+        // Run first cycle immediately (after 500ms initial delay)
+        fireworksCycle();
+        // Then repeat every 3.5 seconds
+        fireworksInterval = setInterval(fireworksCycle, 3500);
+      }, 2000); // ✅ 2 second delay - wait for spinning animation to complete
 
       // CONFETTI - Start falling after fireworks explode
       confettiInterval = setInterval(() => {
@@ -63,6 +72,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     }
     
     return () => {
+      if (initialTimer) clearTimeout(initialTimer);
       if (fireworksInterval) clearInterval(fireworksInterval);
       if (confettiInterval) clearInterval(confettiInterval);
     };
@@ -180,7 +190,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   if (!showRules) {
     return (
       <div className="reward-overlay">
-        {/* Fireworks Explosions */}
+        {/* Fireworks Explosions - REVERSED ORDER */}
         <div className="fireworks-container">
           {fireworks.map(fw => (
             <div
@@ -188,6 +198,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
               className="firework"
               style={{
                 left: `${fw.left}%`,
+                top: `${fw.top}%`, // ✅ NEW: Dynamic top position
                 animationDelay: `${fw.delay}s`
               }}
             >

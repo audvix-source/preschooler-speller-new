@@ -712,6 +712,451 @@
   }
 }
 
+/* ===================================================================
+   COUNTDOWN ANIMATIONS - FIXED TO ROTATE BOTH DIRECTIONS
+   Each animation now rotates clockwise AND counterclockwise
+   =================================================================== */
+
+/* Animation 1: Triangle - Both Directions - FAST */
+.countdown-animation-1 .countdown-circle {
+  background: linear-gradient(135deg, #FF6B9D 0%, #C06C84 50%, #6C5B7B 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%) !important;
+  animation: triangle1Both 3s ease-in-out forwards !important; /* ✅ Was 3s, now 3s */
+  border: 6px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+@keyframes triangle1Both {
+  0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) brightness(1); }
+  27% { transform: rotate(15deg) scale(1.1); filter: hue-rotate(60deg) brightness(1.3); } /* 0.8s */
+  53% { transform: rotate(-15deg) scale(1.1); filter: hue-rotate(60deg) brightness(1.3); } /* 1.6s */
+  100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) brightness(1); } /* 3s - settle */
+}
+
+/* Animation 2: Square - Both Directions */
+.countdown-animation-2 .countdown-circle {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  animation: square2Both 3s ease-in-out forwards !important;
+  border: 5px solid white !important;
+}
+
+@keyframes square2Both {
+  0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+  27% { transform: rotate(45deg) scale(1.1); filter: hue-rotate(90deg); }
+  53% { transform: rotate(-45deg) scale(1.1); filter: hue-rotate(90deg); }
+  100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+}
+
+/* Animation 3: Pentagon - Both Directions */
+.countdown-animation-3 .countdown-circle {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%) !important;
+  animation: pentagon3Both 3s ease-in-out forwards !important;
+  border: 6px solid rgba(255, 215, 0, 0.9) !important;
+}
+
+@keyframes pentagon3Both {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  27% { 
+    transform: scale(1.15) rotate(10deg); 
+    filter: brightness(1.4) hue-rotate(40deg);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(0deg);
+  }
+}
+
+/* Animation 4: Hexagon - Both Directions */
+.countdown-animation-4 .countdown-circle {
+  background: linear-gradient(60deg, #96fbc4 0%, #f9f586 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%) !important;
+  animation: hexagon4Both 3s ease-in-out forwards !important;
+  border: 5px solid rgba(150, 251, 196, 0.9) !important;
+}
+
+@keyframes hexagon4Both {
+  0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+  27% { transform: rotate(30deg) scale(1.1); filter: hue-rotate(90deg); }
+  40% { transform: rotate(0deg) scale(1); filter: hue-rotate(180deg); } /* ✅ ADD THIS LINE */
+  67% { transform: rotate(-30deg) scale(1.1); filter: hue-rotate(90deg); }
+  100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+}
+
+/* Animation 5: Star - Both Directions */
+.countdown-animation-5 .countdown-circle {
+  background: linear-gradient(135deg, #FEE140 0%, #FA709A 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%) !important;
+  animation: star5Both 3s ease-in-out forwards !important;
+  border: 6px solid white !important;
+}
+
+@keyframes star5Both {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1);
+    box-shadow: 0 0 20px rgba(254, 225, 64, 0.6);
+  }
+  27% { 
+    transform: scale(1.2) rotate(36deg); 
+    filter: brightness(1.5);
+    box-shadow: 0 0 40px rgba(254, 225, 64, 1);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1);
+    box-shadow: 0 0 20px rgba(254, 225, 64, 0.6);
+  }
+}
+
+/* Animation 6: Circle - Rainbow Both Ways */
+.countdown-animation-6 .countdown-circle {
+  background: linear-gradient(135deg, #FF6B9D 0%, #FF0844 100%) !important;
+  border-radius: 50% !important;
+  clip-path: none !important;
+  animation: circle6Both 3s ease-in-out forwards !important;
+  border: 5px solid white !important;
+}
+
+@keyframes circle6Both {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    filter: hue-rotate(0deg) brightness(1);
+    box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+  }
+  27% { 
+    transform: scale(1.15) rotate(45deg); 
+    filter: hue-rotate(120deg) brightness(1.2);
+    box-shadow: 0 0 30px rgba(107, 255, 157, 0.8);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    filter: hue-rotate(360deg) brightness(1);
+    box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+  }
+}
+
+/* Animation 7: Diamond - Both Directions */
+.countdown-animation-7 .countdown-circle {
+  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%) !important;
+  animation: diamond7Both 3s ease-in-out forwards !important;
+  border: 6px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+@keyframes diamond7Both {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  27% { 
+    transform: scale(1.1) rotate(45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(0deg);
+  }
+}
+
+/* Animation 8: Octagon - Both Directions */
+.countdown-animation-8 .countdown-circle {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%) !important;
+  animation: octagon8Both 3s ease-in-out forwards !important;
+  border: 5px solid white !important;
+}
+
+@keyframes octagon8Both {
+  0% { 
+    transform: rotate(0deg) scale(1); 
+    filter: hue-rotate(0deg);
+  }
+  27% { 
+    transform: rotate(22.5deg) scale(1.1); 
+    filter: hue-rotate(60deg);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: rotate(0deg) scale(1); 
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Animation 9: Circle Glow - Both Directions */
+.countdown-animation-9 .countdown-circle {
+  background: radial-gradient(circle, #FFF9A6 0%, #FFE66D 40%, #FF6B35 100%) !important;
+  border-radius: 50% !important;
+  clip-path: none !important;
+  animation: circle9Both 3s ease-in-out forwards !important;
+  border: 5px solid rgba(255, 230, 109, 0.8) !important;
+}
+
+@keyframes circle9Both {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    box-shadow: 0 0 20px rgba(255, 249, 166, 0.8);
+    filter: brightness(1);
+  }
+  27% { 
+    transform: scale(1.15) rotate(90deg); 
+    box-shadow: 0 0 40px rgba(255, 249, 166, 1);
+    filter: brightness(1.3);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    box-shadow: 0 0 20px rgba(255, 249, 166, 0.8);
+    filter: brightness(1);
+  }
+}
+
+/* Animation 10: Triangle - Both Directions (Different) */
+.countdown-animation-10 .countdown-circle {
+  background: radial-gradient(circle at 50% 50%, #FFFFFF 0%, #FF5FA2 45%, #7C4DFF 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%) !important;
+  animation: triangle10Both 3s ease-in-out forwards !important;
+  border: 5px solid white !important;
+}
+
+@keyframes triangle10Both {
+  0% { 
+    transform: rotate(0deg) scale(1); 
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  27% { 
+    transform: rotate(-15deg) scale(1.1); 
+    filter: hue-rotate(90deg) brightness(1.3);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: rotate(0deg) scale(1); 
+    filter: hue-rotate(0deg) brightness(1);
+  }
+}
+
+/* Animation 11: Circle Rainbow - Full Rotation Both Ways */
+.countdown-animation-11 .countdown-circle {
+  background: conic-gradient(
+    from 0deg,
+    #ff0000 0deg,
+    #ff7f00 51.43deg,
+    #ffff00 102.86deg,
+    #00ff00 154.29deg,
+    #0000ff 205.71deg,
+    #4b0082 257.14deg,
+    #9400d3 308.57deg,
+    #ff0000 360deg
+  ) !important;
+  border-radius: 50% !important;
+  clip-path: none !important;
+  animation: circle11Both 3s linear forwards !important;
+  border: 6px solid white !important;
+}
+
+@keyframes circle11Both {
+  0% { transform: rotate(0deg) scale(1); }
+  27% { transform: rotate(180deg) scale(1.1); }
+  53% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(-180deg) scale(1.1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* Animation 12: Circle Sun - Both Directions */
+.countdown-animation-12 .countdown-circle {
+  background: radial-gradient(circle, #FFD700 0%, #FFA500 100%) !important;
+  border-radius: 50% !important;
+  clip-path: none !important;
+  animation: circle12Both 3s ease-in-out forwards !important;
+  border: 8px solid rgba(255, 255, 255, 0.8) !important;
+}
+
+@keyframes circle12Both {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    filter: brightness(1);
+  }
+  27% { 
+    transform: scale(1.1) rotate(45deg); 
+    box-shadow: 0 0 50px rgba(255, 215, 0, 1);
+    filter: brightness(1.3);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    filter: brightness(1);
+  }
+}
+
+/* Animation 13: Square - Full Rotation Both Ways */
+.countdown-animation-13 .countdown-circle {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  animation: square13Both 3s ease-in-out forwards !important;
+  border: 5px solid white !important;
+}
+
+@keyframes square13Both {
+  0% { 
+    transform: rotate(0deg) scale(1); 
+    filter: hue-rotate(0deg);
+  }
+  27% { 
+    transform: rotate(90deg) scale(1.1); 
+    filter: hue-rotate(120deg);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: rotate(0deg) scale(1); 
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Animation 14: Pentagon - Both Directions */
+.countdown-animation-14 .countdown-circle {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%) !important;
+  animation: pentagon14Both 3s ease-in-out forwards !important;
+  border: 5px solid rgba(168, 237, 234, 0.9) !important;
+}
+
+@keyframes pentagon14Both {
+  0% { 
+    transform: scale(1) rotate(0deg);
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  27% { 
+    transform: scale(1.1) rotate(-10deg);
+    filter: hue-rotate(120deg) brightness(1.2);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% { 
+    transform: scale(1) rotate(0deg);
+    filter: hue-rotate(0deg) brightness(1);
+  }
+}
+
+/* Animation 15: Hexagon - Full Rotation Both Ways */
+.countdown-animation-15 .countdown-circle {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%) !important;
+  border-radius: 0 !important;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%) !important;
+  animation: hexagon15Both 3s ease-in-out forwards !important;
+  border: 5px solid white !important;
+}
+
+@keyframes hexagon15Both {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: hue-rotate(0deg);
+  }
+  27% {
+    transform: rotate(60deg) scale(1.1);
+    filter: hue-rotate(180deg);
+  }
+  40% { /* ✅ ADDED */
+    transform: scale(1) rotate(0deg); 
+    filter: brightness(1) hue-rotate(180deg);
+  }
+  67% { 
+    transform: scale(1.1) rotate(-45deg); 
+    filter: brightness(1.4) hue-rotate(90deg);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+    filter: hue-rotate(0deg);
+  }
+}
+
 /* Countdown Overlay for Auto-Advance */
 .countdown-overlay {
   position: fixed;
@@ -755,594 +1200,112 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
 }
 
-/* ---------------------------------------------------------
-   10) BLOOM (flower/star petals expanding, stationary)
-   --------------------------------------------------------- */
-.countdown-animation-10 .countdown-circle{
-  background: radial-gradient(circle at 50% 50%, #FFFFFF 0%, #FF5FA2 45%, #7C4DFF 100%);
-  position: relative;
-  overflow: visible;
-  animation: bloomGlow 1s ease-in-out;
-}
 
-.countdown-animation-10 .countdown-circle::before{
-  content:"";
-  position:absolute;
-  inset:-14px;
-  border-radius:50%;
-  background:
-    conic-gradient(from 0deg,
-      rgba(255,255,255,0.0) 0 10%,
-      rgba(255,255,255,0.55) 10% 20%,
-      rgba(255,255,255,0.0) 20% 30%,
-      rgba(255,255,255,0.45) 30% 40%,
-      rgba(255,255,255,0.0) 40% 50%,
-      rgba(255,255,255,0.50) 50% 60%,
-      rgba(255,255,255,0.0) 60% 70%,
-      rgba(255,255,255,0.40) 70% 80%,
-      rgba(255,255,255,0.0) 80% 100%
-    );
-  filter: blur(1px);
-  animation: petalsSpin 1.2s linear infinite;
-  opacity: 0.9;
-}
-
-.countdown-animation-10 .countdown-circle::after{
-  content:"";
-  position:absolute;
-  inset:-28px;
-  border-radius:50%;
-  border: 8px dotted rgba(255,215,0,0.55);
-  animation: bloomPulse 1s ease-in-out infinite;
-}
-
-.countdown-animation-10 .countdown-number{
-  animation: bloomText 1s ease-out;
-}
-
-@keyframes petalsSpin{
-  0%{ transform: rotate(0deg) scale(0.95); }
-  100%{ transform: rotate(360deg) scale(1.05); }
-}
-
-@keyframes bloomPulse{
-  0%,100%{ transform: scale(0.75); opacity: 0.2; }
-  50%{ transform: scale(1.05); opacity: 0.85; }
-}
-
-@keyframes bloomGlow{
-  0%{ transform: scale(0.9); filter: hue-rotate(0deg) saturate(1.4); }
-  60%{ transform: scale(1.05); filter: hue-rotate(160deg) saturate(2); }
-  100%{ transform: scale(1); filter: hue-rotate(320deg) saturate(1.5); }
-}
-
-@keyframes bloomText{
-  0%{ transform: scale(0.5); opacity: 0; }
-  60%{ transform: scale(1.15); opacity: 1; }
-  100%{ transform: scale(1); }
-}
-
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes countdownPulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.6);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 15px 50px rgba(255, 215, 0, 0.9);
-  }
-}
-
-@keyframes countdownScale {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-@keyframes textBlink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-/* ===================================================================
-   TRULY SIMPLE COUNTDOWN ANIMATIONS - SINGLE SHAPES WITH COLOR PLAY
-   No emojis, no mixed objects - just one shape per animation
-   =================================================================== */
-
-/* Animation 1: Rotating Triangle with Color Shift */
-.countdown-animation-1 .countdown-circle {
-  background: linear-gradient(135deg, #FF6B9D 0%, #C06C84 50%, #6C5B7B 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%) !important;
-  animation: triangleRotateColor 1.5s ease-in-out infinite !important;
-  border: 6px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-@keyframes triangleRotateColor {
-  0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) brightness(1); }
-  50% { transform: rotate(180deg) scale(1.1); filter: hue-rotate(180deg) brightness(1.3); }
-  100% { transform: rotate(360deg) scale(1); filter: hue-rotate(360deg) brightness(1); }
-}
-
-/* Animation 2: Square with Color Pulse */
-.countdown-animation-2 .countdown-circle {
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
-  border-radius: 15px !important;
-  animation: squareColorPulse 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes squareColorPulse {
-  0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) saturate(1); }
-  50% { transform: rotate(45deg) scale(1.1); filter: hue-rotate(90deg) saturate(1.5); }
-  100% { transform: rotate(90deg) scale(1); filter: hue-rotate(180deg) saturate(1); }
-}
-
-/* Animation 3: Pentagon with Gradient Shift */
-.countdown-animation-3 .countdown-circle {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%) !important;
-  animation: pentagonGradient 1.2s ease-in-out infinite !important;
-  border: 6px solid rgba(255, 215, 0, 0.9) !important;
-}
-
-@keyframes pentagonGradient {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-    filter: brightness(1) hue-rotate(0deg);
-  }
-  50% { 
-    transform: scale(1.15) rotate(10deg); 
-    filter: brightness(1.4) hue-rotate(60deg);
-  }
-}
-
-/* Animation 4: Hexagon Color Wave */
-.countdown-animation-4 .countdown-circle {
-  background: linear-gradient(60deg, #96fbc4 0%, #f9f586 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%) !important;
-  animation: hexagonColorWave 2s ease-in-out infinite !important;
-  border: 5px solid rgba(150, 251, 196, 0.9) !important;
-}
-
-@keyframes hexagonColorWave {
-  0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
-  50% { transform: rotate(60deg) scale(1.1); filter: hue-rotate(120deg); }
-  100% { transform: rotate(120deg) scale(1); filter: hue-rotate(240deg); }
-}
-
-/* Animation 5: Star with Brightness Twinkle */
-.countdown-animation-5 .countdown-circle {
-  background: linear-gradient(135deg, #FEE140 0%, #FA709A 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%) !important;
-  animation: starColorTwinkle 1.5s ease-in-out infinite !important;
-  border: 6px solid white !important;
-}
-
-@keyframes starColorTwinkle {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-    filter: brightness(1) hue-rotate(0deg);
-    box-shadow: 0 0 20px rgba(254, 225, 64, 0.6);
-  }
-  50% { 
-    transform: scale(1.2) rotate(36deg); 
-    filter: brightness(1.5) hue-rotate(45deg);
-    box-shadow: 0 0 40px rgba(254, 225, 64, 1);
-  }
-}
-
-/* Animation 6: Circle with Rainbow Shift */
-.countdown-animation-6 .countdown-circle {
-  background: linear-gradient(135deg, #FF6B9D 0%, #FF0844 100%) !important;
-  border-radius: 50% !important;
-  animation: circleRainbow 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes circleRainbow {
-  0% { 
-    transform: scale(1); 
+/* COUNTER ANIMATION - Right → Left → Center → EXPLOSION! */
+@keyframes counterSlideExplosion {
+  /* Phase 1: Slide RIGHT (0-25%) */
+  0% {
+    transform: translateX(0) scale(1) rotate(0deg);
     filter: hue-rotate(0deg) brightness(1);
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
   }
-  33% { 
-    transform: scale(1.1); 
-    filter: hue-rotate(120deg) brightness(1.2);
-    box-shadow: 0 0 30px rgba(107, 255, 157, 0.8);
+  25% {
+    transform: translateX(40px) scale(1.1) rotate(10deg);
+    filter: hue-rotate(0deg) brightness(1.1);
   }
-  66% { 
-    transform: scale(1.1); 
+  
+  /* Phase 2: Slide LEFT (25-50%) */
+  26% {
+    transform: translateX(40px) scale(1.1) rotate(10deg);
+  }
+  50% {
+    transform: translateX(-40px) scale(1.1) rotate(-10deg);
+    filter: hue-rotate(120deg) brightness(1.1);
+  }
+  
+  /* Phase 3: Return to CENTER (50-70%) */
+  51% {
+    transform: translateX(-40px) scale(1.1) rotate(-10deg);
+  }
+  70% {
+    transform: translateX(0) scale(1.2) rotate(0deg);
     filter: hue-rotate(240deg) brightness(1.2);
-    box-shadow: 0 0 30px rgba(157, 107, 255, 0.8);
   }
-  100% { 
-    transform: scale(1); 
-    filter: hue-rotate(360deg) brightness(1);
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+  
+  /* Phase 4: EXPLOSION! Vibrate + Color Burst (70-93%) */
+  71%, 73%, 75%, 77%, 79%, 81%, 83%, 85%, 87%, 89%, 91% {
+    /* Rapid vibration with color cycling */
   }
-}
-
-/* Animation 7: Diamond with Shimmer */
-.countdown-animation-7 .countdown-circle {
-  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%) !important;
-  animation: diamondShimmerColor 2s ease-in-out infinite !important;
-  border: 6px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-@keyframes diamondShimmerColor {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-    filter: brightness(1) hue-rotate(0deg);
+  73% {
+    transform: translateX(-3px) scale(1.25) rotate(-2deg);
+    filter: hue-rotate(0deg) brightness(1.5) saturate(2);
   }
-  50% { 
-    transform: scale(1.1) rotate(90deg); 
-    filter: brightness(1.4) hue-rotate(180deg);
+  75% {
+    transform: translateX(3px) scale(1.3) rotate(2deg);
+    filter: hue-rotate(60deg) brightness(1.6) saturate(2);
   }
-}
-
-/* Animation 8: Octagon with Color Spin */
-.countdown-animation-8 .countdown-circle {
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%) !important;
-  animation: octagonSpin 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes octagonSpin {
-  0% { 
-    transform: rotate(0deg) scale(1); 
-    filter: hue-rotate(0deg) saturate(1);
+  77% {
+    transform: translateX(-3px) scale(1.25) rotate(-2deg);
+    filter: hue-rotate(120deg) brightness(1.5) saturate(2);
   }
-  50% { 
-    transform: rotate(45deg) scale(1.1); 
-    filter: hue-rotate(90deg) saturate(1.5);
+  79% {
+    transform: translateX(3px) scale(1.3) rotate(2deg);
+    filter: hue-rotate(180deg) brightness(1.6) saturate(2);
   }
-  100% { 
-    transform: rotate(90deg) scale(1); 
-    filter: hue-rotate(180deg) saturate(1);
+  81% {
+    transform: translateX(-2px) scale(1.25) rotate(-1deg);
+    filter: hue-rotate(240deg) brightness(1.5) saturate(2);
   }
-}
-
-/* Animation 9: Circle with Glow Pulse */
-.countdown-animation-9 .countdown-circle {
-  background: radial-gradient(circle, #FFF9A6 0%, #FFE66D 40%, #FF6B35 100%) !important;
-  animation: glowPulseColor 1.5s ease-in-out infinite !important;
-  border: 5px solid rgba(255, 230, 109, 0.8) !important;
-  border-radius: 50% !important;
-}
-
-@keyframes glowPulseColor {
-  0%, 100% { 
-    transform: scale(1); 
-    box-shadow: 0 0 20px rgba(255, 249, 166, 0.8);
-    filter: brightness(1) hue-rotate(0deg);
+  83% {
+    transform: translateX(2px) scale(1.3) rotate(1deg);
+    filter: hue-rotate(300deg) brightness(1.6) saturate(2);
   }
-  50% { 
-    transform: scale(1.15); 
-    box-shadow: 0 0 40px rgba(255, 249, 166, 1);
-    filter: brightness(1.3) hue-rotate(30deg);
+  85% {
+    transform: translateX(-2px) scale(1.25) rotate(-1deg);
+    filter: hue-rotate(360deg) brightness(1.5) saturate(2);
   }
-}
-
-/* ===================================================================
-   PURE SINGLE-SHAPE ANIMATIONS - Each animation uses ONLY ONE shape
-   No morphing, no mixed shapes - just color and movement variations
-   =================================================================== */
-
-/* Animation 1: Triangle Only */
-.countdown-animation-1 .countdown-circle {
-  background: linear-gradient(135deg, #FF6B9D 0%, #C06C84 50%, #6C5B7B 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%) !important;
-  animation: triangle1 1.5s ease-in-out infinite !important;
-  border: 6px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-@keyframes triangle1 {
-  0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg) brightness(1); }
-  50% { transform: rotate(15deg) scale(1.1); filter: hue-rotate(60deg) brightness(1.3); }
-}
-
-/* Animation 2: Square Only */
-.countdown-animation-2 .countdown-circle {
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
-  border-radius: 0 !important;
-  clip-path: none !important;
-  animation: square2 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes square2 {
-  0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
-  50% { transform: rotate(45deg) scale(1.1); filter: hue-rotate(90deg); }
-}
-
-/* Animation 3: Pentagon Only */
-.countdown-animation-3 .countdown-circle {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%) !important;
-  animation: pentagon3 1.2s ease-in-out infinite !important;
-  border: 6px solid rgba(255, 215, 0, 0.9) !important;
-}
-
-@keyframes pentagon3 {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-    filter: brightness(1) hue-rotate(0deg);
+  87% {
+    transform: translateX(2px) scale(1.3) rotate(1deg);
+    filter: hue-rotate(60deg) brightness(1.6) saturate(2);
   }
-  50% { 
-    transform: scale(1.15) rotate(10deg); 
-    filter: brightness(1.4) hue-rotate(40deg);
+  89% {
+    transform: translateX(-1px) scale(1.25) rotate(-0.5deg);
+    filter: hue-rotate(120deg) brightness(1.5) saturate(2);
   }
-}
-
-/* Animation 4: Hexagon Only */
-.countdown-animation-4 .countdown-circle {
-  background: linear-gradient(60deg, #96fbc4 0%, #f9f586 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%) !important;
-  animation: hexagon4 2s ease-in-out infinite !important;
-  border: 5px solid rgba(150, 251, 196, 0.9) !important;
-}
-
-@keyframes hexagon4 {
-  0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
-  50% { transform: rotate(30deg) scale(1.1); filter: hue-rotate(90deg); }
-}
-
-/* Animation 5: Star Only */
-.countdown-animation-5 .countdown-circle {
-  background: linear-gradient(135deg, #FEE140 0%, #FA709A 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%) !important;
-  animation: star5 1.5s ease-in-out infinite !important;
-  border: 6px solid white !important;
-}
-
-@keyframes star5 {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-    filter: brightness(1);
-    box-shadow: 0 0 20px rgba(254, 225, 64, 0.6);
+  91% {
+    transform: translateX(1px) scale(1.3) rotate(0.5deg);
+    filter: hue-rotate(180deg) brightness(1.6) saturate(2);
   }
-  50% { 
-    transform: scale(1.2) rotate(36deg); 
-    filter: brightness(1.5);
-    box-shadow: 0 0 40px rgba(254, 225, 64, 1);
+  93% {
+    transform: translateX(0) scale(1.35) rotate(0deg);
+    filter: hue-rotate(240deg) brightness(1.7) saturate(2.5);
   }
-}
-
-/* Animation 6: Circle Only */
-.countdown-animation-6 .countdown-circle {
-  background: linear-gradient(135deg, #FF6B9D 0%, #FF0844 100%) !important;
-  border-radius: 50% !important;
-  clip-path: none !important;
-  animation: circle6 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes circle6 {
-  0%, 100% { 
-    transform: scale(1); 
-    filter: hue-rotate(0deg) brightness(1);
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
-  }
-  50% { 
-    transform: scale(1.15); 
-    filter: hue-rotate(120deg) brightness(1.2);
-    box-shadow: 0 0 30px rgba(107, 255, 157, 0.8);
-  }
-}
-
-/* Animation 7: Diamond Only */
-.countdown-animation-7 .countdown-circle {
-  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%) !important;
-  animation: diamond7 2s ease-in-out infinite !important;
-  border: 6px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-@keyframes diamond7 {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
-    filter: brightness(1) hue-rotate(0deg);
-  }
-  50% { 
-    transform: scale(1.1) rotate(45deg); 
-    filter: brightness(1.4) hue-rotate(90deg);
-  }
-}
-
-/* Animation 8: Octagon Only */
-.countdown-animation-8 .countdown-circle {
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%) !important;
-  animation: octagon8 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes octagon8 {
-  0%, 100% { 
-    transform: rotate(0deg) scale(1); 
-    filter: hue-rotate(0deg);
-  }
-  50% { 
-    transform: rotate(22.5deg) scale(1.1); 
-    filter: hue-rotate(60deg);
-  }
-}
-
-/* Animation 9: Circle Only (Different style) */
-.countdown-animation-9 .countdown-circle {
-  background: radial-gradient(circle, #FFF9A6 0%, #FFE66D 40%, #FF6B35 100%) !important;
-  border-radius: 50% !important;
-  clip-path: none !important;
-  animation: circle9 1.5s ease-in-out infinite !important;
-  border: 5px solid rgba(255, 230, 109, 0.8) !important;
-}
-
-@keyframes circle9 {
-  0%, 100% { 
-    transform: scale(1); 
-    box-shadow: 0 0 20px rgba(255, 249, 166, 0.8);
-    filter: brightness(1);
-  }
-  50% { 
-    transform: scale(1.15); 
-    box-shadow: 0 0 40px rgba(255, 249, 166, 1);
-    filter: brightness(1.3);
-  }
-}
-
-/* Animation 10: Triangle Only (Different rotation) */
-.countdown-animation-10 .countdown-circle {
-  background: radial-gradient(circle at 50% 50%, #FFFFFF 0%, #FF5FA2 45%, #7C4DFF 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%) !important;
-  animation: triangle10 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes triangle10 {
-  0%, 100% { 
-    transform: rotate(0deg) scale(1); 
+  
+  /* Phase 5: Settle down (93-100%) */
+  100% {
+    transform: translateX(0) scale(1) rotate(0deg);
     filter: hue-rotate(0deg) brightness(1);
   }
-  50% { 
-    transform: rotate(-15deg) scale(1.1); 
-    filter: hue-rotate(90deg) brightness(1.3);
+}
+
+/* Glow effect during explosion */
+@keyframes counterGlowExplosion {
+  0%, 70% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+  71%, 93% {
+    box-shadow: 
+      0 0 20px rgba(255, 215, 0, 0.8),
+      0 0 40px rgba(255, 0, 255, 0.6),
+      0 0 60px rgba(0, 255, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
   }
 }
 
-/* Animation 11: Circle Only (Rainbow) */
-.countdown-animation-11 .countdown-circle {
-  background: conic-gradient(
-    from 0deg,
-    #ff0000 0deg,
-    #ff7f00 51.43deg,
-    #ffff00 102.86deg,
-    #00ff00 154.29deg,
-    #0000ff 205.71deg,
-    #4b0082 257.14deg,
-    #9400d3 308.57deg,
-    #ff0000 360deg
-  ) !important;
-  border-radius: 50% !important;
-  clip-path: none !important;
-  animation: circle11 3s linear infinite !important;
-  border: 6px solid white !important;
-}
-
-@keyframes circle11 {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.1); }
-}
-
-/* Animation 12: Circle Only (Sun style) */
-.countdown-animation-12 .countdown-circle {
-  background: radial-gradient(circle, #FFD700 0%, #FFA500 100%) !important;
-  border-radius: 50% !important;
-  clip-path: none !important;
-  animation: circle12 1.5s ease-in-out infinite !important;
-  border: 8px solid rgba(255, 255, 255, 0.8) !important;
-}
-
-@keyframes circle12 {
-  0%, 100% { 
-    transform: scale(1); 
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-    filter: brightness(1);
-  }
-  50% { 
-    transform: scale(1.1); 
-    box-shadow: 0 0 50px rgba(255, 215, 0, 1);
-    filter: brightness(1.3);
-  }
-}
-
-/* Animation 13: Square Only (Different rotation) */
-.countdown-animation-13 .countdown-circle {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  border-radius: 0 !important;
-  clip-path: none !important;
-  animation: square13 2s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes square13 {
-  0%, 100% { 
-    transform: rotate(0deg) scale(1); 
-    filter: hue-rotate(0deg);
-  }
-  50% { 
-    transform: rotate(90deg) scale(1.1); 
-    filter: hue-rotate(120deg);
-  }
-}
-
-/* Animation 14: Pentagon Only (Different style) */
-.countdown-animation-14 .countdown-circle {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%) !important;
-  animation: pentagon14 2s ease-in-out infinite !important;
-  border: 5px solid rgba(168, 237, 234, 0.9) !important;
-}
-
-@keyframes pentagon14 {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg);
-    filter: hue-rotate(0deg) brightness(1);
-  }
-  50% { 
-    transform: scale(1.1) rotate(-10deg);
-    filter: hue-rotate(120deg) brightness(1.2);
-  }
-}
-
-/* Animation 15: Hexagon Only (Different style) */
-.countdown-animation-15 .countdown-circle {
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%) !important;
-  border-radius: 0 !important;
-  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%) !important;
-  animation: hexagon15 3s ease-in-out infinite !important;
-  border: 5px solid white !important;
-}
-
-@keyframes hexagon15 {
-  0%, 100% {
-    transform: rotate(0deg) scale(1);
-    filter: hue-rotate(0deg);
-  }
-  50% {
-    transform: rotate(60deg) scale(1.1);
-    filter: hue-rotate(180deg);
-  }
+/* Combined animation class - apply this to your counter element */
+.counter-explosion-animate {
+  animation: 
+    counterSlideExplosion 3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    counterGlowExplosion 3s ease-in-out forwards;
 }
