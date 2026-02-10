@@ -10,12 +10,22 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   const [showChestScreen, setShowChestScreen] = useState(false);
   const [fireworks, setFireworks] = useState([]);
   const [confettiWaves, setConfettiWaves] = useState([]);
+  
+  // ✅ TREASURE CHEST SEQUENTIAL REVEAL STATES
+  const [chestRevealed, setChestRevealed] = useState(false);
+  const [subtitleRevealed, setSubtitleRevealed] = useState(false);
+  const [buttonRevealed, setButtonRevealed] = useState(false);
 
-  // Handle skipCelebration prop changes
+  // ✅ Handle skipCelebration - Show chest screen IMMEDIATELY (no delay)
   useEffect(() => {
     if (skipCelebration) {
-      // Go directly to chest screen
+      // Show chest screen immediately (no delay)
       setShowChestScreen(true);
+      
+      // Then stagger the element reveals with 500ms initial delay:
+      setTimeout(() => setChestRevealed(true), 500);        // Chest appears at 500ms
+      setTimeout(() => setSubtitleRevealed(true), 1500);    // Subtitle 500ms after chest (was 800)
+      setTimeout(() => setButtonRevealed(true), 2500);      // Button 500ms after subtitle (was 1100)
     }
   }, [skipCelebration]);
 
@@ -50,7 +60,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
           setTimeout(() => setFireworks([]), 2500);
         };
         
-        // Run first cycle immediately (after 500ms initial delay)
+        // Run first cycle immediately (after 2000ms initial delay)
         fireworksCycle();
         // Then repeat every 3.5 seconds
         fireworksInterval = setInterval(fireworksCycle, 3500);
@@ -85,6 +95,10 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
 
   const handleChestClick = () => {
     if (speak) speak("Let's see what we can learn!");
+    // ✅ Reset all reveal states when leaving chest screen
+    setChestRevealed(false);
+    setSubtitleRevealed(false);
+    setButtonRevealed(false);
     setShowChestScreen(false);
     setShowRules(true);
   };
@@ -118,7 +132,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     );
   }
 
-  // Chest screen (for error attempts)
+  // Chest screen (for error attempts) - ✅ WITH SEQUENTIAL REVEAL
   if (showChestScreen) {
     return (
       <div className="chest-overlay">
@@ -164,7 +178,8 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
         </div>
 
         <div className="chest-container">
-          <div className="chest-image-wrapper">
+          {/* ✅ CHEST IMAGE with conditional reveal class */}
+          <div className={`chest-image-wrapper ${chestRevealed ? 'reveal' : 'hidden'}`}>
             <div className="chest-glow-pulse"></div>
             <div className="treasure-rays"></div>
             <div className="chest-real">
@@ -172,11 +187,16 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
             </div>
           </div>
 
-          <div className="treasure-subtitle">
+          {/* ✅ SUBTITLE with conditional reveal class */}
+          <div className={`treasure-subtitle ${subtitleRevealed ? 'reveal' : 'hidden'}`}>
             <span>Something to treasure . . .</span>
           </div>
          
-          <button className="chest-banner-button" onClick={handleChestClick}>
+          {/* ✅ BUTTON with conditional reveal class */}
+          <button 
+            className={`chest-banner-button ${buttonRevealed ? 'reveal' : 'hidden'}`}
+            onClick={handleChestClick}
+          >
             <div className="banner-ribbon">
               <span>LET'S SEE IT!</span>
             </div>
@@ -198,7 +218,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
               className="firework"
               style={{
                 left: `${fw.left}%`,
-                top: `${fw.top}%`, // ✅ NEW: Dynamic top position
+                top: `${fw.top}%`,
                 animationDelay: `${fw.delay}s`
               }}
             >
