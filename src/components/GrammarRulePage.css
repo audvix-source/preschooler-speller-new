@@ -1033,3 +1033,55 @@
     font-size: 1.8em;
   }
 }
+
+/* ===================================================================
+   TREASURE CHEST SEQUENTIAL REVEAL ANIMATIONS
+   =================================================================== */
+
+/* Hidden state for reveal elements */
+.chest-image-wrapper.hidden,
+.treasure-subtitle.hidden,
+.chest-banner-button.hidden {
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+  transition: none;
+}
+
+/* Reveal animations */
+.chest-image-wrapper.reveal {
+  animation: revealChest 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.treasure-subtitle.reveal {
+  animation: revealSubtitle 0.5s ease-out forwards;
+  animation-delay: 0.5s; /* ✅ Wait 500ms after class is added */
+}
+
+.chest-banner-button.reveal {
+  animation: revealButton 0.5s ease-out forwards;
+  animation-delay: 1s; /* ✅ Wait 1 second after class is added */
+  pointer-events: auto;
+}
+
+/* ===================================================================
+   TREASURE CHEST SEQUENTIAL REVEAL (CLEANED VERSION)
+   =================================================================== */
+
+/* 1. THE CHEST: Appears first (Immediate) */
+.chest-image-wrapper.reveal {
+  animation: revealChest 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 2. THE SUBTITLE: Appears second (0.6s delay) */
+.treasure-subtitle.reveal {
+  animation: revealSubtitle 0.5s ease-out forwards;
+  animation-delay: 0.6s; 
+}
+
+/* 3. THE BUTTON: Appears last (1.2s delay) */
+.chest-banner-button.reveal {
+  animation: revealButton 0.5s ease-out forwards;
+  animation-delay: 1.2s; 
+  pointer-events: auto;
+}
