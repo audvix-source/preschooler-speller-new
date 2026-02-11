@@ -3,25 +3,29 @@ import './CategoryMenuScreen.css';
 import menuBackground from './assets/menu-background.png'; 
 
 function CategoryMenuScreen(props) {
-    const categories = [
-    'Alphabet Fun', 
-    'Parts of the Body', 
-    'Counting',
-    'Telling Time',
-    'Days & Months',
-    'Inside the House',
-    'Outside',
-    'Community Places',
-    'Vehicles',
-    'My Bible Words'
+  // ✅ Categories with enabled/disabled status
+  const categories = [
+    { name: 'Alphabet Fun', enabled: true }, 
+    { name: 'Parts of the Body', enabled: true }, 
+    { name: 'Counting', enabled: false },
+    { name: 'Telling Time', enabled: false },
+    { name: 'Days & Months', enabled: false },
+    { name: 'Inside the House', enabled: false },
+    { name: 'Outside', enabled: false },
+    { name: 'Community Places', enabled: false },
+    { name: 'Vehicles', enabled: false },
+    { name: 'Faith-builder Words', enabled: false } // ✅ Changed from 'My Bible Words'
   ];
 
-  const handleCategoryClick = (categoryName) => {
-    if (categoryName === 'Alphabet Fun') {
+  const handleCategoryClick = (category) => {
+    // Don't do anything if category is disabled
+    if (!category.enabled) return;
+    
+    if (category.name === 'Alphabet Fun') {
       props.onNavigate('alphabet');
     } else {
       // All other categories will now navigate to the learning screen
-      props.onNavigate('learning', categoryName);
+      props.onNavigate('learning', category.name);
     }
   };
 
@@ -34,11 +38,12 @@ function CategoryMenuScreen(props) {
       <div className="category-buttons-grid">
         {categories.map(category => (
           <button 
-            key={category} 
-            className="category-button"
+            key={category.name} 
+            className={`category-button ${!category.enabled ? 'disabled' : ''}`}
             onClick={() => handleCategoryClick(category)}
+            disabled={!category.enabled}
           >
-            {category}
+            {category.name}
           </button>
         ))}
       </div>
@@ -48,6 +53,7 @@ function CategoryMenuScreen(props) {
         🏆 My Progress 🏆
       </button>
       
+      {/* ✅ Go Back button (pulse animation removed in CSS) */}
       <button className="back-button" onClick={() => props.onNavigate('cover')}>Go Back</button>
     </div>
   );

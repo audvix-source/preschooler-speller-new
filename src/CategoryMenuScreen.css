@@ -66,58 +66,60 @@
   background-color: rgba(255, 199, 0, 0.9);
 }
 
-/* Red Egg-Shaped "Go Back" Button */
+/* ✅ DISABLED Category Buttons (Pale Yellow) */
+.category-menu-container .category-button.disabled {
+  background-color: rgba(255, 250, 205, 0.6); /* Pale yellow (lemonchiffon) */
+  color: rgba(139, 115, 85, 0.7); /* Muted brown text - readable but subdued */
+  cursor: not-allowed;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.category-menu-container .category-button.disabled:hover {
+  transform: none;
+  background-color: rgba(255, 250, 205, 0.6);
+}
+
+/* Red Underline Style "Go Back" Button - REVERTED TO IMAGE DESIGN */
 .category-menu-container .back-button {
-  margin-top: 12px;
-  margin-bottom: 12px;
-  width: 220px;
-  height: 7px;
-  border-radius: 50% / 60%;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4em;
-  font-weight: bold;
+  margin-top: 15px;
+  background: none;             /* Remove red gradient */
+  border: none;                 /* Remove gold border */
+  box-shadow: none;             /* Remove shadow */
   color: white;
-  background: linear-gradient(145deg, #f44336, #d32f2f);
-  border: none;
+  font-size: 1.5em;
+  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  animation: pulse 2s ease-in-out infinite;
+  position: relative;
+  padding: 5px 20px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+/* The red "swoosh" underline effect from the image */
+.category-menu-container .back-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;                  /* Length of the red line */
+  height: 6px;                   /* Thickness of the red line */
+  background-color: #f44336;     /* Red color */
+  border-radius: 50%;            /* Makes it look like a brush stroke */
+  z-index: -1;
 }
 
 .category-menu-container .back-button:hover {
-  background: linear-gradient(145deg, #d32f2f, #b71c1c);
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
+  background: none;              /* Ensures no color appears on hover */
+  border: none;
 }
 
 .category-menu-container .back-button:active {
   transform: scale(0.98);
 }
 
-/* Pulse Animation for the Go Back Button */
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
-  }
-}
-
-/* ===================================================================
-   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
-   =================================================================== */
-
-@media only screen and (min-width: 769px) {
-  /* No desktop-specific overrides needed */
-  /* Category menu works consistently across all screen sizes */
-}
-
-/* My Progress Button */
+/* My Progress Button - PULSING AND ADDED GOLD TRIMMING */
 .progress-button {
   margin-top: 12px;
   margin-bottom: 12px;
@@ -132,24 +134,40 @@
   font-weight: bold;
   color: white;
   background: linear-gradient(145deg, #f44336, #d32f2f);
-  border: none;
+  
+  /* ✅ ADDED GOLD TRIMMING HERE */
+  border: 4px solid #FFD700; 
+  box-sizing: border-box; /* Ensures the border doesn't make the button bigger */
+  
   cursor: pointer;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
-  animation: pulse 2s ease-in-out infinite;
+  animation: pulse 2s ease-in-out infinite; 
 }
 
-.category-menu-container .back-button:hover {
+/* Optional: Make the gold border glow slightly during the pulse */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    border-color: #FFD700;
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
+    border-color: #FFFACD; /* Lightens the gold at the peak of the pulse */
+  }
+}
+
+.progress-button:hover {
   background: linear-gradient(145deg, #d32f2f, #b71c1c);
   transform: scale(1.05);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-.category-menu-container .back-button:active {
+.progress-button:active {
   transform: scale(0.98);
 }
 
-/* Pulse Animation for the Go Back Button */
+/* Pulse Animation - Only for Progress Button now */
 @keyframes pulse {
   0%, 100% {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
