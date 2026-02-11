@@ -432,3 +432,198 @@
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* ===================================================================
+   SCORING LEGEND STYLES
+   ADD TO YOUR STATS CSS FILE (StatsScreen.css or similar)
+   =================================================================== */
+
+.scoring-legend-container {
+  width: 100%;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* Toggle Button */
+.legend-toggle-button {
+  width: 100%;
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 15px 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.legend-toggle-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #357ABD 0%, #2A5F9E 100%);
+}
+
+.legend-toggle-button:active {
+  transform: translateY(0);
+}
+
+.legend-icon {
+  font-size: 1.3em;
+}
+
+.legend-text {
+  flex: 1;
+  text-align: center;
+}
+
+.legend-arrow {
+  font-size: 0.8em;
+  transition: transform 0.3s ease;
+}
+
+.legend-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+/* Legend Content Container */
+.legend-content {
+  background: white;
+  border-radius: 15px;
+  padding: 20px 15px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section Headings */
+.legend-section {
+  margin-bottom: 20px;
+}
+
+.legend-section:last-of-type {
+  margin-bottom: 10px;
+}
+
+.legend-heading {
+  color: #8B4513;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #FFD700;
+  text-align: center;
+}
+
+/* Legend Items */
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
+  border-radius: 10px;
+  border: 2px solid #FFE5B4;
+  transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+  transform: translateX(5px);
+  border-color: #FFD700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.legend-symbol {
+  font-size: 1.5em;
+  min-width: 50px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  font-weight: bold;
+  color: #2C3E50;
+  flex: 1;
+  font-size: 0.95em;
+}
+
+.legend-value {
+  color: #E74C3C;
+  font-weight: 600;
+  font-size: 0.9em;
+  text-align: right;
+}
+
+/* Tip Box */
+.legend-tip-box {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  border: 3px solid #4CAF50;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 15px;
+  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
+}
+
+.tip-icon {
+  font-size: 2em;
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.tip-text {
+  color: #2E7D32;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.tip-text strong {
+  color: #1B5E20;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Mobile Responsive */
+@media only screen and (max-width: 380px) {
+  .legend-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 5px;
+  }
+
+  .legend-symbol {
+    min-width: auto;
+  }
+
+  .legend-value {
+    text-align: center;
+  }
+}

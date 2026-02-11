@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import scoreDB from '../services/scoreDatabase';
 import { getWordsByCategory } from '../wordList.js';
 import './StatsScreen.css';
+import ScoringLegend from './ScoringLegend'; // ✅ ADDED
 
 function StatsScreen({ onNavigate, speak }) {
   const [stats, setStats] = useState(null);
@@ -161,6 +162,9 @@ function StatsScreen({ onNavigate, speak }) {
         </div>
 
         <div className="stats-scrollable-content">
+          {/* ✅ SCORING LEGEND - ADDED HERE */}
+          <ScoringLegend />
+
           {/* Rewards Section */}
           <div className="rewards-section">
             <h2>✨ My Rewards ✨</h2>
