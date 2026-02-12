@@ -3,6 +3,7 @@ import './AlphabetChallenge.css';
 import { wordList } from '../wordList.js';
 import scoreDB from '../services/scoreDatabase';
 import OnScreenKeyboard from './OnScreenKeyboard';
+import RunningTilesAnimation from './RunningTilesAnimation'; // ✅ ADDED
 
 // Import all images dynamically
 const importAll = (r) => {
@@ -44,6 +45,7 @@ function AlphabetChallenge({ mode, selectedLetter, onExit, speak }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [score, setScore] = useState(0);
   const [totalAttempted, setTotalAttempted] = useState(0);
+  const [showAnimation, setShowAnimation] = useState(false); // ✅ ADDED
 
   // Initialize words based on mode
   useEffect(() => {
@@ -201,8 +203,9 @@ function AlphabetChallenge({ mode, selectedLetter, onExit, speak }) {
     if (currentIndex + 1 < currentWords.length) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      // Challenge complete!
+      // ✅ Challenge complete - TRIGGER ANIMATION
       if (speak) speak("Challenge complete! Great job!");
+      setShowAnimation(true);
     }
   };
 
@@ -242,17 +245,26 @@ function AlphabetChallenge({ mode, selectedLetter, onExit, speak }) {
     }
   };
 
+  // ✅ ANIMATION COMPLETE CALLBACK
+  const handleAnimationComplete = () => {
+    onExit();
+  };
+
+  // ✅ SHOW ANIMATION WHEN CHALLENGE COMPLETES
+  if (showAnimation) {
+    return (
+      <RunningTilesAnimation
+        score={score}
+        total={totalAttempted}
+        onComplete={handleAnimationComplete}
+      />
+    );
+  }
+
   if (!currentWord) {
     return (
       <div className="challenge-container">
-        <div className="challenge-complete">
-          <h1>🎉 Challenge Complete! 🎉</h1>
-          <p className="final-score">Score: {score} / {totalAttempted}</p>
-          <p className="accuracy">Accuracy: {totalAttempted > 0 ? Math.round((score / totalAttempted) * 100) : 0}%</p>
-          <button className="exit-challenge-btn" onClick={onExit}>
-            Back to Alphabet
-          </button>
-        </div>
+        <div className="challenge-loading">Loading challenge...</div>
       </div>
     );
   }

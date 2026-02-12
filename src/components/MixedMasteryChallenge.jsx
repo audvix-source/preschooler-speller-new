@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './MixedMasteryChallenge.css';
 import { wordList } from '../wordList.js';
 import RecognitionChallenge from './RecognitionChallenge.jsx';
+import RunningTilesAnimation from './RunningTilesAnimation'; // ✅ ADDED
 
 // Import for getting image path
 const importAll = (r) => {
@@ -25,6 +26,9 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   const [userAnswer, setUserAnswer] = useState([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false); // ✅ ADDED
+  const [finalScore, setFinalScore] = useState(0); // ✅ ADDED
+  const [finalTotal, setFinalTotal] = useState(0); // ✅ ADDED
 
   // Generate mixed questions on mount
   useEffect(() => {
@@ -131,8 +135,15 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       setShowFeedback(false);
       setIsCorrect(false);
     } else {
-      if (speak) speak(`Challenge complete! You scored ${score + (isCorrect ? 1 : 0)} out of ${totalQuestions}`);
-      setTimeout(() => onExit(score + (isCorrect ? 1 : 0), totalQuestions), 2000);
+      // ✅ CHALLENGE COMPLETE - TRIGGER ANIMATION
+      const completedScore = score + (isCorrect ? 1 : 0);
+      setFinalScore(completedScore);
+      setFinalTotal(totalQuestions);
+      
+      if (speak) speak(`Challenge complete! You scored ${completedScore} out of ${totalQuestions}`);
+      
+      // Show animation immediately
+      setShowAnimation(true);
     }
   };
 
@@ -146,6 +157,22 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     if (speak) speak("Exiting challenge");
     onExit(score, currentQuestionIndex);
   };
+
+  // ✅ ANIMATION COMPLETE - CALLBACK TO EXIT
+  const handleAnimationComplete = () => {
+    onExit(finalScore, finalTotal);
+  };
+
+  // ✅ SHOW ANIMATION WHEN QUIZ COMPLETES
+  if (showAnimation) {
+    return (
+      <RunningTilesAnimation
+        score={finalScore}
+        total={finalTotal}
+        onComplete={handleAnimationComplete}
+      />
+    );
+  }
 
   // Get emoji for word
   const getWordVisual = (word) => {
@@ -303,6 +330,19 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           <button className="exit-button" onClick={handleExit}>
             🚪 Exit Challenge
           </button>
+
+           {/* ✅ ADD THIS TEST BUTTON HERE */}
+  <button 
+    className="exit-button" 
+    onClick={() => {
+      setFinalScore(5);
+      setFinalTotal(5);
+      setShowAnimation(true);
+    }}
+    style={{ background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' }}
+  >
+    🎬 Test Animation
+    </button>
         </div>
       </div>
     </div>
