@@ -46,14 +46,14 @@
   flex-shrink: 1;
 }
 
-/* Yellow Category Buttons */
+/* Yellow Category Buttons - ACTIVE/WORKING SECTIONS */
 .category-menu-container .category-button {
   width: 280px;
   padding: 8px 15px;
   font-size: 1.1em;
   font-weight: bold;
   color: #333;
-  background-color: rgba(255, 215, 0, 0.8);
+  background-color: rgba(255, 215, 0, 0.8); /* Gold yellow for active buttons */
   border: none;
   border-radius: 12px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
@@ -66,17 +66,17 @@
   background-color: rgba(255, 199, 0, 0.9);
 }
 
-/* ✅ DISABLED Category Buttons (Pale Yellow) */
+/* ✅ DISABLED Category Buttons - BRIGHTER PALE YELLOW (but still paler than active) */
 .category-menu-container .category-button.disabled {
-  background-color: rgba(255, 250, 205, 0.6); /* Pale yellow (lemonchiffon) */
-  color: rgba(139, 115, 85, 0.7); /* Muted brown text - readable but subdued */
+  background-color: rgba(255, 235, 120, 0.75); /* ✅ BRIGHTER - was rgba(255, 250, 205, 0.6) */
+  color: #7A7A7A; /* ✅ SAME GREY TEXT - unchanged */
   cursor: not-allowed;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .category-menu-container .category-button.disabled:hover {
   transform: none;
-  background-color: rgba(255, 250, 205, 0.6);
+  background-color: rgba(255, 235, 120, 0.75); /* ✅ BRIGHTER - matches above */
 }
 
 /* Red Underline Style "Go Back" Button - REVERTED TO IMAGE DESIGN */
@@ -165,16 +165,6 @@
 
 .progress-button:active {
   transform: scale(0.98);
-}
-
-/* Pulse Animation - Only for Progress Button now */
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
-  }
 }
 
 /* ===================================================================

@@ -10,7 +10,7 @@
   width: 100%;
   height: 50%; /* Bottom half only */
   pointer-events: none;
-  z-index: 100;
+  z-index: 1000; /* ✅ VERY HIGH - above everything! Was 100 */
   overflow: visible; /* ✅ Changed from hidden - allows tree to extend above */
   background: transparent; /* ✅ No background - prevents blue box glitch */
 }
@@ -84,7 +84,7 @@
   transform-origin: center;
   opacity: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  z-index: 15; /* Higher z-index so bees appear in front */
+  z-index: 999; /* ✅ VERY HIGH z-index - bees appear IN FRONT OF EVERYTHING including Progress box! */
 }
 
 /* Flying bees - FLY to RIGHT SIDE (artistic placement) */
@@ -147,33 +147,6 @@
     filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25)) brightness(1.05);
   }
 }
-
-/* ===================================================================
-   🎯 QUICK ADJUSTMENT GUIDE
-   =================================================================== */
-
-/* 
-TO MOVE BEEHIVE UP/DOWN:
-1. In .bee-animation__beehive, change top: 40px
-   - Lower number = higher position
-   - Higher number = lower position
-
-2. Update bee starting position:
-   - In .bee-animation__bee, change top: 240px
-   - Formula: beehive top + 200px
-   - Example: If beehive top is 20px, bee top should be 220px
-
-TO ADJUST BEEHIVE HEIGHT (make it shorter/taller):
-1. Go to BeeAnimation.js, line ~45
-2. Change height: 'auto' to height: '300px' (or your value)
-   - Smaller number = shorter beehive
-   - Larger number = taller beehive
-
-TO MOVE BRANCH UP/DOWN:
-1. In .bee-animation__branch, change top: 0
-   - Negative values move it up (e.g., top: -50px)
-   - Positive values move it down (e.g., top: 50px)
-*/
 
 /* ===================================================================
    RESPONSIVE ADJUSTMENTS

@@ -5,9 +5,9 @@ import birdBackground from './assets/pair-birds.png';
 import AlphabetChallenge from './components/AlphabetChallenge';
 import ChallengeBanner from './components/ChallengeBanner';
 import HexagonTransition from './components/HexagonTransition';
-import MixedMasteryChallenge from './components/MixedMasteryChallenge.jsx';
+import MixedMasteryChallenge from './components/MixedMasteryChallenge';
 
-// Dynamic image context setup
+// Dynamic image context setup - LOAD FROM BOTH FOLDERS
 const importAll = (r) => {
   let images = {};
   r.keys().forEach((item) => { 
@@ -16,10 +16,21 @@ const importAll = (r) => {
   return images;
 };
 
-const images = importAll(require.context('./assets', false, /\.(png|jpe?g|svg)$/));
+// Load from main assets folder (labeled images)
+const mainImages = importAll(require.context('./assets', false, /\.(png|jpe?g|svg)$/));
+
+// Load from emojis folder
+const emojiImages = importAll(require.context('./assets/emojis', false, /\.(png|jpe?g|svg)$/));
+
+// Combine both
+const allImages = { ...mainImages, ...emojiImages };
 
 const getImagePath = (fileName) => {
-  return images[fileName] || null;
+  if (allImages[fileName]) {
+    return allImages[fileName];
+  }
+  console.warn(`AlphabetScreen: Image not found: ${fileName}`);
+  return null;
 };
 
 function AlphabetScreen(props) {

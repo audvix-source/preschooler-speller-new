@@ -82,7 +82,7 @@
 }
 
 /* ========================================
-   CONTENT AREA
+   CONTENT AREA - LOWERED Z-INDEX
    ======================================== */
 
 .hexagon-transition__content-area {
@@ -99,7 +99,13 @@
   gap: 15px;
   opacity: 1;
   box-sizing: border-box;
-  z-index: 50; /* ✅ HIGH z-index - appears in FRONT of tree */
+  z-index: 50; /* ✅ Bees have z-index 999, so they appear in front */
+  pointer-events: none; /* ✅ ADDED - allows clicks through to bees */
+}
+
+/* Re-enable pointer events on buttons */
+.hexagon-transition__content-area * {
+  pointer-events: auto;
 }
 
 /* ========================================
@@ -128,7 +134,7 @@
   justify-content: center;
   padding: 20px 18px;
   box-sizing: border-box;
-  animation: goldBoxBlink 0.4s ease-in-out; /* ✅ Quick blink effect */
+  animation: goldBoxBlink 0.4s ease-in-out;
 }
 
 /* Quick blink animation - artistic touch */
@@ -137,7 +143,7 @@
     opacity: 1;
   }
   15% {
-    opacity: 0.3; /* ✅ Quick dim */
+    opacity: 0.3;
   }
   30% {
     opacity: 1;
@@ -203,6 +209,25 @@
   text-align: center;
   font-weight: 600;
   font-style: italic;
+}
+
+.hexagon-transition__heads-up {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.9em; /* ✅ BIGGER - was 0.75em */
+  color: #4B0082; /* ✅ DARKER purple for better visibility */
+  margin: 8px 0 12px 0;
+  text-align: center;
+  font-weight: 700; /* ✅ BOLDER */
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.7); /* ✅ More opaque */
+  padding: 10px 12px; /* ✅ More padding */
+  border-radius: 10px;
+  border: 2px solid rgba(147, 112, 219, 0.3); /* ✅ Added border */
+}
+
+.hexagon-transition__heads-up strong {
+  color: #8A2BE2; /* ✅ Highlight important text */
+  font-size: 1.1em;
 }
 
 .hexagon-transition__defer-options-grid {

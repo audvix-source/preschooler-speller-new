@@ -1,82 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './HexagonTransition.css';
 import BeeAnimation from './BeeAnimation';
 import './BeeAnimation.css';
 
 const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
-  const [phase, setPhase] = useState('fullscreen'); // fullscreen → transition → prompt
+  const [phase, setPhase] = useState('fullscreen');
   const [showPrompt, setShowPrompt] = useState(false);
   const [showDeferOptions, setShowDeferOptions] = useState(false);
   const [showBees, setShowBees] = useState(false);
-  const [beeConfig, setBeeConfig] = useState({ count: 20, size: 40 });
+  const [beeConfig, setBeeConfig] = useState({ count: 20, size: 40, pattern: 'default' });
 
   useEffect(() => {
-    // ✅ INSTANT: Show everything immediately - no waiting!
-    setPhase('transition'); // Show honeycomb split immediately
-    setShowPrompt(true); // Show Progress box immediately
+    setPhase('transition');
+    setShowPrompt(true);
     
-    // Show defer options 1s after initial display
     const deferTimer = setTimeout(() => {
       setShowDeferOptions(true);
     }, 1000);
 
     return () => {
       clearTimeout(deferTimer);
+      // ✅ REMOVED - Don't cancel speech here anymore!
+      // Speech will continue until user clicks a button
     };
   }, []);
 
   const handleAccept = () => {
+    // ✅ Cancel speech when user clicks "Let's Go!"
+    window.speechSynthesis.cancel();
+    
     if (speak) speak("Awesome! Let's test your knowledge!");
     
-    // Hide defer options and show bees
     setShowDeferOptions(false);
-    setBeeConfig({ count: 20, size: 40 });
+    setBeeConfig({ count: 20, size: 40, pattern: 'default' });
     setShowBees(true);
   };
 
   const handleDecline = () => {
+    // ✅ Cancel speech when user clicks "Later"
+    window.speechSynthesis.cancel();
+    
     if (speak) speak("No problem! Keep learning!");
     onDecline();
   };
 
   const handleSnooze = (option) => {
-    // Hide defer options
+    // ✅ Cancel previous speech when user clicks a snooze option
+    window.speechSynthesis.cancel();
+    
     setShowDeferOptions(false);
     
-    // Configure bees based on snooze option
     const beeConfigs = {
-      'quarter': { count: 35, size: 30 },
-      'third': { count: 50, size: 24 },
-      'half': { count: 70, size: 18 },
-      'all': { count: 100, size: 14 }
+      'quarter': { count: 50, size: 28, pattern: 'quarter' },
+      'third': { count: 60, size: 22, pattern: 'third' },
+      'half': { count: 80, size: 17, pattern: 'half' },
+      'all': { count: 120, size: 13, pattern: 'all' }
     };
     
     const config = beeConfigs[option];
     setBeeConfig(config);
     setShowBees(true);
     
-    // Speak appropriate message
+    // ✅ Speak new message (old one already cancelled above)
     if (speak) {
       const messages = {
-        'quarter': "Got it! I'll remind you after one-fourth of the images. That's about 7 letters and 65 images.",
-        'third': "Got it! I'll remind you after one-third of the images. That's about 9 letters and 87 images.",
-        'half': "Perfect! I'll remind you after one-half of the images. That's about 13 letters and 130 images.",
-        'all': "Sounds good! I'll remind you when you finish all 26 letters and 260 images."
+        'quarter': "Got it! I'll ask you again after 1 out of 4 of the pictures.",
+        'third': "Got it! I'll ask you again after 1 out of 3 of the pictures.",
+        'half': "Perfect! I'll ask you again after half of the pictures.",
+        'all': "Sounds good! I'll ask you when you finish all the letters."
       };
+      
       speak(messages[option]);
     }
   };
 
   const handleBeeAnimationComplete = () => {
-    // Called when bee animation finishes
     if (beeConfig.count === 20) {
       onAccept();
     } else {
       const snoozeOptions = {
-        35: 'quarter',
-        50: 'third',
-        70: 'half',
-        100: 'all'
+        50: 'quarter',
+        60: 'third',
+        80: 'half',
+        120: 'all'
       };
       const option = snoozeOptions[beeConfig.count];
       onSnooze(option);
@@ -85,28 +91,22 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
 
   return (
     <div className="hexagon-transition__overlay">
-      {/* Phase 1 & 2: Honeycomb background (pure CSS) */}
       <div className={`hexagon-transition__honeycomb-bg ${phase === 'transition' ? 'split' : ''}`}>
-        {/* Top half */}
         <div className="hexagon-transition__honeycomb-section top"></div>
-
-        {/* Bottom half */}
         <div className="hexagon-transition__honeycomb-section bottom"></div>
       </div>
 
-      {/* Bee Animation (shows after button click) */}
       {showBees && (
         <BeeAnimation
           beeCount={beeConfig.count}
           beeSize={beeConfig.size}
+          flightPattern={beeConfig.pattern}
           onComplete={handleBeeAnimationComplete}
         />
       )}
 
-      {/* Phase 3 & 4: Main content area */}
       {phase !== 'fullscreen' && (
         <div className="hexagon-transition__content-area">
-          {/* Light Gold Box - Main Prompt */}
           <div className="hexagon-transition__gold-box-container">
             <div className="hexagon-transition__gold-box">
               {showPrompt && (
@@ -155,32 +155,39 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
             </div>
           </div>
 
-          {/* Defer Options Box */}
           {showDeferOptions && (
             <div className="hexagon-transition__defer-box-container">
               <div className="hexagon-transition__defer-box">
                 <p className="hexagon-transition__defer-label">Or remind me after...</p>
+                
+                {/* ✅ HEADS UP MESSAGE */}
+                <p className="hexagon-transition__heads-up">
+                  💡 <strong>Changed your mind?</strong><br />
+                  Go back to the menu and tap<br />
+                  <strong>Alphabet Fun</strong> again to reset!
+                </p>
+                
                 <div className="hexagon-transition__defer-options-grid">
                   <button 
                     className="hexagon-transition__defer-option-btn" 
                     onClick={() => handleSnooze('quarter')}
                   >
                     <span className="hexagon-transition__defer-fraction">1/4</span>
-                    <span className="hexagon-transition__defer-desc">of images</span>
+                    <span className="hexagon-transition__defer-desc">of pictures</span>
                   </button>
                   <button 
                     className="hexagon-transition__defer-option-btn" 
                     onClick={() => handleSnooze('third')}
                   >
                     <span className="hexagon-transition__defer-fraction">1/3</span>
-                    <span className="hexagon-transition__defer-desc">of images</span>
+                    <span className="hexagon-transition__defer-desc">of pictures</span>
                   </button>
                   <button 
                     className="hexagon-transition__defer-option-btn" 
                     onClick={() => handleSnooze('half')}
                   >
                     <span className="hexagon-transition__defer-fraction">1/2</span>
-                    <span className="hexagon-transition__defer-desc">of images</span>
+                    <span className="hexagon-transition__defer-desc">of pictures</span>
                   </button>
                   <button 
                     className="hexagon-transition__defer-option-btn" 

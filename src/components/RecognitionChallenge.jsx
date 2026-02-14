@@ -1,107 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import './RecognitionChallenge.css';
 
+// ✅ Import all emoji images
+const importAll = (r) => {
+  let images = {};
+  r.keys().forEach((item) => { 
+    images[item.replace('./', '')] = r(item); 
+  });
+  return images;
+};
+
+const images = importAll(require.context('../assets/emojis', false, /\.(png|jpe?g|svg)$/));
+
+// ✅ Get image path helper with special X-word mappings
+const getImagePath = (fileName) => {
+  if (!fileName) {
+    console.warn('RecognitionChallenge getImagePath: No fileName provided');
+    return null;
+  }
+  
+  // ✅ Special mapping for X-words
+  const specialMappings = {
+    'x-box.png': 'xbox-emoji.png',
+    'x-pen.png': 'xpen-emoji.png',
+    'xerox-machine.png': 'xeroxmachine-emoji.png',
+    'x-ray.png': 'x-ray-emoji.png',
+    'xylophone.png': 'xylophone-emoji.png',
+  };
+  
+  // Check if it's a special case
+  if (specialMappings[fileName]) {
+    const mappedFile = specialMappings[fileName];
+    if (images[mappedFile]) {
+      return images[mappedFile];
+    } else {
+      console.warn(`RecognitionChallenge: Mapped file not found: ${mappedFile}`);
+      return null;
+    }
+  }
+  
+  // Normal case: add -emoji
+  const emojiFileName = fileName.replace('.png', '-emoji.png');
+  if (images[emojiFileName]) {
+    return images[emojiFileName];
+  } else {
+    console.warn(`RecognitionChallenge: Image not found: ${emojiFileName}`);
+    return null;
+  }
+};
+
 function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
   const [choices, setChoices] = useState([]);
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
 
-  // Comprehensive emoji mapping
-  const getEmojiForWord = (wordText) => {
-    const emojiMap = {
-      // A
-      'apple': '🍎', 'ant': '🐜', 'alligator': '🐊', 'astronaut': '🧑‍🚀', 'airplane': '✈️',
-      'anchor': '⚓', 'arrow': '➡️', 'axe': '🪓',
-      // B
-      'ball': '⚽', 'bear': '🐻', 'bus': '🚌', 'baby': '👶', 'banana': '🍌',
-      'bee': '🐝', 'bird': '🐦', 'book': '📖', 'butterfly': '🦋', 'boat': '⛵',
-      // C
-      'cat': '🐱', 'car': '🚗', 'cookie': '🍪', 'cow': '🐄', 'cake': '🎂',
-      'crown': '👑', 'crab': '🦀', 'cloud': '☁️', 'cup': '☕',
-      // D
-      'dog': '🐕', 'duck': '🦆', 'door': '🚪', 'dinosaur': '🦕', 'deer': '🦌',
-      'dolphin': '🐬', 'drum': '🥁', 'diamond': '💎',
-      // E
-      'egg': '🥚', 'elephant': '🐘', 'elf': '🧝', 'elbow': '💪', 'eagle': '🦅',
-      'earth': '🌍', 'eye': '👁️', 'ear': '👂',
-      // F
-      'fish': '🐠', 'frog': '🐸', 'fire': '🔥', 'flower': '🌸', 'fox': '🦊',
-      'flag': '🚩', 'fork': '🍴', 'feather': '🪶',
-      // G
-      'goat': '🐐', 'girl': '👧', 'grapes': '🍇', 'globe': '🌍', 'guitar': '🎸',
-      'gift': '🎁', 'ghost': '👻', 'giraffe': '🦒',
-      // H
-      'hat': '🎩', 'horse': '🐴', 'hand': '✋', 'heart': '❤️', 'house': '🏠',
-      'hammer': '🔨', 'honey': '🍯', 'helicopter': '🚁',
-      // I
-      'igloo': '🏔️', 'iguana': '🦎', 'island': '🏝️', 'infant': '👶', 'ice-cream': '🍦',
-      'insect': '🐛',
-      // J
-      'jacket': '🧥', 'jellyfish': '🪼', 'jar': '🫙', 'jet': '✈️', 'juice': '🧃',
-      'jaguar': '🐆',
-      // K
-      'kite': '🪁', 'king': '🤴', 'kitten': '🐱', 'koala': '🐨', 'key': '🔑',
-      'kangaroo': '🦘', 'kettle': '🫖',
-      // L
-      'lion': '🦁', 'lamp': '💡', 'lemon': '🍋', 'lollipop': '🍭', 'leaf': '🍃',
-      'lips': '💋', 'lock': '🔒', 'ladybug': '🐞',
-      // M
-      'monkey': '🐵', 'moon': '🌙', 'mouse': '🐭', 'mushroom': '🍄', 'milk': '🥛',
-      'mango': '🥭', 'mountain': '⛰️', 'music': '🎵',
-      // N
-      'nail': '🔨', 'necklace': '📿', 'net': '🥅', 'nurse': '👩‍⚕️', 'nose': '👃',
-      'nest': '🪺', 'notebook': '📓',
-      // O
-      'octopus': '🐙', 'ostrich': '🦩', 'otter': '🦦', 'ox': '🐂', 'orange': '🍊',
-      'ocean': '🌊', 'owl': '🦉',
-      // P
-      'peacock': '🦚', 'pencil': '✏️', 'pizza': '🍕', 'pumpkin': '🎃', 'panda': '🐼',
-      'parrot': '🦜', 'pig': '🐷', 'piano': '🎹',
-      // Q
-      'quail': '🦢', 'queen': '👸', 'quilt': '🛏️', 'question-mark': '❓',
-      // R
-      'rain': '🌧️', 'rainbow': '🌈', 'robot': '🤖', 'rocket': '🚀', 'rose': '🌹',
-      'rabbit': '🐰', 'ring': '💍',
-      // S
-      'shoes': '👟', 'spoon': '🥄', 'star': '⭐', 'sun': '☀️', 'snake': '🐍',
-      'snowman': '⛄', 'ship': '🚢', 'scissors': '✂️',
-      // T
-      'table': '🪑', 'tree': '🌳', 'telephone': '📞', 'truck': '🚚', 'turtle': '🐢',
-      'tiger': '🐯', 'tooth': '🦷', 'tornado': '🌪️',
-      // U
-      'umbrella': '☂️', 'unicorn': '🦄', 'umpire': '🧑‍⚖️', 'unicycle': '🚲', 'uniform': '👔',
-      // V
-      'vase': '🏺', 'vest': '🦺', 'violin': '🎻', 'volcano': '🌋', 'van': '🚐',
-      // W
-      'wagon': '🛒', 'watch': '⌚', 'whale': '🐋', 'wheel': '🎡', 'watermelon': '🍉',
-      'wolf': '🐺', 'windmill': '🏰',
-      // X
-      'xylophone': '🎹', 'x-ray': '🩻', 'x-box': '🎮',
-      // Y
-      'yak': '🦬', 'yarn': '🧶', 'yogurt': '🥛', 'yacht': '⛵', 'yo-yo': '🪀',
-      // Z
-      'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '🛩️', 'zigzag': '⚡',
-      'zombie': '🧟', 'zoo': '🦁'
-    };
-
-    const wordLower = wordText.toLowerCase();
-    return emojiMap[wordLower] || '📝';
-  };
-
   useEffect(() => {
     // Generate 4 choices including the correct answer
     const generateChoices = () => {
-      const correctWord = { word, image: wordImage, emoji: getEmojiForWord(word) };
+      // Correct answer
+      const correctChoice = {
+        word: word,
+        image: wordImage
+      };
       
-      // Filter out the correct word and get random wrong choices
-      const wrongWords = allWords
+      // Get 3 random wrong answers - FILTER OUT ONES WITHOUT IMAGES
+      const wrongChoices = allWords
         .filter(w => w.word.toLowerCase() !== word.toLowerCase())
+        .filter(w => w.image !== null && w.image !== undefined) // ✅ Only include if image exists
         .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
-        .map(w => ({ ...w, emoji: getEmojiForWord(w.word) }));
+        .slice(0, 3);
       
-      // Combine and shuffle
-      const allChoices = [correctWord, ...wrongWords].sort(() => Math.random() - 0.5);
+      // Combine and shuffle all 4
+      const allChoices = [correctChoice, ...wrongChoices]
+        .sort(() => Math.random() - 0.5);
+      
       setChoices(allChoices);
     };
 
@@ -133,12 +105,13 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
   return (
     <div className="recognition-challenge">
       <div className="recognition-header">
+        <h2 className="recognition-question">
+          Which one is<br />
+          the <span className="highlight-word">{word}</span>?
+        </h2>
         <div className="sound-icon" onClick={() => speak && speak(word)}>
           🔊
         </div>
-        <h2 className="recognition-question">
-          Which one is the <span className="highlight-word">{word}</span>?
-        </h2>
       </div>
 
       <div className="recognition-choices">
@@ -155,12 +128,16 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
             onClick={() => handleChoiceClick(choice)}
           >
             <div className="choice-visual">
-              {/* Use emoji instead of image */}
-              <div className="choice-emoji">
-                {choice.emoji}
-              </div>
+              {choice.image ? (
+                <img 
+                  src={choice.image} 
+                  alt=""
+                  className="choice-image"
+                />
+              ) : (
+                <div className="choice-placeholder">?</div>
+              )}
             </div>
-            {/* LABEL REMOVED - Kids should identify by image only */}
             
             {/* Feedback icons */}
             {selectedChoice && (

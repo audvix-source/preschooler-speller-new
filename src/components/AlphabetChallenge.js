@@ -46,6 +46,8 @@ function AlphabetChallenge({ mode, selectedLetter, onExit, speak }) {
   const [score, setScore] = useState(0);
   const [totalAttempted, setTotalAttempted] = useState(0);
   const [showAnimation, setShowAnimation] = useState(false); // ✅ ADDED
+  const [lastPowerWordIndex, setLastPowerWordIndex] = useState(-1); // ✅ ADDED - Track power word rotation
+  const [completionMessage, setCompletionMessage] = useState(''); // ✅ ADDED - Display power word
 
   // Initialize words based on mode
   useEffect(() => {
@@ -185,7 +187,34 @@ function AlphabetChallenge({ mode, selectedLetter, onExit, speak }) {
     
     if (isPerfect) {
       playMagicSound();
-      if (speak) speak("Perfect!");
+      
+      // ✅ USE ROTATING POWER WORDS (same as LearningScreen)
+      const messages = [
+        { display: '🎉 Perfect! 🎉', speak: 'Perfect' },
+        { display: '⭐ Excellent! ⭐', speak: 'Excellent' },
+        { display: '🏆 Amazing! 🏆', speak: 'Amazing' },
+        { display: '🎊 You Did It! 🎊', speak: 'You Did It' },
+        { display: '✨ Splendid! ✨', speak: 'Splendid' },
+        { display: '🌟 Genius! 🌟', speak: 'Genius' },
+        { display: '💫 Brilliant! 💫', speak: 'Brilliant' },
+        { display: '🎯 Outstanding! 🎯', speak: 'Outstanding' },
+        { display: '👏 Fantastic! 👏', speak: 'Fantastic' },
+        { display: '✨ Wonderful! ✨', speak: 'Wonderful' },
+        { display: '⭐ Superb! ⭐', speak: 'Superb' },
+        { display: '🎪 Magnificent! 🎪', speak: 'Magnificent' },
+        { display: '🏅 Champion! 🏅', speak: 'Champion' },
+        { display: '💝 Incredible! 💝', speak: 'Incredible' },
+        { display: '🎨 Marvelous! 🎨', speak: 'Marvelous' }
+      ];
+      
+      // Use chronological order (cycles through 0-14, then repeats)
+      const nextIndex = (lastPowerWordIndex + 1) % messages.length;
+      setLastPowerWordIndex(nextIndex);
+      
+      const chosen = messages[nextIndex];
+      setCompletionMessage(chosen.display); // ✅ SET the display message
+      if (speak) speak(chosen.speak);
+      
       setScore(prev => prev + 1);
     } else {
       if (speak) speak("Good job!");
@@ -314,6 +343,13 @@ function AlphabetChallenge({ mode, selectedLetter, onExit, speak }) {
           usedLetters={userInput.filter(l => l !== '' && l !== '?')}
           currentWord={currentWord}
         />
+      )}
+
+      {/* ✅ SHOW COMPLETION MESSAGE when word is complete */}
+      {isCompleted && completionMessage && (
+        <div className="completion-message">
+          <h2>{completionMessage}</h2>
+        </div>
       )}
 
       {mistakeCount >= 2 && !isCompleted && (
