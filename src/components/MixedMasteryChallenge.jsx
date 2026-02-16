@@ -225,7 +225,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     
     setTimeout(() => {
       moveToNextQuestion(calculatedScore);
-    }, 500);
+    }, 2000);
   };
 
   const moveToNextQuestion = (calculatedScore) => {

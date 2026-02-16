@@ -82,13 +82,17 @@ function AlphabetScreen(props) {
       const lastPromptAt = parseInt(localStorage.getItem('lastMasteryPromptAt') || '0');
       if (viewedImages.length > lastPromptAt) {
         console.log('Triggering mastery check at', viewedImages.length, 'images');
-        setShowHexagonTransition(true);
-        localStorage.setItem('lastMasteryPromptAt', viewedImages.length.toString());
+        
+        // ✅ DELAY 3 SECONDS to let user see the 5th image
+        setTimeout(() => {
+          setShowHexagonTransition(true);
+          localStorage.setItem('lastMasteryPromptAt', viewedImages.length.toString());
+        }, 3000);
       }
     }
   }, [viewedImages, snoozeUntil]);
 
-  // Auto-save state
+    // Auto-save state
   useEffect(() => {
     const stateToSave = {
       selectedWord,

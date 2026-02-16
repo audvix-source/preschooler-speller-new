@@ -1,9 +1,9 @@
 /* ===================================================================
-   MASTERY CHALLENGE V4 - EXACT OVERLAY SIZE & LETTER HIGHLIGHTING
-   - Overlay matches exact app screen size
-   - Bigger emoji (no label showing word)
-   - Highlight only letters needed for the word
-   - Thicker border, colorful sections
+   MASTERY CHALLENGE V5 - VIBRANT BACKGROUNDS UPDATE ✨
+   - VIBRANT purple answer boxes
+   - VIBRANT teal/mint keyboard
+   - VIBRANT orange backspace button
+   - Letter highlighting maintained
    ===================================================================
 */
 
@@ -39,7 +39,7 @@
     max-height: 680px !important;
     margin: 0 !important;
     padding: 0 !important;
-    border-radius: 20px !important; /* SAME as app screen */
+    border-radius: 20px !important;
   }
 
   @keyframes challengeFadeIn {
@@ -100,7 +100,6 @@
    ======================================== */
 
 .challenge-container-fixed {
-  /* PASTEL ABSTRACT BACKGROUND - Like Image 5 */
   background: 
     radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.4) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(173, 216, 230, 0.4) 0%, transparent 50%),
@@ -178,7 +177,7 @@
   overflow: hidden;
   flex-shrink: 0;
   margin: 10px 12px;
-  height: 160px; /* Increased for bigger emoji */
+  height: 160px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -221,10 +220,17 @@
 }
 
 .emoji-huge {
-  font-size: 7em; /* MUCH BIGGER - was 4em */
+  font-size: 7em;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
   animation: subtleFloat 4s ease-in-out infinite;
   line-height: 1;
+}
+
+.emoji-huge-image {
+  max-width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
 }
 
 @keyframes subtleFloat {
@@ -292,7 +298,7 @@
 }
 
 /* ========================================
-   ANSWER BOXES - PINK/ROSE GRADIENT AREA
+   ANSWER BOXES - VIBRANT PINK/PURPLE ✨
    ======================================== */
 
 .answer-boxes {
@@ -303,16 +309,20 @@
   flex-shrink: 0;
   margin: 0 12px;
   padding: 15px 10px;
-  background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 100%);
+  /* ✅ VIBRANT pink/rose background */
+  background: linear-gradient(135deg, #FFE5F1 0%, #FFDAE8 100%);
   border-radius: 12px;
-  box-shadow: inset 0 2px 8px rgba(233, 30, 99, 0.1);
+  box-shadow: 
+    inset 0 2px 8px rgba(255, 105, 180, 0.15),
+    0 2px 8px rgba(255, 105, 180, 0.1);
 }
 
 .answer-box {
   width: 40px;
   height: 50px;
-  background: white;
-  border: 3px solid #667eea;
+  /* ✅ Empty boxes: light purple with dashed border */
+  background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+  border: 3px dashed #BA68C8;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -320,28 +330,46 @@
   font-family: 'Arial', sans-serif;
   font-size: 1.6em;
   font-weight: 800;
-  color: #2C3E50;
-  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.15);
+  color: #9C27B0;
+  box-shadow: 0 3px 10px rgba(156, 39, 176, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .answer-box.filled {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* ✅ VIBRANT PURPLE gradient for filled tiles */
+  background: linear-gradient(135deg, #7B68EE 0%, #6A5ACD 100%);
   color: white;
   transform: scale(1.08);
-  border-color: #764ba2;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  border: 3px solid #5B4BC3;
+  border-style: solid;
+  box-shadow: 
+    0 4px 15px rgba(123, 104, 238, 0.4),
+    0 0 20px rgba(123, 104, 238, 0.3);
+  animation: fillPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes fillPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
 }
 
 .answer-box.correct-box {
-  background: linear-gradient(135deg, #28A745 0%, #20873A 100%);
-  border-color: #196F3D;
+  background: linear-gradient(135deg, #28A745 0%, #20873A 100%) !important;
+  border-color: #196F3D !important;
+  border-style: solid !important;
   animation: correctPulse 0.4s ease;
 }
 
 .answer-box.incorrect-box {
-  background: linear-gradient(135deg, #DC3545 0%, #BD2130 100%);
-  border-color: #A93226;
+  background: linear-gradient(135deg, #DC3545 0%, #BD2130 100%) !important;
+  border-color: #A93226 !important;
+  border-style: solid !important;
   animation: incorrectWiggle 0.4s ease;
 }
 
@@ -357,7 +385,7 @@
 }
 
 /* ========================================
-   KEYBOARD - WITH HIGHLIGHTED NEEDED LETTERS
+   KEYBOARD - VIBRANT TEAL/MINT ✨
    ======================================== */
 
 .challenge-keyboard {
@@ -365,17 +393,21 @@
   grid-template-columns: repeat(9, 1fr);
   gap: 4px;
   padding: 12px;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  /* ✅ VIBRANT mint/teal background */
+  background: linear-gradient(135deg, #D4F4DD 0%, #C2EDD0 100%);
   border-radius: 12px;
-  box-shadow: inset 0 2px 8px rgba(76, 175, 80, 0.1);
+  box-shadow: 
+    inset 0 2px 8px rgba(72, 187, 120, 0.15),
+    0 2px 8px rgba(72, 187, 120, 0.1);
   flex-shrink: 0;
   margin: 10px 12px;
 }
 
 .keyboard-key {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F1F8E9 100%);
-  color: #2C3E50;
-  border: 2px solid #81C784;
+  /* ✅ VIBRANT teal/mint gradient for keys */
+  background: linear-gradient(135deg, #81E6D9 0%, #4FD1C5 100%);
+  color: #2C5F2D;
+  border: 3px solid #38B2AC;
   border-radius: 8px;
   padding: 10px 0;
   font-family: 'Arial', sans-serif;
@@ -383,17 +415,18 @@
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.15);
+  box-shadow: 0 3px 8px rgba(56, 178, 172, 0.3);
 }
 
-/* HIGHLIGHT NEEDED LETTERS - YELLOW GLOW */
+/* ✅ HIGHLIGHT NEEDED LETTERS - VIBRANT ORANGE/YELLOW GLOW */
 .keyboard-key.needed-letter {
-  background: linear-gradient(135deg, #FFF9C4 0%, #FFF59D 100%);
-  border-color: #FBC02D;
+  background: linear-gradient(135deg, #FED7AA 0%, #F6AD55 100%);
+  border-color: #ED8936;
   border-width: 3px;
+  color: #7C2D12;
   box-shadow: 
-    0 0 15px rgba(251, 192, 45, 0.6),
-    0 4px 10px rgba(251, 192, 45, 0.3);
+    0 0 15px rgba(237, 137, 54, 0.6),
+    0 4px 10px rgba(237, 137, 54, 0.4);
   animation: letterPulse 1.5s ease-in-out infinite;
 }
 
@@ -401,23 +434,23 @@
   0%, 100% {
     transform: scale(1);
     box-shadow: 
-      0 0 15px rgba(251, 192, 45, 0.6),
-      0 4px 10px rgba(251, 192, 45, 0.3);
+      0 0 15px rgba(237, 137, 54, 0.6),
+      0 4px 10px rgba(237, 137, 54, 0.4);
   }
   50% {
     transform: scale(1.05);
     box-shadow: 
-      0 0 25px rgba(251, 192, 45, 0.8),
-      0 6px 15px rgba(251, 192, 45, 0.5);
+      0 0 25px rgba(237, 137, 54, 0.9),
+      0 6px 15px rgba(237, 137, 54, 0.6);
   }
 }
 
 .keyboard-key:hover:not(:disabled):not(.used) {
-  background: linear-gradient(135deg, #81C784 0%, #66BB6A 100%);
+  background: linear-gradient(135deg, #90F0E7 0%, #5FE1D5 100%);
   color: white;
-  border-color: #4CAF50;
+  border-color: #2C7A7B;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 5px 12px rgba(56, 178, 172, 0.4);
 }
 
 .keyboard-key:active:not(:disabled) {
@@ -438,7 +471,7 @@
 }
 
 /* ========================================
-   CONTROL BUTTONS - PEACH GRADIENT AREA
+   CONTROL BUTTONS - VIBRANT ORANGE/RED ✨
    ======================================== */
 
 .challenge-controls {
@@ -447,9 +480,12 @@
   flex-shrink: 0;
   margin: 10px 12px;
   padding: 12px;
-  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  /* ✅ VIBRANT peach/orange background */
+  background: linear-gradient(135deg, #FFF4E0 0%, #FFE4B8 100%);
   border-radius: 12px;
-  box-shadow: inset 0 2px 8px rgba(255, 152, 0, 0.1);
+  box-shadow: 
+    inset 0 2px 8px rgba(255, 152, 0, 0.15),
+    0 2px 8px rgba(255, 152, 0, 0.1);
 }
 
 .backspace-button,
@@ -463,7 +499,6 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -471,32 +506,40 @@
 }
 
 .backspace-button {
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  /* ✅ VIBRANT ORANGE gradient */
+  background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
   color: white;
-  border: 2px solid #E65100;
+  border: 3px solid #EA580C;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
 }
 
 .backspace-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%);
+  background: linear-gradient(135deg, #FDBA74 0%, #FB923C 100%);
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(255, 152, 0, 0.4);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
 }
 
 .backspace-button:disabled {
-  opacity: 0.4;
+  background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%);
+  border-color: #9CA3AF;
+  color: #6B7280;
+  opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .exit-button {
-  background: linear-gradient(135deg, #DC3545 0%, #C0392B 100%);
+  /* ✅ VIBRANT RED gradient */
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: white;
-  border: 2px solid #A93226;
+  border: 3px solid #B91C1C;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
 .exit-button:hover {
-  background: linear-gradient(135deg, #E74C3C 0%, #DC3545 100%);
+  background: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(220, 53, 69, 0.4);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
 }
 
 .exit-button:active,
@@ -514,19 +557,18 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
-  overflow: hidden; /* NO SCROLLBAR - hide overflow */
+  overflow: hidden;
   padding: 12px;
   box-sizing: border-box;
 }
 
-/* Hide scrollbar for all browsers */
 .question-content::-webkit-scrollbar {
   display: none;
 }
 
 .question-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ========================================
