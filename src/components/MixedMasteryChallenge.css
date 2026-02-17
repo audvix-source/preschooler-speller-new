@@ -1,9 +1,6 @@
 /* ===================================================================
-   MASTERY CHALLENGE V5 - VIBRANT BACKGROUNDS UPDATE ✨
-   - VIBRANT purple answer boxes
-   - VIBRANT teal/mint keyboard
-   - VIBRANT orange backspace button
-   - Letter highlighting maintained
+   MASTERY CHALLENGE V6 - VIBRANT BACKGROUNDS (CORRECTED PATH)
+   Background image uses public folder path
    ===================================================================
 */
 
@@ -96,16 +93,13 @@
 }
 
 /* ========================================
-   MAIN CONTAINER - THICK BORDER & EXACT SIZE
+   MAIN CONTAINER - SOFT GRADIENT BACKGROUND
    ======================================== */
 
 .challenge-container-fixed {
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.4) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(173, 216, 230, 0.4) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(255, 255, 224, 0.4) 0%, transparent 50%),
-    radial-gradient(circle at 60% 70%, rgba(221, 160, 221, 0.3) 0%, transparent 50%),
-    linear-gradient(135deg, #FFF5F7 0%, #F0F8FF 50%, #FFFACD 100%);
+  /* ✅ FINAL: Hot pink background */
+  background: #FF69B4 !important;
+  
   border: 20px solid #FFD700;
   border-radius: 20px;
   box-shadow: 
@@ -307,9 +301,8 @@
   gap: 6px;
   flex-wrap: wrap;
   flex-shrink: 0;
-  margin: 0 12px;
+  margin: 0 12px 4px 12px; /* ✅ Small bottom margin so rounded edge is visible */
   padding: 15px 10px;
-  /* ✅ VIBRANT pink/rose background */
   background: linear-gradient(135deg, #FFE5F1 0%, #FFDAE8 100%);
   border-radius: 12px;
   box-shadow: 
@@ -320,7 +313,6 @@
 .answer-box {
   width: 40px;
   height: 50px;
-  /* ✅ Empty boxes: light purple with dashed border */
   background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
   border: 3px dashed #BA68C8;
   border-radius: 10px;
@@ -336,7 +328,6 @@
 }
 
 .answer-box.filled {
-  /* ✅ VIBRANT PURPLE gradient for filled tiles */
   background: linear-gradient(135deg, #7B68EE 0%, #6A5ACD 100%);
   color: white;
   transform: scale(1.08);
@@ -385,6 +376,21 @@
 }
 
 /* ========================================
+   KEYBOARD WRAPPER - ONE BIG GREEN CONTAINER ✨
+   ======================================== */
+
+.keyboard-wrapper-container {
+  background: linear-gradient(135deg, #D4F4DD 0%, #C2EDD0 100%);
+  border-radius: 12px; /* ✅ ALL corners rounded */
+  box-shadow: 
+    inset 0 2px 8px rgba(72, 187, 120, 0.15),
+    0 4px 12px rgba(72, 187, 120, 0.2);
+  margin: 10px 12px 14px 12px; /* ✅ 14px bottom margin so rounded edge shows above container border */
+  padding: 12px 12px 14px 12px;
+  flex-shrink: 0;
+}
+
+/* ========================================
    KEYBOARD - VIBRANT TEAL/MINT ✨
    ======================================== */
 
@@ -392,33 +398,30 @@
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   gap: 4px;
-  padding: 12px;
-  /* ✅ VIBRANT mint/teal background */
-  background: linear-gradient(135deg, #D4F4DD 0%, #C2EDD0 100%);
-  border-radius: 12px;
-  box-shadow: 
-    inset 0 2px 8px rgba(72, 187, 120, 0.15),
-    0 2px 8px rgba(72, 187, 120, 0.1);
+  padding: 0; /* No padding - wrapper handles it */
+  background: transparent; /* No background - wrapper has it */
+  border-radius: 0; /* No border radius - wrapper handles it */
+  box-shadow: none; /* No shadow - wrapper has it */
   flex-shrink: 0;
-  margin: 10px 12px;
+  margin: 0; /* No margin - wrapper handles it */
+  margin-bottom: 12px; /* Space before buttons */
 }
 
 .keyboard-key {
-  /* ✅ VIBRANT teal/mint gradient for keys */
   background: linear-gradient(135deg, #81E6D9 0%, #4FD1C5 100%);
-  color: #2C5F2D;
+  color: #000000; /* ✅ PURE BLACK - maximum contrast */
   border: 3px solid #38B2AC;
   border-radius: 8px;
   padding: 10px 0;
   font-family: 'Arial', sans-serif;
-  font-size: 1em;
-  font-weight: 800;
+  font-size: 1.3em; /* ✅ Even bigger */
+  font-weight: 900; /* ✅ Boldest */
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 3px 8px rgba(56, 178, 172, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* ✅ Subtle shadow for crispness */
 }
 
-/* ✅ HIGHLIGHT NEEDED LETTERS - VIBRANT ORANGE/YELLOW GLOW */
 .keyboard-key.needed-letter {
   background: linear-gradient(135deg, #FED7AA 0%, #F6AD55 100%);
   border-color: #ED8936;
@@ -471,21 +474,18 @@
 }
 
 /* ========================================
-   CONTROL BUTTONS - VIBRANT ORANGE/RED ✨
+   CONTROL BUTTONS - INSIDE WRAPPER ✨
    ======================================== */
 
 .challenge-controls {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
-  margin: 10px 12px;
-  padding: 12px;
-  /* ✅ VIBRANT peach/orange background */
-  background: linear-gradient(135deg, #FFF4E0 0%, #FFE4B8 100%);
-  border-radius: 12px;
-  box-shadow: 
-    inset 0 2px 8px rgba(255, 152, 0, 0.15),
-    0 2px 8px rgba(255, 152, 0, 0.1);
+  margin: 0; /* No margin - inside wrapper */
+  padding: 0; /* No padding - wrapper handles it */
+  background: transparent; /* No background - wrapper has it */
+  border-radius: 0; /* No border radius */
+  box-shadow: none; /* No shadow */
 }
 
 .backspace-button,
@@ -493,7 +493,7 @@
   flex: 1;
   padding: 12px;
   border: none;
-  border-radius: 12px;
+  border-radius: 12px; /* ✅ ALL corners fully rounded */
   font-family: 'Arial', sans-serif;
   font-size: 0.95em;
   font-weight: 700;
@@ -506,7 +506,6 @@
 }
 
 .backspace-button {
-  /* ✅ VIBRANT ORANGE gradient */
   background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
   color: white;
   border: 3px solid #EA580C;
@@ -529,7 +528,6 @@
 }
 
 .exit-button {
-  /* ✅ VIBRANT RED gradient */
   background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: white;
   border: 3px solid #B91C1C;

@@ -1,167 +1,137 @@
-/* ========================================
-   RECOGNITION CHALLENGE - PROFESSIONAL STYLE
-   ALL ISSUES FIXED + VIBRANT BACKGROUNDS
-   ======================================== */
+/* ===================================================================
+   RecognitionChallenge.css - COMPLETE STYLES
+   Fixed image sizing - no more cutoff on right side
+   ===================================================================
+*/
 
 .recognition-challenge {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding: 10px;
-  box-sizing: border-box;
+  gap: 0;
+  width: 100%;
+  padding: 0;
+  flex: 1;
+  justify-content: flex-start;
 }
 
 /* ========================================
-   HEADER WITH SOUND ICON - FIXED POSITIONING
+   HEADER - QUESTION BOX
    ======================================== */
 
 .recognition-header {
-  background: linear-gradient(135deg, #FF6B9D 0%, #C9184A 100%);
-  border-radius: 20px;
-  padding: 15px 60px 15px 15px; /* Extra padding on right for icon */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  position: relative;
-  border: 3px solid #FFD700;
-  min-height: 80px;
-  overflow: hidden; /* ✅ FIX: Prevents question mark from escaping */
+  background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+  border: 4px solid #FFD700;
+  border-radius: 15px;
+  padding: 16px 20px;
+  box-shadow: 
+    0 4px 15px rgba(255, 105, 180, 0.3),
+    inset 0 2px 8px rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-bottom: 0; /* ✅ No margin - let image grid handle its own top margin */
 }
 
 .recognition-question {
+  font-family: 'Arial', sans-serif;
   font-size: 1.3em;
-  line-height: 1.3;
-  margin: 0;
-  padding: 0 10px;
   font-weight: 700;
   color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   text-align: center;
-  word-wrap: break-word; /* ✅ FIX: Breaks long words properly */
-  overflow-wrap: break-word; /* ✅ FIX: Additional word breaking */
+  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .highlight-word {
   color: #FFD700;
-  font-weight: 800;
   display: inline;
   word-break: break-word;
-  text-shadow: 
-    2px 2px 4px rgba(0, 0, 0, 0.3),
-    0 0 15px rgba(255, 215, 0, 0.6);
-  animation: wordHighlight 1.5s ease-in-out infinite;
 }
 
-@keyframes wordHighlight {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-/* ✅ FIX: Sound icon now properly positioned in top-right corner */
 .sound-icon {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  font-size: 2em;
+  font-size: 1.8em;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   flex-shrink: 0;
+  transition: transform 0.2s;
 }
 
 .sound-icon:hover {
-  transform: scale(1.15);
-  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
 }
 
 .sound-icon:active {
   transform: scale(0.95);
 }
 
-@keyframes soundPulse {
-  0%, 100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
-  }
-  50% {
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
-  }
-}
-
 /* ========================================
-   CHOICE GRID - ENHANCED CONTRAST
+   CHOICE BOXES - 2x2 GRID (FIXED WIDTH)
    ======================================== */
 
 .recognition-choices {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   width: 100%;
-  flex: 1;
   padding: 0;
-  box-sizing: border-box;
+  flex: 1;
+  /* ✅ This creates equal spacing: auto top margin pushes grid down evenly */
+  margin-top: auto;
+  margin-bottom: auto;
+  align-content: stretch;
 }
 
-/* ✅ BASE STYLE: Stronger borders and better contrast for choice boxes */
 .recognition-choice {
-  aspect-ratio: 1;
-  width: 100%;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%);
-  border: 4px solid #D0D0D0; /* ✅ Thicker, darker border */
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* ✅ Stronger shadow */
-  cursor: pointer;
-  transition: all 0.3s ease;
   position: relative;
+  border: 4px solid #E0E0E0;
+  border-radius: 15px;
+  padding: 10px;
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-/* ✅ VIBRANT BACKGROUNDS - Each box gets a unique pastel gradient! */
+/* ✅ Colorful backgrounds for each box */
 .recognition-choice:nth-child(1) {
-  background: linear-gradient(135deg, #FFE5EC 0%, #FFC2D4 100%); /* Soft Pink */
-  border-color: #FFB3C6;
+  background: linear-gradient(135deg, #FFE5EC 0%, #FFC2D4 100%); /* Soft pink */
 }
 
 .recognition-choice:nth-child(2) {
-  background: linear-gradient(135deg, #E0F4FF 0%, #B8E1FF 100%); /* Sky Blue */
-  border-color: #A0D5FF;
+  background: linear-gradient(135deg, #E0F4FF 0%, #B8E1FF 100%); /* Sky blue */
 }
 
 .recognition-choice:nth-child(3) {
-  background: linear-gradient(135deg, #FFF4E0 0%, #FFE4B8 100%); /* Warm Peach */
-  border-color: #FFD89A;
+  background: linear-gradient(135deg, #FFF4E0 0%, #FFE4B8 100%); /* Warm peach */
 }
 
 .recognition-choice:nth-child(4) {
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); /* Mint Green */
-  border-color: #B0DBAB;
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); /* Mint green */
 }
 
 .recognition-choice:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  filter: brightness(1.05);
+  transform: scale(1.05);
+  border-color: #667eea;
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
 }
 
 .recognition-choice:active {
-  transform: translateY(-1px) scale(0.98);
+  transform: scale(0.98);
 }
+
+/* ========================================
+   CHOICE VISUAL - IMAGE CONTAINER
+   ======================================== */
 
 .choice-visual {
   width: 100%;
@@ -169,104 +139,60 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .choice-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.choice-emoji {
-  font-size: 5em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  max-width: 100%; /* ✅ Fit within container */
+  max-height: 100%; /* ✅ Fit within container */
+  width: auto;
+  height: auto;
+  object-fit: contain; /* ✅ Maintain aspect ratio */
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-  animation: emojiFloat 3s ease-in-out infinite;
-}
-
-@keyframes emojiFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
 }
 
 .choice-placeholder {
-  font-size: 3em;
-  color: #ccc;
-}
-
-.choice-label {
-  font-family: 'Arial', sans-serif;
-  font-size: 1.2em;
-  font-weight: 700;
-  color: #2C3E50;
-  text-align: center;
-  text-transform: capitalize;
+  font-size: 4em;
+  color: #D0D0D0;
+  font-weight: 300;
 }
 
 /* ========================================
-   FEEDBACK STATES - ENHANCED VISIBILITY
+   FEEDBACK STATES
    ======================================== */
 
-/* ✅ Correct choice - stronger green (overrides colorful backgrounds) */
 .recognition-choice.correct-choice {
-  background: linear-gradient(135deg, #C3E6CB 0%, #A8D5BA 100%) !important;
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%) !important;
   border-color: #28A745 !important;
-  border-width: 5px;
-  animation: correctPulse 0.6s ease;
+  border-width: 5px !important;
+  animation: correctGlow 0.5s ease;
+  box-shadow: 0 0 25px rgba(40, 167, 69, 0.6) !important;
 }
 
-@keyframes correctPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-}
-
-/* ✅ Incorrect choice - stronger red (overrides colorful backgrounds) */
 .recognition-choice.incorrect-choice {
-  background: linear-gradient(135deg, #F5C6CB 0%, #F1B0B7 100%) !important;
+  background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%) !important;
   border-color: #DC3545 !important;
-  border-width: 5px;
+  border-width: 5px !important;
   animation: incorrectShake 0.5s ease;
+  box-shadow: 0 0 25px rgba(220, 53, 69, 0.6) !important;
+}
+
+.recognition-choice.show-correct {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%) !important;
+  border-color: #28A745 !important;
+  border-width: 5px !important;
+  box-shadow: 0 0 25px rgba(40, 167, 69, 0.6) !important;
+}
+
+@keyframes correctGlow {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
 }
 
 @keyframes incorrectShake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-8px);
-  }
-  75% {
-    transform: translateX(8px);
-  }
-}
-
-/* ✅ Show correct answer - stronger blue (overrides colorful backgrounds) */
-.recognition-choice.show-correct {
-  background: linear-gradient(135deg, #BEE5EB 0%, #A8D5E2 100%) !important;
-  border-color: #17A2B8 !important;
-  border-width: 5px;
-  animation: showCorrectGlow 0.6s ease;
-}
-
-@keyframes showCorrectGlow {
-  0%, 100% {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(23, 162, 184, 0.6);
-  }
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-8px) rotate(-2deg); }
+  75% { transform: translateX(8px) rotate(2deg); }
 }
 
 /* ========================================
@@ -275,8 +201,8 @@
 
 .feedback-badge {
   position: absolute;
-  top: -12px;
-  right: -12px;
+  top: 8px;
+  right: 8px;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -285,9 +211,24 @@
   justify-content: center;
   font-size: 2em;
   font-weight: 900;
-  color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   animation: badgePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.correct-badge {
+  background: linear-gradient(135deg, #28A745 0%, #20873A 100%);
+  color: white;
+}
+
+.incorrect-badge {
+  background: linear-gradient(135deg, #DC3545 0%, #BD2130 100%);
+  color: white;
+}
+
+.correct-answer-badge {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #1A1A1A;
 }
 
 @keyframes badgePop {
@@ -301,124 +242,40 @@
   }
 }
 
-.correct-badge {
-  background: linear-gradient(135deg, #28A745 0%, #20873A 100%);
-}
-
-.incorrect-badge {
-  background: linear-gradient(135deg, #DC3545 0%, #BD2130 100%);
-}
-
-.correct-answer-badge {
-  background: linear-gradient(135deg, #17A2B8 0%, #138496 100%);
-  animation: badgePop 0.4s 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) backwards;
-}
-
 /* ========================================
-   RESPONSIVE DESIGN
+   RESPONSIVE SIZING
    ======================================== */
 
 @media (max-width: 768px) {
-  .recognition-header {
-    padding: 15px 55px 15px 15px;
-  }
-
-  .sound-icon {
-    font-size: 1.8em;
-    width: 40px;
-    height: 40px;
-    right: 12px;
-    top: 12px;
-  }
-
-  .recognition-question {
-    font-size: 1.2em;
-  }
-
-  .recognition-choices {
-    gap: 10px;
-  }
-
-  .recognition-choice {
-    padding: 12px;
-    border-width: 3px;
-  }
-
-  .choice-emoji {
-    font-size: 4em;
-  }
-
-  .choice-label {
-    font-size: 1.1em;
-  }
-
-  .feedback-badge {
-    width: 45px;
-    height: 45px;
-    font-size: 1.8em;
-  }
-}
-
-@media (max-width: 480px) {
-  .recognition-header {
-    padding: 12px 50px 12px 12px;
-    min-height: 70px;
-  }
-
-  .sound-icon {
-    font-size: 1.6em;
-    width: 38px;
-    height: 38px;
-    right: 10px;
-    top: 10px;
-  }
-
   .recognition-question {
     font-size: 1.1em;
-    line-height: 1.2;
-  }
-
-  .recognition-choices {
-    gap: 8px;
   }
 
   .recognition-choice {
     padding: 10px;
   }
 
-  .choice-emoji {
-    font-size: 3.5em;
+  .choice-placeholder {
+    font-size: 3em;
+  }
+}
+
+@media (max-width: 480px) {
+  .recognition-question {
+    font-size: 1em;
   }
 
-  .choice-label {
-    font-size: 1em;
+  .recognition-choice {
+    padding: 8px;
+  }
+
+  .choice-placeholder {
+    font-size: 2.5em;
   }
 
   .feedback-badge {
     width: 40px;
     height: 40px;
-    font-size: 1.6em;
-  }
-}
-
-/* ========================================
-   ACCESSIBILITY
-   ======================================== */
-
-.recognition-choice:focus {
-  outline: 3px solid #667eea;
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .recognition-choice,
-  .choice-emoji,
-  .sound-icon,
-  .highlight-word {
-    animation: none;
-  }
-  
-  .recognition-choice:hover {
-    transform: translateY(-2px);
+    font-size: 1.5em;
   }
 }

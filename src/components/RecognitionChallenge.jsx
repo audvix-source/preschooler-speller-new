@@ -1,160 +1,165 @@
 import React, { useState, useEffect } from 'react';
 import './RecognitionChallenge.css';
 
-// ✅ Import all emoji images
-const importAll = (r) => {
-  let images = {};
-  r.keys().forEach((item) => { 
-    images[item.replace('./', '')] = r(item); 
-  });
-  return images;
-};
-
-const images = importAll(require.context('../assets/emojis', false, /\.(png|jpe?g|svg)$/));
-
-// ✅ Get image path helper with special X-word mappings
-const getImagePath = (fileName) => {
-  if (!fileName) {
-    console.warn('RecognitionChallenge getImagePath: No fileName provided');
-    return null;
-  }
-  
-  // ✅ Special mapping for X-words
-  const specialMappings = {
-    'x-box.png': 'xbox-emoji.png',
-    'x-pen.png': 'xpen-emoji.png',
-    'xerox-machine.png': 'xeroxmachine-emoji.png',
-    'x-ray.png': 'x-ray-emoji.png',
-    'xylophone.png': 'xylophone-emoji.png',
-  };
-  
-  // Check if it's a special case
-  if (specialMappings[fileName]) {
-    const mappedFile = specialMappings[fileName];
-    if (images[mappedFile]) {
-      return images[mappedFile];
-    } else {
-      console.warn(`RecognitionChallenge: Mapped file not found: ${mappedFile}`);
-      return null;
-    }
-  }
-  
-  // Normal case: add -emoji
-  const emojiFileName = fileName.replace('.png', '-emoji.png');
-  if (images[emojiFileName]) {
-    return images[emojiFileName];
-  } else {
-    console.warn(`RecognitionChallenge: Image not found: ${emojiFileName}`);
-    return null;
-  }
-};
-
 function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
   const [choices, setChoices] = useState([]);
   const [selectedChoice, setSelectedChoice] = useState(null);
-  const [isCorrect, setIsCorrect] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isLocked, setIsLocked] = useState(false); // ✅ NEW: Lock choices after selection
+
+  // ✅ CRITICAL FIX: Reset state when word changes (new question)
+  useEffect(() => {
+    console.log('New question detected, resetting state');
+    setSelectedChoice(null);
+    setShowFeedback(false);
+    setIsLocked(false); // ✅ Unlock for new question
+  }, [word]); // Reset when word prop changes
 
   useEffect(() => {
-    // Generate 4 choices including the correct answer
+    // ✅ Don't regenerate if locked (user already clicked)
+    if (isLocked) {
+      console.log('Choices locked - preventing regeneration');
+      return;
+    }
+
     const generateChoices = () => {
-      // Correct answer
+      console.log('Generating choices for word:', word);
+      console.log('Word image:', wordImage);
+      
       const correctChoice = {
         word: word,
-        image: wordImage
+        image: wordImage,
+        isCorrect: true
       };
       
-      // Get 3 random wrong answers - FILTER OUT ONES WITHOUT IMAGES
-      const wrongChoices = allWords
-        .filter(w => w.word.toLowerCase() !== word.toLowerCase())
-        .filter(w => w.image !== null && w.image !== undefined) // ✅ Only include if image exists
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
+      const otherWords = allWords.filter(w => 
+        w.word.toLowerCase() !== word.toLowerCase() &&
+        w.image !== null &&
+        w.image !== undefined
+      );
       
-      // Combine and shuffle all 4
-      const allChoices = [correctChoice, ...wrongChoices]
-        .sort(() => Math.random() - 0.5);
+      console.log('Available wrong answers:', otherWords.length);
       
-      setChoices(allChoices);
+      const shuffled = [...otherWords].sort(() => Math.random() - 0.5);
+      const wrongChoices = shuffled.slice(0, 3).map(w => ({
+        word: w.word,
+        image: w.image,
+        isCorrect: false
+      }));
+      
+      console.log('Wrong choices selected:', wrongChoices.map(c => c.word));
+      
+      const allChoices = [correctChoice, ...wrongChoices];
+      
+      const finalChoices = allChoices.sort(() => Math.random() - 0.5);
+      
+      console.log('Final choices:', finalChoices.map(c => `${c.word} (${c.isCorrect ? 'CORRECT' : 'wrong'})`));
+      
+      const hasCorrectAnswer = finalChoices.some(c => 
+        c.word.toLowerCase() === word.toLowerCase()
+      );
+      
+      if (!hasCorrectAnswer) {
+        console.error('CRITICAL BUG: Correct answer not in choices!');
+        console.error('Looking for:', word);
+        console.error('Got:', finalChoices.map(c => c.word));
+        
+        finalChoices.pop();
+        finalChoices.push(correctChoice);
+        finalChoices.sort(() => Math.random() - 0.5);
+        
+        console.log('Emergency fix applied. New choices:', finalChoices.map(c => c.word));
+      }
+      
+      return finalChoices;
     };
-
-    generateChoices();
-    setSelectedChoice(null);
-    setIsCorrect(null);
+    
+    const newChoices = generateChoices();
+    setChoices(newChoices);
   }, [word, wordImage, allWords]);
 
   const handleChoiceClick = (choice) => {
-    if (selectedChoice) return; // Already answered
-
+    if (showFeedback) return;
+    
+    setIsLocked(true); // ✅ LOCK choices immediately to prevent regeneration
     setSelectedChoice(choice);
-    const correct = choice.word.toLowerCase() === word.toLowerCase();
-    setIsCorrect(correct);
-
+    setShowFeedback(true);
+    
     if (speak) {
-      if (correct) {
-        speak(`Correct! It's ${word}!`);
+      if (choice.isCorrect) {
+        speak('Correct! Well done!');
       } else {
-        speak(`Not quite. It's ${word}, not ${choice.word}.`);
+        speak(`Not quite! It's ${word}`);
       }
     }
-
+    
     setTimeout(() => {
-      onAnswer(correct);
-    }, 1500);
+      onAnswer(choice.isCorrect);
+    }, 1000);
+  };
+
+  const handleSpeakWord = () => {
+    if (speak) {
+      speak(word);
+    }
   };
 
   return (
     <div className="recognition-challenge">
       <div className="recognition-header">
-        <h2 className="recognition-question">
-          Which one is<br />
-          the <span className="highlight-word">{word}</span>?
-        </h2>
-        <div className="sound-icon" onClick={() => speak && speak(word)}>
+        <p className="recognition-question">
+          Which one is the <span className="highlight-word">{word}</span>?
+        </p>
+        <div className="sound-icon" onClick={handleSpeakWord}>
           🔊
         </div>
       </div>
 
       <div className="recognition-choices">
-        {choices.map((choice, index) => (
-          <div
-            key={index}
-            className={`recognition-choice ${
-              selectedChoice === choice
-                ? isCorrect
-                  ? 'correct-choice'
-                  : 'incorrect-choice'
-                : ''
-            } ${selectedChoice && choice.word.toLowerCase() === word.toLowerCase() ? 'show-correct' : ''}`}
-            onClick={() => handleChoiceClick(choice)}
-          >
-            <div className="choice-visual">
-              {choice.image ? (
-                <img 
-                  src={choice.image} 
-                  alt=""
-                  className="choice-image"
-                />
-              ) : (
-                <div className="choice-placeholder">?</div>
+        {choices.map((choice, index) => {
+          const isSelected = selectedChoice?.word === choice.word;
+          const isCorrect = choice.isCorrect;
+          
+          let boxClass = 'recognition-choice';
+          if (showFeedback && isSelected) {
+            boxClass += isCorrect ? ' correct-choice' : ' incorrect-choice';
+          }
+          if (showFeedback && !isSelected && isCorrect) {
+            boxClass += ' show-correct';
+          }
+          
+          return (
+            <div
+              key={index}
+              className={boxClass}
+              onClick={() => handleChoiceClick(choice)}
+            >
+              <div className="choice-visual">
+                {choice.image ? (
+                  <img 
+                    src={choice.image} 
+                    alt={choice.word} 
+                    className="choice-image"
+                  />
+                ) : (
+                  <div className="choice-placeholder">?</div>
+                )}
+              </div>
+              
+              {showFeedback && isSelected && (
+                <div className={`feedback-badge ${isCorrect ? 'correct-badge' : 'incorrect-badge'}`}>
+                  {isCorrect ? '✓' : '✗'}
+                </div>
+              )}
+              
+              {showFeedback && !isSelected && isCorrect && (
+                <div className="feedback-badge correct-answer-badge">
+                  ✓
+                </div>
               )}
             </div>
-            
-            {/* Feedback icons */}
-            {selectedChoice && (
-              <>
-                {selectedChoice === choice && isCorrect && (
-                  <div className="feedback-badge correct-badge">✓</div>
-                )}
-                {selectedChoice === choice && !isCorrect && (
-                  <div className="feedback-badge incorrect-badge">✗</div>
-                )}
-                {selectedChoice !== choice && choice.word.toLowerCase() === word.toLowerCase() && (
-                  <div className="feedback-badge correct-answer-badge">✓</div>
-                )}
-              </>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

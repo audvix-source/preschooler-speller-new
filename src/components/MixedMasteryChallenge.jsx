@@ -4,7 +4,6 @@ import { wordList } from '../wordList.js';
 import RecognitionChallenge from './RecognitionChallenge.jsx';
 import RunningTilesAnimation from './RunningTilesAnimation';
 
-// Import all images dynamically from emojis folder
 const importAll = (r) => {
   let images = {};
   r.keys().forEach((item) => { 
@@ -15,14 +14,12 @@ const importAll = (r) => {
 
 const images = importAll(require.context('../assets/emojis', false, /\.(png|jpe?g|svg)$/));
 
-// ✅ getImagePath function with special mappings for X-words
 const getImagePath = (fileName) => {
   if (!fileName) {
     console.warn('getImagePath: No fileName provided');
     return null;
   }
   
-  // ✅ Special mapping for X-words (hyphens removed in emoji filenames)
   const specialMappings = {
     'x-box.png': 'xbox-emoji.png',
     'x-pen.png': 'xpen-emoji.png',
@@ -31,7 +28,6 @@ const getImagePath = (fileName) => {
     'xylophone.png': 'xylophone-emoji.png',
   };
   
-  // Check if it's a special case
   if (specialMappings[fileName]) {
     const mappedFile = specialMappings[fileName];
     if (images[mappedFile]) {
@@ -42,7 +38,6 @@ const getImagePath = (fileName) => {
     }
   }
   
-  // Normal case: just add -emoji
   const emojiFileName = fileName.replace('.png', '-emoji.png');
   if (images[emojiFileName]) {
     return images[emojiFileName];
@@ -65,56 +60,58 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   const [lastPowerWordIndex, setLastPowerWordIndex] = useState(-1);
   const [completionMessage, setCompletionMessage] = useState('Perfect!');
 
-  // Generate mixed questions on mount
   useEffect(() => {
     const generateQuestions = () => {
-      // ... rest of your code continues here
       console.log('Recent words:', recentWords);
       
-      // SEPARATE: Easy words (3-6 letters) vs Hard words (7+ letters)
-      const easyWords = recentWords.filter(w => w.word.length >= 3 && w.word.length <= 6);
-      const hardWords = recentWords.filter(w => w.word.length >= 7);
+      if (!recentWords || recentWords.length === 0) {
+        console.warn('No recent words available for quiz');
+        return;
+      }
+
+      const shortWords = recentWords.filter(w => w.word && w.word.length >= 3 && w.word.length <= 6);
+      const longWords = recentWords.filter(w => w.word && w.word.length >= 7);
       
       const selectedQuestions = [];
       
-      // START WITH EASY SPELLING (3-6 letter words)
-      const easySpellingCount = Math.min(3, easyWords.length);
-      for (let i = 0; i < easySpellingCount; i++) {
-        if (easyWords[i]) {
-          selectedQuestions.push({
-            type: 'spelling',
-            word: easyWords[i]
-          });
-        }
-      }
-      
-      // THEN ADD HARD RECOGNITION (7+ letter words - multiple choice, NO spelling)
-      const hardRecognitionCount = Math.min(2, hardWords.length);
-      for (let i = 0; i < hardRecognitionCount; i++) {
-        if (hardWords[i]) {
-          selectedQuestions.push({
-            type: 'recognition',
-            word: hardWords[i]
-          });
-        }
-      }
-      
-      // Fill remaining slots if needed
-      while (selectedQuestions.length < 5 && recentWords.length > 0) {
-        const remaining = recentWords.filter(
-          w => !selectedQuestions.find(q => q.word.word === w.word)
-        );
-        if (remaining.length === 0) break;
-        
-        const randomWord = remaining[Math.floor(Math.random() * remaining.length)];
+      console.log(`Short words (3-6 letters): ${shortWords.length}`);
+      shortWords.forEach(word => {
         selectedQuestions.push({
-          type: randomWord.word.length <= 6 ? 'spelling' : 'recognition',
-          word: randomWord
+          type: 'spelling',
+          word: word
         });
+      });
+      
+      console.log(`Long words (7+ letters): ${longWords.length}`);
+      longWords.forEach(word => {
+        selectedQuestions.push({
+          type: 'recognition',
+          word: word
+        });
+      });
+      
+      if (selectedQuestions.length > 5) {
+        const spellingCount = selectedQuestions.filter(q => q.type === 'spelling').length;
+        const recognitionCount = selectedQuestions.filter(q => q.type === 'recognition').length;
+        
+        if (spellingCount >= 3 && recognitionCount >= 2) {
+          const spellingQuestions = selectedQuestions.filter(q => q.type === 'spelling').slice(0, 3);
+          const recognitionQuestions = selectedQuestions.filter(q => q.type === 'recognition').slice(0, 2);
+          selectedQuestions.length = 0;
+          selectedQuestions.push(...spellingQuestions, ...recognitionQuestions);
+        } else {
+          selectedQuestions.length = 5;
+        }
       }
       
-      // DON'T shuffle - keep easy spelling first, hard recognition after
-      // selectedQuestions.sort(() => Math.random() - 0.5); // REMOVED
+      console.log('Final question order:');
+      selectedQuestions.forEach((q, i) => {
+        console.log(`${i + 1}. ${q.word.word} (${q.type})`);
+      });
+      
+      console.log(`Total questions: ${selectedQuestions.length}`);
+      console.log(`Spelling: ${selectedQuestions.filter(q => q.type === 'spelling').length}`);
+      console.log(`Recognition: ${selectedQuestions.filter(q => q.type === 'recognition').length}`);
       
       setQuestions(selectedQuestions);
     };
@@ -124,9 +121,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
 
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
-  const accuracy = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
 
-  // Handle spelling answer
   const handleLetterClick = (letter) => {
     if (!currentQuestion || showFeedback || currentQuestion.type !== 'spelling') return;
 
@@ -144,20 +139,17 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       let calculatedScore = score;
       
       if (correct) {
-        // ✅ USE UPDATER FUNCTION to get latest score
         setScore(prevScore => {
           const newScore = prevScore + 1;
           calculatedScore = newScore;
           
-          // Store the new score for final calculation
           if (currentQuestionIndex === questions.length - 1) {
-            setFinalScore(newScore); // ✅ Set final score here with correct value
+            setFinalScore(newScore);
           }
           
           return newScore;
         });
         
-        // ✅ USE ROTATING POWER WORDS (same as LearningScreen)
         const messages = [
           { display: 'Perfect!', speak: 'Perfect' },
           { display: 'Excellent!', speak: 'Excellent' },
@@ -176,24 +168,21 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           { display: 'Marvelous!', speak: 'Marvelous' }
         ];
         
-        // Use chronological order (cycles through 0-14, then repeats)
         const nextIndex = (lastPowerWordIndex + 1) % messages.length;
         setLastPowerWordIndex(nextIndex);
         
         const chosen = messages[nextIndex];
-        setCompletionMessage(chosen.display); // ✅ SET the display message
+        setCompletionMessage(chosen.display);
         if (speak) speak(chosen.speak);
       } else {
         calculatedScore = score;
-        // Store score even if wrong on last question
         if (currentQuestionIndex === questions.length - 1) {
-          setFinalScore(score); // ✅ Use current score (not incremented)
+          setFinalScore(score);
         }
         if (speak) speak(`Not quite! It's ${currentQuestion.word.word}`);
       }
 
       setTimeout(() => {
-        // Pass the calculated score to moveToNextQuestion
         moveToNextQuestion(calculatedScore);
       }, 2000);
     }
@@ -203,29 +192,26 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     let calculatedScore = score;
     
     if (correct) {
-      // ✅ USE UPDATER FUNCTION to get latest score
       setScore(prevScore => {
         const newScore = prevScore + 1;
         calculatedScore = newScore;
         
-        // Store the new score for final calculation
         if (currentQuestionIndex === questions.length - 1) {
-          setFinalScore(newScore); // ✅ Set final score here with correct value
+          setFinalScore(newScore);
         }
         
         return newScore;
       });
     } else {
       calculatedScore = score;
-      // Store score even if wrong on last question
       if (currentQuestionIndex === questions.length - 1) {
-        setFinalScore(score); // ✅ Use current score (not incremented)
+        setFinalScore(score);
       }
     }
     
     setTimeout(() => {
       moveToNextQuestion(calculatedScore);
-    }, 2000);
+    }, 500); // ✅ Reduced from 2000ms to 500ms - much faster!
   };
 
   const moveToNextQuestion = (calculatedScore) => {
@@ -235,14 +221,11 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       setShowFeedback(false);
       setIsCorrect(false);
     } else {
-      // ✅ CHALLENGE COMPLETE - TRIGGER ANIMATION
-      // Use the calculatedScore passed from the answer handlers
       const finalScoreValue = calculatedScore !== undefined ? calculatedScore : score;
       setFinalTotal(totalQuestions);
       
       if (speak) speak(`Challenge complete! You scored ${finalScoreValue} out of ${totalQuestions}`);
       
-      // Show animation immediately
       setShowAnimation(true);
     }
   };
@@ -258,12 +241,10 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     onExit(score, currentQuestionIndex);
   };
 
-  // ✅ ANIMATION COMPLETE - CALLBACK TO EXIT
   const handleAnimationComplete = () => {
     onExit(finalScore, finalTotal);
   };
 
-  // ✅ SHOW ANIMATION WHEN QUIZ COMPLETES
   if (showAnimation) {
     return (
       <RunningTilesAnimation
@@ -274,7 +255,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     );
   }
 
-  // Get emoji for word - NO LABELS, just visual emoji
   const getWordVisual = (word) => {
     const emojiMap = {
       'apple': '🍎', 'ant': '🐜', 'ball': '⚽', 'bear': '🐻', 'bus': '🚌', 'baby': '👶',
@@ -287,19 +267,11 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       'quilt': '🛏️', 'rain': '🌧️', 'robot': '🤖', 'star': '⭐', 'sun': '☀️', 'tree': '🌳',
       'truck': '🚚', 'vase': '🏺', 'vest': '🦺', 'watch': '⌚', 'whale': '🐋', 'yak': '🦬',
       'yarn': '🧶', 'zebra': '🦓', 'zap': '⚡', 'zipper': '🤐', 'zigzag': '⚡', 'zeppelin': '🛩️',
-      'queue': '👥', 'question-mark': '❓' // Added Q words
+      'queue': '👥', 'question-mark': '❓'
     };
     return emojiMap[word.toLowerCase()] || '📝';
   };
 
-  // Get ALL letters needed (including duplicates) for proper highlighting
-  const getNeededLetters = (word) => {
-    if (!word) return [];
-    // Return ALL letters (including duplicates) as uppercase
-    return word.toUpperCase().split('');
-  };
-
-  // Check if a letter is still needed (accounting for how many times it appears)
   const isLetterStillNeeded = (letter, word, currentAnswer) => {
     const totalNeeded = word.toUpperCase().split('').filter(l => l === letter).length;
     const alreadyUsed = currentAnswer.filter(l => l === letter).length;
@@ -308,19 +280,19 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
 
   if (!currentQuestion) {
     return (
-      <div className="challenge-overlay">
-        <div className="challenge-loading">Loading challenge...</div>
+      <div className="challenge-overlay-fixed">
+        <div className="challenge-container-fixed">
+          <div className="challenge-loading">Loading challenge...</div>
+        </div>
       </div>
     );
   }
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ-'.split('');
-  const neededLetters = currentQuestion.type === 'spelling' ? getNeededLetters(currentQuestion.word.word) : [];
 
   return (
     <div className="challenge-overlay-fixed">
       <div className="challenge-container-fixed">
-        {/* Floating confetti */}
         <div className="challenge-confetti">
           {Array.from({ length: 15 }).map((_, i) => (
             <div
@@ -337,7 +309,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           ))}
         </div>
 
-        {/* Score header */}
         <div className="challenge-header">
           <div className="score-display">
             <span className="score-label">Question:</span>
@@ -349,7 +320,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           </div>
         </div>
 
-        {/* Question content */}
         <div className="question-content">
           {currentQuestion.type === 'recognition' ? (
             <RecognitionChallenge
@@ -365,7 +335,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           ) : (
             <>
               <div className={`word-card ${showFeedback ? (isCorrect ? 'correct' : 'incorrect') : ''}`}>
-                {/* EMOJI IMAGE FILE - NO LABELS */}
                 <div className="word-emoji-display">
                   {currentQuestion.word.image ? (
                     <img 
@@ -384,7 +353,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                   )}
                 </div>
 
-                {/* Show feedback without hiding emoji */}
                 {showFeedback && (
                   <div className="feedback-banner">
                     <span className="feedback-icon-inline">
@@ -410,41 +378,41 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                 ))}
               </div>
 
-              {/* KEYBOARD WITH HIGHLIGHTED NEEDED LETTERS */}
-              <div className="challenge-keyboard">
-                {alphabet.map(letter => {
-                  const isUsed = userAnswer.filter(l => l === letter).length >= 
-                                 currentQuestion.word.word.toUpperCase().split('').filter(l => l === letter).length;
-                  const isNeeded = isLetterStillNeeded(letter, currentQuestion.word.word, userAnswer);
-                  
-                  return (
-                    <button
-                      key={letter}
-                      className={`keyboard-key ${isUsed ? 'used' : ''} ${
-                        isNeeded ? 'needed-letter' : ''
-                      }`}
-                      onClick={() => handleLetterClick(letter)}
-                      disabled={showFeedback}
-                    >
-                      {letter}
-                    </button>
-                  );
-                })}
+              {/* KEYBOARD + BUTTONS IN ONE GREEN CONTAINER */}
+              <div className="keyboard-wrapper-container">
+                <div className="challenge-keyboard">
+                  {alphabet.map(letter => {
+                    const isUsed = userAnswer.filter(l => l === letter).length >= 
+                                   currentQuestion.word.word.toUpperCase().split('').filter(l => l === letter).length;
+                    const isNeeded = isLetterStillNeeded(letter, currentQuestion.word.word, userAnswer);
+                    
+                    return (
+                      <button
+                        key={letter}
+                        className={`keyboard-key ${isUsed ? 'used' : ''} ${
+                          isNeeded ? 'needed-letter' : ''
+                        }`}
+                        onClick={() => handleLetterClick(letter)}
+                        disabled={showFeedback}
+                      >
+                        {letter}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* CONTROL BUTTONS INSIDE WRAPPER */}
+                <div className="challenge-controls">
+                  <button className="backspace-button" onClick={handleBackspace} disabled={showFeedback}>
+                    ⌫ Backspace
+                  </button>
+                  <button className="exit-button" onClick={handleExit}>
+                    🚪 Exit Challenge
+                  </button>
+                </div>
               </div>
             </>
           )}
-        </div>
-
-        {/* Control buttons */}
-        <div className="challenge-controls">
-          {currentQuestion.type === 'spelling' && (
-            <button className="backspace-button" onClick={handleBackspace} disabled={showFeedback}>
-              ⌫ Backspace
-            </button>
-          )}
-          <button className="exit-button" onClick={handleExit}>
-            🚪 Exit Challenge
-          </button>
         </div>
       </div>
     </div>
