@@ -17,28 +17,25 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
 
   useEffect(() => {
     // ✅ Don't regenerate if locked (user already clicked)
-    if (isLocked) {
-      console.log('Choices locked - preventing regeneration');
-      return;
-    }
+    if (isLocked) return;
 
     const generateChoices = () => {
-      console.log('Generating choices for word:', word);
-      console.log('Word image:', wordImage);
+      // ✅ If no image for correct answer, auto-advance immediately - never get stuck
+      if (!wordImage) {
+        console.warn(`No image for: ${word} - auto-advancing`);
+        setTimeout(() => onAnswer(false), 100);
+        return [];
+      }
       
-      const correctChoice = {
-        word: word,
-        image: wordImage,
-        isCorrect: true
-      };
+      const correctChoice = { word, image: wordImage, isCorrect: true };
       
+      // ✅ Only use words that have VALID images (filters out dimples, broken entries)
       const otherWords = allWords.filter(w => 
         w.word.toLowerCase() !== word.toLowerCase() &&
         w.image !== null &&
-        w.image !== undefined
+        w.image !== undefined &&
+        typeof w.image === 'string' ? w.image.length > 0 : true
       );
-      
-      console.log('Available wrong answers:', otherWords.length);
       
       const shuffled = [...otherWords].sort(() => Math.random() - 0.5);
       const wrongChoices = shuffled.slice(0, 3).map(w => ({
@@ -47,36 +44,19 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
         isCorrect: false
       }));
       
-      console.log('Wrong choices selected:', wrongChoices.map(c => c.word));
+      const allChoices = [correctChoice, ...wrongChoices].sort(() => Math.random() - 0.5);
       
-      const allChoices = [correctChoice, ...wrongChoices];
-      
-      const finalChoices = allChoices.sort(() => Math.random() - 0.5);
-      
-      console.log('Final choices:', finalChoices.map(c => `${c.word} (${c.isCorrect ? 'CORRECT' : 'wrong'})`));
-      
-      const hasCorrectAnswer = finalChoices.some(c => 
-        c.word.toLowerCase() === word.toLowerCase()
-      );
-      
-      if (!hasCorrectAnswer) {
-        console.error('CRITICAL BUG: Correct answer not in choices!');
-        console.error('Looking for:', word);
-        console.error('Got:', finalChoices.map(c => c.word));
-        
-        finalChoices.pop();
-        finalChoices.push(correctChoice);
-        finalChoices.sort(() => Math.random() - 0.5);
-        
-        console.log('Emergency fix applied. New choices:', finalChoices.map(c => c.word));
+      // Safety check - correct answer must be present
+      if (!allChoices.some(c => c.word.toLowerCase() === word.toLowerCase())) {
+        allChoices[0] = correctChoice;
       }
       
-      return finalChoices;
+      return allChoices;
     };
     
     const newChoices = generateChoices();
-    setChoices(newChoices);
-  }, [word, wordImage, allWords]);
+    if (newChoices.length > 0) setChoices(newChoices);
+  }, [word, wordImage, allWords, isLocked, onAnswer]);
 
   const handleChoiceClick = (choice) => {
     if (showFeedback) return;

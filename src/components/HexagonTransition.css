@@ -57,11 +57,11 @@
 
 @keyframes honeycombFloat {
   0%, 100% {
-    background-position: 0 0, 0 0;
+    background-position: 48px 0, 0 0;
     opacity: 0.9;
   }
   50% {
-    background-position: 50px 50px, 0 0;
+    background-position: 98px 50px, 0 0;
     opacity: 1;
   }
 }
@@ -500,4 +500,10 @@
     font-size: 1em;
     padding: 12px 14px;
   }
+}
+
+.hexagon-transition__honeycomb-bg {
+  background-position: 
+    48px 0,    /* ← honeycomb-pattern.png: moved 48px right (was 0) */
+    0 0;       /* ← gradient: stays same */
 }

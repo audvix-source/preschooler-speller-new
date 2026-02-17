@@ -15,10 +15,20 @@ const importAll = (r) => {
 const images = importAll(require.context('../assets/emojis', false, /\.(png|jpe?g|svg)$/));
 
 const getImagePath = (fileName) => {
-  if (!fileName) {
-    console.warn('getImagePath: No fileName provided');
-    return null;
-  }
+  if (!fileName) return null;
+  
+  // ✅ If already a resolved image module (not a plain string), return it directly
+  if (typeof fileName !== 'string') return fileName;
+
+  // ✅ Words that live in /assets/ (not /assets/emojis/) - exclude from quiz pool
+  const nonEmojiWords = [
+    'neck.png','hands.png','ears.png','hair.png','chin.png','palms.png',
+    'face.png','eyes.png','nose.png','mouth.png','teeth.png','tongue.png',
+    'shoulders.png','knees.png','toes.png','fingers.png','thumb.png',
+    'elbow.png','wrist.png','ankle.png','heel.png',
+    // Add any other body-part or non-emoji images here
+  ];
+  if (nonEmojiWords.includes(fileName.toLowerCase())) return null;
   
   const specialMappings = {
     'x-box.png': 'xbox-emoji.png',
@@ -26,6 +36,11 @@ const getImagePath = (fileName) => {
     'xerox-machine.png': 'xeroxmachine-emoji.png',
     'x-ray.png': 'x-ray-emoji.png',
     'xylophone.png': 'xylophone-emoji.png',
+    'zeppelin.png': 'zepellin-emoji.png',
+    'mushroom.png': 'mushroom-emoji.png',
+    'umbrella.png': 'umbrella-emoji.png',
+    'mailbox.png': 'mailbox-emoji.png',
+    'uniform.png': 'uniform-emoji.png',
   };
   
   if (specialMappings[fileName]) {
@@ -47,6 +62,27 @@ const getImagePath = (fileName) => {
   }
 };
 
+// ✅ Module-level power word tracker - persists across quiz sessions so words never repeat
+let globalPowerWordIndex = -1;
+
+const POWER_WORDS = [
+  { display: 'Perfect!',      speak: 'Perfect' },
+  { display: 'Excellent!',    speak: 'Excellent' },
+  { display: 'Amazing!',      speak: 'Amazing' },
+  { display: 'You Did It!',   speak: 'You Did It' },
+  { display: 'Splendid!',     speak: 'Splendid' },
+  { display: 'Genius!',       speak: 'Genius' },
+  { display: 'Brilliant!',    speak: 'Brilliant' },
+  { display: 'Outstanding!',  speak: 'Outstanding' },
+  { display: 'Fantastic!',    speak: 'Fantastic' },
+  { display: 'Wonderful!',    speak: 'Wonderful' },
+  { display: 'Superb!',       speak: 'Superb' },
+  { display: 'Magnificent!',  speak: 'Magnificent' },
+  { display: 'Champion!',     speak: 'Champion' },
+  { display: 'Incredible!',   speak: 'Incredible' },
+  { display: 'Marvelous!',    speak: 'Marvelous' }
+];
+
 function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
@@ -57,7 +93,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   const [showAnimation, setShowAnimation] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
   const [finalTotal, setFinalTotal] = useState(0);
-  const [lastPowerWordIndex, setLastPowerWordIndex] = useState(-1);
   const [completionMessage, setCompletionMessage] = useState('Perfect!');
 
   useEffect(() => {
@@ -84,10 +119,18 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       
       console.log(`Long words (7+ letters): ${longWords.length}`);
       longWords.forEach(word => {
-        selectedQuestions.push({
-          type: 'recognition',
-          word: word
-        });
+        // ✅ RULE: 7+ letter words are ALWAYS recognition (multiple choice)
+        // Kids aged 3-6 cannot spell long words - they only need to identify them
+        const imgPath = getImagePath(word.image);
+        if (imgPath) {
+          selectedQuestions.push({
+            type: 'recognition',
+            word: word
+          });
+        } else {
+          // No image = skip entirely, don't add as spelling
+          console.warn(`Skipping ${word.word} - no image found for recognition question`);
+        }
       });
       
       if (selectedQuestions.length > 5) {
@@ -150,28 +193,9 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           return newScore;
         });
         
-        const messages = [
-          { display: 'Perfect!', speak: 'Perfect' },
-          { display: 'Excellent!', speak: 'Excellent' },
-          { display: 'Amazing!', speak: 'Amazing' },
-          { display: 'You Did It!', speak: 'You Did It' },
-          { display: 'Splendid!', speak: 'Splendid' },
-          { display: 'Genius!', speak: 'Genius' },
-          { display: 'Brilliant!', speak: 'Brilliant' },
-          { display: 'Outstanding!', speak: 'Outstanding' },
-          { display: 'Fantastic!', speak: 'Fantastic' },
-          { display: 'Wonderful!', speak: 'Wonderful' },
-          { display: 'Superb!', speak: 'Superb' },
-          { display: 'Magnificent!', speak: 'Magnificent' },
-          { display: 'Champion!', speak: 'Champion' },
-          { display: 'Incredible!', speak: 'Incredible' },
-          { display: 'Marvelous!', speak: 'Marvelous' }
-        ];
-        
-        const nextIndex = (lastPowerWordIndex + 1) % messages.length;
-        setLastPowerWordIndex(nextIndex);
-        
-        const chosen = messages[nextIndex];
+        // ✅ Use global power word index so it never repeats across sessions
+        globalPowerWordIndex = (globalPowerWordIndex + 1) % POWER_WORDS.length;
+        const chosen = POWER_WORDS[globalPowerWordIndex];
         setCompletionMessage(chosen.display);
         if (speak) speak(chosen.speak);
       } else {
@@ -189,17 +213,18 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   };
 
   const handleRecognitionAnswer = (correct) => {
+    // ✅ Guard: ignore if already processing
+    if (showFeedback && currentQuestion?.type === 'recognition') return;
+    
     let calculatedScore = score;
     
     if (correct) {
       setScore(prevScore => {
         const newScore = prevScore + 1;
         calculatedScore = newScore;
-        
         if (currentQuestionIndex === questions.length - 1) {
           setFinalScore(newScore);
         }
-        
         return newScore;
       });
     } else {
@@ -210,8 +235,10 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     }
     
     setTimeout(() => {
+      // ✅ Cancel speech RIGHT BEFORE transitioning - stops any mid-word cutoff whisper
+      window.speechSynthesis.cancel();
       moveToNextQuestion(calculatedScore);
-    }, 500); // ✅ Reduced from 2000ms to 500ms - much faster!
+    }, 500);
   };
 
   const moveToNextQuestion = (calculatedScore) => {
@@ -223,10 +250,11 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     } else {
       const finalScoreValue = calculatedScore !== undefined ? calculatedScore : score;
       setFinalTotal(totalQuestions);
-      
-      if (speak) speak(`Challenge complete! You scored ${finalScoreValue} out of ${totalQuestions}`);
-      
-      setShowAnimation(true);
+      window.speechSynthesis.cancel();
+      setTimeout(() => {
+        if (speak) speak(`Challenge complete! You scored ${finalScoreValue} out of ${totalQuestions}`);
+        setShowAnimation(true);
+      }, 400);
     }
   };
 
@@ -325,10 +353,15 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
             <RecognitionChallenge
               word={currentQuestion.word.word}
               wordImage={getImagePath(currentQuestion.word.image)}
-              allWords={wordList.filter(w => w.category === 'Alphabet Fun').map(w => ({
+              allWords={wordList.map(w => ({
                 word: w.word,
                 image: getImagePath(w.image)
-              }))}
+              })).filter(w => 
+                w.image !== null && 
+                w.image !== undefined &&
+                // ✅ Exclude broken images: webpack modules are objects/functions, not plain strings like "dimples-emoji.png"
+                typeof w.image !== 'string'
+              )}
               onAnswer={handleRecognitionAnswer}
               speak={speak}
             />
@@ -336,7 +369,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
             <>
               <div className={`word-card ${showFeedback ? (isCorrect ? 'correct' : 'incorrect') : ''}`}>
                 <div className="word-emoji-display">
-                  {currentQuestion.word.image ? (
+                  {getImagePath(currentQuestion.word.image) ? (
                     <img 
                       src={getImagePath(currentQuestion.word.image)}
                       alt=""

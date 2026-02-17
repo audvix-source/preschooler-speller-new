@@ -1,138 +1,88 @@
-/* ===================================================================
-   RecognitionChallenge.css - COMPLETE STYLES
-   Fixed image sizing - no more cutoff on right side
-   ===================================================================
-*/
+/* RecognitionChallenge.css - FINAL */
 
 .recognition-challenge {
   display: flex;
   flex-direction: column;
-  gap: 0;
   width: 100%;
+  height: 100%;
   padding: 0;
-  flex: 1;
-  justify-content: flex-start;
+  gap: 14px; /* ← single source of truth for ALL gaps */
 }
 
-/* ========================================
-   HEADER - QUESTION BOX
-   ======================================== */
-
+/* ── Question header ── */
 .recognition-header {
-  background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); /* ✅ Strong apple green */
   border: 4px solid #FFD700;
   border-radius: 15px;
-  padding: 16px 20px;
-  box-shadow: 
-    0 4px 15px rgba(255, 105, 180, 0.3),
-    inset 0 2px 8px rgba(255, 255, 255, 0.2);
+  padding: 14px 18px;
+  box-shadow: 0 4px 15px rgba(46,125,50,.4),
+              inset 0 2px 8px rgba(255,255,255,.15);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   overflow: hidden;
-  flex-shrink: 0;
-  margin-bottom: 0; /* ✅ No margin - let image grid handle its own top margin */
 }
 
 .recognition-question {
-  font-family: 'Arial', sans-serif;
-  font-size: 1.3em;
+  font-family: Arial, sans-serif;
+  font-size: 1.25em;
   font-weight: 700;
   color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 2px 4px rgba(0,0,0,.3);
   text-align: center;
   flex: 1;
   word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 .highlight-word {
   color: #FFD700;
-  display: inline;
-  word-break: break-word;
 }
 
 .sound-icon {
   font-size: 1.8em;
   cursor: pointer;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   flex-shrink: 0;
-  transition: transform 0.2s;
+  transition: transform .2s;
 }
+.sound-icon:hover  { transform: scale(1.1); }
+.sound-icon:active { transform: scale(.95); }
 
-.sound-icon:hover {
-  transform: scale(1.1);
-}
-
-.sound-icon:active {
-  transform: scale(0.95);
-}
-
-/* ========================================
-   CHOICE BOXES - 2x2 GRID (FIXED WIDTH)
-   ======================================== */
-
+/* ── 2×2 image grid ── */
 .recognition-choices {
+  flex: 1;           /* take ALL remaining space */
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  width: 100%;
-  padding: 0;
-  flex: 1;
-  /* ✅ This creates equal spacing: auto top margin pushes grid down evenly */
-  margin-top: auto;
-  margin-bottom: auto;
-  align-content: stretch;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;     /* allow shrinking inside flex parent */
 }
 
+/* ── Individual choice box ── */
 .recognition-choice {
   position: relative;
   border: 4px solid #E0E0E0;
   border-radius: 15px;
-  padding: 10px;
-  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all .3s cubic-bezier(.4,0,.2,1);
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  box-shadow: 0 3px 10px rgba(0,0,0,.1);
+  min-height: 0;
 }
 
-/* ✅ Colorful backgrounds for each box */
-.recognition-choice:nth-child(1) {
-  background: linear-gradient(135deg, #FFE5EC 0%, #FFC2D4 100%); /* Soft pink */
-}
+.recognition-choice:nth-child(1) { background: linear-gradient(135deg,#FFE5EC,#FFC2D4); }
+.recognition-choice:nth-child(2) { background: linear-gradient(135deg,#E0F4FF,#B8E1FF); }
+.recognition-choice:nth-child(3) { background: linear-gradient(135deg,#FFF4E0,#FFE4B8); }
+.recognition-choice:nth-child(4) { background: linear-gradient(135deg,#E8F5E9,#C8E6C9); }
 
-.recognition-choice:nth-child(2) {
-  background: linear-gradient(135deg, #E0F4FF 0%, #B8E1FF 100%); /* Sky blue */
-}
+.recognition-choice:hover  { transform: scale(1.04); border-color:#667eea; box-shadow:0 5px 20px rgba(102,126,234,.3); }
+.recognition-choice:active { transform: scale(.98); }
 
-.recognition-choice:nth-child(3) {
-  background: linear-gradient(135deg, #FFF4E0 0%, #FFE4B8 100%); /* Warm peach */
-}
-
-.recognition-choice:nth-child(4) {
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); /* Mint green */
-}
-
-.recognition-choice:hover {
-  transform: scale(1.05);
-  border-color: #667eea;
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
-}
-
-.recognition-choice:active {
-  transform: scale(0.98);
-}
-
-/* ========================================
-   CHOICE VISUAL - IMAGE CONTAINER
-   ======================================== */
-
+/* ── Image inside box ── */
 .choice-visual {
   width: 100%;
   height: 100%;
@@ -140,142 +90,77 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding: 8px;
+  box-sizing: border-box;
 }
 
 .choice-image {
-  max-width: 100%; /* ✅ Fit within container */
-  max-height: 100%; /* ✅ Fit within container */
+  max-width: 100%;
+  max-height: 100%;
   width: auto;
   height: auto;
-  object-fit: contain; /* ✅ Maintain aspect ratio */
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.15));
 }
 
 .choice-placeholder {
-  font-size: 4em;
+  font-size: 3.5em;
   color: #D0D0D0;
   font-weight: 300;
 }
 
-/* ========================================
-   FEEDBACK STATES
-   ======================================== */
-
+/* ── Feedback states ── */
 .recognition-choice.correct-choice {
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%) !important;
+  background: linear-gradient(135deg,#E8F5E9,#C8E6C9) !important;
   border-color: #28A745 !important;
   border-width: 5px !important;
-  animation: correctGlow 0.5s ease;
-  box-shadow: 0 0 25px rgba(40, 167, 69, 0.6) !important;
+  animation: correctGlow .5s ease;
+  box-shadow: 0 0 25px rgba(40,167,69,.6) !important;
 }
-
 .recognition-choice.incorrect-choice {
-  background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%) !important;
+  background: linear-gradient(135deg,#FFEBEE,#FFCDD2) !important;
   border-color: #DC3545 !important;
   border-width: 5px !important;
-  animation: incorrectShake 0.5s ease;
-  box-shadow: 0 0 25px rgba(220, 53, 69, 0.6) !important;
+  animation: incorrectShake .5s ease;
+  box-shadow: 0 0 25px rgba(220,53,69,.6) !important;
 }
-
 .recognition-choice.show-correct {
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%) !important;
+  background: linear-gradient(135deg,#E8F5E9,#C8E6C9) !important;
   border-color: #28A745 !important;
   border-width: 5px !important;
-  box-shadow: 0 0 25px rgba(40, 167, 69, 0.6) !important;
+  box-shadow: 0 0 25px rgba(40,167,69,.6) !important;
 }
 
 @keyframes correctGlow {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
 }
-
 @keyframes incorrectShake {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(-8px) rotate(-2deg); }
-  75% { transform: translateX(8px) rotate(2deg); }
+  0%,100% { transform: translateX(0); }
+  25%     { transform: translateX(-8px); }
+  75%     { transform: translateX(8px); }
 }
 
-/* ========================================
-   FEEDBACK BADGES
-   ======================================== */
-
+/* ── Feedback badges ── */
 .feedback-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 50px;
-  height: 50px;
+  top: 8px; right: 8px;
+  width: 46px; height: 46px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: 900;
-  animation: badgePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: badgePop .4s cubic-bezier(.68,-.55,.265,1.55);
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
 }
-
-.correct-badge {
-  background: linear-gradient(135deg, #28A745 0%, #20873A 100%);
-  color: white;
-}
-
-.incorrect-badge {
-  background: linear-gradient(135deg, #DC3545 0%, #BD2130 100%);
-  color: white;
-}
-
-.correct-answer-badge {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  color: #1A1A1A;
-}
+.correct-badge       { background: linear-gradient(135deg,#28A745,#20873A); color: white; }
+.incorrect-badge     { background: linear-gradient(135deg,#DC3545,#BD2130); color: white; }
+.correct-answer-badge{ background: linear-gradient(135deg,#FFD700,#FFA500); color: #1A1A1A; }
 
 @keyframes badgePop {
-  0% {
-    transform: scale(0) rotate(-180deg);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-/* ========================================
-   RESPONSIVE SIZING
-   ======================================== */
-
-@media (max-width: 768px) {
-  .recognition-question {
-    font-size: 1.1em;
-  }
-
-  .recognition-choice {
-    padding: 10px;
-  }
-
-  .choice-placeholder {
-    font-size: 3em;
-  }
-}
-
-@media (max-width: 480px) {
-  .recognition-question {
-    font-size: 1em;
-  }
-
-  .recognition-choice {
-    padding: 8px;
-  }
-
-  .choice-placeholder {
-    font-size: 2.5em;
-  }
-
-  .feedback-badge {
-    width: 40px;
-    height: 40px;
-    font-size: 1.5em;
-  }
+  0%   { transform: scale(0) rotate(-180deg); opacity:0; }
+  100% { transform: scale(1) rotate(0deg);    opacity:1; }
 }
