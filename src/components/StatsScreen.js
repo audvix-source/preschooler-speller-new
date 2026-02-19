@@ -297,49 +297,98 @@ function StatsScreen({ onNavigate, speak }) {
           </div>
 
           {/* Learning Progress Section */}
-          <div className="learning-progress-section">
-            <h2>📚 Body Parts Mastery 📚</h2>
-            {stats.wordStats && stats.wordStats.length > 0 ? (
-              <div className="learning-list">
-                {stats.wordStats.map((word, index) => {
-                  const accuracy = word.totalAttempts > 0 
-                    ? Math.round((word.correctAttempts / word.totalAttempts) * 100) 
-                    : 0;
-                  const stars = accuracy >= 80 ? '⭐⭐⭐' : accuracy >= 60 ? '⭐⭐' : accuracy >= 40 ? '⭐' : '';
-                  
-                  return (
-                    <div 
-                      key={index} 
-                      className="learning-item clickable"
-                      onClick={() => handleWordClick(word.word)}
-                    >
-                      <div className="learning-word">{word.word}</div>
-                      <div className="learning-stats">
-                        <div className="stat">
-                          <span className="stat-label">Accuracy:</span>
-                          <span className="stat-value">{accuracy}%</span>
-                        </div>
-                        <div className="stat">
-                          <span className="stat-label">Attempts:</span>
-                          <span className="stat-value">{word.totalAttempts}</span>
-                        </div>
-                        <div className="stat">
-                          <span className="stat-label">Correct:</span>
-                          <span className="stat-value">{word.correctAttempts}</span>
-                        </div>
-                        {stars && <div className="mastery-stars">{stars}</div>}
-                      </div>
-                      {word.perfectCount > 0 && (
-                        <div className="perfect-badge">
-                          🏆 {word.perfectCount} Perfect!
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+<div className="learning-progress-section">
+  <h2>📚 Learning Progress 📚</h2>
+  
+  {/* ✅ BODY PARTS SECTION */}
+  {stats.wordStats && stats.wordStats.length > 0 ? (
+    <>
+      <h3 className="category-header">👤 Body Parts Mastery</h3>
+      <div className="learning-list">
+        {stats.wordStats
+          .filter(word => !word.word.startsWith('Mastery Check') && !word.word.includes('-'))
+          .map((word, index) => {
+            const accuracy = word.totalAttempts > 0 
+              ? Math.round((word.correctAttempts / word.totalAttempts) * 100) 
+              : 0;
+            const stars = accuracy >= 80 ? '⭐⭐⭐' : accuracy >= 60 ? '⭐⭐' : accuracy >= 40 ? '⭐' : '';
+            
+            return (
+              <div 
+                key={index} 
+                className="learning-item clickable"
+                onClick={() => handleWordClick(word.word)}
+              >
+                <div className="learning-word">{word.word}</div>
+                <div className="learning-stats">
+                  <div className="stat">
+                    <span className="stat-label">Accuracy:</span>
+                    <span className="stat-value">{accuracy}%</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-label">Attempts:</span>
+                    <span className="stat-value">{word.totalAttempts}</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-label">Correct:</span>
+                    <span className="stat-value">{word.correctAttempts}</span>
+                  </div>
+                  {stars && <div className="mastery-stars">{stars}</div>}
+                </div>
+                {word.perfectCount > 0 && (
+                  <div className="perfect-badge">
+                    🏆 {word.perfectCount} Perfect!
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="no-data-message">
+            );
+          })}
+      </div>
+      
+      {/* ✅ ALPHABET SECTION */}
+      <h3 className="category-header">🔤 Alphabet Fun Mastery</h3>
+      <div className="learning-list">
+        {stats.wordStats
+          .filter(word => word.word.startsWith('Mastery Check') || word.word.includes('-'))
+          .map((word, index) => {
+            const accuracy = word.totalAttempts > 0 
+              ? Math.round((word.correctAttempts / word.totalAttempts) * 100) 
+              : 0;
+            const stars = accuracy >= 80 ? '⭐⭐⭐' : accuracy >= 60 ? '⭐⭐' : accuracy >= 40 ? '⭐' : '';
+            
+            return (
+              <div 
+                key={index} 
+                className="learning-item"
+              >
+                <div className="learning-word">{word.word}</div>
+                <div className="learning-stats">
+                  <div className="stat">
+                    <span className="stat-label">Accuracy:</span>
+                    <span className="stat-value">{accuracy}%</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-label">Attempts:</span>
+                    <span className="stat-value">{word.totalAttempts}</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-label">Correct:</span>
+                    <span className="stat-value">{word.correctAttempts}</span>
+                  </div>
+                  {stars && <div className="mastery-stars">{stars}</div>}
+                </div>
+                {word.perfectCount > 0 && (
+                  <div className="perfect-badge">
+                    🏆 {word.perfectCount} Perfect!
+                  </div>
+                )}
+              </div>
+            );
+          })}
+      </div>
+    </>
+  ) : (
+    <div className="no-data-message">
                 Start practicing to see your progress!
               </div>
             )}

@@ -4,6 +4,7 @@ import { wordList } from './wordList.js';
 import birdBackground from './assets/pair-birds.png';
 import AlphabetChallenge from './components/AlphabetChallenge';
 import ChallengeBanner from './components/ChallengeBanner';
+import scoreDB from './services/scoreDatabase';
 import HexagonTransition from './components/HexagonTransition';
 import MixedMasteryChallenge from './components/MixedMasteryChallenge';
 
@@ -67,30 +68,31 @@ function AlphabetScreen(props) {
   const [snoozeUntil, setSnoozeUntil] = useState(savedState?.snoozeUntil || null);
 
   // ✅ Check for mastery prompt every 5 images
-  useEffect(() => {
-    console.log('Viewed images count:', viewedImages.length);
-    console.log('Snooze until:', snoozeUntil);
+ useEffect(() => {
+  console.log('Viewed images count:', viewedImages.length);
+  console.log('Snooze until:', snoozeUntil);
+  
+  // Skip if user has snoozed
+  const ONE_THIRD_MARK = Math.floor(260 / 3);
+  if (snoozeUntil === 'third' && viewedImages.length < ONE_THIRD_MARK) return;
+  if (snoozeUntil === 'half' && viewedImages.length < 130) return;
+  if (snoozeUntil === 'complete' && viewedImages.length < 260) return;
+  
+  if (viewedImages.length > 0 && viewedImages.length % 5 === 0) {
+    const lastPromptAt = parseInt(localStorage.getItem('lastMasteryPromptAt') || '0');
     
-    // Skip if user has snoozed
-    const ONE_THIRD_MARK = Math.floor(260 / 3); // 87 images
-    if (snoozeUntil === 'third' && viewedImages.length < ONE_THIRD_MARK) return;
-    if (snoozeUntil === 'half' && viewedImages.length < 130) return;
-    if (snoozeUntil === 'complete' && viewedImages.length < 260) return; // 26 letters × 10 images
-    
-    if (viewedImages.length > 0 && viewedImages.length % 5 === 0) {
-      // Check if we haven't already shown prompt for this milestone
-      const lastPromptAt = parseInt(localStorage.getItem('lastMasteryPromptAt') || '0');
-      if (viewedImages.length > lastPromptAt) {
-        console.log('Triggering mastery check at', viewedImages.length, 'images');
-        
-        // ✅ DELAY 3 SECONDS to let user see the 5th image
-        setTimeout(() => {
-          setShowHexagonTransition(true);
-          localStorage.setItem('lastMasteryPromptAt', viewedImages.length.toString());
-        }, 3000);
-      }
+    // ✅ FIX: Only trigger if this is a NEW milestone
+    if (viewedImages.length > lastPromptAt) {
+      console.log('Triggering mastery check at', viewedImages.length, 'images');
+      
+      setTimeout(() => {
+        setShowHexagonTransition(true);
+        // ✅ Set the flag IMMEDIATELY, not in setTimeout
+        localStorage.setItem('lastMasteryPromptAt', viewedImages.length.toString());
+      }, 3000);
     }
-  }, [viewedImages, snoozeUntil]);
+  }
+}, [viewedImages, snoozeUntil]);
 
     // Auto-save state
   useEffect(() => {
@@ -236,12 +238,44 @@ function AlphabetScreen(props) {
     setSnoozeUntil(option);
   };
 
-  const handleExitMasteryCheck = (score, total) => {
-    setShowMasteryChallenge(false);
-    setSnoozeUntil(null); // Clear snooze after completing challenge
-    console.log(`Mastery Check Score: ${score}/${total}`);
-    // Optional: Save score to database
-  };
+ const handleExitMasteryCheck = (score, total) => {
+  setShowMasteryChallenge(false);
+  setSnoozeUntil(null);
+  
+  console.log(`Mastery Check Score: ${score}/${total}`);
+  
+  // ✅ SAVE TO DATABASE
+  const accuracy = total > 0 ? (score / total) * 100 : 0;
+  const isPerfect = score === total;
+  
+  // ✅ Build a list of words that were tested
+  const wordsTestedString = recentWords
+    .map(w => w.word)
+    .join(', ');
+  
+  // Record overall mastery check with words listed
+  scoreDB.recordLearningAttempt(
+    `Mastery Check: ${wordsTestedString}`,
+    isPerfect
+  );
+  
+  // Also record each word individually for detailed tracking
+  recentWords.forEach((word, index) => {
+    const isCorrect = index < score; // First 'score' words were answered correctly
+    scoreDB.recordLearningAttempt(
+      `${word.letter || word.word[0]}-${word.word}`,
+      isCorrect
+    );
+  });
+  
+  if (props.speak) {
+    if (isPerfect) {
+      props.speak(`Perfect score! ${score} out of ${total}!`);
+    } else {
+      props.speak(`You scored ${score} out of ${total}. Keep practicing!`);
+    }
+  }
+};
 
   // ✅ If hexagon transition is active
   if (showHexagonTransition) {

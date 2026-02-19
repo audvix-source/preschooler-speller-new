@@ -39,7 +39,7 @@
 .bee-animation__beehive {
   position: absolute;
   bottom: 50px;
-  left: 144px; /* ✅ Moved +48px right from original 96px (beehive only, NOT tree) */
+  left: 120px; /* ✅ Moved back LEFT by 24px (was 144px) */
   transform: none;
   animation: beehiveGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
              beehiveSwing 2.5s ease-in-out infinite 0.5s;
@@ -64,7 +64,7 @@
 .bee-animation__bee {
   position: absolute;
   bottom: 130px;
-  left: calc(50% + 8px); /* ✅ Moved +48px right (was calc(50% - 40px)) to stay at beehive mouth */
+  left: calc(50% - 16px); /* ✅ Moved back LEFT by 24px (was calc(50% + 8px)) to match beehive */
   width: var(--bee-size);
   height: var(--bee-size);
   transform-origin: center;

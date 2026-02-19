@@ -17,7 +17,10 @@
   z-index: 9999;
   animation: challengeFadeIn 0.5s ease;
   overflow: hidden;
+  box-sizing: border-box;
 }
+
+/* Desktop gets rounded corners via media query below */
 
 @keyframes challengeFadeIn {
   from { opacity: 0; transform: scale(0.95); }
@@ -97,11 +100,15 @@
    ======================================== */
 
 .challenge-container-fixed {
-  /* ✅ FINAL: Hot pink background */
   background: #FF69B4 !important;
-  
   border: 20px solid #FFD700;
-  border-radius: 20px;
+  border-radius: 20px !important;
+  -webkit-border-radius: 20px !important;
+  -moz-border-radius: 20px !important;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  border-bottom-left-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
   box-shadow: 
     0 25px 70px rgba(0, 0, 0, 0.4),
     inset 0 0 40px rgba(255, 215, 0, 0.15);
@@ -109,13 +116,13 @@
   max-width: 100%;
   height: 100%;
   max-height: 100%;
-  padding: 0 0 12px 0; /* ✅ 12px bottom padding so rounded corners of inner elements show */
+  padding: 0 0 12px 0;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 10;
-  overflow: hidden;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* ========================================
@@ -165,13 +172,13 @@
   background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
   border: 3px solid #667eea;
   border-radius: 15px;
-  padding: 20px;
+  padding: 15px; /* ✅ Reduced from 20px */
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
-  margin: 10px 12px;
-  height: 160px;
+  margin: 6px 12px; /* ✅ Reduced top margin from 10px to 6px */
+  height: 140px; /* ✅ Reduced from 160px */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -301,8 +308,8 @@
   gap: 6px;
   flex-wrap: wrap;
   flex-shrink: 0;
-  margin: 0 12px 4px 12px; /* ✅ Small bottom margin so rounded edge is visible */
-  padding: 15px 10px;
+  margin: 0 12px 6px 12px; /* ✅ Increased bottom margin slightly for balance */
+  padding: 12px 10px; /* ✅ Reduced top/bottom padding from 15px */
   background: linear-gradient(135deg, #FFE5F1 0%, #FFDAE8 100%);
   border-radius: 12px;
   box-shadow: 
@@ -385,9 +392,12 @@
   box-shadow: 
     inset 0 2px 8px rgba(72, 187, 120, 0.15),
     0 4px 12px rgba(72, 187, 120, 0.2);
-  margin: 6px 12px 0 12px; /* ✅ No bottom margin - container padding handles it */
-  padding: 12px;
+  margin: 2px 12px 0 12px; /* ✅ Reduced top margin from 6px to 2px */
+  padding: 4px;
   flex-shrink: 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ========================================
@@ -397,29 +407,30 @@
 .challenge-keyboard {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  gap: 4px;
-  padding: 0; /* No padding - wrapper handles it */
-  background: transparent; /* No background - wrapper has it */
-  border-radius: 0; /* No border radius - wrapper handles it */
-  box-shadow: none; /* No shadow - wrapper has it */
+  gap: 0; /* ✅ No gaps - tiles touch each other */
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
   flex-shrink: 0;
-  margin: 0; /* No margin - wrapper handles it */
-  margin-bottom: 12px; /* Space before buttons */
+  flex-grow: 1; /* ✅ Take available vertical space */
+  margin: 0;
+  margin-bottom: 4px; /* ✅ Minimal space before buttons */
 }
 
 .keyboard-key {
-  background: linear-gradient(135deg, #81E6D9 0%, #4FD1C5 100%);
-  color: #000000; /* ✅ PURE BLACK - maximum contrast */
-  border: 3px solid #38B2AC;
+  background: linear-gradient(135deg, #5A6A6A 0%, #4A5A5A 100%); /* ✅ Dark gray tiles */
+  color: #FFFFFF; /* ✅ White text on dark gray */
+  border: 2px solid #3A4A4A; /* ✅ Even darker border */
   border-radius: 8px;
-  padding: 10px 0;
+  padding: 12px 0; /* ✅ Increased from 10px - taller tiles */
   font-family: 'Arial', sans-serif;
-  font-size: 1.3em; /* ✅ Even bigger */
-  font-weight: 900; /* ✅ Boldest */
+  font-size: 1.3em;
+  font-weight: 900;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 3px 8px rgba(56, 178, 172, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* ✅ Subtle shadow for crispness */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .keyboard-key.needed-letter {
@@ -461,11 +472,14 @@
 }
 
 .keyboard-key.used {
-  background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%);
-  color: #9E9E9E;
-  border-color: #B0B0B0;
-  opacity: 0.5;
+  background: linear-gradient(135deg, #FFE5CC 0%, #FFD4A3 100%); /* ✅ Light orange background */
+  color: #000000; /* ✅ Black text */
+  border-color: #FF8C00; /* ✅ Dark orange border */
+  border-width: 3px;
+  border-style: solid;
+  opacity: 1; /* ✅ Full opacity, not faded */
   cursor: not-allowed;
+  font-weight: 900;
 }
 
 .keyboard-key:disabled {

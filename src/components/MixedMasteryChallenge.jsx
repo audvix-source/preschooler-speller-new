@@ -15,21 +15,20 @@ const importAll = (r) => {
 const images = importAll(require.context('../assets/emojis', false, /\.(png|jpe?g|svg)$/));
 
 const getImagePath = (fileName) => {
-  if (!fileName) return null;
+  if (!fileName) {
+    console.log('❌ getImagePath: fileName is empty/null');
+    return null;
+  }
   
-  // ✅ If already a resolved image module (not a plain string), return it directly
-  if (typeof fileName !== 'string') return fileName;
+  // ✅ If already a resolved webpack module, return it
+  if (typeof fileName !== 'string') {
+    console.log('✅ getImagePath: Already resolved module:', fileName);
+    return fileName;
+  }
 
-  // ✅ Words that live in /assets/ (not /assets/emojis/) - exclude from quiz pool
-  const nonEmojiWords = [
-    'neck.png','hands.png','ears.png','hair.png','chin.png','palms.png',
-    'face.png','eyes.png','nose.png','mouth.png','teeth.png','tongue.png',
-    'shoulders.png','knees.png','toes.png','fingers.png','thumb.png',
-    'elbow.png','wrist.png','ankle.png','heel.png',
-    // Add any other body-part or non-emoji images here
-  ];
-  if (nonEmojiWords.includes(fileName.toLowerCase())) return null;
-  
+  console.log(`🔍 getImagePath: Processing "${fileName}"`);
+
+  // ✅ HARD RULE: Check special mappings first
   const specialMappings = {
     'x-box.png': 'xbox-emoji.png',
     'x-pen.png': 'xpen-emoji.png',
@@ -46,18 +45,23 @@ const getImagePath = (fileName) => {
   if (specialMappings[fileName]) {
     const mappedFile = specialMappings[fileName];
     if (images[mappedFile]) {
+      console.log(`✅ Special mapping: ${fileName} → ${mappedFile} (FOUND)`);
       return images[mappedFile];
     } else {
-      console.warn(`getImagePath: Mapped file not found: ${mappedFile}`);
+      console.log(`❌ Special mapping: ${fileName} → ${mappedFile} (NOT FOUND)`);
       return null;
     }
   }
   
+  // ✅ HARD RULE: Convert to emoji filename pattern
   const emojiFileName = fileName.replace('.png', '-emoji.png');
+  
+  // ✅ HARD CHECK: Does it actually exist in the emojis folder?
   if (images[emojiFileName]) {
+    console.log(`✅ Found in emojis: ${fileName} → ${emojiFileName}`);
     return images[emojiFileName];
   } else {
-    console.warn(`getImagePath: Image not found: ${emojiFileName}`);
+    console.log(`❌ NOT in emojis folder: ${fileName} → ${emojiFileName}`);
     return null;
   }
 };
@@ -353,15 +357,51 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
             <RecognitionChallenge
               word={currentQuestion.word.word}
               wordImage={getImagePath(currentQuestion.word.image)}
-              allWords={wordList.map(w => ({
-                word: w.word,
-                image: getImagePath(w.image)
-              })).filter(w => 
-                w.image !== null && 
-                w.image !== undefined &&
-                // ✅ Exclude broken images: webpack modules are objects/functions, not plain strings like "dimples-emoji.png"
-                typeof w.image !== 'string'
-              )}
+              allWords={wordList
+                .filter(w => {
+                  // ✅ NUCLEAR FILTER: Block body part words by name
+                  const bodyPartWords = [
+                    'head','face','hair','forehead','eyebrow','eyebrows','eyelash','eyelashes',
+                    'eye','eyes','eyelid','eyelids','nose','nostrils','ear','ears','earlobe',
+                    'cheek','cheeks','dimple','dimples','mouth','lip','lips','tongue','tooth',
+                    'teeth','chin','jaw','jawline','neck','throat','cleft chin','cleft-chin',
+                    'shoulder','shoulders','chest','breast','arm','arms','armpit','armpits',
+                    'elbow','elbows','forearm','forearms','wrist','wrists','hand','hands',
+                    'palm','palms','finger','fingers','thumb','thumbs','fingernail','fingernails',
+                    'knuckle','knuckles','belly','bellybutton','belly button','belly-button',
+                    'navel','stomach','tummy','abdomen','back','spine','waist','hip','hips',
+                    'leg','legs','thigh','thighs','knee','knees','kneecap','calf','calves',
+                    'shin','shins','ankle','ankles','foot','feet','heel','heels','toe','toes',
+                    'toenail','toenails','sole','soles','arch','body','eyelashes','nails'
+                  ];
+                  
+                  const wordLower = w.word.toLowerCase().trim();
+                  if (bodyPartWords.includes(wordLower)) {
+                    console.log(`🚫 BLOCKED BODY PART BY NAME: ${w.word}`);
+                    return false;
+                  }
+                  return true;
+                })
+                .map(w => {
+                  const resolvedImage = getImagePath(w.image);
+                  return {
+                    word: w.word,
+                    image: resolvedImage,
+                    originalFilename: w.image
+                  };
+                })
+                .filter(w => {
+                  // ✅ Image must exist
+                  if (!w.image) {
+                    console.log(`❌ No image: ${w.word} (${w.originalFilename})`);
+                    return false;
+                  }
+                  // ✅ REMOVED string check - webpack modules can be strings!
+                  // Some webpack configs return strings, some return objects - both are valid
+                  console.log(`✅ Valid: ${w.word}`);
+                  return true;
+                })
+              }
               onAnswer={handleRecognitionAnswer}
               speak={speak}
             />
