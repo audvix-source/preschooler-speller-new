@@ -1,18 +1,19 @@
-/* RecognitionChallenge.css - FINAL */
+/* RecognitionChallenge.css */
 
+/* ── Base layout ── */
 .recognition-challenge {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   padding: 0;
-  gap: 14px; /* ← single source of truth for ALL gaps */
+  gap: 14px;
 }
 
 /* ── Question header ── */
 .recognition-header {
   flex-shrink: 0;
-  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%); /* ✅ Strong apple green */
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
   border: 4px solid #FFD700;
   border-radius: 15px;
   padding: 14px 18px;
@@ -51,15 +52,19 @@
 
 /* ── 2×2 image grid ── */
 .recognition-choices {
-  flex: 1;           /* take ALL remaining space */
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 12px;
-  min-height: 0;     /* allow shrinking inside flex parent */
+  min-height: 0;
 }
 
-/* ── Individual choice box ── */
+/* ── Individual choice box ──
+   Background color is now set via inline style in JS (randomized per question).
+   No nth-child color rules here — JS always wins over CSS for inline styles anyway,
+   but removing them keeps the CSS clean and avoids confusion.
+── */
 .recognition-choice {
   position: relative;
   border: 4px solid #E0E0E0;
@@ -74,12 +79,11 @@
   min-height: 0;
 }
 
-.recognition-choice:nth-child(1) { background: linear-gradient(135deg,#FFE5EC,#FFC2D4); }
-.recognition-choice:nth-child(2) { background: linear-gradient(135deg,#E0F4FF,#B8E1FF); }
-.recognition-choice:nth-child(3) { background: linear-gradient(135deg,#FFF4E0,#FFE4B8); }
-.recognition-choice:nth-child(4) { background: linear-gradient(135deg,#E8F5E9,#C8E6C9); }
-
-.recognition-choice:hover  { transform: scale(1.04); border-color:#667eea; box-shadow:0 5px 20px rgba(102,126,234,.3); }
+.recognition-choice:hover {
+  transform: scale(1.04);
+  border-color: #667eea;
+  box-shadow: 0 5px 20px rgba(102,126,234,.3);
+}
 .recognition-choice:active { transform: scale(.98); }
 
 /* ── Image inside box ── */
@@ -111,21 +115,21 @@
 
 /* ── Feedback states ── */
 .recognition-choice.correct-choice {
-  background: linear-gradient(135deg,#E8F5E9,#C8E6C9) !important;
+  background: #C8E6C9 !important;
   border-color: #28A745 !important;
   border-width: 5px !important;
   animation: correctGlow .5s ease;
   box-shadow: 0 0 25px rgba(40,167,69,.6) !important;
 }
 .recognition-choice.incorrect-choice {
-  background: linear-gradient(135deg,#FFEBEE,#FFCDD2) !important;
+  background: #FFCDD2 !important;
   border-color: #DC3545 !important;
   border-width: 5px !important;
   animation: incorrectShake .5s ease;
   box-shadow: 0 0 25px rgba(220,53,69,.6) !important;
 }
 .recognition-choice.show-correct {
-  background: linear-gradient(135deg,#E8F5E9,#C8E6C9) !important;
+  background: #C8E6C9 !important;
   border-color: #28A745 !important;
   border-width: 5px !important;
   box-shadow: 0 0 25px rgba(40,167,69,.6) !important;
@@ -156,11 +160,17 @@
   z-index: 10;
   box-shadow: 0 4px 12px rgba(0,0,0,.3);
 }
-.correct-badge       { background: linear-gradient(135deg,#28A745,#20873A); color: white; }
-.incorrect-badge     { background: linear-gradient(135deg,#DC3545,#BD2130); color: white; }
-.correct-answer-badge{ background: linear-gradient(135deg,#FFD700,#FFA500); color: #1A1A1A; }
+.correct-badge        { background: linear-gradient(135deg,#28A745,#20873A); color: white; }
+.incorrect-badge      { background: linear-gradient(135deg,#DC3545,#BD2130); color: white; }
+.correct-answer-badge { background: linear-gradient(135deg,#FFD700,#FFA500); color: #1A1A1A; }
 
 @keyframes badgePop {
   0%   { transform: scale(0) rotate(-180deg); opacity:0; }
   100% { transform: scale(1) rotate(0deg);    opacity:1; }
+}
+
+/* ── Desktop / Tablet ── */
+@media (min-width: 769px) {
+  .recognition-question { font-size: 1.35em; }
+  .sound-icon { font-size: 2em; }
 }

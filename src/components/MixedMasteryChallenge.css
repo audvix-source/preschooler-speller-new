@@ -1,9 +1,10 @@
 /* ===================================================================
-   MASTERY CHALLENGE V6 - VIBRANT BACKGROUNDS (CORRECTED PATH)
-   Background image uses public folder path
-   ===================================================================
-*/
+   MASTERY CHALLENGE - CLEAN CSS
+   Order: mobile base → tablet/desktop overrides
+   No duplicate rules, no conflicting patches
+   =================================================================== */
 
+/* ── Overlay (full screen backdrop) ── */
 .challenge-overlay-fixed {
   position: fixed;
   top: 0;
@@ -20,52 +21,45 @@
   box-sizing: border-box;
 }
 
-/* Desktop gets rounded corners via media query below */
-
 @keyframes challengeFadeIn {
   from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-/* Tablet/Desktop: EXACT match to main screen */
-@media only screen and (min-width: 769px) {
-  .challenge-overlay-fixed {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 420px !important;
-    height: 680px !important;
-    max-height: 680px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border-radius: 20px !important;
-  }
-
-  @keyframes challengeFadeIn {
-    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  }
+/* ── Main card container ── */
+.challenge-container-fixed {
+  background: #FF69B4;
+  border: 20px solid #FFD700;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.4),
+    inset 0 0 40px rgba(255,215,0,.15);
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  padding: 0 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
 }
 
 .challenge-loading {
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 2em;
   color: white;
   font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 2px 4px rgba(0,0,0,.3);
 }
 
-/* ========================================
-   FLOATING PARTICLES (Subtle)
-   ======================================== */
-
+/* ── Floating particles ── */
 .challenge-confetti {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   pointer-events: none;
   overflow: hidden;
   opacity: 0.3;
@@ -79,106 +73,64 @@
 }
 
 @keyframes floatConfetti {
-  0% {
-    transform: translateY(-50px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.3;
-  }
-  90% {
-    opacity: 0.3;
-  }
-  100% {
-    transform: translateY(calc(100vh + 50px)) rotate(360deg);
-    opacity: 0;
-  }
+  0%   { transform: translateY(-50px) rotate(0deg);                opacity: 0; }
+  10%  { opacity: 0.3; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(calc(100vh + 50px)) rotate(360deg); opacity: 0; }
 }
 
-/* ========================================
-   MAIN CONTAINER - SOFT GRADIENT BACKGROUND
-   ======================================== */
-
-.challenge-container-fixed {
-  background: #FF69B4 !important;
-  border: 20px solid #FFD700;
-  border-radius: 20px !important;
-  -webkit-border-radius: 20px !important;
-  -moz-border-radius: 20px !important;
-  border-top-left-radius: 20px !important;
-  border-top-right-radius: 20px !important;
-  border-bottom-left-radius: 20px !important;
-  border-bottom-right-radius: 20px !important;
-  box-shadow: 
-    0 25px 70px rgba(0, 0, 0, 0.4),
-    inset 0 0 40px rgba(255, 215, 0, 0.15);
-  width: 100%;
-  max-width: 100%;
-  height: 100%;
-  max-height: 100%;
-  padding: 0 0 12px 0;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 10;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-/* ========================================
-   HEADER - PURPLE GRADIENT
-   ======================================== */
-
+/* ── Header ── */
 .challenge-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 12px 20px;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px rgba(102,126,234,.3);
   flex-shrink: 0;
   height: 60px;
 }
 
-.score-display, .accuracy-display {
+.score-display,
+.accuracy-display {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
 }
 
-.score-label, .accuracy-label {
-  font-family: 'Arial', sans-serif;
+.score-label,
+.accuracy-label {
+  font-family: Arial, sans-serif;
   font-size: 0.7em;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255,255,255,.9);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.score-value, .accuracy-value {
-  font-family: 'Arial', sans-serif;
-  font-size: 1.4em;
+/* ✅ REVERTED to original compact size */
+.score-value,
+.accuracy-value {
+  font-family: Arial, sans-serif;
+  font-size: 1.1em;
   font-weight: 900;
   color: #FFD700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 2px 4px rgba(0,0,0,.3);
 }
 
-/* ========================================
-   WORD CARD - BIGGER EMOJI, NO LABEL
-   ======================================== */
-
+/* ── Word image card ── */
 .word-card {
   background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
   border: 3px solid #667eea;
   border-radius: 15px;
-  padding: 15px; /* ✅ Reduced from 20px */
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(102,126,234,.2);
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
-  margin: 6px 12px; /* ✅ Reduced top margin from 10px to 6px */
-  height: 140px; /* ✅ Reduced from 160px */
+  margin: 6px 12px;
+  height: 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -198,20 +150,17 @@
 }
 
 @keyframes correctGlow {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.02); }
 }
 
 @keyframes incorrectShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-8px); }
-  75% { transform: translateX(8px); }
+  0%,100% { transform: translateX(0); }
+  25%     { transform: translateX(-8px); }
+  75%     { transform: translateX(8px); }
 }
 
-/* ========================================
-   EMOJI - HUGE SIZE, NO LABEL
-   ======================================== */
-
+/* ── Emoji / image display ── */
 .word-emoji-display {
   display: flex;
   justify-content: center;
@@ -222,7 +171,7 @@
 
 .emoji-huge {
   font-size: 7em;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,.2));
   animation: subtleFloat 4s ease-in-out infinite;
   line-height: 1;
 }
@@ -231,22 +180,15 @@
   max-width: 100%;
   max-height: 140px;
   object-fit: contain;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,.2));
 }
 
 @keyframes subtleFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
 }
 
-/* ========================================
-   FEEDBACK BANNER - DOESN'T HIDE EMOJI
-   ======================================== */
-
+/* ── Feedback banner ── */
 .feedback-banner {
   position: absolute;
   bottom: 10px;
@@ -255,66 +197,51 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255,255,255,.95);
   backdrop-filter: blur(5px);
   padding: 8px 20px;
   border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,.2);
   animation: feedbackSlideUp 0.3s ease;
 }
 
 @keyframes feedbackSlideUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .feedback-icon-inline {
   font-size: 2em;
-  animation: iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: iconPop 0.5s cubic-bezier(0.68,-0.55,0.265,1.55);
 }
 
 @keyframes iconPop {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.15);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0%   { transform: scale(0); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
 .feedback-text-inline {
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 1.2em;
   font-weight: 800;
   color: #2C3E50;
 }
 
-/* ========================================
-   ANSWER BOXES - VIBRANT PINK/PURPLE ✨
-   ======================================== */
-
+/* ── Answer boxes row ── */
 .answer-boxes {
   display: flex;
   justify-content: center;
   gap: 6px;
   flex-wrap: wrap;
   flex-shrink: 0;
-  margin: 0 12px 6px 12px; /* ✅ Increased bottom margin slightly for balance */
-  padding: 12px 10px; /* ✅ Reduced top/bottom padding from 15px */
+  margin: 0 12px 6px 12px;
+  padding: 12px 10px;
   background: linear-gradient(135deg, #FFE5F1 0%, #FFDAE8 100%);
   border-radius: 12px;
-  box-shadow: 
-    inset 0 2px 8px rgba(255, 105, 180, 0.15),
-    0 2px 8px rgba(255, 105, 180, 0.1);
+  box-shadow:
+    inset 0 2px 8px rgba(255,105,180,.15),
+    0 2px 8px rgba(255,105,180,.1);
 }
 
 .answer-box {
@@ -326,12 +253,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 1.6em;
   font-weight: 800;
   color: #9C27B0;
-  box-shadow: 0 3px 10px rgba(156, 39, 176, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 10px rgba(156,39,176,.2);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
 .answer-box.filled {
@@ -339,22 +266,15 @@
   color: white;
   transform: scale(1.08);
   border: 3px solid #5B4BC3;
-  border-style: solid;
-  box-shadow: 
-    0 4px 15px rgba(123, 104, 238, 0.4),
-    0 0 20px rgba(123, 104, 238, 0.3);
-  animation: fillPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow:
+    0 4px 15px rgba(123,104,238,.4),
+    0 0 20px rgba(123,104,238,.3);
+  animation: fillPop 0.3s cubic-bezier(0.68,-0.55,0.265,1.55);
 }
 
 @keyframes fillPop {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
+  0%   { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.08); opacity: 1; }
 }
 
 .answer-box.correct-box {
@@ -372,27 +292,24 @@
 }
 
 @keyframes correctPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.12); }
 }
 
 @keyframes incorrectWiggle {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(0.95) rotate(-3deg); }
-  75% { transform: scale(0.95) rotate(3deg); }
+  0%,100% { transform: scale(1) rotate(0deg); }
+  25%     { transform: scale(0.95) rotate(-3deg); }
+  75%     { transform: scale(0.95) rotate(3deg); }
 }
 
-/* ========================================
-   KEYBOARD WRAPPER - ONE BIG GREEN CONTAINER ✨
-   ======================================== */
-
+/* ── Keyboard wrapper (green container) ── */
 .keyboard-wrapper-container {
   background: linear-gradient(135deg, #D4F4DD 0%, #C2EDD0 100%);
   border-radius: 12px;
-  box-shadow: 
-    inset 0 2px 8px rgba(72, 187, 120, 0.15),
-    0 4px 12px rgba(72, 187, 120, 0.2);
-  margin: 2px 12px 0 12px; /* ✅ Reduced top margin from 6px to 2px */
+  box-shadow:
+    inset 0 2px 8px rgba(227, 13, 38, 0.96),
+    0 4px 12px rgba(72,187,120,.2);
+  margin: 2px 12px 0 12px;
   padding: 4px;
   flex-shrink: 0;
   flex-grow: 1;
@@ -400,106 +317,80 @@
   flex-direction: column;
 }
 
-/* ========================================
-   KEYBOARD - VIBRANT TEAL/MINT ✨
-   ======================================== */
-
+/* ── Keyboard grid ── */
 .challenge-keyboard {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  gap: 0; /* ✅ No gaps - tiles touch each other */
+  gap: 0;
   padding: 0;
   background: transparent;
-  border-radius: 0;
-  box-shadow: none;
   flex-shrink: 0;
-  flex-grow: 1; /* ✅ Take available vertical space */
+  flex-grow: 1;
   margin: 0;
-  margin-bottom: 4px; /* ✅ Minimal space before buttons */
+  margin-bottom: 4px;
 }
 
-.keyboard-key {
-  background: linear-gradient(135deg, #5A6A6A 0%, #4A5A5A 100%); /* ✅ Dark gray tiles */
-  color: #FFFFFF; /* ✅ White text on dark gray */
-  border: 2px solid #3A4A4A; /* ✅ Even darker border */
+/* ── Keyboard keys ── */
+.challenge-keyboard .keyboard-key {
+  background: #0d0e0d;
+  color: #fd0c04;
+  border: 2px solid #89c4e1;
   border-radius: 8px;
-  padding: 12px 0; /* ✅ Increased from 10px - taller tiles */
-  font-family: 'Arial', sans-serif;
+  padding: 12px 0;
+  font-family: Arial, sans-serif;
   font-size: 1.3em;
   font-weight: 900;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 3px 8px rgba(0,0,0,.15);
+  opacity: 0.50;
+  animation: none;
 }
 
-.keyboard-key.needed-letter {
-  background: linear-gradient(135deg, #FED7AA 0%, #F6AD55 100%);
-  border-color: #ED8936;
-  border-width: 3px;
-  color: #7C2D12;
-  box-shadow: 
-    0 0 15px rgba(237, 137, 54, 0.6),
-    0 4px 10px rgba(237, 137, 54, 0.4);
-  animation: letterPulse 1.5s ease-in-out infinite;
+.challenge-keyboard .keyboard-key.not-needed-letter {
+  background: #f48005;
+  color: #0e0aee;
+  border: 2px solid #f02a27;
+  opacity: 0.75;
+  animation: none;
 }
 
-@keyframes letterPulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 
-      0 0 15px rgba(237, 137, 54, 0.6),
-      0 4px 10px rgba(237, 137, 54, 0.4);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 
-      0 0 25px rgba(237, 137, 54, 0.9),
-      0 6px 15px rgba(237, 137, 54, 0.6);
-  }
+.challenge-keyboard .keyboard-key.needed-letter {
+  background: #eb842462;
+  color: #07041249;
+  border: 2.5px solid #f5a623;
+  font-weight: 800;
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(245,166,35,.55);
+  animation: neededPulse 1s ease-in-out infinite;
 }
 
-.keyboard-key:hover:not(:disabled):not(.used) {
-  background: linear-gradient(135deg, #90F0E7 0%, #5FE1D5 100%);
+.challenge-keyboard .keyboard-key.used {
+  background: #5a4de9;
+  color: #8c7b7b;
+  border: 2px solid #3a6f88;
+  opacity: 0.45;
+  animation: none;
+  cursor: not-allowed;
+}
+
+.challenge-keyboard .keyboard-key:hover:not(:disabled):not(.used) {
+  background: #0b0b0b07;
   color: white;
-  border-color: #2C7A7B;
+  border-color: #0c03b2;
   transform: translateY(-2px);
-  box-shadow: 0 5px 12px rgba(56, 178, 172, 0.4);
+  box-shadow: 0 5px 12px rgba(56,178,172,.4);
+  opacity: 1;
 }
 
-.keyboard-key:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.keyboard-key.used {
-  background: linear-gradient(135deg, #FFE5CC 0%, #FFD4A3 100%); /* ✅ Light orange background */
-  color: #000000; /* ✅ Black text */
-  border-color: #FF8C00; /* ✅ Dark orange border */
-  border-width: 3px;
-  border-style: solid;
-  opacity: 1; /* ✅ Full opacity, not faded */
-  cursor: not-allowed;
-  font-weight: 900;
-}
-
-.keyboard-key:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* ========================================
-   CONTROL BUTTONS - INSIDE WRAPPER ✨
-   ======================================== */
-
+/* ── Control buttons ── */
 .challenge-controls {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
-  margin: 0; /* No margin - inside wrapper */
-  padding: 0; /* No padding - wrapper handles it */
-  background: transparent; /* No background - wrapper has it */
-  border-radius: 0; /* No border radius */
-  box-shadow: none; /* No shadow */
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
 
 .backspace-button,
@@ -507,12 +398,12 @@
   flex: 1;
   padding: 12px;
   border: none;
-  border-radius: 12px; /* ✅ ALL corners fully rounded */
-  font-family: 'Arial', sans-serif;
+  border-radius: 12px;
+  font-family: Arial, sans-serif;
   font-size: 0.95em;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -523,13 +414,13 @@
   background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
   color: white;
   border: 3px solid #EA580C;
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 4px 12px rgba(249,115,22,.4);
 }
 
 .backspace-button:hover:not(:disabled) {
   background: linear-gradient(135deg, #FDBA74 0%, #FB923C 100%);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+  box-shadow: 0 6px 20px rgba(249,115,22,.5);
 }
 
 .backspace-button:disabled {
@@ -545,13 +436,13 @@
   background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: white;
   border: 3px solid #B91C1C;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 4px 12px rgba(239,68,68,.4);
 }
 
 .exit-button:hover {
   background: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+  box-shadow: 0 6px 20px rgba(239,68,68,.5);
 }
 
 .exit-button:active,
@@ -559,10 +450,7 @@
   transform: translateY(0);
 }
 
-/* ========================================
-   QUESTION CONTENT (for recognition)
-   ======================================== */
-
+/* ── Question content area ── */
 .question-content {
   flex: 1;
   display: flex;
@@ -572,63 +460,55 @@
   overflow: hidden;
   padding: 12px;
   box-sizing: border-box;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .question-content::-webkit-scrollbar {
   display: none;
 }
 
-.question-content {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
-
-@media (max-width: 768px) {
-  .challenge-container-fixed {
-    border-width: 15px;
+/* ── Tablet / Desktop ── */
+@media (min-width: 769px) {
+  .challenge-overlay-fixed {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 420px !important;
+    height: 680px !important;
+    max-height: 680px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 20px !important;
   }
 
-  .emoji-huge {
-    font-size: 6em;
+  @keyframes challengeFadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  .challenge-container-fixed {
+    border-width: 20px;
   }
 
   .word-card {
-    height: 150px;
-    margin: 8px 10px;
-  }
-
-  .answer-boxes {
-    margin: 0 10px;
-    padding: 12px 8px;
+    height: 160px;
   }
 
   .answer-box {
-    width: 36px;
-    height: 46px;
-    font-size: 1.4em;
+    width: 44px;
+    height: 54px;
+    font-size: 1.7em;
   }
 
-  .keyboard-key {
-    padding: 9px 0;
-    font-size: 0.95em;
-  }
-
-  .challenge-controls {
-    margin: 8px 10px;
-    padding: 10px;
-  }
-
-  .backspace-button,
-  .exit-button {
-    font-size: 0.85em;
-    padding: 10px;
+  .challenge-keyboard .keyboard-key {
+    padding: 13px 0;
+    font-size: 1.35em;
   }
 }
 
+/* ── Small mobile ── */
 @media (max-width: 480px) {
   .challenge-container-fixed {
     border-width: 12px;
@@ -639,7 +519,7 @@
   }
 
   .word-card {
-    height: 130px;
+    height: 120px;
   }
 
   .answer-box {
@@ -648,7 +528,14 @@
     font-size: 1.3em;
   }
 
-  .keyboard-key {
+  .challenge-keyboard .keyboard-key {
     font-size: 0.9em;
+    padding: 9px 0;
+  }
+
+  .backspace-button,
+  .exit-button {
+    font-size: 0.85em;
+    padding: 10px;
   }
 }

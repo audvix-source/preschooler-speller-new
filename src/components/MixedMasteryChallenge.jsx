@@ -20,7 +20,6 @@ const getImagePath = (fileName) => {
     return null;
   }
   
-  // ✅ If already a resolved webpack module, return it
   if (typeof fileName !== 'string') {
     console.log('✅ getImagePath: Already resolved module:', fileName);
     return fileName;
@@ -28,7 +27,6 @@ const getImagePath = (fileName) => {
 
   console.log(`🔍 getImagePath: Processing "${fileName}"`);
 
-  // ✅ HARD RULE: Check special mappings first
   const specialMappings = {
     'x-box.png': 'xbox-emoji.png',
     'x-pen.png': 'xpen-emoji.png',
@@ -53,10 +51,8 @@ const getImagePath = (fileName) => {
     }
   }
   
-  // ✅ HARD RULE: Convert to emoji filename pattern
   const emojiFileName = fileName.replace('.png', '-emoji.png');
   
-  // ✅ HARD CHECK: Does it actually exist in the emojis folder?
   if (images[emojiFileName]) {
     console.log(`✅ Found in emojis: ${fileName} → ${emojiFileName}`);
     return images[emojiFileName];
@@ -66,7 +62,7 @@ const getImagePath = (fileName) => {
   }
 };
 
-// ✅ Module-level power word tracker - persists across quiz sessions so words never repeat
+// ✅ Module-level power word tracker
 let globalPowerWordIndex = -1;
 
 const POWER_WORDS = [
@@ -101,66 +97,76 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
 
   useEffect(() => {
     const generateQuestions = () => {
-      console.log('Recent words:', recentWords);
-      
       if (!recentWords || recentWords.length === 0) {
         console.warn('No recent words available for quiz');
         return;
       }
 
-      const shortWords = recentWords.filter(w => w.word && w.word.length >= 3 && w.word.length <= 6);
-      const longWords = recentWords.filter(w => w.word && w.word.length >= 7);
-      
-      const selectedQuestions = [];
-      
-      console.log(`Short words (3-6 letters): ${shortWords.length}`);
-      shortWords.forEach(word => {
-        selectedQuestions.push({
-          type: 'spelling',
-          word: word
-        });
-      });
-      
-      console.log(`Long words (7+ letters): ${longWords.length}`);
-      longWords.forEach(word => {
-        // ✅ RULE: 7+ letter words are ALWAYS recognition (multiple choice)
-        // Kids aged 3-6 cannot spell long words - they only need to identify them
-        const imgPath = getImagePath(word.image);
-        if (imgPath) {
-          selectedQuestions.push({
-            type: 'recognition',
-            word: word
-          });
+      const normalizeWord = (wordObj) => {
+        if (wordObj.word && wordObj.word.toLowerCase() === 'nail') {
+          return { ...wordObj, word: 'nails' };
+        }
+        return wordObj;
+      };
+
+      const normalizedWords = recentWords.map(normalizeWord);
+
+      // ✅ ORDERING FIX:
+      // Spelling questions first (short words < 7 letters),
+      // then recognition questions (long words ≥ 6 letters with images).
+      // Long words with no image fall back to spelling so nothing is skipped.
+      const spellingQuestions = [];
+      const recognitionQuestions = [];
+
+      normalizedWords.forEach(word => {
+        if (!word.word) return;
+        if (word.word.length >= 6) {
+          const imgPath = getImagePath(word.image);
+          if (imgPath) {
+            recognitionQuestions.push({ type: 'recognition', word });
+          } else {
+            // No image for long word — treat as spelling
+            spellingQuestions.push({ type: 'spelling', word });
+          }
         } else {
-          // No image = skip entirely, don't add as spelling
-          console.warn(`Skipping ${word.word} - no image found for recognition question`);
+          spellingQuestions.push({ type: 'spelling', word });
         }
       });
-      
-      if (selectedQuestions.length > 5) {
-        const spellingCount = selectedQuestions.filter(q => q.type === 'spelling').length;
-        const recognitionCount = selectedQuestions.filter(q => q.type === 'recognition').length;
-        
-        if (spellingCount >= 3 && recognitionCount >= 2) {
-          const spellingQuestions = selectedQuestions.filter(q => q.type === 'spelling').slice(0, 3);
-          const recognitionQuestions = selectedQuestions.filter(q => q.type === 'recognition').slice(0, 2);
-          selectedQuestions.length = 0;
-          selectedQuestions.push(...spellingQuestions, ...recognitionQuestions);
-        } else {
-          selectedQuestions.length = 5;
+
+      // ✅ Spelling always comes first, recognition at the end
+      const orderedQuestions = [...spellingQuestions, ...recognitionQuestions];
+
+      // ✅ Guarantee exactly 5 questions
+      if (orderedQuestions.length > 5) {
+        // Keep up to 3 spelling + up to 2 recognition, spelling first
+        const spelling = orderedQuestions.filter(q => q.type === 'spelling');
+        const recognition = orderedQuestions.filter(q => q.type === 'recognition');
+        const wantSpelling = Math.min(spelling.length, 3);
+        const wantRecognition = Math.min(recognition.length, 5 - wantSpelling);
+        const trimmed = [
+          ...spelling.slice(0, wantSpelling),
+          ...recognition.slice(0, wantRecognition),
+        ];
+        // Top up if still short
+        if (trimmed.length < 5) {
+          const remaining = orderedQuestions.filter(q => !trimmed.includes(q));
+          trimmed.push(...remaining.slice(0, 5 - trimmed.length));
         }
+        setQuestions(trimmed.slice(0, 5));
+      } else {
+        // Pad to 5 with spelling repeats (spelling first, then recognition)
+        const padded = [...orderedQuestions];
+        let padIndex = 0;
+        while (padded.length < 5) {
+          const source = normalizedWords[padIndex % normalizedWords.length];
+          padded.push({ type: 'spelling', word: source });
+          padIndex++;
+        }
+        // Re-sort so spelling is always before recognition after padding
+        const finalSpelling = padded.filter(q => q.type === 'spelling');
+        const finalRecognition = padded.filter(q => q.type === 'recognition');
+        setQuestions([...finalSpelling, ...finalRecognition].slice(0, 5));
       }
-      
-      console.log('Final question order:');
-      selectedQuestions.forEach((q, i) => {
-        console.log(`${i + 1}. ${q.word.word} (${q.type})`);
-      });
-      
-      console.log(`Total questions: ${selectedQuestions.length}`);
-      console.log(`Spelling: ${selectedQuestions.filter(q => q.type === 'spelling').length}`);
-      console.log(`Recognition: ${selectedQuestions.filter(q => q.type === 'recognition').length}`);
-      
-      setQuestions(selectedQuestions);
     };
 
     generateQuestions();
@@ -189,15 +195,12 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         setScore(prevScore => {
           const newScore = prevScore + 1;
           calculatedScore = newScore;
-          
           if (currentQuestionIndex === questions.length - 1) {
             setFinalScore(newScore);
           }
-          
           return newScore;
         });
         
-        // ✅ Use global power word index so it never repeats across sessions
         globalPowerWordIndex = (globalPowerWordIndex + 1) % POWER_WORDS.length;
         const chosen = POWER_WORDS[globalPowerWordIndex];
         setCompletionMessage(chosen.display);
@@ -207,7 +210,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         if (currentQuestionIndex === questions.length - 1) {
           setFinalScore(score);
         }
-        if (speak) speak(`Not quite! It's ${currentQuestion.word.word}`);
+        if (speak) speak(`Try again!`);
       }
 
       setTimeout(() => {
@@ -217,7 +220,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   };
 
   const handleRecognitionAnswer = (correct) => {
-    // ✅ Guard: ignore if already processing
     if (showFeedback && currentQuestion?.type === 'recognition') return;
     
     let calculatedScore = score;
@@ -239,7 +241,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
     }
     
     setTimeout(() => {
-      // ✅ Cancel speech RIGHT BEFORE transitioning - stops any mid-word cutoff whisper
       window.speechSynthesis.cancel();
       moveToNextQuestion(calculatedScore);
     }, 500);
@@ -256,7 +257,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       setFinalTotal(totalQuestions);
       window.speechSynthesis.cancel();
       setTimeout(() => {
-        if (speak) speak(`Challenge complete! You scored ${finalScoreValue} out of ${totalQuestions}`);
         setShowAnimation(true);
       }, 400);
     }
@@ -269,7 +269,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   };
 
   const handleExit = () => {
-    if (speak) speak("Exiting challenge");
+    if (speak) speak("Bye!");
     onExit(score, currentQuestionIndex);
   };
 
@@ -283,6 +283,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         score={finalScore}
         total={finalTotal}
         onComplete={handleAnimationComplete}
+        speak={speak}
       />
     );
   }
@@ -295,11 +296,11 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       'flower': '🌸', 'goat': '🐐', 'girl': '👧', 'hat': '🎩', 'horse': '🐴', 'hand': '✋',
       'heart': '❤️', 'igloo': '🏔️', 'jar': '🫙', 'jet': '✈️', 'kite': '🪁', 'king': '🤴',
       'lion': '🦁', 'lamp': '💡', 'lemon': '🍋', 'moon': '🌙', 'mouse': '🐭', 'monkey': '🐵',
-      'nail': '🔨', 'net': '🥅', 'nurse': '👩‍⚕️', 'ox': '🐂', 'pizza': '🍕', 'queen': '👸',
-      'quilt': '🛏️', 'rain': '🌧️', 'robot': '🤖', 'star': '⭐', 'sun': '☀️', 'tree': '🌳',
-      'truck': '🚚', 'vase': '🏺', 'vest': '🦺', 'watch': '⌚', 'whale': '🐋', 'yak': '🦬',
-      'yarn': '🧶', 'zebra': '🦓', 'zap': '⚡', 'zipper': '🤐', 'zigzag': '⚡', 'zeppelin': '🛩️',
-      'queue': '👥', 'question-mark': '❓'
+      'nails': '💅', 'nail': '💅', 'net': '🥅', 'nurse': '👩‍⚕️', 'ox': '🐂', 'pizza': '🍕',
+      'queen': '👸', 'quilt': '🛏️', 'rain': '🌧️', 'robot': '🤖', 'star': '⭐', 'sun': '☀️',
+      'tree': '🌳', 'truck': '🚚', 'vase': '🏺', 'vest': '🦺', 'watch': '⌚', 'whale': '🐋',
+      'yak': '🦬', 'yarn': '🧶', 'zebra': '🦓', 'zap': '⚡', 'zipper': '🤐',
+      'zigzag': '⚡', 'zeppelin': '🛩️', 'queue': '👥', 'question-mark': '❓'
     };
     return emojiMap[word.toLowerCase()] || '📝';
   };
@@ -359,7 +360,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
               wordImage={getImagePath(currentQuestion.word.image)}
               allWords={wordList
                 .filter(w => {
-                  // ✅ NUCLEAR FILTER: Block body part words by name
                   const bodyPartWords = [
                     'head','face','hair','forehead','eyebrow','eyebrows','eyelash','eyelashes',
                     'eye','eyes','eyelid','eyelids','nose','nostrils','ear','ears','earlobe',
@@ -374,12 +374,8 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                     'shin','shins','ankle','ankles','foot','feet','heel','heels','toe','toes',
                     'toenail','toenails','sole','soles','arch','body','eyelashes','nails'
                   ];
-                  
                   const wordLower = w.word.toLowerCase().trim();
-                  if (bodyPartWords.includes(wordLower)) {
-                    console.log(`🚫 BLOCKED BODY PART BY NAME: ${w.word}`);
-                    return false;
-                  }
+                  if (bodyPartWords.includes(wordLower)) return false;
                   return true;
                 })
                 .map(w => {
@@ -391,14 +387,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                   };
                 })
                 .filter(w => {
-                  // ✅ Image must exist
-                  if (!w.image) {
-                    console.log(`❌ No image: ${w.word} (${w.originalFilename})`);
-                    return false;
-                  }
-                  // ✅ REMOVED string check - webpack modules can be strings!
-                  // Some webpack configs return strings, some return objects - both are valid
-                  console.log(`✅ Valid: ${w.word}`);
+                  if (!w.image) return false;
                   return true;
                 })
               }
@@ -451,7 +440,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                 ))}
               </div>
 
-              {/* KEYBOARD + BUTTONS IN ONE GREEN CONTAINER */}
               <div className="keyboard-wrapper-container">
                 <div className="challenge-keyboard">
                   {alphabet.map(letter => {
@@ -462,9 +450,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                     return (
                       <button
                         key={letter}
-                        className={`keyboard-key ${isUsed ? 'used' : ''} ${
-                          isNeeded ? 'needed-letter' : ''
-                        }`}
+                        className={`keyboard-key ${isNeeded ? 'needed-letter' : 'not-needed-letter'} ${isUsed ? 'used' : ''}`}
                         onClick={() => handleLetterClick(letter)}
                         disabled={showFeedback}
                       >
@@ -474,7 +460,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
                   })}
                 </div>
 
-                {/* CONTROL BUTTONS INSIDE WRAPPER */}
                 <div className="challenge-controls">
                   <button className="backspace-button" onClick={handleBackspace} disabled={showFeedback}>
                     ⌫ Backspace
