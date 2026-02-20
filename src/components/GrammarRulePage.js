@@ -6,81 +6,61 @@ import chestImage from '../assets/treasure-chest.png';
 
 function GrammarRulePage({ onContinue, speak, skipCelebration }) {
   const [showRules, setShowRules] = useState(false);
-  const [showTileAnimation, setShowTileAnimation] = useState(false);
   const [showChestScreen, setShowChestScreen] = useState(false);
   const [fireworks, setFireworks] = useState([]);
   const [confettiWaves, setConfettiWaves] = useState([]);
-  
-  // ✅ TREASURE CHEST SEQUENTIAL REVEAL STATES
+
+  // ✅ Sequential reveal states for chest screen
   const [chestRevealed, setChestRevealed] = useState(false);
   const [subtitleRevealed, setSubtitleRevealed] = useState(false);
   const [buttonRevealed, setButtonRevealed] = useState(false);
 
-  // ✅ Handle skipCelebration - Show chest screen IMMEDIATELY (no delay)
+  // ✅ skipCelebration: show chest screen immediately (no celebration)
   useEffect(() => {
     if (skipCelebration) {
-      // Show chest screen immediately (no delay)
       setShowChestScreen(true);
-      
-      // Then stagger the element reveals with 500ms initial delay:
-      setTimeout(() => setChestRevealed(true), 500);        // Chest appears at 500ms
-      setTimeout(() => setSubtitleRevealed(true), 1500);    // Subtitle 500ms after chest (was 800)
-      setTimeout(() => setButtonRevealed(true), 2500);      // Button 500ms after subtitle (was 1100)
+      setTimeout(() => setChestRevealed(true), 500);
+      setTimeout(() => setSubtitleRevealed(true), 1500);
+      setTimeout(() => setButtonRevealed(true), 2500);
     }
   }, [skipCelebration]);
 
-  // Fireworks and confetti management for perfect score
+  // Fireworks + confetti for perfect score celebration
   useEffect(() => {
     let fireworksInterval;
     let confettiInterval;
     let initialTimer;
-   
+
     if (!showRules && !skipCelebration) {
-      // ✅ WAIT 2 SECONDS BEFORE FIRST FIREWORKS (after spinning animation completes)
       initialTimer = setTimeout(() => {
         const fireworksCycle = () => {
-          // FIRST: Center fireworks (explode first but at LOWER height - 15%)
           setTimeout(() => {
             setFireworks([
-              { id: Date.now(), left: 35, delay: 0, top: 15 }, // Center-left, LOW
-              { id: Date.now() + 1, left: 65, delay: 0, top: 15 } // Center-right, LOW
+              { id: Date.now(),     left: 35, delay: 0, top: 15 },
+              { id: Date.now() + 1, left: 65, delay: 0, top: 15 }
             ]);
           }, 0);
-          
-          // SECOND: Outer fireworks (explode second but at HIGHER height - 8%)
           setTimeout(() => {
             setFireworks(prev => [
               ...prev,
-              { id: Date.now() + 2, left: 15, delay: 0, top: 8 }, // Far left, HIGH
-              { id: Date.now() + 3, left: 85, delay: 0, top: 8 } // Far right, HIGH
+              { id: Date.now() + 2, left: 15, delay: 0, top: 8 },
+              { id: Date.now() + 3, left: 85, delay: 0, top: 8 }
             ]);
           }, 500);
-          
-          // Clear all fireworks after animations
           setTimeout(() => setFireworks([]), 2500);
         };
-        
-        // Run first cycle immediately (after 2000ms initial delay)
-        fireworksCycle();
-        // Then repeat every 3.5 seconds
-        fireworksInterval = setInterval(fireworksCycle, 3500);
-      }, 2000); // ✅ 2 second delay - wait for spinning animation to complete
 
-      // CONFETTI - Start falling after fireworks explode
+        fireworksCycle();
+        fireworksInterval = setInterval(fireworksCycle, 3500);
+      }, 2000);
+
       confettiInterval = setInterval(() => {
-        // First wave
-        setTimeout(() => {
-          setConfettiWaves([{ id: Date.now(), wave: 1 }]);
-        }, 1000);
-        // Second wave (500ms later)
-        setTimeout(() => {
-          setConfettiWaves(prev => [...prev, { id: Date.now() + 1, wave: 2 }]);
-        }, 1500);
-        // Clear confetti
+        setTimeout(() => setConfettiWaves([{ id: Date.now(), wave: 1 }]), 1000);
+        setTimeout(() => setConfettiWaves(prev => [...prev, { id: Date.now() + 1, wave: 2 }]), 1500);
         setTimeout(() => setConfettiWaves([]), 3000);
       }, 3500);
     }
-    
+
     return () => {
       if (initialTimer) clearTimeout(initialTimer);
       if (fireworksInterval) clearInterval(fireworksInterval);
@@ -95,7 +75,6 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
 
   const handleChestClick = () => {
     if (speak) speak("Let's see what we can learn!");
-    // ✅ Reset all reveal states when leaving chest screen
     setChestRevealed(false);
     setSubtitleRevealed(false);
     setButtonRevealed(false);
@@ -103,56 +82,30 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     setShowRules(true);
   };
 
+  // ✅ FIX: No tile animation here — just call onContinue() directly.
+  // LearningScreen's GrammarRulePage onContinue handler already runs
+  // the countdown, so adding tiles here caused a double animation.
   const handleContinue = () => {
     if (speak) speak("Awesome! Let's keep going!");
-    setShowRules(false);
-    setShowTileAnimation(true);
-    setTimeout(() => {
-      setShowTileAnimation(false);
-      onContinue();
-    }, 2500);
+    onContinue();
   };
 
-  // Tile animation screen
-  if (showTileAnimation) {
-    return (
-      <div className="grammar-overlay">
-        <div className="tile-animation-container">
-          {Array.from({ length: 48 }).map((_, i) => (
-            <div
-              key={i}
-              className="tile"
-              style={{
-                animationDelay: `${Math.random() * 1.5}s`
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Chest screen (for error attempts) - ✅ WITH SEQUENTIAL REVEAL
+  // ── Chest screen (shown after error attempts) ──
   if (showChestScreen) {
     return (
       <div className="chest-overlay">
-        {/* Floating coins background */}
         <div className="floating-coins">
           {Array.from({ length: 10 }).map((_, i) => (
             <div
               key={i}
               className="coin"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`
-              }}
+              style={{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 5}s` }}
             >
               🪙
             </div>
           ))}
         </div>
 
-        {/* Pirate decorations */}
         <div className="pirate-decorations">
           <div className="pirate-item">🏴‍☠️</div>
           <div className="pirate-item">⚓</div>
@@ -160,7 +113,6 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
           <div className="pirate-item">🦜</div>
         </div>
 
-        {/* Sparkle effects */}
         <div className="sparkle-effects">
           {Array.from({ length: 15 }).map((_, i) => (
             <div
@@ -178,7 +130,6 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
         </div>
 
         <div className="chest-container">
-          {/* ✅ CHEST IMAGE with conditional reveal class */}
           <div className={`chest-image-wrapper ${chestRevealed ? 'reveal' : 'hidden'}`}>
             <div className="chest-glow-pulse"></div>
             <div className="treasure-rays"></div>
@@ -187,13 +138,11 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
             </div>
           </div>
 
-          {/* ✅ SUBTITLE with conditional reveal class */}
           <div className={`treasure-subtitle ${subtitleRevealed ? 'reveal' : 'hidden'}`}>
             <span>Something to treasure . . .</span>
           </div>
-         
-          {/* ✅ BUTTON with conditional reveal class */}
-          <button 
+
+          <button
             className={`chest-banner-button ${buttonRevealed ? 'reveal' : 'hidden'}`}
             onClick={handleChestClick}
           >
@@ -206,28 +155,22 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     );
   }
 
-  // Page 1 - Perfect score celebration
+  // ── Page 1: Perfect score celebration ──
   if (!showRules) {
     return (
       <div className="reward-overlay">
-        {/* Fireworks Explosions - REVERSED ORDER */}
         <div className="fireworks-container">
           {fireworks.map(fw => (
             <div
               key={fw.id}
               className="firework"
-              style={{
-                left: `${fw.left}%`,
-                top: `${fw.top}%`,
-                animationDelay: `${fw.delay}s`
-              }}
+              style={{ left: `${fw.left}%`, top: `${fw.top}%`, animationDelay: `${fw.delay}s` }}
             >
               🎆
             </div>
           ))}
         </div>
 
-        {/* Confetti Waves */}
         <div className="confetti-container">
           {confettiWaves.map((wave, waveIndex) => (
             <React.Fragment key={wave.id}>
@@ -267,7 +210,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
     );
   }
 
-  // Page 2 - Grammar Rules
+  // ── Page 2: Grammar Rules ──
   return (
     <div className="grammar-overlay">
       <div className="grammar-game-container grow-animation">
@@ -275,7 +218,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
           <h1>💡 Grammar Rules 💡</h1>
           <p className="grammar-subtitle-game">Body parts often come in pairs!</p>
         </div>
-       
+
         <div className="grammar-content-game">
           <div className="rules-card">
             <table className="grammar-table-game">
@@ -285,7 +228,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                   <td><span className="emoji-large">👁️</span> <strong>Eye</strong></td>
                   <td><span className="emoji-large">👁️👁️</span> <strong>Eyes</strong></td>
                 </tr>
-                 <tr>
+                <tr>
                   <td>
                     <div className="emoji-image-container">
                       <img src={lipSingleImage} alt="Single Lip" />
@@ -306,13 +249,13 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
                     <div className="emoji-image-container">
                       <span className="emoji-large">🥰</span>
                     </div>
-                    <strong>Cheeks</strong>  
+                    <strong>Cheeks</strong>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-         
+
           <div className="special-card">
             <h3>✨ Special Words ✨</h3>
             <div className="special-grid">
@@ -330,7 +273,7 @@ function GrammarRulePage({ onContinue, speak, skipCelebration }) {
             </div>
           </div>
         </div>
-       
+
         <button className="continue-game-button" onClick={handleContinue}>GOT IT! 🚀</button>
       </div>
     </div>
