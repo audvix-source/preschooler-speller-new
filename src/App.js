@@ -8,7 +8,6 @@ import AlphabetScreen from './AlphabetScreen';
 import LearningScreen from './LearningScreen';
 
 function App() {
-  // Initialize state from localStorage or use defaults
   const getSavedState = () => {
     try {
       const saved = localStorage.getItem('preschoolerSpellerState');
@@ -29,7 +28,6 @@ function App() {
   const [speed, setSpeed] = useState(savedState?.speed || 1);
   const [voices, setVoices] = useState([]);
 
-  // Initialize database on app start
   useEffect(() => {
     const initDatabase = async () => {
       try {
@@ -39,11 +37,9 @@ function App() {
         console.error('❌ Database initialization failed:', error);
       }
     };
-    
     initDatabase();
   }, []);
 
-  // Auto-save state whenever it changes
   useEffect(() => {
     const stateToSave = {
       currentScreen,
@@ -54,7 +50,6 @@ function App() {
       speed,
       lastSaved: new Date().toISOString()
     };
-    
     try {
       localStorage.setItem('preschoolerSpellerState', JSON.stringify(stateToSave));
     } catch (e) {
@@ -86,33 +81,24 @@ function App() {
       console.error("Speech synthesis not supported.");
       return;
     }
-
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.pitch = pitch;
     utterance.rate = speed;
-
     const voiceType = forceGender || guideVoice;
-
     if (voiceType === 'female') {
       const femaleVoice = voices.find(v =>
         v.lang.startsWith('en') &&
         (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
       );
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
-      }
+      if (femaleVoice) utterance.voice = femaleVoice;
     } else if (voiceType === 'male') {
       const maleVoice = voices.find(v =>
         v.lang.startsWith('en') &&
         (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
       );
-
-      if (maleVoice) {
-        utterance.voice = maleVoice;
-      }
+      if (maleVoice) utterance.voice = maleVoice;
     }
-
     window.speechSynthesis.speak(utterance);
   };
 
@@ -140,7 +126,13 @@ function App() {
       case 'stats':
         return <StatsScreen onNavigate={navigateTo} speak={speak} />;
       default:
-        return <MainScreen onNavigate={navigateTo} speak={speak} setGuideVoice={setGuideVoice} settings={{ brightness, pitch, speed }} setters={{ setBrightness, setPitch, setSpeed }}/>;
+        return <MainScreen
+          onNavigate={navigateTo}
+          speak={speak}
+          setGuideVoice={setGuideVoice}
+          settings={{ brightness, pitch, speed }}
+          setters={{ setBrightness, setPitch, setSpeed }}
+        />;
     }
   };
 

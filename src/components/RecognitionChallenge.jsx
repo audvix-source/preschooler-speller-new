@@ -161,7 +161,14 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
 
           // ✅ Use randomized slot color when no feedback active.
           // When feedback IS active, let the CSS feedback classes take over.
-          const bgColor = showFeedback ? undefined : slotColors.current[index];
+          // ✅ NECKLACE OVERRIDE: force dark background — image is too light otherwise
+          const isNecklace = choice.image &&
+            choice.image.toString().includes('necklace-emoji');
+          const bgColor = showFeedback
+            ? undefined
+            : isNecklace
+              ? '#2C2C2C'
+              : slotColors.current[index];
 
           return (
             <div

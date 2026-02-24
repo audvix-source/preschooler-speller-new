@@ -1,6 +1,7 @@
 /* ===================================================================
-   BEE ANIMATION COMPONENT - ARTISTIC LAYOUT
-   Branch at left, beehive centered, bees fly to RIGHT SIDE
+   BEE ANIMATION COMPONENT
+   Mobile (<769px): positions relative to full 914px screen
+   Desktop (≥769px): positions relative to 420×680 card
    =================================================================== */
 
 .bee-animation-container {
@@ -15,14 +16,11 @@
   background: transparent;
 }
 
-/* ===================================================================
-   TREE BRANCH with TRUNK - stays at left: 24px (moved earlier, do not touch)
-   =================================================================== */
-
+/* ── Branch ── */
 .bee-animation__branch {
   position: absolute;
   bottom: 0;
-  left: 0; /* ✅ Tree position - do not change */
+  left: 0;
   width: auto;
   z-index: 5;
   animation: branchSway 3s ease-in-out infinite;
@@ -36,14 +34,15 @@
   display: block;
 }
 
+/* ── Beehive ── */
 .bee-animation__beehive {
   position: absolute;
   bottom: 50px;
-  left: 120px; /* ✅ Moved back LEFT by 24px (was 144px) */
+  left: 120px;
   transform: none;
   animation: beehiveGrow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
              beehiveSwing 2.5s ease-in-out infinite 0.5s;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   z-index: 7;
 }
 
@@ -57,24 +56,21 @@
   50%       { transform: rotate(2deg); }
 }
 
-/* ===================================================================
-   BEES
-   =================================================================== */
-
+/* ── Bees ── */
 .bee-animation__bee {
   position: absolute;
   bottom: 130px;
-  left: calc(50% - 16px); /* ✅ Moved back LEFT by 24px (was calc(50% + 8px)) to match beehive */
+  left: calc(50% - 16px);
   width: var(--bee-size);
   height: var(--bee-size);
   transform-origin: center;
   opacity: 0;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
   z-index: 999;
 }
 
 .bee-animation__bee--to-right-side {
-  animation: 
+  animation:
     beeFlyToRightSide var(--duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
     beeWingFlap 0.2s linear infinite;
   animation-delay: var(--start-delay);
@@ -121,10 +117,12 @@
   50%       { filter: drop-shadow(0 3px 6px rgba(0,0,0,.25)) brightness(1.05); }
 }
 
-/* ===================================================================
-   RESPONSIVE
-   =================================================================== */
+@keyframes branchSway {
+  0%, 100% { transform: rotate(0deg); }
+  50%       { transform: rotate(1deg); }
+}
 
+/* ── DESKTOP (≥769px) — card layout ── */
 @media only screen and (min-width: 769px) {
   .bee-animation-container {
     max-width: 420px;
@@ -132,18 +130,48 @@
     transform: translateX(-50%);
     border-radius: 0 0 20px 20px;
   }
+
+  .bee-animation__branch img {
+    height: 450px;
+  }
+
+  .bee-animation__beehive img {
+    height: 300px;
+  }
 }
 
-@media (max-width: 768px) {
-  .bee-animation__branch  { height: 90%; }
-  .bee-animation__beehive { top: 50px; }
-  .bee-animation__bee     { top: 250px; }
+/* ── MOBILE (<769px) — full screen 412×914 ── */
+@media only screen and (max-width: 768px) {
+  .bee-animation-container {
+    height: 55%;   /* taller on mobile so tree fills bottom half */
+  }
+
+  .bee-animation__branch {
+    bottom: 0;
+    left: 0;
+  }
+
+  .bee-animation__branch img {
+    height: 380px;  /* slightly shorter than desktop so it fits */
+    width: auto;
+  }
+
+  .bee-animation__beehive {
+    bottom: 60px;
+    left: 100px;
+  }
+
+  .bee-animation__beehive img {
+    height: 220px;  /* scaled down for mobile */
+    width: auto;
+  }
+
+  .bee-animation__bee {
+    bottom: 100px;
+  }
 }
 
-/* ===================================================================
-   PERFORMANCE
-   =================================================================== */
-
+/* ── Performance ── */
 .bee-animation__bee     { will-change: transform, opacity; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .bee-animation__beehive { will-change: transform, opacity; }
 .bee-animation__branch  { will-change: transform; }

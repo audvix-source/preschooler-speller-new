@@ -443,21 +443,23 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
               <div className="keyboard-wrapper-container">
                 <div className="challenge-keyboard">
                   {alphabet.map(letter => {
-                    const isUsed = userAnswer.filter(l => l === letter).length >= 
-                                   currentQuestion.word.word.toUpperCase().split('').filter(l => l === letter).length;
-                    const isNeeded = isLetterStillNeeded(letter, currentQuestion.word.word, userAnswer);
-                    
-                    return (
-                      <button
-                        key={letter}
-                        className={`keyboard-key ${isNeeded ? 'needed-letter' : 'not-needed-letter'} ${isUsed ? 'used' : ''}`}
-                        onClick={() => handleLetterClick(letter)}
-                        disabled={showFeedback}
-                      >
-                        {letter}
-                      </button>
-                    );
-                  })}
+  const wordUpper = currentQuestion.word.word.toUpperCase();
+  const totalNeeded = wordUpper.split('').filter(l => l === letter).length;
+  const alreadyUsed = userAnswer.filter(l => l === letter).length;
+  const isUsed = (totalNeeded > 0) && (alreadyUsed >= totalNeeded);
+  const isNeeded = alreadyUsed < totalNeeded;
+  
+  return (
+    <button
+      key={letter}
+      className={`keyboard-key ${isUsed ? 'used' : isNeeded ? 'needed-letter' : 'not-needed-letter'}`}
+      onClick={() => handleLetterClick(letter)}
+      disabled={showFeedback || isUsed}
+    >
+      {letter}
+    </button>
+  );
+})}
                 </div>
 
                 <div className="challenge-controls">

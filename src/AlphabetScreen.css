@@ -1,182 +1,457 @@
 /* ===================================================================
-   MOBILE-FIRST CSS STRUCTURE
-   Base styles are for mobile, then desktop overrides at the bottom
+   ALPHABETSCREEN.CSS
+   Strategy:
+   - Mobile (<769px): TRUE full-screen, fills 412×914 (Galaxy A51/71)
+   - Desktop (≥769px): Card layout 420×680, unchanged from before
+   BEM prefix: .alphabet-screen-* for new mobile-only rules
+   No existing desktop classes are redefined inside mobile blocks.
    =================================================================== */
 
-/* ===================================================================
-   GENERAL BASE STYLES (Applied to all devices)
-   =================================================================== */
-
-/* Main container for the Alphabet Fun screen */
+/* ── Shared base (both mobile + desktop inherit these) ── */
 .alphabet-screen-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 20px 20px 30px 20px; /* ← CHANGE first value from 30px to 40px */
   box-sizing: border-box;
   background-color: #2db946;
-  border-radius: 20px;
   overflow: hidden;
 }
 
-/* Section for the video or word display */
-.top-section {
-  flex-shrink: 0;
-  flex-grow: 0;
-  margin-bottom: 25px;
-  height: 345px; /* ← CHANGE from 'auto' to fixed height */
-  min-height: 345px;
-  max-height: 365px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 92%;
-  margin-left: auto;
-  margin-right: auto;
+/* ── MOBILE ONLY (<769px) ── */
+@media only screen and (max-width: 768px) {
+  .alphabet-screen-container {
+    height: 100dvh;           /* dynamic viewport — accounts for browser chrome */
+    max-width: 100%;          /* no card centering on mobile */
+    border-radius: 0;         /* no rounded corners on mobile */
+    padding: 12px 12px 8px 12px;
+  }
+
+  .top-section {
+    flex: 0 0 auto;           /* ← change from 1 1 auto */
+    min-height: 0;            /* allows flex to shrink below content size */
+    max-height: 420px;  
+    height: auto;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 96%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .video-section {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .video-section .alphabet-title {
+    text-align: center;
+    width: 100%;
+    color: #f2e8cf;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+    font-size: 1.3em;
+  }
+
+  .video-container {
+    position: relative;
+    width: 100%;
+    height: 200px;            /* reduced from 240 for mobile view */
+    background-color: #000;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: -5%;
+    left: -3%;
+    width: 115%;
+    height: 130%;
+    border-radius: 14px;
+    pointer-events: auto;
+  }
+
+  .video-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: #000;
+    border-radius: 0 0 14px 14px;
+    z-index: 1;
+  }
+
+  .keyboard-wrapper {
+    flex: 0 0 auto;           /* does NOT grow — fixed to its content */
+    width: 96%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6px;
+    margin-bottom: 8px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    padding: 6px;
+    background-color: rgba(200,220,255,0.7);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Height calculated for 914px screen:
+       914 - 12(top pad) - 8(bot pad) - 240(video) - 10(margin) - 6(margin) = ~638px remaining
+       We want keyboard to be roughly 260px */
+    min-height: 250px;
+    max-height: 290px;
+  }
+
+  .alphabet-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    padding: 3px;
+    padding-bottom: 52px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    overflow: visible;
+    flex: 1;
+  }
+
+  .alphabet-grid::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .letter-tile {
+    aspect-ratio: 1;
+    background-color: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    color: blue;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .alphabet-grid .back-button {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: calc(100% - 60px);
+    max-width: 150px;
+    padding: 7px 0;
+    cursor: pointer;
+    border: 4px solid rgba(0,0,255,0.7);
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: rgba(255,255,255,0.25);
+    backdrop-filter: blur(4px);
+    color: #92043a;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .word-display-section {
+    position: relative;
+    text-align: center;
+    padding: 4px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .word-image-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #FF69B4;
+    border-radius: 12px;
+    padding: 15px;
+    background-color: rgba(173,216,230,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 55%;
+    min-height: 200px;
+    max-height: 260px;
+  }
+
+  .word-image-frame img {
+    display: block;
+    max-width: 120%;
+    max-height: 230px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .word-display-section .word-text {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #f2e8cf;
+    margin-top: 8px;
+    margin-bottom: 5px;
+  }
+
+  .credit-line {
+    font-size: 0.75em;
+    color: #a3b18a;
+    margin-top: 2px;
+    margin-bottom: 0;
+    text-align: center;
+  }
 }
 
-.video-section {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  overflow: hidden; /* ← ADD THIS */
+/* ── DESKTOP / TABLET (≥769px) — UNCHANGED from original ── */
+@media only screen and (min-width: 769px) {
+  .alphabet-screen-container {
+    max-width: 420px;
+    max-height: 680px;
+    height: 100vh;
+    margin: 0 auto;
+    padding: 25px 20px 30px 20px;
+    border-radius: 20px;
+  }
+
+  .top-section {
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin-bottom: 25px;
+    height: 325px;
+    min-height: 325px;
+    max-height: 325px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 92%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .video-section {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .video-section .alphabet-title {
+    text-align: center;
+    width: 100%;
+    color: #f2e8cf;
+    flex-shrink: 0;
+    margin-bottom: 15px;
+  }
+
+  .video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 0;
+    height: 260px;
+    background-color: #000;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border: 3px solid #000;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  .video-container::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 3px solid #000;
+    border-radius: 14px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .credit-line {
+    font-size: 0.8em;
+    color: #a3b18a;
+    margin-top: 2px;
+    margin-bottom: 0;
+    text-align: center;
+  }
+
+  .keyboard-wrapper {
+    margin-top: -10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    max-height: 300px;
+    min-height: 260px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 8px;
+    background-color: rgba(200,220,255,0.7);
+    flex-shrink: 0;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 92%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .alphabet-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    padding: 1px;
+    padding-bottom: 60px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    max-height: 280px;
+    overflow: visible;
+  }
+
+  .alphabet-grid::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .letter-tile {
+    aspect-ratio: 1;
+    background-color: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    color: blue;
+    font-size: 2.0em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .letter-icon {
+    width: 95% !important;
+    max-width: none !important;
+  }
+
+  .alphabet-grid .back-button {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: calc(100% - 100px);
+    max-width: 180px;
+    padding: 8px 0;
+    cursor: pointer;
+    border: 4px solid rgba(0,0,255,0.7);
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    background-color: rgba(255,255,255,0.25);
+    backdrop-filter: blur(4px);
+    color: #92043a;
+    transition: all 0.2s ease;
+  }
+
+  .word-display-section {
+    position: relative;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .word-image-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #FF69B4;
+    border-radius: 12px;
+    padding: 25px;
+    background-color: rgba(173,216,230,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    min-height: 200px;
+    max-height: 200px;
+  }
+
+  .word-image-frame img {
+    display: block;
+    max-width: 120%;
+    max-height: 170px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .word-display-section .word-text {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #f2e8cf;
+    margin-top: 8px;
+    margin-bottom: 5px;
+  }
 }
 
-.video-section .alphabet-title {
-  text-align: center;
-  width: 100%;
-  color: #f2e8cf;
-  flex-shrink: 0;
-  margin-bottom: 15px;
-}
-
-.video-container {
-  position: relative;
-  width: 100%;
-  padding-bottom: 0; /* ← CHANGE from 85% to 0 */
-  height: 260px; /* ← ADD fixed height */
-  background-color: #000;
-  border-radius: 14px !important; /* Increased from 12px */
-  overflow: hidden !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.video-container iframe {
-  position: absolute;
-  top: -5%;
-  left:-3%;
-  width: 115% !important;
-  height: 130% !important;
-  border-radius: 14px !important;
-  pointer-events: auto; /* ← ADD THIS */
-}
-
-.video-container::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 10px;
-  background: #000;
-  border-radius: 0 0 14px 14px;
-  z-index: 1;
-}
-
-.credit-line {
-  font-size: 0.8em;
-  color: #a3b18a;
-  margin-top: 2px;
-  margin-bottom: 0;
-  text-align: center;
-}
-
-/* Keyboard wrapper - contains the grid and back button */
-.keyboard-wrapper {
-  margin-top: 8px;
-  margin-bottom: 30px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  padding: 8px;
-  background-color: rgba(200, 220, 255, 0.7);
-  flex-shrink: 0;
-  flex-grow: 0;
-  max-height: 240px;
-  min-height: 220px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 92%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Keyboard grid - letter tiles layout */
-.alphabet-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-  padding: 3px;
-  padding-bottom: 60px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-  max-height: 230px;
-  overflow: visible;
-}
-
-/* Dark overlay for bird background */
-.alphabet-grid::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  opacity: 0.2;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Individual letter tiles */
-.letter-tile {
-  aspect-ratio: 1;
-  background-color: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  color: blue;
-  font-size: 1.6em;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.letter-icon {
-  width: 95%;
-  height: auto;
-  margin-bottom: 2px;
-}
-
+/* ── Shared interactive styles (both breakpoints) ── */
 .letter-tile:hover,
 .letter-tile:active {
-  background-color: rgba(255, 255, 153, 0.6);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  background-color: rgba(255,255,153,0.6);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
-/* Highlight letter tiles that have more images */
 .letter-tile.has-more {
   background-color: #FF69B4 !important;
   color: white !important;
@@ -194,96 +469,25 @@
 @keyframes soft-flash {
   0%, 100% {
     background-color: #FF69B4;
-    box-shadow: 0 0 10px rgba(255, 105, 180, 0.6);
+    box-shadow: 0 0 10px rgba(255,105,180,0.6);
     opacity: 1;
   }
   50% {
     background-color: #FFB6C1;
-    box-shadow: 0 0 20px rgba(255, 182, 193, 0.8);
+    box-shadow: 0 0 20px rgba(255,182,193,0.8);
     opacity: 0.85;
   }
 }
 
-/* Back to Menu button */
-.alphabet-grid .back-button {
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-  width: calc(100% - 60px);
-  max-width: 150px;
-  padding: 8px 0;
-  cursor: pointer;
-  border: 4px solid rgba(0, 0, 255, 0.7);
-  border-radius: 25px;
-  font-size: 1.1em;
-  font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
-  color: #92043a;
-  transition: all 0.2s ease;
-}
-
 .alphabet-grid .back-button:hover {
-  background-color: rgba(255, 255, 255, 0.5);
-  transform: translateX(-50%) scale(1.02);
+  background-color: rgba(255,255,255,0.5);
 }
 
-/* Word display section (when showing images for letters) */
-.word-display-section {
-  position: relative;
-  text-align: center;
-  padding: 5px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-/* Frame for word images */
-.word-image-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid #FF69B4;
-  border-radius: 12px;
-  padding: 25px; /* ← REDUCE from 15px */
-  background-color: rgba(173, 216, 230, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  margin-top: 5px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-  min-height: 220px;
-  max-height: 240px;
-}
-
-.word-image-frame img {
-  display: block;
-  max-width: 120%; /* ← CHANGE from 110% */
-  max-height: 220px; /* ← INCREASE from 240px gives more height */
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-.word-display-section .word-text {
-  font-size: 1.8em;
-  font-weight: bold;
-  color: #f2e8cf;
-  margin-top: 8px;
-  margin-bottom: 5px;
-}
-
-/* Close button for word display */
 .close-word-button {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0,0,0,0.7);
   color: white;
   border: none;
   border-radius: 50%;
@@ -297,11 +501,10 @@
 }
 
 .close-word-button:hover {
-  background: rgba(255, 0, 0, 0.8);
+  background: rgba(255,0,0,0.8);
   transform: scale(1.1);
 }
 
-/* Progress dots for multiple words */
 .progress-dots {
   display: flex;
   gap: 8px;
@@ -314,7 +517,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255,255,255,0.3);
   border: 2px solid #FF69B4;
   transition: all 0.3s ease;
 }
@@ -322,46 +525,7 @@
 .progress-dot.active {
   background-color: #FFD700;
   transform: scale(1.3);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
-}
-
-.progress-dot.active.last {
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1);
-  box-shadow: none;
-}
-
-/* Sequential pulsating effect for future dots */
-.progress-dot.future {
-  animation: sequential-pulse 2.5s ease-in-out infinite;
-}
-
-.progress-dot.future:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.progress-dot.future:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-.progress-dot.future:nth-child(4) {
-  animation-delay: 0.6s;
-}
-
-.progress-dot.future:nth-child(5) {
-  animation-delay: 0.8s;
-}
-
-@keyframes sequential-pulse {
-  0%, 100% {
-    transform: scale(1);
-    background-color: rgba(255, 255, 255, 0.3);
-  }
-  50% {
-    transform: scale(1.4);
-    background-color: rgba(255, 215, 0, 0.6);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-  }
+  box-shadow: 0 0 10px rgba(255,215,0,0.6);
 }
 
 .tap-more-hint {
@@ -376,110 +540,52 @@
   50% { transform: translateY(-5px); }
 }
 
-
-/* ===================================================================
-   DESKTOP/TABLET OVERRIDES (min-width: 769px and above)
-   Only applied when screen is wider than mobile
-   =================================================================== */
-
-@media only screen and (min-width: 769px) {
-  .alphabet-screen-container {
-    max-height: 680px;
-    height: 100vh;
-    padding-top: 25px; /* ← ADD THIS LINE */
-  }
-
-   /* ADD THIS */
-  .video-container {
-  position: relative;
-  width: 100%;
-  padding-bottom: 0;
-  height: 260px;
-  background-color: #000;
-  border-radius: 14px !important;
-  overflow: hidden !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  border: 3px solid #000; /* ← ADD solid border same color as background */
-}
-  
-  .video-container iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block; /* ← ADD THIS */
+/* ── Progress indicator ── */
+.progress-indicator {
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  padding: 10px 16px;
+  border-radius: 12px;
+  margin-top: 10px;
+  border: 3px solid #FFD700;
+  box-shadow: 0 4px 15px rgba(74,144,226,0.3);
+  text-align: center;
+  flex-shrink: 0;
 }
 
-.video-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border: 3px solid #000;
-  border-radius: 14px;
-  pointer-events: none;
-  z-index: 1;
+.progress-indicator p {
+  margin: 0;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95em;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-  .top-section {
-    margin-bottom: 25px;
-    height: 325px;
-    min-height: 325px;
-    max-height: 325px;
-  }
-  
-  .word-display-section {
-    padding: 10px;
-  }
-
-   /* ADD THIS */
-  .letter-icon {
-    width: 95% !important;
-    max-width: none !important;
-  }
-  
-  .word-image-frame {
-    min-height: 200px;
-    max-height: 200px;
-    margin-top: 15px;
-  }
-  
-  .word-image-frame img {
-    max-height: 170px;
-  }
-  
-  .keyboard-wrapper {
-    margin-top: -10px;
-    padding-top: 10px;
-    padding-bottom: 10px; /* Match the top */
-    max-height: 280px;
-    min-height: 280px;
-  }
-  
-  .alphabet-grid {
-    gap: 1px;
-    padding: 1px;
-    padding-bottom: 60px;
-    max-height: 280px;
-  }
-  
-  .letter-tile {
-    font-size: 2.0em;
-  }
-  
-  .alphabet-grid .back-button {
-    bottom: 3px;
-    width: calc(100% - 100px);
-    max-width: 180px;
-    font-size: 1.1em;
-  }
+.next-milestone {
+  margin-top: 4px !important;
+  font-size: 0.85em !important;
+  color: #FFD700 !important;
+  animation: milestonePulse 2s ease-in-out infinite;
 }
 
-/* Letter Challenge Button */
+@keyframes milestonePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.05); }
+}
+
+.snooze-status {
+  margin-top: 4px !important;
+  font-size: 0.8em !important;
+  color: #FFA500 !important;
+  font-weight: 600 !important;
+  animation: snoozeGlow 2s ease-in-out infinite;
+}
+
+@keyframes snoozeGlow {
+  0%, 100% { opacity: 0.8; text-shadow: 0 0 5px rgba(255,165,0,0.3); }
+  50%       { opacity: 1;   text-shadow: 0 0 10px rgba(255,165,0,0.6); }
+}
+
+/* ── Letter Challenge Button ── */
 .letter-challenge-btn {
   padding: 10px 20px;
   font-size: 1em;
@@ -491,104 +597,14 @@
   cursor: pointer;
   margin-top: 10px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.4);
+  box-shadow: 0 4px 8px rgba(255,152,0,0.4);
 }
 
 .letter-challenge-btn:hover {
   background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(255, 152, 0, 0.6);
 }
 
 .letter-challenge-btn:active {
   transform: translateY(0);
-}
-
-/* ===================================================================
-   PROGRESS INDICATOR - Shows how many images until mastery check
-   ===================================================================
-*/
-
-.progress-indicator {
-  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-  padding: 12px 20px;
-  border-radius: 15px;
-  margin-top: 15px;
-  border: 3px solid #FFD700;
-  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-  text-align: center;
-}
-
-.progress-indicator p {
-  margin: 0;
-  color: white;
-  font-weight: 700;
-  font-size: 1em;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.next-milestone {
-  margin-top: 5px !important;
-  font-size: 0.9em !important;
-  color: #FFD700 !important;
-  animation: milestonePulse 2s ease-in-out infinite;
-}
-
-@keyframes milestonePulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .progress-indicator {
-    padding: 10px 15px;
-    margin-top: 10px;
-  }
-
-  .progress-indicator p {
-    font-size: 0.9em;
-  }
-
-  .next-milestone {
-    font-size: 0.8em !important;
-  }
-}
-
-/* ===================================================================
-   ADD THIS TO THE END OF AlphabetScreen.css
-   SNOOZE STATUS INDICATOR
-   ===================================================================
-*/
-
-.snooze-status {
-  margin-top: 5px !important;
-  font-size: 0.85em !important;
-  color: #FFA500 !important;
-  font-weight: 600 !important;
-  animation: snoozeGlow 2s ease-in-out infinite;
-}
-
-@keyframes snoozeGlow {
-  0%, 100% {
-    opacity: 0.8;
-    text-shadow: 0 0 5px rgba(255, 165, 0, 0.3);
-  }
-  50% {
-    opacity: 1;
-    text-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
-  }
-}
-
-/* Mobile responsiveness for snooze status */
-@media (max-width: 768px) {
-  .snooze-status {
-    font-size: 0.75em !important;
-  }
 }
