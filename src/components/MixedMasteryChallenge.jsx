@@ -441,36 +441,39 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
               </div>
 
               <div className="keyboard-wrapper-container">
-                <div className="challenge-keyboard">
-                  {alphabet.map(letter => {
-  const wordUpper = currentQuestion.word.word.toUpperCase();
-  const totalNeeded = wordUpper.split('').filter(l => l === letter).length;
-  const alreadyUsed = userAnswer.filter(l => l === letter).length;
-  const isUsed = (totalNeeded > 0) && (alreadyUsed >= totalNeeded);
-  const isNeeded = alreadyUsed < totalNeeded;
-  
-  return (
-    <button
-      key={letter}
-      className={`keyboard-key ${isUsed ? 'used' : isNeeded ? 'needed-letter' : 'not-needed-letter'}`}
-      onClick={() => handleLetterClick(letter)}
-      disabled={showFeedback || isUsed}
-    >
-      {letter}
-    </button>
-  );
-})}
-                </div>
+  <div className="challenge-keyboard">
+    {alphabet.map(letter => {
+      const wordUpper = currentQuestion.word.word.toUpperCase();
+      const totalNeeded = wordUpper.split('').filter(l => l === letter).length;
+      const alreadyUsed = userAnswer.filter(l => l === letter).length;
+      const isUsed = (totalNeeded > 0) && (alreadyUsed >= totalNeeded);
+      const isNeeded = alreadyUsed < totalNeeded;
+      
+      return (
+        <button
+          key={letter}
+          className={`keyboard-key ${isUsed ? 'used' : isNeeded ? 'needed-letter' : 'not-needed-letter'}`}
+          onClick={() => handleLetterClick(letter)}
+          disabled={showFeedback || isUsed}
+        >
+          {letter}
+        </button>
+      );
+    })}
+  </div>
 
-                <div className="challenge-controls">
-                  <button className="backspace-button" onClick={handleBackspace} disabled={showFeedback}>
-                    ⌫ Backspace
-                  </button>
-                  <button className="exit-button" onClick={handleExit}>
-                    🚪 Exit Challenge
-                  </button>
-                </div>
-              </div>
+  {/* ── NEW WRAPPER for orange-trimmed button box ── */}
+  <div className="button-group-wrapper">
+    <div className="challenge-controls">
+      <button className="backspace-button" onClick={handleBackspace} disabled={showFeedback}>
+  ⌫ Backspace
+</button>
+<button className="exit-button" onClick={handleExit}>
+  🚪 Exit
+</button>
+    </div>
+  </div>
+</div>
             </>
           )}
         </div>

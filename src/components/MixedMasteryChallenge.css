@@ -492,89 +492,73 @@
     font-size: 1.7em;
   }
 
-  /* ── Keyboard wrapper ── tighter top margin, balanced internal space */
-  .keyboard-wrapper-container {
-  margin: 8px 16px 24px 16px;
-  padding: 16px;
-  border: 6px solid #f69905b !important;
-  border-radius: 20px !important;               /* more pronounced rounding */
-  min-height: 340px !important;
-  background: linear-gradient(135deg, #8ff3aa 0%, #9bf1ac 100%) !important; /* ← restore gradient */
-  box-shadow: 
-    inset 0 3px 12px rgba(246,153,5,0.4),
-    0 8px 24px rgba(0,0,0,0.25);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;                       /* allow buttons to sit flush without clipping *
-  }
+ /* ── Keyboard wrapper ── full width, no side margins/padding */
+.keyboard-wrapper-container {
+  margin: 8px 0 12px 0 !important;           /* zero side margins — full width */
+  padding: 0 !important;                     /* no side padding */
+  background: linear-gradient(135deg, #8ff3aa 0%, #9bf1ac 100%) !important;
+  border: 6px solid #f69905 !important;
+  border-radius: 20px !important;
+  box-shadow: inset 0 3px 12px rgba(246,153,5,0.4), 0 8px 24px rgba(0,0,0,0.25) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;                    /* full width */
+  max-width: none !important;
+}
 
-  .challenge-keyboard {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  gap: 0;                            /* no gaps between keys for a clean look */
-  padding: 0 0 20px 0;               /* extra bottom space above buttons */
-  background: transparent;
-  margin: 0;
-  flex-grow: 1;                    /* grows to fill space */
-  }
+/* Grid fills width completely, no gaps */
+.challenge-keyboard {
+  display: grid !important;
+  grid-template-columns: repeat(9, 1fr) !important;
+  gap: 0 !important;                         /* tiles touch edges */
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  flex-grow: 1 !important;
+}
 
-  .challenge-keyboard .keyboard-key {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 4px solid #f69905;     /* thicker orange border */
-    border-radius: 0;              /* remove rounding so edges touch cleanly */
-    margin: 0;
-    height: 56px !important;
-    min-height: 56px !important;
-    padding: 0 !important;
-    font-size: 1.35em;
-    font-weight: 600;
-    line-height: 1;
-    box-sizing: border-box;
-  }
+/* Keys — larger centered letters, no inner padding */
+.challenge-keyboard .keyboard-key {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.5em !important;               /* larger to fill wider tiles */
+  font-weight: 800 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;               /* flat edges for seamless grid */
+  border: 4px solid #f69905 !important;
+  background: #9bf1ac !important;
+  color: #333 !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  line-height: 1 !important;
+}
 
-  /* All letters that belong to the word — fatter & bigger */
-  .challenge-keyboard .keyboard-key.needed-letter,
-  .challenge-keyboard .keyboard-key.used {
-    font-size: 1.65em !important;
-    font-weight: 900 !important;
-    line-height: 1 !important;
-    transform: scale(1.03) !important;
-    border-width: 5px !important;
-  }
+/* Hyphen tile — bigger symbol */
+.challenge-keyboard .keyboard-key:last-child {
+  font-size: 1.8em !important;
+  font-weight: 900 !important;
+}
 
-  .challenge-keyboard .keyboard-key.needed-letter {
-    background: #a5d8ff;
-    color: #004085;
-    box-shadow: 0 0 12px rgba(245,166,35,0.6);
-    animation: neededPulse 1.8s ease-in-out infinite;
-  }
+/* Button bar at bottom — thin, transparent, orange outlines on buttons only */
+.challenge-controls {
+  display: flex !important;
+  gap: 16px !important;
+  padding: 12px 16px !important;
+  background: transparent !important;
+  margin: 0 !important;
+  border-top: 2px solid #f69905 !important;  /* thin orange separator line */
+  flex-shrink: 0 !important;
+}
 
-  .challenge-keyboard .keyboard-key.used {
-    background: #9bf1ac;
-    color: white !important;
-    border: 3px solid #f69905;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-  }
-
-  .challenge-keyboard .keyboard-key.not-needed-letter {
-    font-size: 1.35em !important;
-    font-weight: 600 !important;
-    opacity: 0.75;
-    transform: none !important;
-  }
-
-  .backspace-button,
-  .exit-button {
-    padding: 12px 10px;
-    font-size: 0.95em;
-    border-radius: 14px !important;
-  }
-
-  .question-content {
-    gap: 10px;
-    padding: 12px;
-  }
+.backspace-button,
+.exit-button {
+  flex: 1 !important;
+  padding: 10px 20px !important;
+  font-size: 1em !important;
+  border-radius: 12px !important;
+  border: 3px solid #f69905 !important;     /* orange outline on each button */
+  min-height: 48px !important;
+}
 }
