@@ -272,7 +272,7 @@
 
 .answer-box.filled {
   background: linear-gradient(135deg, #7B68EE 0%, #6A5ACD 100%);
-  color: white;
+  color: #000000 !important;                    /* default black (assume most are needed) */
   transform: scale(1.08);
   border: 3px solid #5B4BC3;
   box-shadow: 0 4px 15px rgba(123,104,238,.4);
@@ -285,7 +285,7 @@
 }
 
 .answer-box.correct-box {
-  background: linear-gradient(135deg, #28A745 0%, #20873A 100%) !important;
+  background: linear-gradient(135deg, #ef283c 0%, #ee181f 100%) !important;
   border-color: #196F3D !important;
   border-style: solid !important;
 }
@@ -345,14 +345,14 @@
 }
 
 .challenge-keyboard .keyboard-key.not-needed-letter {
-  background: #9bf1ac;
-  color: #9d9fb1;
+  background: #609875;
+  color: #dbdbdc;
   border: 3px solid #f69905;
   opacity: 0.7;
 }
 
 .challenge-keyboard .keyboard-key.needed-letter {
-  background: #a5d8ff;
+  background: #08a103 !important;
   color: #000000 !important;   /* pure black */
   border: 2.5px solid #f5a623;
   font-weight: 900;
@@ -422,9 +422,9 @@
 }
 
 .backspace-button {
-  background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
+  background: linear-gradient(135deg, #0c26ea 0%, #1e3aff 100%) !important;
   color: white;
-  border: 3px solid #EA580C;
+  border: 3px solid #030e63;
   box-shadow: 0 4px 12px rgba(249,115,22,.4);
 }
 
@@ -438,9 +438,9 @@
 }
 
 .exit-button {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  background: linear-gradient(135deg, #EF4444 0%, #f00707 100%);
   color: white;
-  border: 3px solid #B91C1C;
+  border: 3px solid #920404;
   box-shadow: 0 4px 12px rgba(239,68,68,.4);
 }
 
@@ -488,10 +488,19 @@
   }
 
   .answer-box {
-    width: 44px !important;
-    height: 54px !important;
-    font-size: 1.7em !important;
-  }
+  width: 44px !important;
+  height: 54px !important;
+  font-size: 1.7em !important;
+  
+  background: #b1eef4 !important;          /* light blue/teal from the image container */
+  border: 3px dashed #BA68C8 !important;   /* keep purple dashed border */
+  border-radius: 10px !important;          /* slight rounding for consistency */
+  box-shadow: 0 2px 8px rgba(187, 222, 251, 0.4) !important;  /* soft blue shadow */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #9C27B0 !important;               /* purple text for filled letters */
+}
 
   /* ── Keyboard container: gold bg + thick orange frame ── */
   .keyboard-wrapper-container {
@@ -521,7 +530,7 @@
 
   /* Letter tiles: no border, bigger letters, perfectly centered */
   .challenge-keyboard .keyboard-key {
-    background: #7fed95 !important;                /* keep light green tile background */
+    background: #96eca8 !important;                /* keep light green tile background */
     border: none !important;                       /* removed orange trimming */
     border-radius: 10px !important;   /* small rounding — adjust 8–12px to taste */
     margin: 0 !important;
@@ -537,12 +546,20 @@
     line-height: 1 !important;
   }
 
-  /* Used/correct letters turn white */
-  .challenge-keyboard .keyboard-key.used,
-  .challenge-keyboard .keyboard-key.correct,
-  .challenge-keyboard .keyboard-key.needed-letter.used {
-    color: white !important;
-  }
+  /* Used needed letters on keyboard — match filled answer box aqua background */
+.challenge-keyboard .keyboard-key.needed-letter.used,
+.challenge-keyboard .keyboard-key.used {
+  background: #04d5f5 !important;   /* exact aqua/teal from filled answer boxes */
+  color: white !important;          /* keep white text for used state */
+  font-size: 2.3em !important;               /* bigger than unused (base is 1.8em) */
+  font-weight: 900 !important;
+  box-shadow: 0 2px 8px rgba(177, 238, 244, 0.5) !important;  /* soft matching shadow */
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;                 /* tight vertical centering */
+}
 
   /* Hyphen tile — slightly larger symbol */
   .challenge-keyboard .keyboard-key:last-child {
