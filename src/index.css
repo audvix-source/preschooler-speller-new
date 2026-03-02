@@ -20,13 +20,16 @@
     display: block;        /* no flex centering — app fills the screen */
   }
 
+  /* ── MOBILE (<769px) ── */
   #root {
     width: 100%;
-    height: 100%;
-    max-width: none;       /* remove card constraint */
-    max-height: none;      /* remove card constraint */
+    height: 100dvh;        /* ← change from 100% to 100dvh */
+    max-width: none;
+    max-height: none;
+    margin: 0;             /* ← add this */
+    padding: 0;            /* ← add this */
     background-color: transparent;
-    border-radius: 0;      /* no rounded corners on mobile */
+    border-radius: 0;
     overflow: hidden;
   }
 

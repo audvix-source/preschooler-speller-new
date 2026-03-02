@@ -23,15 +23,15 @@
     height: 100dvh;           /* dynamic viewport — accounts for browser chrome */
     max-width: 100%;          /* no card centering on mobile */
     border-radius: 0;         /* no rounded corners on mobile */
-    padding: 12px 12px 8px 12px;
+    padding: 20px 12px 8px 12px;   /* ← just change 12px → 20px on the top value */
   }
 
   .top-section {
-    flex: 0 0 auto;           /* ← change from 1 1 auto */
-    min-height: 0;            /* allows flex to shrink below content size */
-    max-height: 420px;  
+    flex: 1 1 auto;           /* let it grow to fill available space */
+    min-height: 0;            
+    max-height: 360px;        /* ← tighten further from 380px */
     height: auto;
-    margin-bottom: 10px;
+    margin-bottom: 2px;       /* ← was 6px, shrink the gap below top-section */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -46,6 +46,7 @@
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
+    padding-top: 8px;                           /* ← use padding instead of margin on title */
   }
 
   .video-section .alphabet-title {
@@ -53,27 +54,31 @@
     width: 100%;
     color: #f2e8cf;
     flex-shrink: 0;
+    margin-top: 15px;                           /* ← pushes title down ~0.5cm */
     margin-bottom: 10px;
+    margin-block-start: 0;                      /* ← overrides browser h2 default */
+    margin-block-end: 0;                        /* ← overrides browser h2 default */
     font-size: 1.3em;
   }
 
   .video-container {
-    position: relative;
-    width: 100%;
-    height: 200px;            /* reduced from 240 for mobile view */
-    background-color: #000;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    flex-shrink: 0;
-  }
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;          /* ← grows to fill remaining top-section space */
+  min-height: 180px;
+  max-height: 320px;       /* ← safety cap so it doesn't go crazy */
+  background-color: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
 
   .video-container iframe {
     position: absolute;
-    top: -5%;
+    top: -52px;                            /* ← push iframe up to hide YouTube's top bar */
     left: -3%;
     width: 115%;
-    height: 130%;
+    height: calc(100% + 52px);             /* ← compensate so bottom isn't clipped */
     border-radius: 14px;
     pointer-events: auto;
   }
@@ -95,7 +100,7 @@
     width: 96%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 6px;
+    margin-top: 0px;          /* ← was 6px/11px, remove gap */
     margin-bottom: 8px;
     border: 2px solid rgba(255,255,255,0.3);
     border-radius: 16px;
@@ -177,11 +182,11 @@
   .word-display-section {
     position: relative;
     text-align: center;
-    padding: 4px 8px;
+    padding: 30px 8px 0px 8px;               /* ← increase top padding, was 10px/20px */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;             /* ← was center, pack content to top */
     height: 100%;
   }
 
@@ -195,6 +200,7 @@
     background-color: rgba(173,216,230,0.3);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     margin-top: 5px;
+    margin-bottom: 12px;                     /* ← add this, pushes labels away from frame */
     margin-left: auto;
     margin-right: auto;
     width: 55%;
@@ -204,8 +210,8 @@
 
   .word-image-frame img {
     display: block;
-    max-width: 120%;
-    max-height: 230px;
+    max-width: 100%;                                /* ← was 120%, contributing to overflow */
+    max-height: 180px;                              /* ← was 230px, rein it back in */
     width: auto;
     height: auto;
     object-fit: contain;
@@ -216,8 +222,10 @@
     font-size: 1.8em;
     font-weight: bold;
     color: #f2e8cf;
-    margin-top: 8px;
-    margin-bottom: 5px;
+    margin-top: 12px;                              /* ← was 4px, give it breathing room */
+    margin-bottom: 2px;                            /* ← was 5px */
+    margin-block-start: 0;                         /* ← browser default killer */
+    margin-block-end: 0;
   }
 
   .credit-line {
@@ -243,10 +251,10 @@
   .top-section {
     flex-shrink: 0;
     flex-grow: 0;
-    margin-bottom: 25px;
+    margin-bottom: 6px;               /* ← reduce bottom gap */
     height: 325px;
     min-height: 325px;
-    max-height: 325px;
+    max-height: 380px;                /* ← tighten from none/420px to reclaim space */        
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -509,8 +517,8 @@
   display: flex;
   gap: 8px;
   justify-content: center;
-  margin-top: 8px;
-  margin-bottom: 10px;
+  margin-top: 4px;                              /* ← was 8px */
+  margin-bottom: 4px;                           /* ← was 10px */
 }
 
 .progress-dot {
@@ -531,7 +539,10 @@
 .tap-more-hint {
   font-size: 1.2em;
   color: #FFD700;
-  margin-top: 8px;
+  margin-top: 4px;          /* ← tighten from 8px */
+  margin-bottom: 0;         /* ← add this */
+  margin-block-start: 0;    /* ← kill browser p default */
+  margin-block-end: 0;      /* ← kill browser p default */
   animation: gentle-bounce 1.5s ease-in-out infinite;
 }
 
