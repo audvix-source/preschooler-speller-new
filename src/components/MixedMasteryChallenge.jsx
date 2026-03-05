@@ -178,6 +178,8 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   const handleLetterClick = (letter) => {
     if (!currentQuestion || showFeedback || currentQuestion.type !== 'spelling') return;
 
+    if (speak) speak(letter);   
+
     const newAnswer = [...userAnswer, letter];
     setUserAnswer(newAnswer);
 
@@ -269,8 +271,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   };
 
   const handleExit = () => {
-    if (speak) speak("Bye!");
-    onExit(score, currentQuestionIndex);
+        onExit(score, currentQuestionIndex);
   };
 
   const handleAnimationComplete = () => {

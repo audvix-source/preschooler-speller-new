@@ -226,54 +226,69 @@ function AlphabetScreen(props) {
     setShowMasteryChallenge(true);
     setSnoozeUntil(null); // Clear any snooze
   };
-
+  const handleSnoozeMasteryCheck = (option) => {
+  console.log('Mastery check snoozed until:', option);
+  setShowHexagonTransition(false);
+  setSnoozeUntil(option);
+  };
   const handleDeclineMasteryCheck = () => {
     setShowHexagonTransition(false);
     setSnoozeUntil(null); // Clear any snooze
   };
 
-  const handleSnoozeMasteryCheck = (option) => {
-    console.log('Mastery check snoozed until:', option);
-    setShowHexagonTransition(false);
-    setSnoozeUntil(option);
-  };
-
- const handleExitMasteryCheck = (score, total) => {
+  const handleExitMasteryCheck = (score, total) => {
   setShowMasteryChallenge(false);
   setSnoozeUntil(null);
   
-  console.log(`Mastery Check Score: ${score}/${total}`);
+  console.log(`Score: ${score}, Total: ${total}, Ratio: ${score/total}`);
   
-  // ✅ SAVE TO DATABASE
   const accuracy = total > 0 ? (score / total) * 100 : 0;
   const isPerfect = score === total;
   
-  // ✅ Build a list of words that were tested
   const wordsTestedString = recentWords
     .map(w => w.word)
     .join(', ');
   
-  // Record overall mastery check with words listed
   scoreDB.recordLearningAttempt(
     `Mastery Check: ${wordsTestedString}`,
     isPerfect
   );
   
-  // Also record each word individually for detailed tracking
   recentWords.forEach((word, index) => {
-    const isCorrect = index < score; // First 'score' words were answered correctly
+    const isCorrect = index < score;
     scoreDB.recordLearningAttempt(
       `${word.letter || word.word[0]}-${word.word}`,
       isCorrect
     );
   });
   
-  if (props.speak) {
-    if (isPerfect) {
-      props.speak(`Perfect score! ${score} out of ${total}!`);
-    } else {
-      props.speak(`You scored ${score} out of ${total}. Keep practicing!`);
-    }
+  if (total === 0) {
+    // say nothing
+  } else if (score === 0) {
+    setTimeout(() => {
+      if (props.speak) props.speak("Don't give up! Try again!");
+    }, 500);
+  } else {
+    const ratio = score / total;
+    setTimeout(() => {
+      if (score === total) {
+        const powerWords = [
+          'Perfect!', 'Excellent!', 'Amazing!', 'You Did It!',
+          'Splendid!', 'Genius!', 'Brilliant!', 'Outstanding!',
+          'Fantastic!', 'Wonderful!'
+        ];
+        const chosen = powerWords[Math.floor(Math.random() * powerWords.length)];
+        if (props.speak) props.speak(chosen);
+      } else if (ratio >= 0.8) {
+        if (props.speak) props.speak("So close! Almost perfect!");
+      } else if (ratio >= 0.6) {
+        if (props.speak) props.speak("Nice work! You're getting there!");
+      } else if (ratio >= 0.4) {
+        if (props.speak) props.speak("Good try! Practice makes perfect!");
+      } else {
+        if (props.speak) props.speak("That's a start! Keep going!");
+      }
+    }, 500);
   }
 };
 
@@ -383,7 +398,7 @@ function AlphabetScreen(props) {
             )}
             
             {selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1 && (
-               <p className="tap-more-hint">👆 Tap {selectedWord.word[0]} for more!</p>
+               <p className="tap-more-hint">👇 Tap {selectedWord.word[0]} for more!</p>
             )}
           </div>
         )}

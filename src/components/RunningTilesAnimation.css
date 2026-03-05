@@ -1,28 +1,3 @@
-/* ── Full-screen overlay wrapper ── */
-.grammar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  overflow: hidden;
-
-  /* Tablet/Desktop: match app card dimensions */
-  @media (min-width: 769px) {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 420px;
-    height: 680px;
-    border-radius: 20px;
-  }
-}
-
 /* ── Tile grid fills the entire overlay ── */
 .tile-animation-container {
   position: absolute;
@@ -67,11 +42,11 @@
 
 /* ── Score card — floats ABOVE the tile grid ── */
 .score-reveal {
-  position: absolute;        /* ← sits above tiles */
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10;               /* ← above z-index:1 tiles */
+  z-index: 10;
 
   background: rgba(255, 255, 255, 0.97);
   border: 5px solid #FFD700;
@@ -83,7 +58,6 @@
     0 0 40px rgba(255, 215, 0, 0.4),
     inset 0 0 20px rgba(255, 215, 0, 0.1);
 
-  /* Bounce-in animation */
   animation: scoreReveal 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
   min-width: 240px;
 }
@@ -154,17 +128,4 @@
   font-weight: 700;
   color: #7F8C8D;
   letter-spacing: 1px;
-}
-
-/* ── Tablet/Desktop card dimensions ── */
-@media (min-width: 769px) {
-  .grammar-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 420px;
-    height: 680px;
-    border-radius: 20px;
-  }
 }

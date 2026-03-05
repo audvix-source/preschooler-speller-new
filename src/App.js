@@ -77,11 +77,13 @@ function App() {
   }, [currentScreen]);
 
   const speak = (text, forceGender = null) => {
-    if (!('speechSynthesis' in window)) {
-      console.error("Speech synthesis not supported.");
-      return;
-    }
-    window.speechSynthesis.cancel();
+  if (!('speechSynthesis' in window)) {
+    console.error("Speech synthesis not supported.");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  
+  setTimeout(() => {                        // ← add this
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.pitch = pitch;
     utterance.rate = speed;
@@ -100,7 +102,8 @@ function App() {
       if (maleVoice) utterance.voice = maleVoice;
     }
     window.speechSynthesis.speak(utterance);
-  };
+  }, 50);                                   // ← 50ms gap after cancel
+};
 
   const navigateTo = (screen, category = '') => {
     setSelectedCategory(category);

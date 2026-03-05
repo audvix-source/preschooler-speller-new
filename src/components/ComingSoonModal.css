@@ -17,7 +17,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,8 +29,8 @@
   background: linear-gradient(135deg, #87CEEB 0%, #98D8E8 100%);
   border-radius: 20px;
   padding: 15px 20px;
-  width: 95vw;
-  height: 95vh;
+  width: 100vw;
+  height: 100vh;
   max-width: 420px;
   max-height: 680px;
   display: flex;

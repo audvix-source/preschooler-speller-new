@@ -199,19 +199,19 @@
     padding: 15px;
     background-color: rgba(173,216,230,0.3);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    margin-top: 5px;
+    margin-top: -13px;                       /* ← was 5px, pulls up ~0.5cm */
     margin-bottom: 12px;                     /* ← add this, pushes labels away from frame */
     margin-left: auto;
     margin-right: auto;
     width: 55%;
-    min-height: 200px;
-    max-height: 260px;
+    min-height: 240px;                       /* ← was 200px */
+    max-height: 290px;                       /* ← was 260px */
   }
 
   .word-image-frame img {
     display: block;
-    max-width: 100%;                                /* ← was 120%, contributing to overflow */
-    max-height: 180px;                              /* ← was 230px, rein it back in */
+    max-width: 100%;                          /* ← was 120%, contributing to overflow */
+    max-height: 220px;                        /* ← was 180px */
     width: auto;
     height: auto;
     object-fit: contain;
@@ -252,9 +252,9 @@
     flex-shrink: 0;
     flex-grow: 0;
     margin-bottom: 6px;               /* ← reduce bottom gap */
-    height: 325px;
-    min-height: 325px;
-    max-height: 380px;                /* ← tighten from none/420px to reclaim space */        
+    height: 370px;                    /* ← was 325px */
+    min-height: 370px;                /* ← was 325px */
+    max-height: 400px;                /* ← was 380px */      
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -320,7 +320,7 @@
   }
 
   .keyboard-wrapper {
-    margin-top: -10px;
+    margin-top: -5px;
     padding-top: 10px;
     padding-bottom: 10px;
     max-height: 300px;
@@ -424,20 +424,20 @@
     border: 3px solid #FF69B4;
     border-radius: 12px;
     padding: 25px;
-    background-color: rgba(173,216,230,0.3);
+    background-color: #6fd3ef;                        /* ← warm cream/yellow */
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    margin-top: 15px;
+    margin-top: 15px;                                   /* ← was 15px, pulls up ~0.5cm */
+    min-height: 240px;                                  /* ← was 200px */
+    max-height: 200px;                                  /* ← was 200px */
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
-    min-height: 200px;
-    max-height: 200px;
+    width: 60%;
   }
 
   .word-image-frame img {
     display: block;
-    max-width: 120%;
-    max-height: 170px;
+    max-width: 100%;
+    max-height: 250px;                                   /* ← was 170px */
     width: auto;
     height: auto;
     object-fit: contain;
@@ -517,7 +517,7 @@
   display: flex;
   gap: 8px;
   justify-content: center;
-  margin-top: 4px;                              /* ← was 8px */
+  margin-top: 2px;                              /* ← was 8px */
   margin-bottom: 4px;                           /* ← was 10px */
 }
 
@@ -539,7 +539,7 @@
 .tap-more-hint {
   font-size: 1.2em;
   color: #FFD700;
-  margin-top: 4px;          /* ← tighten from 8px */
+  margin-top: -1px;          /* ← tighten from 8px */
   margin-bottom: 0;         /* ← add this */
   margin-block-start: 0;    /* ← kill browser p default */
   margin-block-end: 0;      /* ← kill browser p default */
@@ -618,4 +618,19 @@
 
 .letter-challenge-btn:active {
   transform: translateY(0);
+}
+
+@media only screen and (min-width: 769px) {
+  .progress-dots {
+    margin-bottom: 8px;   /* ← was 4px, matches "Deer" → dots spacing */
+  }
+
+  .tap-more-hint {
+    margin-top: -1px;      /* ← was 4px, matches "Deer" → dots spacing */
+    margin-bottom: 10px;   /* ← was 0, adds space before keyboard */
+  }
+
+  .keyboard-wrapper {
+    margin-top: -20px;      /* ← was -10px, adds space above keyboard */
+  }
 }

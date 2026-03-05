@@ -356,19 +356,26 @@
   color: #000000 !important;   /* pure black */
   border: 2.5px solid #f5a623;
   font-weight: 900;
-  font-size: 1.4em;
+  font-size: 1.9em;
   opacity: 1;
   box-shadow: 0 0 10px rgba(245,166,35,.55);
   animation: neededPulse 1.2s ease-in-out infinite;
 }
 
 .challenge-keyboard .keyboard-key.used {
-  color: white !important;
-  font-size: 1.4em;
-  font-weight: 900;
-  background: #9bf1ac;
-  border: 3px solid #f69905;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  color: white !important;                            /* ← same purple as answer box text */
+  font-size: 1.9em;
+  font-weight: 900 !important;
+  background: #18dcee !important;                     /* ← same teal as answer boxes */
+  border: none !important;
+  text-shadow: none !important;
+}
+
+.challenge-keyboard .keyboard-key.needed-letter.used {
+  background: #18dcee !important;                     /* ← unified, same strong teal */                    
+  color: #9C27B0 !important;
+  font-size: 1.9em !important;
+  font-weight: 900 !important;
 }
 
 @keyframes neededPulse {
@@ -488,18 +495,18 @@
   }
 
   .answer-box {
-  width: 44px !important;
-  height: 54px !important;
-  font-size: 1.7em !important;
+  width: 50px !important;
+  height: 58px !important;
+  font-size: 2.5em !important;
   
-  background: #b1eef4 !important;          /* light blue/teal from the image container */
-  border: 3px dashed #BA68C8 !important;   /* keep purple dashed border */
-  border-radius: 10px !important;          /* slight rounding for consistency */
+  background: #b1eef4 !important;                 /* light blue/teal from the image container */
+  border: 3px dashed #BA68C8 !important;          /* keep purple dashed border */
+  border-radius: 10px !important;                   /* slight rounding for consistency */
   box-shadow: 0 2px 8px rgba(187, 222, 251, 0.4) !important;  /* soft blue shadow */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  color: #9C27B0 !important;               /* purple text for filled letters */
+  color: #9C27B0 !important;                      /* purple text for filled letters */
 }
 
   /* ── Keyboard container: gold bg + thick orange frame ── */
@@ -580,9 +587,82 @@
   .backspace-button,
   .exit-button {
     flex: 1 !important;
-    padding: 10px 16px !important;
+    padding: 14px 10px !important;                  /* ← taller buttons */
     font-size: 1em !important;
     border-radius: 12px !important;
     min-height: 48px !important;
   }
+}
+
+@media only screen and (max-width: 768px) {
+  .challenge-overlay-fixed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .challenge-container-fixed {
+    background: #FF69B4 !important;          /* ← back to pink */
+    border: 16px solid #f69905 !important;   /* ← thicker orange border */
+    height: 100%;
+    max-height: 100%;
+    border-radius: 20px !important;
+    overflow: hidden;
+  }
+
+  .question-content {
+    padding: 8px 10px;
+    gap: 14px;                                  /* ← spacing between containers */
+  }
+
+  .word-card {
+    height: 180px !important;                   /* ← was 183px, reduced by another ~57px (1.5cm) */
+  }
+
+ .answer-box {
+  width: 48px !important;
+  height: 58px !important;
+  font-size: 2em !important;
+  background: #b1eef4 !important;             /* ← match tablet aqua/teal */
+  border: 5px dashed #BA68C8 !important;      /* ← match tablet purple dashed */
+  border-radius: 10px !important;
+  color: #9C27B0 !important;                  /* ← purple text */
+}
+
+.answer-boxes {
+  padding: 20px 8px !important;
+  min-height: 90px !important;
+  gap: 8px !important;               /* ← more space between tiles */
+}
+
+  .keyboard-wrapper-container {
+    margin: 0 4px 4px 4px;
+    flex-grow: 1 !important;                    /* ← grows to fill extra 1.5cm */
+    flex-shrink: 0;
+    border: 8px solid #f69905 !important;     /* ← match desktop thickness */
+    border-radius: 20px !important;
+    padding: 2px !important;
+    background: #FFD700 !important;           /* ← match desktop gold */
+  }
+
+  .challenge-keyboard .keyboard-key {
+  background: #96eca8 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-size: 1.9em !important;                   /* ← bigger letters */
+  font-weight: 900 !important;
+  color: #7e7e81 !important;
+  padding: 8px 0 !important;                     /* ← taller tiles */
+  width: 100% !important;
+  height: 100% !important;
+}
+
+  .challenge-controls {
+  margin-top: 16px !important;                    /* ← ~1cm gap above buttons */
+  margin-bottom: 16px !important;                 /* ← ~1cm gap below buttons */
+  padding: 0 8px !important;
+}
 }

@@ -20,7 +20,7 @@
   border-radius: 20px !important;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5) !important;
   width: 420px !important;
-  height: 680px !important;
+  height: calc(100% - 2px);                    /* or reduce max-height by 38px */
   padding: 15px !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
@@ -66,7 +66,6 @@
   font-size: 1.3em;
 }
 
-/* ✅ 2×2 equal grid — each card is exactly the same size */
 .rewards-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -75,7 +74,6 @@
   margin-bottom: 10px;
 }
 
-/* ✅ Base card — square-ish, equal size, no spanning */
 .reward-card {
   background: linear-gradient(135deg, #FFE5B4 0%, #FFD700 100%);
   border: 3px solid #FFA500;
@@ -86,7 +84,6 @@
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  /* ✅ Fixed minimum height so all 4 are same size before expansion */
   min-height: 110px;
   display: flex;
   flex-direction: column;
@@ -103,40 +100,22 @@
   animation: rewardBlink 1s ease-in-out infinite;
 }
 
-/* ✅ When expanded: card spans full width and grows to fit content */
 .reward-card.expanded {
-  grid-column: 1 / -1;   /* full row */
-  min-height: 110px;      /* same base, grows with content */
+  grid-column: 1 / -1;
+  min-height: 110px;
   justify-content: flex-start;
   padding: 16px;
 }
 
 @keyframes rewardBlink {
   0%, 100% { box-shadow: 0 4px 8px rgba(0,0,0,.15); transform: scale(1); }
-  50%       { box-shadow: 0 0 20px rgba(255,215,0,.8), 0 0 40px rgba(255,215,0,.6); transform: scale(1.05); }
+  50% { box-shadow: 0 0 20px rgba(255,215,0,.8), 0 0 40px rgba(255,215,0,.6); transform: scale(1.05); }
 }
 
-.reward-icon {
-  font-size: 2.2em;
-  margin-bottom: 4px;
-}
+.reward-icon { font-size: 2.2em; margin-bottom: 4px; }
+.reward-count { font-size: 1.8em; font-weight: 900; color: #E74C3C; margin-bottom: 2px; }
+.reward-label { font-size: 0.8em; color: #2C3E50; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.reward-count {
-  font-size: 1.8em;
-  font-weight: 900;
-  color: #E74C3C;
-  margin-bottom: 2px;
-}
-
-.reward-label {
-  font-size: 0.8em;
-  color: #2C3E50;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* ── Expanded detail panel (inside the card) ── */
 .reward-details {
   margin-top: 14px;
   padding-top: 12px;
@@ -155,44 +134,14 @@
   text-align: center;
 }
 
-.reward-details-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.reward-detail-item {
-  background: rgba(255,255,255,.6);
-  padding: 8px 10px;
-  border-radius: 8px;
-  font-size: 0.85em;
-}
-
-.detail-body-part {
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 3px;
-  text-transform: capitalize;
-}
-
-.detail-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9em;
-  color: #555;
-}
-
+.reward-details-list { display: flex; flex-direction: column; gap: 8px; }
+.reward-detail-item { background: rgba(255,255,255,.6); padding: 8px 10px; border-radius: 8px; font-size: 0.85em; }
+.detail-body-part { font-weight: bold; color: #2c3e50; margin-bottom: 3px; text-transform: capitalize; }
+.detail-info { display: flex; justify-content: space-between; font-size: 0.9em; color: #555; }
 .detail-accuracy { color: #27ae60; font-weight: 600; }
-.detail-date     { color: #7f8c8d; }
+.detail-date { color: #7f8c8d; }
+.no-details { text-align: center; color: #999; font-style: italic; padding: 16px; }
 
-.no-details {
-  text-align: center;
-  color: #999;
-  font-style: italic;
-  padding: 16px;
-}
-
-/* ── New Rewards Banner ── */
 .new-rewards-banner {
   background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
   color: white;
@@ -200,12 +149,6 @@
   border-radius: 10px;
   text-align: center;
   margin-top: 15px;
-}
-
-.new-rewards-banner p {
-  margin: 0 0 10px 0;
-  font-weight: 700;
-  font-size: 1.1em;
 }
 
 .dismiss-rewards-btn {
@@ -219,8 +162,6 @@
   font-size: 1em;
 }
 
-.dismiss-rewards-btn:hover { background: #FFD700; }
-
 /* ── Learning Progress Section ── */
 .learning-progress-section {
   background: white;
@@ -230,86 +171,14 @@
   box-shadow: 0 4px 12px rgba(0,0,0,.1);
 }
 
-.learning-progress-section h2 {
-  text-align: center;
-  color: #8B4513;
-  margin: 0 0 15px 0;
-  font-size: 1.3em;
-}
-
-.category-header {
-  font-size: 1.1em;
-  color: #2C3E50;
-  margin: 20px 0 10px 0;
-  font-weight: 700;
-  border-bottom: 2px solid #3498db;
-  padding-bottom: 5px;
-}
-
-.learning-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.learning-item {
-  background: linear-gradient(135deg, #E8F4F8 0%, #D4E9F2 100%);
-  border: 2px solid #4A90E2;
-  border-radius: 12px;
-  padding: 12px;
-  position: relative;
-}
-
-.learning-item.clickable {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.learning-item.clickable:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
-}
-
-.learning-item.clickable:active { transform: translateY(0); }
-
-.learning-word {
-  font-size: 1.3em;
-  font-weight: 900;
-  color: #2C3E50;
-  margin-bottom: 8px;
-}
-
-.learning-stats {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.stat { display: flex; align-items: center; gap: 5px; }
-.stat-label { font-size: 0.85em; color: #7F8C8D; }
+.category-header { font-size: 1.1em; color: #2C3E50; margin: 20px 0 10px 0; font-weight: 700; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+.learning-list { display: flex; flex-direction: column; gap: 12px; }
+.learning-item { background: linear-gradient(135deg, #E8F4F8 0%, #D4E9F2 100%); border: 2px solid #4A90E2; border-radius: 12px; padding: 12px; position: relative; }
+.learning-item.clickable { cursor: pointer; transition: all 0.2s ease; }
+.learning-word { font-size: 1.3em; font-weight: 900; color: #2C3E50; margin-bottom: 8px; }
+.learning-stats { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 .stat-value { font-size: 1em; font-weight: 700; color: #E74C3C; }
-.mastery-stars { font-size: 1.2em; }
-
-.perfect-badge {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8em;
-  font-weight: 700;
-  text-align: center;
-  margin-top: 8px;
-  display: inline-block;
-}
-
-.no-data-message {
-  text-align: center;
-  color: #7F8C8D;
-  font-style: italic;
-  padding: 20px;
-}
+.perfect-badge { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 700; display: inline-block; }
 
 /* ── Overall Stats Section ── */
 .overall-stats-section {
@@ -320,36 +189,11 @@
   box-shadow: 0 4px 12px rgba(0,0,0,.1);
 }
 
-.overall-stats-section h2 {
-  text-align: center;
-  color: #8B4513;
-  margin: 0 0 15px 0;
-  font-size: 1.3em;
-}
-
-.stats-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.summary-item {
-  background: linear-gradient(135deg, #FFE5B4 0%, #FFDAB9 100%);
-  border: 2px solid #FFA500;
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.summary-icon  { font-size: 2em; }
+.stats-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.summary-item { background: linear-gradient(135deg, #FFE5B4 0%, #FFDAB9 100%); border: 2px solid #FFA500; border-radius: 12px; padding: 12px; text-align: center; }
 .summary-value { font-size: 1.8em; font-weight: 900; color: #E74C3C; }
-.summary-label { font-size: 0.85em; color: #2C3E50; font-weight: 600; }
 
-/* ── Back Button ── */
+/* ── Buttons & Scrollbar ── */
 .stats-back-button {
   background: linear-gradient(135deg, #FF6347 0%, #DC143C 100%) !important;
   color: white !important;
@@ -361,143 +205,100 @@
   cursor: pointer !important;
   width: 100% !important;
   margin-top: 10px !important;
-  flex-shrink: 0 !important;
   box-shadow: 0 6px 20px rgba(255,99,71,.4) !important;
-  transition: all 0.3s ease !important;
 }
 
-.stats-back-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(255,99,71,.6);
-}
-
-.loading-message {
-  color: white;
-  font-size: 1.5em;
-  text-align: center;
-  padding: 40px;
-}
-
-/* ── Scrollbar ── */
 .stats-scrollable-content::-webkit-scrollbar { width: 14px; }
-.stats-scrollable-content::-webkit-scrollbar-track {
-  background: rgba(255,215,0,.2);
-  border-radius: 10px;
-  border: 2px solid rgba(255,165,0,.3);
-}
-.stats-scrollable-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  border-radius: 10px;
-  border: 2px solid rgba(255,255,255,.3);
-}
-.stats-scrollable-content::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+.stats-scrollable-content::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); border-radius: 10px; }
+
+/* ── Scoring Legend (Button Context) ── */
+.scoring-legend-container { 
+  width: 100%; 
+  margin: 15px 0; 
 }
 
-/* ── Scoring Legend styles (unchanged) ── */
-.scoring-legend-container { width: 100%; margin: 15px 0; }
+.legend-toggle-button { 
+  width: 100%; 
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%); 
+  color: white; 
+  border-radius: 15px; 
+  padding: 15px; 
+  cursor: pointer; 
+  font-size: 1em;        
+  font-weight: bold;  
+  border: 3px solid #1a3a6b !important;   
+}
 
-.legend-toggle-button {
+/* ============================================================
+   NEW RESET FEATURE RULES (Mobile First / Global)
+   ============================================================ */
+
+.reset-scores-button {
   width: 100%;
-  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  padding: 12px;
+  background: #ff5722;
   color: white;
-  border: none;
-  border-radius: 15px;
-  padding: 15px 20px;
-  font-size: 1.1em;
+  border: 3px solid #b71c1c !important;  /* dark red border */
+  border-radius: 12px;
+  font-size: 1em;
   font-weight: bold;
   cursor: pointer;
+  margin: 8px 0 16px 0;
+  box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
+}
+
+.reset-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,.2);
-  transition: all 0.3s ease;
+  z-index: 10000;                            /* Above everything */
 }
 
-.legend-toggle-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,.3);
-  background: linear-gradient(135deg, #357ABD 0%, #2A5F9E 100%);
-}
-
-.legend-icon { font-size: 1.3em; }
-.legend-text { flex: 1; text-align: center; }
-.legend-arrow { font-size: 0.8em; transition: transform 0.3s ease; }
-.legend-arrow.expanded { transform: rotate(180deg); }
-
-.legend-content {
+.reset-modal {
   background: white;
-  border-radius: 15px;
-  padding: 20px 15px;
-  margin-top: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.legend-section { margin-bottom: 20px; }
-.legend-section:last-of-type { margin-bottom: 10px; }
-
-.legend-heading {
-  color: #8B4513;
-  font-size: 1.1em;
-  font-weight: bold;
-  margin: 0 0 12px 0;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #FFD700;
+  border-radius: 20px;
+  padding: 30px 25px;                        /* ← was 25px 20px */
+  width: 30px 25px 40px 25px;                /* ← increase bottom padding from 30px to 40px */
+  max-width: 380px;
+  max-height: 85vh;
+  overflow-y: auto;
   text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  min-height: 480px;                         /* ← add this to match screen 2 height */
+  margin-bottom: 20px;  
 }
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #FFF9E6 0%, #FFFACD 100%);
-  border-radius: 10px;
-  border: 2px solid #FFE5B4;
-  transition: all 0.2s ease;
-}
+.reset-step-icon { font-size: 4em; margin-bottom: 15px; }
+.reset-title { color: #e53935; font-size: 1.5em; font-weight: 900; margin-bottom: 15px; }
+.reset-explanation { color: #333; font-size: 1.1em; line-height: 1.8; margin-bottom: 25px; }
 
-.legend-item:hover {
-  transform: translateX(5px);
-  border-color: #FFD700;
-  box-shadow: 0 2px 6px rgba(0,0,0,.1);
-}
-
-.legend-symbol { font-size: 1.5em; min-width: 50px; text-align: center; flex-shrink: 0; }
-.legend-label  { font-weight: bold; color: #2C3E50; flex: 1; font-size: 0.95em; }
-.legend-value  { color: #E74C3C; font-weight: 600; font-size: 0.9em; text-align: right; }
-
-.legend-tip-box {
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-  border: 3px solid #4CAF50;
+.reset-preview {
+  background: #fff9e6;
+  border: 2px solid #ffd700;
   border-radius: 12px;
-  padding: 15px;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  margin-top: 15px;
-  box-shadow: 0 3px 8px rgba(76,175,80,.2);
+  padding: 10px;
+  margin-bottom: 15px;
 }
 
-.tip-icon { font-size: 2em; flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+.preview-rewards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
+.preview-reward-card { background: #ffe082; border-radius: 10px; padding: 8px 4px; font-size: 0.85em; }
+.preview-reward-card strong { display: block; font-size: 1.3em; color: #e53935; }
+.preview-stats-row { display: flex; justify-content: space-around; margin-bottom: 10px; }
+.preview-stat strong { display: block; font-size: 1.3em; color: #e53935; }
+.preview-warning { font-size: 0.85em; color: #e53935; font-weight: bold; margin-top: 8px; }
 
-@keyframes pulse {
-  0%,100% { transform: scale(1); }
-  50%      { transform: scale(1.1); }
-}
+.reset-buttons { display: flex; flex-direction: column; gap: 10px; }
+.reset-preview-btn { background: #ff9800; color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; cursor: pointer; }
+.reset-confirm-btn { background: #f44336; color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; cursor: pointer; }
+.reset-cancel-btn { background: #4caf50; color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; cursor: pointer; }
 
-.tip-text { color: #2E7D32; font-size: 0.9em; line-height: 1.4; }
-.tip-text strong { color: #1B5E20; display: block; margin-bottom: 5px; }
-
-/* ── Mobile ── */
+/* ── Media Queries ── */
 @media (max-width: 768px) {
   .stats-summary { grid-template-columns: 1fr; }
 }

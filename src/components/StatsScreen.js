@@ -12,6 +12,9 @@ function StatsScreen({ onNavigate, speak }) {
   const [expandedReward, setExpandedReward] = useState(null);
   const [rewardDetails, setRewardDetails] = useState({});
   const [viewedRewards, setViewedRewards] = useState(new Set());
+  
+  // ✅ Reset Logic State
+  const [resetStep, setResetStep] = useState(0); // 0=hidden, 1=explanation, 2=preview
 
   useEffect(() => {
     loadStats();
@@ -51,6 +54,15 @@ function StatsScreen({ onNavigate, speak }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ✅ Reset Handler
+  const handleReset = async () => {
+    await scoreDB.resetAllData();
+    localStorage.removeItem('lastViewedRewards');
+    setResetStep(0);
+    loadStats();
+    if (speak) speak("All scores have been reset to zero.");
   };
 
   const dismissNewRewards = () => {
@@ -105,9 +117,9 @@ function StatsScreen({ onNavigate, speak }) {
 
   // ── Reward card renderer ──
   const REWARD_TYPES = [
-    { key: 'star',     icon: '⭐', label: 'Stars',    countKey: 'stars' },
-    { key: 'bronze',   icon: '🥉', label: 'Bronze',   countKey: 'bronze' },
-    { key: 'silver',   icon: '🥈', label: 'Silver',   countKey: 'silver' },
+    { key: 'star',     icon: '⭐', label: 'Stars',     countKey: 'stars' },
+    { key: 'bronze',   icon: '🥉', label: 'Bronze',    countKey: 'bronze' },
+    { key: 'silver',   icon: '🥈', label: 'Silver',    countKey: 'silver' },
     { key: 'champion', icon: '👑', label: 'Champion', countKey: 'champion' },
   ];
 
@@ -123,7 +135,6 @@ function StatsScreen({ onNavigate, speak }) {
         <div className="reward-count">{stats[rtype.countKey] || 0}</div>
         <div className="reward-label">{rtype.label}</div>
 
-        {/* ✅ Expanded details panel */}
         {isExpanded && details && (
           <div className="reward-details">
             <div className="reward-details-header">Achievement History</div>
@@ -179,12 +190,15 @@ function StatsScreen({ onNavigate, speak }) {
 
         <div className="stats-scrollable-content">
           <ScoringLegend />
+          
+          {/* ✅ Reset Button placed after Legend */}
+          <button className="reset-scores-button" onClick={() => setResetStep(1)}>
+            🗑️ Reset All Scores
+          </button>
 
           {/* ── Rewards Section ── */}
           <div className="rewards-section">
             <h2>✨ My Rewards ✨</h2>
-
-            {/* ✅ 2×2 equal grid — no card ever spans columns unless expanded */}
             <div className="rewards-grid">
               {REWARD_TYPES.map(rt => (
                 <RewardCard key={rt.key} rtype={rt} />
@@ -284,6 +298,64 @@ function StatsScreen({ onNavigate, speak }) {
           Back to Menu
         </button>
       </div>
+
+      {/* ✅ Reset Overlay positioned inside the outer stats-screen div */}
+      {resetStep > 0 && (
+        <div className="reset-overlay">
+          <div className="reset-modal">
+            {resetStep === 1 && (
+              <>
+                <div className="reset-step-icon">⚠️</div>
+                <h2 className="reset-title">Reset All Scores?</h2>
+                <p className="reset-explanation">
+                  This will erase <strong>all</strong> your stars, rewards, and learning progress.
+                  <br /><br />
+                  Everything goes back to zero — including streaks, correct answers, and all badges earned.
+                  <br /><br />
+                  Want to see what that looks like first?
+                </p>
+                <div className="reset-buttons">
+                  <button className="reset-preview-btn" onClick={() => setResetStep(2)}>
+                    👀 Show me what happens
+                  </button>
+                  <button className="reset-cancel-btn" onClick={() => setResetStep(0)}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+
+            {resetStep === 2 && (
+              <>
+                <div className="reset-step-icon">🔍</div>
+                <h2 className="reset-title">After reset, this is what you'll see:</h2>
+                <div className="reset-preview">
+                  <div className="preview-rewards-grid">
+                    <div className="preview-reward-card">⭐<br/><strong>0</strong><br/><span>Stars</span></div>
+                    <div className="preview-reward-card">🥉<br/><strong>0</strong><br/><span>Bronze</span></div>
+                    <div className="preview-reward-card">🥈<br/><strong>0</strong><br/><span>Silver</span></div>
+                    <div className="preview-reward-card">👑<br/><strong>0</strong><br/><span>Champion</span></div>
+                  </div>
+                  <div className="preview-stats-row">
+                    <div className="preview-stat">✅<br/><strong>0</strong><br/><span>Correct</span></div>
+                    <div className="preview-stat">📝<br/><strong>0</strong><br/><span>Attempts</span></div>
+                    <div className="preview-stat">🔥<br/><strong>0</strong><br/><span>Streak</span></div>
+                  </div>
+                  <p className="preview-warning">⚠️ All learning progress will also be cleared.</p>
+                </div>
+                <div className="reset-buttons">
+                  <button className="reset-confirm-btn" onClick={handleReset}>
+                    🗑️ Yes, Reset Everything
+                  </button>
+                  <button className="reset-cancel-btn" onClick={() => setResetStep(0)}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

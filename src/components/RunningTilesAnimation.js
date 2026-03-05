@@ -17,16 +17,6 @@ function RunningTilesAnimation({ score, total, onComplete, speak }) {
     window.speechSynthesis.cancel();
 
     // ✅ New narration format: "You got 4 out of 5. Perfect!"
-    const speakTimer = setTimeout(() => {
-      if (speak) {
-        const isPerfect = score === total;
-        const phrase = isPerfect
-          ? `You got ${score} out of ${total}. Perfect!`
-          : `You got ${score} out of ${total}. Great work!`;
-        speak(phrase);
-      }
-    }, 300);
-
     const scoreTimer = setTimeout(() => {
       setAnimationPhase('score');
     }, 1800);
@@ -39,7 +29,6 @@ function RunningTilesAnimation({ score, total, onComplete, speak }) {
 
     return () => {
       window.speechSynthesis.cancel();
-      clearTimeout(speakTimer);
       clearTimeout(scoreTimer);
       clearTimeout(completeTimer);
     };

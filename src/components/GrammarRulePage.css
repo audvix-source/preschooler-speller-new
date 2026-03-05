@@ -1,7 +1,11 @@
 /* ===================================================================
+   GRAMMARULEPAGE.CSS - MOBILE-FIRST
+   Base styles = mobile, desktop overrides at the bottom
+   =================================================================== */
+
+/* ===================================================================
    REWARD SCREEN (REMEMBER PAGE) - Full Screen
-   ===================================================================
-*/
+   =================================================================== */
 
 .reward-overlay {
   position: fixed;
@@ -21,37 +25,9 @@
   box-sizing: border-box;
 }
 
-/* Tablet/Desktop: Match main screen EXACTLY AND CENTER VERTICALLY */
-@media only screen and (min-width: 769px) {
-  .reward-overlay,
-  .chest-overlay,
-  .grammar-overlay {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 420px !important;
-    height: 680px !important;
-    max-height: 680px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
-    border-radius: 20px !important;
-  }
-}
-
 @keyframes rewardFadeIn {
   from { opacity: 0; transform: scale(0.8); }
   to { opacity: 1; transform: scale(1); }
-}
-
-/* Tablet animation with centering */
-@media only screen and (min-width: 769px) {
-  @keyframes rewardFadeIn {
-    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  }
 }
 
 /* Confetti Shower */
@@ -87,7 +63,7 @@
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-/* FIREWORKS EXPLOSIONS */
+/* Fireworks */
 .fireworks-container {
   position: absolute;
   top: 0;
@@ -107,141 +83,57 @@
 }
 
 @keyframes fireworkExplode {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-  20% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(2);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(3);
-    opacity: 0;
-  }
+  0% { transform: scale(0); opacity: 1; }
+  20% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(2); opacity: 0.8; }
+  100% { transform: scale(3); opacity: 0; }
 }
 
-/* COUNTER ANIMATION - Right → Left → Center → EXPLOSION! */
-
+/* Counter Animation */
 @keyframes counterSlideExplosion {
-  /* Phase 1: Slide RIGHT (0-25%) */
-  0% {
-    transform: translateX(0) scale(1) rotate(0deg);
-    filter: hue-rotate(0deg) brightness(1);
-  }
-  25% {
-    transform: translateX(40px) scale(1.1) rotate(10deg);
-    filter: hue-rotate(0deg) brightness(1.1);
-  }
-  
-  /* Phase 2: Slide LEFT (25-50%) */
-  26% {
-    transform: translateX(40px) scale(1.1) rotate(10deg);
-  }
-  50% {
-    transform: translateX(-40px) scale(1.1) rotate(-10deg);
-    filter: hue-rotate(120deg) brightness(1.1);
-  }
-  
-  /* Phase 3: Return to CENTER (50-70%) */
-  51% {
-    transform: translateX(-40px) scale(1.1) rotate(-10deg);
-  }
-  70% {
-    transform: translateX(0) scale(1.2) rotate(0deg);
-    filter: hue-rotate(240deg) brightness(1.2);
-  }
-  
-  /* Phase 4: EXPLOSION! Vibrate + Color Burst (70-100%) */
-  71% {
-    transform: translateX(0) scale(1.2) rotate(0deg);
-    filter: hue-rotate(240deg) brightness(1.2);
-  }
-  73% {
-    transform: translateX(-3px) scale(1.25) rotate(-2deg);
-    filter: hue-rotate(0deg) brightness(1.5) saturate(2);
-  }
-  75% {
-    transform: translateX(3px) scale(1.3) rotate(2deg);
-    filter: hue-rotate(60deg) brightness(1.6) saturate(2);
-  }
-  77% {
-    transform: translateX(-3px) scale(1.25) rotate(-2deg);
-    filter: hue-rotate(120deg) brightness(1.5) saturate(2);
-  }
-  79% {
-    transform: translateX(3px) scale(1.3) rotate(2deg);
-    filter: hue-rotate(180deg) brightness(1.6) saturate(2);
-  }
-  81% {
-    transform: translateX(-2px) scale(1.25) rotate(-1deg);
-    filter: hue-rotate(240deg) brightness(1.5) saturate(2);
-  }
-  83% {
-    transform: translateX(2px) scale(1.3) rotate(1deg);
-    filter: hue-rotate(300deg) brightness(1.6) saturate(2);
-  }
-  85% {
-    transform: translateX(-2px) scale(1.25) rotate(-1deg);
-    filter: hue-rotate(360deg) brightness(1.5) saturate(2);
-  }
-  87% {
-    transform: translateX(2px) scale(1.3) rotate(1deg);
-    filter: hue-rotate(60deg) brightness(1.6) saturate(2);
-  }
-  89% {
-    transform: translateX(-1px) scale(1.25) rotate(-0.5deg);
-    filter: hue-rotate(120deg) brightness(1.5) saturate(2);
-  }
-  91% {
-    transform: translateX(1px) scale(1.3) rotate(0.5deg);
-    filter: hue-rotate(180deg) brightness(1.6) saturate(2);
-  }
-  93% {
-    transform: translateX(0) scale(1.35) rotate(0deg);
-    filter: hue-rotate(240deg) brightness(1.7) saturate(2.5);
-  }
-  
-  /* Phase 5: Settle down (93-100%) */
-  100% {
-    transform: translateX(0) scale(1) rotate(0deg);
-    filter: hue-rotate(0deg) brightness(1);
-  }
+  0% { transform: translateX(0) scale(1) rotate(0deg); filter: hue-rotate(0deg) brightness(1); }
+  25% { transform: translateX(40px) scale(1.1) rotate(10deg); filter: hue-rotate(0deg) brightness(1.1); }
+  26% { transform: translateX(40px) scale(1.1) rotate(10deg); }
+  50% { transform: translateX(-40px) scale(1.1) rotate(-10deg); filter: hue-rotate(120deg) brightness(1.1); }
+  51% { transform: translateX(-40px) scale(1.1) rotate(-10deg); }
+  70% { transform: translateX(0) scale(1.2) rotate(0deg); filter: hue-rotate(240deg) brightness(1.2); }
+  71% { transform: translateX(0) scale(1.2) rotate(0deg); filter: hue-rotate(240deg) brightness(1.2); }
+  73% { transform: translateX(-3px) scale(1.25) rotate(-2deg); filter: hue-rotate(0deg) brightness(1.5) saturate(2); }
+  75% { transform: translateX(3px) scale(1.3) rotate(2deg); filter: hue-rotate(60deg) brightness(1.6) saturate(2); }
+  77% { transform: translateX(-3px) scale(1.25) rotate(-2deg); filter: hue-rotate(120deg) brightness(1.5) saturate(2); }
+  79% { transform: translateX(3px) scale(1.3) rotate(2deg); filter: hue-rotate(180deg) brightness(1.6) saturate(2); }
+  81% { transform: translateX(-2px) scale(1.25) rotate(-1deg); filter: hue-rotate(240deg) brightness(1.5) saturate(2); }
+  83% { transform: translateX(2px) scale(1.3) rotate(1deg); filter: hue-rotate(300deg) brightness(1.6) saturate(2); }
+  85% { transform: translateX(-2px) scale(1.25) rotate(-1deg); filter: hue-rotate(360deg) brightness(1.5) saturate(2); }
+  87% { transform: translateX(2px) scale(1.3) rotate(1deg); filter: hue-rotate(60deg) brightness(1.6) saturate(2); }
+  89% { transform: translateX(-1px) scale(1.25) rotate(-0.5deg); filter: hue-rotate(120deg) brightness(1.5) saturate(2); }
+  91% { transform: translateX(1px) scale(1.3) rotate(0.5deg); filter: hue-rotate(180deg) brightness(1.6) saturate(2); }
+  93% { transform: translateX(0) scale(1.35) rotate(0deg); filter: hue-rotate(240deg) brightness(1.7) saturate(2.5); }
+  100% { transform: translateX(0) scale(1) rotate(0deg); filter: hue-rotate(0deg) brightness(1); }
 }
 
-/* Apply to counter element */
 .counter-animate-explosion {
   animation: counterSlideExplosion 3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* Add glow effect during explosion phase */
 @keyframes counterGlowExplosion {
-  0%, 70% {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-  }
+  0%, 70% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
   71%, 93% {
     box-shadow: 
       0 0 20px rgba(255, 215, 0, 0.8),
       0 0 40px rgba(255, 0, 255, 0.6),
       0 0 60px rgba(0, 255, 255, 0.4);
   }
-  100% {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-  }
+  100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 }
 
-/* Combined animation class */
 .counter-full-animation {
   animation: 
     counterSlideExplosion 3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
     counterGlowExplosion 3s ease-in-out forwards;
 }
 
-/* MAIN CONTAINER - ONE LONG STRIP WITH SPINNING ANIMATION */
+/* Reward Container */
 .reward-container {
   background: transparent;
   border: none;
@@ -261,21 +153,10 @@
 }
 
 @keyframes spinGrowBig {
-  0% {
-    transform: scale(0.01) rotate(-1440deg);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.1) rotate(10deg);
-    opacity: 1;
-  }
-  80% {
-    transform: scale(0.95) rotate(-5deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
+  0% { transform: scale(0.01) rotate(-1440deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(10deg); opacity: 1; }
+  80% { transform: scale(0.95) rotate(-5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 .reward-banner {
@@ -402,11 +283,10 @@
 
 /* ===================================================================
    GRAMMAR RULES SCREEN
-   ===================================================================
-*/
+   =================================================================== */
 
 .grammar-overlay {
-  position: fixed;
+  position: absolute !important; 
   top: 0;
   left: 0;
   width: 100vw;
@@ -424,13 +304,6 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-@media only screen and (min-width: 769px) {
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  }
 }
 
 .grammar-game-container {
@@ -452,34 +325,14 @@
   box-sizing: border-box;
 }
 
-@media only screen and (min-width: 769px) {
-  .grammar-game-container {
-    width: 420px !important;
-    height: 680px !important;
-    min-height: 680px !important;
-    max-height: 680px !important;
-    max-width: 420px !important;
-  }
-}
-
 .grow-animation {
   animation: growFromDot 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes growFromDot {
-  0% {
-    transform: scale(0);
-    border-radius: 50%;
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    border-radius: 20px;
-    opacity: 1;
-  }
+  0% { transform: scale(0); border-radius: 50%; opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: scale(1); border-radius: 20px; opacity: 1; }
 }
 
 .tile-animation-container {
@@ -508,14 +361,8 @@
 }
 
 @keyframes tileLightUp {
-  0% {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: none;
-  }
-  100% {
-    background: rgba(255, 215, 0, 0.8);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-  }
+  0% { background: rgba(255, 255, 255, 0.1); box-shadow: none; }
+  100% { background: rgba(255, 215, 0, 0.8); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
 }
 
 .grammar-header-game {
@@ -540,7 +387,7 @@
   margin: 0;
 }
 
-/* SCROLLABLE CONTENT WITH GOLDEN WIDE SCROLLBAR */
+/* Scrollable Content */
 .grammar-content-game {
   display: flex;
   flex-direction: column;
@@ -551,24 +398,18 @@
   padding: 15px 8px 15px 15px;
 }
 
-/* GOLDEN WIDE SCROLLBAR - MATCHES MY PROGRESS */
-.grammar-content-game::-webkit-scrollbar {
-  width: 11px;
-}
-
+.grammar-content-game::-webkit-scrollbar { width: 11px; }
 .grammar-content-game::-webkit-scrollbar-track {
   background: rgba(255, 215, 0, 0.2);
   border-radius: 10px;
   margin: 5px 0;
   border: 2px solid rgba(255, 165, 0, 0.3);
 }
-
 .grammar-content-game::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
-
 .grammar-content-game::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
 }
@@ -650,13 +491,8 @@
   text-align: center;
 }
 
-.grammar-table-game th:first-child {
-  border-radius: 8px 0 0 0;
-}
-
-.grammar-table-game th:last-child {
-  border-radius: 0 8px 0 0;
-}
+.grammar-table-game th:first-child { border-radius: 8px 0 0 0; }
+.grammar-table-game th:last-child { border-radius: 0 8px 0 0; }
 
 .grammar-table-game td {
   padding: 8px 6px;
@@ -665,12 +501,14 @@
   vertical-align: middle;
 }
 
-.grammar-table-game tr:last-child td {
-  border-bottom: none;
-}
+.grammar-table-game tr:last-child td { border-bottom: none; }
+.grammar-table-game tr:hover { background: #FFF9E6; }
 
-.grammar-table-game tr:hover {
-  background: #FFF9E6;
+.grammar-table-game strong {
+  display: block;
+  color: #E74C3C;
+  font-size: 1.1em;
+  margin-bottom: 3px;
 }
 
 .emoji-large {
@@ -693,13 +531,6 @@
   object-fit: contain;
 }
 
-.grammar-table-game strong {
-  display: block;
-  color: #E74C3C;
-  font-size: 1.1em;
-  margin-bottom: 3px;
-}
-
 .example-small {
   display: block;
   font-size: 0.75em;
@@ -707,10 +538,7 @@
   font-style: italic;
 }
 
-.special-emoji-large {
-  font-size: 2em;
-  flex-shrink: 0;
-}
+.special-emoji-large { font-size: 2em; flex-shrink: 0; }
 
 .special-text-game {
   font-size: 0.95em;
@@ -719,9 +547,7 @@
   line-height: 1.4;
 }
 
-.special-text-game strong {
-  color: #E74C3C;
-}
+.special-text-game strong { color: #E74C3C; }
 
 .sub-rule {
   display: block;
@@ -732,7 +558,10 @@
   font-style: italic;
 }
 
-/* CHEST SCREEN */
+/* ===================================================================
+   CHEST SCREEN
+   =================================================================== */
+
 .chest-overlay {
   position: fixed;
   top: 0;
@@ -754,10 +583,8 @@
 
 .floating-coins {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   pointer-events: none;
   overflow: hidden;
 }
@@ -770,26 +597,15 @@
 }
 
 @keyframes floatCoin {
-  0% {
-    transform: translateY(100vh) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7;
-  }
-  90% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateY(-100px) rotate(720deg);
-    opacity: 0;
-  }
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
 }
 
 .pirate-decorations {
   position: absolute;
-  top: 20px;
-  left: 0;
+  top: 20px; left: 0;
   width: 100%;
   display: flex;
   justify-content: space-around;
@@ -809,10 +625,8 @@
 
 .sparkle-effects {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   pointer-events: none;
 }
 
@@ -823,14 +637,8 @@
 }
 
 @keyframes twinkle {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(0) rotate(0deg);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.5) rotate(180deg);
-  }
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.5) rotate(180deg); }
 }
 
 .chest-container {
@@ -891,33 +699,23 @@
 
 .chest-glow-pulse {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
-  height: 400px;
+  width: 400px; height: 400px;
   background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.3);
-    opacity: 1;
-  }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
 }
 
 .treasure-rays {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 300px;
-  height: 300px;
+  width: 300px; height: 300px;
   background:
     linear-gradient(0deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%),
     linear-gradient(45deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%),
@@ -933,8 +731,7 @@
 
 .chest-real {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 300px; height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -947,8 +744,7 @@
 }
 
 .chest-real img {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
 }
@@ -985,8 +781,7 @@
   content: '';
   position: absolute;
   top: 50%;
-  width: 30px;
-  height: 40px;
+  width: 30px; height: 40px;
   background: #DC143C;
   transform: translateY(-50%);
 }
@@ -1009,36 +804,10 @@
   letter-spacing: 2px;
 }
 
-@media (max-width: 768px) {
-  .reward-container {
-    max-width: 95%;
-  }
-  .banner-text {
-    font-size: 1.5em;
-  }
-  .reward-circle {
-    width: 130px;
-    height: 130px;
-  }
-  .trophy-icon {
-    font-size: 4em;
-  }
-  .grammar-header-game h1 {
-    font-size: 1.4em;
-  }
-  .grammar-table-game th {
-    font-size: 0.9em;
-  }
-  .emoji-large {
-    font-size: 1.8em;
-  }
-}
-
 /* ===================================================================
    TREASURE CHEST SEQUENTIAL REVEAL ANIMATIONS
    =================================================================== */
 
-/* Hidden state for reveal elements */
 .chest-image-wrapper.hidden,
 .treasure-subtitle.hidden,
 .chest-banner-button.hidden {
@@ -1048,40 +817,118 @@
   transition: none;
 }
 
-/* Reveal animations */
 .chest-image-wrapper.reveal {
   animation: revealChest 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .treasure-subtitle.reveal {
   animation: revealSubtitle 0.5s ease-out forwards;
-  animation-delay: 0.5s; /* ✅ Wait 500ms after class is added */
+  animation-delay: 0.6s;
 }
 
 .chest-banner-button.reveal {
   animation: revealButton 0.5s ease-out forwards;
-  animation-delay: 1s; /* ✅ Wait 1 second after class is added */
+  animation-delay: 1.2s;
   pointer-events: auto;
 }
 
 /* ===================================================================
-   TREASURE CHEST SEQUENTIAL REVEAL (CLEANED VERSION)
+   MOBILE OVERRIDES (max-width: 768px)
+   ALL mobile rules consolidated here
    =================================================================== */
 
-/* 1. THE CHEST: Appears first (Immediate) */
-.chest-image-wrapper.reveal {
-  animation: revealChest 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+@media (max-width: 768px) {
+  .reward-container {
+    max-width: 95%;
+  }
+
+  .banner-text {
+    font-size: 1.5em;
+  }
+
+  .reward-circle {
+    width: 130px;
+    height: 130px;
+  }
+
+  .trophy-icon {
+    font-size: 4em;
+  }
+
+  .grammar-header-game h1 {
+    font-size: 1.4em;
+  }
+
+  .grammar-table-game th {
+    font-size: 0.9em;
+  }
+
+  .emoji-large {
+    font-size: 1.8em;
+  }
+
+  /* Grammar overlay — padding creates the card gap */
+  .grammar-overlay {
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    background: transparent !important;  /* ← kill the purple, card has its own border */
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .grammar-game-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    border-radius: 0 !important;        /* ← container clips corners anyway */
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+  }
 }
 
-/* 2. THE SUBTITLE: Appears second (0.6s delay) */
-.treasure-subtitle.reveal {
-  animation: revealSubtitle 0.5s ease-out forwards;
-  animation-delay: 0.6s; 
-}
+/* ===================================================================
+   DESKTOP/TABLET OVERRIDES (min-width: 769px)
+   =================================================================== */
 
-/* 3. THE BUTTON: Appears last (1.2s delay) */
-.chest-banner-button.reveal {
-  animation: revealButton 0.5s ease-out forwards;
-  animation-delay: 1.2s; 
-  pointer-events: auto;
+@media only screen and (min-width: 769px) {
+  .reward-overlay,
+  .chest-overlay,
+  .grammar-overlay {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 420px !important;
+    height: 680px !important;
+    max-height: 680px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    border-radius: 20px !important;
+  }
+
+  @keyframes rewardFadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  .grammar-game-container {
+    width: 420px !important;
+    height: 680px !important;
+    min-height: 680px !important;
+    max-height: 680px !important;
+    max-width: 420px !important;
+  }
 }
