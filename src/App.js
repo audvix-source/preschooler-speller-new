@@ -6,6 +6,8 @@ import MainScreen from './MainScreen';
 import CategoryMenuScreen from './CategoryMenuScreen';
 import AlphabetScreen from './AlphabetScreen';
 import LearningScreen from './LearningScreen';
+import PlayersScreen from './components/PlayersScreen';
+import { initUsers, getActiveUserId, setActiveUserId } from './UserManager';
 
 function App() {
   const getSavedState = () => {
@@ -27,6 +29,17 @@ function App() {
   const [pitch, setPitch] = useState(savedState?.pitch || 1);
   const [speed, setSpeed] = useState(savedState?.speed || 1);
   const [voices, setVoices] = useState([]);
+
+  // ✅ Multi-user state
+  const [users, setUsers] = useState(() => initUsers());
+  const [activeUserId, setActiveUserIdState] = useState(() => getActiveUserId());
+
+  const handleSetActiveUser = (userId) => {
+    setActiveUserId(userId);
+    setActiveUserIdState(userId);
+  };
+
+  const activeUser = users.find(u => u?.id === activeUserId) || users[0];
 
   useEffect(() => {
     const initDatabase = async () => {
@@ -77,33 +90,32 @@ function App() {
   }, [currentScreen]);
 
   const speak = (text, forceGender = null) => {
-  if (!('speechSynthesis' in window)) {
-    console.error("Speech synthesis not supported.");
-    return;
-  }
-  window.speechSynthesis.cancel();
-  
-  setTimeout(() => {                        // ← add this
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.pitch = pitch;
-    utterance.rate = speed;
-    const voiceType = forceGender || guideVoice;
-    if (voiceType === 'female') {
-      const femaleVoice = voices.find(v =>
-        v.lang.startsWith('en') &&
-        (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
-      );
-      if (femaleVoice) utterance.voice = femaleVoice;
-    } else if (voiceType === 'male') {
-      const maleVoice = voices.find(v =>
-        v.lang.startsWith('en') &&
-        (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
-      );
-      if (maleVoice) utterance.voice = maleVoice;
+    if (!('speechSynthesis' in window)) {
+      console.error("Speech synthesis not supported.");
+      return;
     }
-    window.speechSynthesis.speak(utterance);
-  }, 50);                                   // ← 50ms gap after cancel
-};
+    window.speechSynthesis.cancel();
+    setTimeout(() => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.pitch = pitch;
+      utterance.rate = speed;
+      const voiceType = forceGender || guideVoice;
+      if (voiceType === 'female') {
+        const femaleVoice = voices.find(v =>
+          v.lang.startsWith('en') &&
+          (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha'))
+        );
+        if (femaleVoice) utterance.voice = femaleVoice;
+      } else if (voiceType === 'male') {
+        const maleVoice = voices.find(v =>
+          v.lang.startsWith('en') &&
+          (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male'))
+        );
+        if (maleVoice) utterance.voice = maleVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    }, 50);
+  };
 
   const navigateTo = (screen, category = '') => {
     setSelectedCategory(category);
@@ -121,13 +133,43 @@ function App() {
           setters={{ setBrightness, setPitch, setSpeed }}
         />;
       case 'menu':
-        return <CategoryMenuScreen onNavigate={navigateTo} />;
+        return <CategoryMenuScreen
+          onNavigate={navigateTo}
+          users={users}
+          setUsers={setUsers}
+          activeUserId={activeUserId}
+          setActiveUserId={handleSetActiveUser}
+          speak={speak}
+          activeUser={activeUser}
+        />;
       case 'alphabet':
-        return <AlphabetScreen onNavigate={navigateTo} speak={speak} />;
+        return <AlphabetScreen
+          onNavigate={navigateTo}
+          speak={speak}
+          userId={activeUserId}
+        />;
       case 'learning':
-        return <LearningScreen onNavigate={navigateTo} speak={speak} category={selectedCategory} />;
+        return <LearningScreen
+          onNavigate={navigateTo}
+          speak={speak}
+          category={selectedCategory}
+          userId={activeUserId}
+        />;
       case 'stats':
-        return <StatsScreen onNavigate={navigateTo} speak={speak} />;
+        return <StatsScreen
+          onNavigate={navigateTo}
+          speak={speak}
+          userId={activeUserId}
+        />;
+      case 'players':
+        return <PlayersScreen
+          users={users}
+          setUsers={setUsers}
+          activeUserId={activeUserId}
+          setActiveUserId={handleSetActiveUser}
+          onBack={() => navigateTo('menu')}
+          speak={speak}
+        />;
       default:
         return <MainScreen
           onNavigate={navigateTo}

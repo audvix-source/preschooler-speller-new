@@ -2,8 +2,7 @@ import React from 'react';
 import './CategoryMenuScreen.css'; 
 import menuBackground from './assets/menu-background.png'; 
 
-function CategoryMenuScreen(props) {
-  // ✅ Categories with enabled/disabled status
+function CategoryMenuScreen({ onNavigate, activeUser, speak }) {
   const categories = [
     { name: 'Alphabet Fun', enabled: true }, 
     { name: 'Parts of the Body', enabled: true }, 
@@ -14,18 +13,15 @@ function CategoryMenuScreen(props) {
     { name: 'Outside', enabled: false },
     { name: 'Community Places', enabled: false },
     { name: 'Vehicles', enabled: false },
-    { name: 'Faith-builder Words', enabled: false } // ✅ Changed from 'My Bible Words'
+    { name: 'Faith-builder Words', enabled: false }
   ];
 
   const handleCategoryClick = (category) => {
-    // Don't do anything if category is disabled
     if (!category.enabled) return;
-    
     if (category.name === 'Alphabet Fun') {
-      props.onNavigate('alphabet');
+      onNavigate('alphabet');
     } else {
-      // All other categories will now navigate to the learning screen
-      props.onNavigate('learning', category.name);
+      onNavigate('learning', category.name);
     }
   };
 
@@ -35,6 +31,19 @@ function CategoryMenuScreen(props) {
       style={{ backgroundImage: `url(${menuBackground})` }}
     >
       <h1 className="category-title">Choose an Activity</h1>
+
+      {/* ✅ Active player indicator */}
+      {activeUser && (
+        <button
+          className="players-menu-btn"
+          onClick={() => onNavigate('players')}
+        >
+          <span className="players-btn-avatar">{activeUser.avatar}</span>
+          <span className="players-btn-name">{activeUser.name}</span>
+          <span className="players-btn-arrow">›</span>
+        </button>
+      )}
+
       <div className="category-buttons-grid">
         {categories.map(category => (
           <button 
@@ -48,13 +57,11 @@ function CategoryMenuScreen(props) {
         ))}
       </div>
       
-      {/* My Progress Button */}
-      <button className="progress-button" onClick={() => props.onNavigate('stats')}>
+      <button className="progress-button" onClick={() => onNavigate('stats')}>
         🏆 My Progress 🏆
       </button>
       
-      {/* ✅ Go Back button (pulse animation removed in CSS) */}
-      <button className="back-button" onClick={() => props.onNavigate('cover')}>Go Back</button>
+      <button className="back-button" onClick={() => onNavigate('cover')}>Go Back</button>
     </div>
   );
 }
