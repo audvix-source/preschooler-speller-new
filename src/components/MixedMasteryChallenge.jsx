@@ -271,7 +271,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   };
 
   const handleExit = () => {
-        onExit(score, currentQuestionIndex);
+        onExit(score, questions.length); 
   };
 
   const handleAnimationComplete = () => {

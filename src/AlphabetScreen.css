@@ -197,7 +197,7 @@
     border: 3px solid #FF69B4;
     border-radius: 12px;
     padding: 15px;
-    background-color: rgba(173,216,230,0.3);
+    background-color: #6fd3ef; 
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     margin-top: -13px;                       /* ← was 5px, pulls up ~0.5cm */
     margin-bottom: 12px;                     /* ← add this, pushes labels away from frame */
@@ -431,7 +431,7 @@
     max-height: 200px;                                  /* ← was 200px */
     margin-left: auto;
     margin-right: auto;
-    width: 60%;
+    width: 71%;
   }
 
   .word-image-frame img {

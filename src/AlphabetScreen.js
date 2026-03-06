@@ -352,28 +352,6 @@ function AlphabetScreen(props) {
               />
             </div>
             <p className="credit-line">Video courtesy of CoComelon - Nursery Rhymes</p>
-            
-            {/* ✅ Progress indicator */}
-            {viewedImages.length > 0 && (
-              <div className="progress-indicator">
-                <p>Images explored: {viewedImages.length}</p>
-                {viewedImages.length < 5 && (
-                  <p className="next-milestone">
-                    {5 - viewedImages.length} more to unlock Mastery Check! 🎯
-                  </p>
-                )}
-                {snoozeUntil === 'half' && viewedImages.length < 20 && (
-                  <p className="snooze-status">
-                    ⏰ Mastery Check snoozed until 20 images
-                  </p>
-                )}
-                {snoozeUntil === 'complete' && (
-                  <p className="snooze-status">
-                    ⏰ Mastery Check snoozed until all letters complete
-                  </p>
-                )}
-              </div>
-            )}
           </div>
         ) : (
           <div className="word-display-section">
