@@ -182,3 +182,16 @@
     padding: 20px;
   }
 }
+
+/* Add Players? button — distinct teal color to stand out from category buttons */
+.category-button.add-players-btn {
+  background: transparent !important;
+  color: white !important;
+  border: 2px solid rgba(242, 5, 179, 0.981) !important;
+  font-style: normal !important;
+}
+
+.category-button.add-players-btn:hover {
+  background: linear-gradient(135deg, #8ef0e9 0%, #a9f1e9 100%) !important;
+  transform: scale(1.02);
+}

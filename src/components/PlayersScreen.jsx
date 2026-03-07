@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { AVATARS, COLORS, createUser, deleteUser, setActiveUserId } from '../UserManager';
+import { AVATARS, COLORS, createUser, deleteUser, setActiveUserId, saveUsers } from '../UserManager';
 import './PlayersScreen.css';
 
 function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActive, onBack, speak }) {
   const [editingSlot, setEditingSlot] = useState(null);
+  const [isEditing, setIsEditing] = useState(false); // true = edit mode, false = create mode
   const [deleteConfirmSlot, setDeleteConfirmSlot] = useState(null);
-  const [deleteStep, setDeleteStep] = useState(0); // 0=none, 1=confirm, 2=preview
+  const [deleteStep, setDeleteStep] = useState(0);
   const [formName, setFormName] = useState('');
   const [formAvatar, setFormAvatar] = useState(AVATARS[0]);
   const [formColor, setFormColor] = useState(COLORS[0]);
@@ -13,13 +14,12 @@ function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActi
   const handleSlotClick = (index) => {
     const user = users[index];
     if (user) {
-      // Switch to this user
       setActiveUserId(user.id);
       setActive(user.id);
       if (speak) speak(`Now playing as ${user.name}!`);
       onBack();
     } else {
-      // Open creation form
+      setIsEditing(false);
       setEditingSlot(index);
       setFormName('');
       setFormAvatar(AVATARS[Math.floor(Math.random() * AVATARS.length)]);
@@ -27,18 +27,46 @@ function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActi
     }
   };
 
+  const handleEditClick = (e, index) => {
+    e.stopPropagation();
+    const user = users[index];
+    setIsEditing(true);
+    setEditingSlot(index);
+    setFormName(user.name);
+    setFormAvatar(user.avatar);
+    setFormColor(user.color);
+  };
+
   const handleSave = () => {
     if (!formName.trim()) {
       if (speak) speak("Please enter a name!");
       return;
     }
-    const updated = createUser(users, editingSlot, formName, formAvatar, formColor);
-    setUsers(updated);
-    setActiveUserId(updated[editingSlot].id);
-    setActive(updated[editingSlot].id);
-    setEditingSlot(null);
-    if (speak) speak(`Welcome, ${formName}!`);
-    onBack();
+
+    const updated = [...users];
+
+    if (isEditing) {
+      // Update existing user
+      updated[editingSlot] = {
+        ...updated[editingSlot],
+        name: formName.trim().slice(0, 12),
+        avatar: formAvatar,
+        color: formColor
+      };
+      saveUsers(updated);
+      setUsers(updated);
+      setEditingSlot(null);
+      if (speak) speak(`Profile updated!`);
+    } else {
+      // Create new user
+      const newUpdated = createUser(users, editingSlot, formName, formAvatar, formColor);
+      setUsers(newUpdated);
+      setActiveUserId(newUpdated[editingSlot].id);
+      setActive(newUpdated[editingSlot].id);
+      setEditingSlot(null);
+      if (speak) speak(`Welcome, ${formName}!`);
+      onBack();
+    }
   };
 
   const handleDeleteClick = (e, index) => {
@@ -50,7 +78,6 @@ function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActi
   const handleDeleteConfirm = () => {
     const updated = deleteUser(users, deleteConfirmSlot);
     setUsers(updated);
-    // If deleted user was active, switch to Player 1
     if (users[deleteConfirmSlot]?.id === activeUserId) {
       setActiveUserId(updated[0].id);
       setActive(updated[0].id);
@@ -87,12 +114,20 @@ function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActi
                   )}
                   <div className="player-avatar">{user.avatar}</div>
                   <div className="player-name">{user.name}</div>
-                  {!user.isDefault && (
+                  <div className="player-actions">
+                    {/* ✏️ Edit button for ALL players */}
                     <button
-                      className="player-delete-btn"
-                      onClick={(e) => handleDeleteClick(e, index)}
-                    >✕</button>
-                  )}
+                      className="player-edit-btn"
+                      onClick={(e) => handleEditClick(e, index)}
+                    >✏️</button>
+                    {/* ✕ Delete button only for non-default players */}
+                    {!user.isDefault && (
+                      <button
+                        className="player-delete-btn"
+                        onClick={(e) => handleDeleteClick(e, index)}
+                      >✕</button>
+                    )}
+                  </div>
                 </>
               ) : (
                 <>
@@ -109,11 +144,11 @@ function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActi
         </button>
       </div>
 
-      {/* ── Create Player Form ── */}
+      {/* ── Create / Edit Player Form ── */}
       {editingSlot !== null && (
         <div className="players-overlay">
           <div className="players-modal">
-            <h2 className="modal-title">New Player</h2>
+            <h2 className="modal-title">{isEditing ? 'Edit Player' : 'New Player'}</h2>
 
             <input
               className="name-input"

@@ -160,7 +160,10 @@ function App() {
           onNavigate={navigateTo}
           speak={speak}
           userId={activeUserId}
+          users={users}
+          setActiveUserId={handleSetActiveUser}
         />;
+        
       case 'players':
         return <PlayersScreen
           users={users}

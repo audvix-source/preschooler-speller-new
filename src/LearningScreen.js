@@ -14,9 +14,10 @@ const images = require.context('./assets', false);
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function LearningScreen(props) {
+  const { userId = 'user_1' } = props; 
   const getSavedLearningState = () => {
     try {
-      const saved = localStorage.getItem(`learningState_${props.category}`);
+      const saved = localStorage.getItem(`${userId}_learningState_${props.category}`);
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       console.error('Error loading learning state:', e);
@@ -64,7 +65,7 @@ function LearningScreen(props) {
       lastSaved: new Date().toISOString()
     };
     try {
-      localStorage.setItem(`learningState_${props.category}`, JSON.stringify(learningState));
+      localStorage.setItem(`${userId}_learningState_${props.category}`, JSON.stringify(learningState));
     } catch (e) {
       console.error('Error saving learning state:', e);
     }
@@ -309,12 +310,12 @@ function LearningScreen(props) {
     setShowReward(true);
 
     const isCorrect = finalMistakeCount === 0;
-    scoreDB.recordLearningAttempt(currentWord.word, isCorrect)
+    scoreDB.recordLearningAttempt(currentWord.word, isCorrect, userId)
       .then(scoreData => console.log('Score recorded:', scoreData))
       .catch(err => console.error('Error recording score:', err));
 
     if (finalMistakeCount === 0) {
-      scoreDB.recordPerfectScore(currentWord.word)
+      scoreDB.recordPerfectScore(currentWord.word, userId)
         .catch(err => console.error('Error recording perfect score:', err));
     }
 
@@ -439,7 +440,7 @@ function LearningScreen(props) {
         <h1>End of Category!</h1>
         <p>Category: {props.category}</p>
         <button className="back-button-fixed" onClick={() => {
-          localStorage.removeItem(`learningState_${props.category}`);
+          localStorage.removeItem(`${userId}_learningState_${props.category}`);
           props.onNavigate('menu');
         }}>
           Back to Menu
@@ -461,7 +462,7 @@ function LearningScreen(props) {
           </div>
         </div>
         <button className="back-button-fixed" onClick={() => {
-          localStorage.removeItem(`learningState_${props.category}`);
+          localStorage.removeItem(`${userId}_learningState_${props.category}`);
           props.onNavigate('menu');
         }}>
           Back to Menu
@@ -534,7 +535,7 @@ function LearningScreen(props) {
         )}
 
         <button className="learning-back-button" onClick={() => {
-          localStorage.removeItem(`learningState_${props.category}`);
+          localStorage.removeItem(`${userId}_learningState_${props.category}`);
           props.onNavigate('menu');
         }}>
           Back to Menu

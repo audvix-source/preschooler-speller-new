@@ -35,12 +35,13 @@ const getImagePath = (fileName) => {
 };
 
 function AlphabetScreen(props) {
+  const { userId = 'user_1' } = props;
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   
   // Load saved state
   const getSavedAlphabetState = () => {
     try {
-      const saved = localStorage.getItem('alphabetScreenState');
+      const saved = localStorage.getItem(`${userId}_alphabetScreenState`);
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       console.error('Error loading alphabet state:', e);
@@ -79,7 +80,7 @@ function AlphabetScreen(props) {
   if (snoozeUntil === 'complete' && viewedImages.length < 260) return;
   
   if (viewedImages.length > 0 && viewedImages.length % 5 === 0) {
-    const lastPromptAt = parseInt(localStorage.getItem('lastMasteryPromptAt') || '0');
+    const lastPromptAt = parseInt(localStorage.getItem(`${userId}_lastMasteryPromptAt`) || '0');
     
     // ✅ FIX: Only trigger if this is a NEW milestone
     if (viewedImages.length > lastPromptAt) {
@@ -88,7 +89,7 @@ function AlphabetScreen(props) {
       setTimeout(() => {
         setShowHexagonTransition(true);
         // ✅ Set the flag IMMEDIATELY, not in setTimeout
-        localStorage.setItem('lastMasteryPromptAt', viewedImages.length.toString());
+        localStorage.setItem(`${userId}_lastMasteryPromptAt`, viewedImages.length.toString());
       }, 3000);
     }
   }
@@ -107,7 +108,7 @@ function AlphabetScreen(props) {
     };
 
     try {
-      localStorage.setItem('alphabetScreenState', JSON.stringify(stateToSave));
+      localStorage.setItem(`${userId}_alphabetScreenState`, JSON.stringify(stateToSave));
     } catch (e) {
       console.error('Error saving alphabet state:', e);
     }
@@ -175,8 +176,8 @@ function AlphabetScreen(props) {
   };
 
   const handleBackToMenu = () => {
-    localStorage.removeItem('alphabetScreenState');
-    localStorage.removeItem('lastMasteryPromptAt');
+    localStorage.removeItem(`${userId}_alphabetScreenState`);
+    localStorage.removeItem(`${userId}_lastMasteryPromptAt`);
     props.onNavigate('menu');
   };
 
@@ -216,7 +217,7 @@ function AlphabetScreen(props) {
   const handleDismissBanner = () => {
     setShowBanner(false);
     setBannerDismissed(true);
-    localStorage.setItem('challengeBannerDismissed', 'true');
+    localStorage.setItem('${userId}challengeBannerDismissed', 'true');
   };
 
   // ✅ HEXAGON TRANSITION HANDLERS
@@ -249,18 +250,23 @@ function AlphabetScreen(props) {
     .map(w => w.word)
     .join(', ');
   
-  scoreDB.recordLearningAttempt(
-    `Mastery Check: ${wordsTestedString}`,
-    isPerfect
-  );
-  
-  recentWords.forEach((word, index) => {
-    const isCorrect = index < score;
-    scoreDB.recordLearningAttempt(
-      `${word.letter || word.word[0]}-${word.word}`,
-      isCorrect
+  const saveResults = async () => {
+    if (!scoreDB.db) await scoreDB.init();
+    await scoreDB.recordLearningAttempt(
+      `Mastery Check: ${wordsTestedString}`,
+      isPerfect,
+      userId
     );
-  });
+    for (const [index, word] of recentWords.entries()) {
+      const isCorrect = index < score;
+      await scoreDB.recordLearningAttempt(
+        `${word.letter || word.word[0]}-${word.word}`,
+        isCorrect,
+        userId
+      );
+    }
+  };
+  saveResults();
   
   if (total === 0) {
     // say nothing

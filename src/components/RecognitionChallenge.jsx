@@ -94,7 +94,8 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
       });
 
       const shuffled = [...otherWords].sort(() => Math.random() - 0.5);
-      const wrongChoices = shuffled.slice(0, 3).map(w => ({
+      const validWrong = shuffled.filter(w => w.image !== null && w.image !== undefined);
+      const wrongChoices = validWrong.slice(0, 3).map(w => ({
         word: w.word,
         image: w.image,
         isCorrect: false,

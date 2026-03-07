@@ -4,7 +4,7 @@ import { getWordsByCategory } from '../wordList.js';
 import './StatsScreen.css';
 import ScoringLegend from './ScoringLegend';
 
-function StatsScreen({ onNavigate, speak }) {
+function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActiveUserId }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [newRewards, setNewRewards] = useState([]);
@@ -15,18 +15,19 @@ function StatsScreen({ onNavigate, speak }) {
   
   // ✅ Reset Logic State
   const [resetStep, setResetStep] = useState(0); // 0=hidden, 1=explanation, 2=preview
+  const [viewedUserId, setViewedUserId] = useState(userId); // ← ADD THIS
 
   useEffect(() => {
-    loadStats();
-  }, []);
+    loadStats(viewedUserId);
+  }, [viewedUserId]);
 
-  const loadStats = async () => {
+  const loadStats = async (uid) => {
     try {
       setLoading(true);
-      const data = await scoreDB.getOverallProgress();
+      const data = await scoreDB.getOverallProgress(uid || viewedUserId);
       setStats(data);
 
-      const lastViewedRewards = JSON.parse(localStorage.getItem('lastViewedRewards') || '{}');
+      const lastViewedRewards = JSON.parse(localStorage.getItem(`${userId}_lastViewedRewards`) || '{}');
       const currentRewards = {
         stars: data.stars || 0,
         bronze: data.bronze || 0,
@@ -58,10 +59,10 @@ function StatsScreen({ onNavigate, speak }) {
 
   // ✅ Reset Handler
   const handleReset = async () => {
-    await scoreDB.resetAllData();
-    localStorage.removeItem('lastViewedRewards');
+    await scoreDB.resetAllData(userId);
+    localStorage.removeItem(`${userId}_lastViewedRewards`);
     setResetStep(0);
-    loadStats();
+    loadStats(viewedUserId);
     if (speak) speak("All scores have been reset to zero.");
   };
 
@@ -73,7 +74,7 @@ function StatsScreen({ onNavigate, speak }) {
       silver: stats.silver || 0,
       champion: stats.champion || 0
     };
-    localStorage.setItem('lastViewedRewards', JSON.stringify(currentRewards));
+    localStorage.setItem(`${userId}_lastViewedRewards`, JSON.stringify(currentRewards));
     setShowNewRewardsBanner(false);
     setNewRewards([]);
   };
@@ -85,7 +86,7 @@ function StatsScreen({ onNavigate, speak }) {
     } else {
       setExpandedReward(rewardType);
       if (!rewardDetails[rewardType]) {
-        const details = await scoreDB.getRewardsByType(rewardType);
+        const details = await scoreDB.getRewardsByType(rewardType, viewedUserId);
         setRewardDetails(prev => ({ ...prev, [rewardType]: details }));
       }
     }
@@ -106,9 +107,9 @@ function StatsScreen({ onNavigate, speak }) {
     const bodyPartsWords = getWordsByCategory('Parts of the Body');
     const wordIndex = bodyPartsWords.findIndex(w => w.word === wordName);
     if (wordIndex === -1) return;
-    localStorage.setItem('learningState_Parts of the Body', JSON.stringify({
+    localStorage.setItem(`${userId}_learningState_Parts of the Body`, JSON.stringify({
       viewState: 'activity',
-      chosenModel: localStorage.getItem('lastChosenModel') || 'boy',
+      chosenModel: localStorage.getItem(`${userId}_lastChosenModel`) || 'boy',
       wordIndex,
       lastSaved: new Date().toISOString()
     }));
@@ -186,6 +187,27 @@ function StatsScreen({ onNavigate, speak }) {
       <div className="stats-container">
         <div className="stats-header">
           <h1>🏆 My Progress 🏆</h1>
+        </div>
+
+         {/* ── Player Tabs ── */}
+        <div className="player-tabs">
+          {users.filter(u => u !== null).map(user => (
+            <div
+              key={user.id}
+              className={`player-tab ${user.id === viewedUserId ? 'active' : ''}`}
+              style={user.id === viewedUserId ? { backgroundColor: user.color } : {}}
+              onClick={() => { 
+  setActiveUserId(user.id); 
+  setViewedUserId(user.id); 
+  setRewardDetails({}); 
+  setExpandedReward(null); 
+  loadStats(user.id); 
+}}
+            >
+              <span className="player-tab-avatar">{user.avatar}</span>
+              <span className="player-tab-name">{user.name}</span>
+            </div>
+          ))}
         </div>
 
         <div className="stats-scrollable-content">
