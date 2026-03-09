@@ -129,3 +129,24 @@
   color: #7F8C8D;
   letter-spacing: 1px;
 }
+
+/* ── Milestone badge ── */
+.score-milestone {
+  margin-top: 14px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 20px;
+  font-family: Arial, sans-serif;
+  font-size: 0.95em;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  animation: milestonePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s both;
+}
+
+@keyframes milestonePop {
+  0%   { opacity: 0; transform: scale(0.7); }
+  70%  { transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}

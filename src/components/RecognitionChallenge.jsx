@@ -1,210 +1,93 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './RecognitionChallenge.css';
+import React, { useState, useEffect } from 'react';
+import './RunningTilesAnimation.css';
 
 /**
- * A pool of 12 distinct, kid-friendly background colors.
- * Deliberately excludes:
- *  - Pink / rose tones (app background is pink)
- *  - Skin tones / beige / peach (clash with animal/person images)
- *  - Pure white (no contrast for light-colored objects)
- *  - Very dark colors (hard for kids to see images against)
+ * RunningTilesAnimation
  *
- * Colors are shuffled fresh on every new question so adjacent
- * tiles are always visually distinct from each other.
+ * TIMING:
+ * - t=0ms   : tiles animate randomly
+ * - t=1800ms: score card appears as overlay
+ * - t=3800ms: speech hard-cancelled + onComplete fires
  */
-const COLOR_POOL = [
-  '#B3E5FC', // light sky blue
-  '#C8E6C9', // light mint green
-  '#FFF9C4', // light lemon yellow
-  '#D1C4E9', // light lavender
-  '#B2EBF2', // light cyan
-  '#DCEDC8', // light lime
-  '#FFE0B2', // light orange
-  '#F8BBD0', // — intentionally excluded (pink) - replaced below
-  '#CFD8DC', // blue-grey
-  '#E1F5FE', // pale azure
-  '#F0F4C3', // pale chartreuse
-  '#D7CCC8', // warm grey
-];
-
-// Remove any pinkish entries just in case — final safe pool
-const SAFE_COLORS = [
-  '#B3E5FC', // sky blue
-  '#C8E6C9', // mint green
-  '#FFF9C4', // lemon yellow
-  '#D1C4E9', // lavender
-  '#B2EBF2', // cyan
-  '#DCEDC8', // lime green
-  '#FFE0B2', // soft orange
-  '#CFD8DC', // blue-grey
-  '#E1F5FE', // pale azure
-  '#F0F4C3', // chartreuse
-  '#D7CCC8', // warm grey
-  '#B2DFDB', // teal mint
-  '#FFECB3', // amber cream
-  '#C5CAE9', // indigo tint
-];
-
-/**
- * Shuffle an array (Fisher-Yates) and return the first `n` items.
- * Guarantees no two adjacent slots share the same color.
- */
-function pickDistinctColors(n) {
-  const shuffled = [...SAFE_COLORS].sort(() => Math.random() - 0.5);
-  // Take first n — since pool has 14 entries and n=4, they'll always be distinct
-  return shuffled.slice(0, n);
-}
-
-function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
-  const [choices, setChoices] = useState([]);
-  const [selectedChoice, setSelectedChoice] = useState(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
-
-  // ✅ Slot colors are picked once per question (when `word` changes)
-  // Stored in a ref so they don't re-randomize on every render
-  const slotColors = useRef(pickDistinctColors(4));
-
-  // Reset state and pick fresh colors when the question word changes
-  useEffect(() => {
-    setSelectedChoice(null);
-    setShowFeedback(false);
-    setIsLocked(false);
-    slotColors.current = pickDistinctColors(4);
-  }, [word]);
+function RunningTilesAnimation({ score, total, onComplete, speak, milestone }) {
+  const [animationPhase, setAnimationPhase] = useState('tiles');
 
   useEffect(() => {
-    if (isLocked) return;
+    window.speechSynthesis.cancel();
 
-    const generateChoices = () => {
-      if (!wordImage) {
-        console.warn(`No image for: ${word} - auto-advancing`);
-        setTimeout(() => onAnswer(false), 100);
-        return [];
-      }
+    const scoreTimer = setTimeout(() => {
+      setAnimationPhase('score');
+    }, 1800);
 
-      const correctChoice = { word, image: wordImage, isCorrect: true };
+    const completeTimer = setTimeout(() => {
+      window.speechSynthesis.cancel();
+      if (onComplete) onComplete();
+    }, 3800);
 
-      // Filter out the correct word and any entries without a valid image
-      const otherWords = allWords.filter(w => {
-        if (w.word.toLowerCase() === word.toLowerCase()) return false;
-        if (w.image === null || w.image === undefined) return false;
-        if (typeof w.image === 'string' && w.image.length === 0) return false;
-        return true;
-      });
-
-      const shuffled = [...otherWords].sort(() => Math.random() - 0.5);
-      const validWrong = shuffled.filter(w => w.image !== null && w.image !== undefined);
-      const wrongChoices = validWrong.slice(0, 3).map(w => ({
-        word: w.word,
-        image: w.image,
-        isCorrect: false,
-      }));
-
-      const allChoices = [correctChoice, ...wrongChoices].sort(() => Math.random() - 0.5);
-
-      // Safety: ensure correct answer is present
-      if (!allChoices.some(c => c.word.toLowerCase() === word.toLowerCase())) {
-        allChoices[0] = correctChoice;
-      }
-
-      return allChoices;
+    return () => {
+      window.speechSynthesis.cancel();
+      clearTimeout(scoreTimer);
+      clearTimeout(completeTimer);
     };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const newChoices = generateChoices();
-    if (newChoices.length > 0) setChoices(newChoices);
-  }, [word, wordImage, allWords, isLocked, onAnswer]);
+  const accuracy = total > 0 ? Math.round((score / total) * 100) : 0;
 
-  const handleChoiceClick = (choice) => {
-    if (showFeedback) return;
+  const getPerformanceMessage = () => {
+    if (accuracy === 100) return { emoji: '👑', text: 'PERFECT!',   color: '#FFD700' };
+    if (accuracy >= 80)  return { emoji: '🌟', text: 'EXCELLENT!',  color: '#4CAF50' };
+    if (accuracy >= 60)  return { emoji: '⭐', text: 'GREAT JOB!',  color: '#2196F3' };
+    return                      { emoji: '💪', text: 'KEEP GOING!', color: '#FF9800' };
+  };
 
-    setIsLocked(true);
-    setSelectedChoice(choice);
-    setShowFeedback(true);
-
-    if (speak) {
-      speak(choice.isCorrect ? 'Correct!' : 'Try again!');
+  const getMilestoneLabel = () => {
+    switch (milestone) {
+      case 'quarter': return '🎯 1/4 of pictures done!';
+      case 'third':   return '🎯 1/3 of pictures done!';
+      case 'half':    return '🎯 Half of pictures done!';
+      case 'all':     return '🏆 All pictures done!';
+      default:        return null;
     }
-
-    setTimeout(() => {
-      onAnswer(choice.isCorrect);
-    }, 1000);
   };
 
-  const handleSpeakWord = () => {
-    if (speak) speak(word);
-  };
+  const performance = getPerformanceMessage();
+  const milestoneLabel = getMilestoneLabel();
 
   return (
-    <div className="recognition-challenge">
-      <div className="recognition-header">
-        <p className="recognition-question">
-          Which one is the <span className="highlight-word">{word}</span>?
-        </p>
-        <div className="sound-icon" onClick={handleSpeakWord}>
-          🔊
-        </div>
+    <div className="grammar-overlay">
+      <div className="tile-animation-container">
+        {Array.from({ length: 48 }).map((_, i) => (
+          <div
+            key={i}
+            className="tile"
+            style={{ animationDelay: `${Math.random() * 1.5}s` }}
+          />
+        ))}
       </div>
 
-      <div className="recognition-choices">
-        {choices.map((choice, index) => {
-          const isSelected = selectedChoice?.word === choice.word;
-          const isCorrect = choice.isCorrect;
-
-          // Build feedback class
-          let boxClass = 'recognition-choice';
-          if (showFeedback && isSelected) {
-            boxClass += isCorrect ? ' correct-choice' : ' incorrect-choice';
-          }
-          if (showFeedback && !isSelected && isCorrect) {
-            boxClass += ' show-correct';
-          }
-
-          // ✅ Use randomized slot color when no feedback active.
-          // When feedback IS active, let the CSS feedback classes take over.
-          // ✅ NECKLACE OVERRIDE: force dark background — image is too light otherwise
-          const isNecklace = choice.image &&
-            choice.image.toString().includes('necklace-emoji');
-          const bgColor = showFeedback
-            ? undefined
-            : isNecklace
-              ? '#2C2C2C'
-              : slotColors.current[index];
-
-          return (
-            <div
-              key={index}
-              className={boxClass}
-              style={bgColor ? { backgroundColor: bgColor } : undefined}
-              onClick={() => handleChoiceClick(choice)}
-            >
-              <div className="choice-visual">
-                {choice.image ? (
-                  <img
-                    src={choice.image}
-                    alt={choice.word}
-                    className="choice-image"
-                  />
-                ) : (
-                  <div className="choice-placeholder">?</div>
-                )}
-              </div>
-
-              {showFeedback && isSelected && (
-                <div className={`feedback-badge ${isCorrect ? 'correct-badge' : 'incorrect-badge'}`}>
-                  {isCorrect ? '✓' : '✗'}
-                </div>
-              )}
-
-              {showFeedback && !isSelected && isCorrect && (
-                <div className="feedback-badge correct-answer-badge">✓</div>
-              )}
+      {animationPhase === 'score' && (
+        <div className="score-reveal">
+          <div className="score-emoji">{performance.emoji}</div>
+          <div className="score-message" style={{ color: performance.color }}>
+            {performance.text}
+          </div>
+          <div className="score-numbers">
+            <span className="score-value">{score}</span>
+            <span className="score-separator">/</span>
+            <span className="score-total">{total}</span>
+          </div>
+          <div className="score-accuracy">
+            {accuracy}% Accuracy
+          </div>
+          {milestoneLabel && (
+            <div className="score-milestone">
+              {milestoneLabel}
             </div>
-          );
-        })}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-export default RecognitionChallenge;
+export default RunningTilesAnimation;

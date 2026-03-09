@@ -72,32 +72,61 @@ function AlphabetScreen(props) {
   const [showHexagonTransition, setShowHexagonTransition] = useState(false);
   const [showMasteryChallenge, setShowMasteryChallenge] = useState(false);
   const [snoozeUntil, setSnoozeUntil] = useState(savedState?.snoozeUntil || null);
+  const [currentMilestone, setCurrentMilestone] = useState(null);
 
-  // ✅ Check for mastery prompt every 5 images
+  // ✅ Check for mastery prompt: first at 30 images, then every 10 after that.
+  // Snooze thresholds: quarter=65 (1/4 of 260), third=87 (1/3), half=130 (1/2), all=260.
   useEffect(() => {
     console.log('Viewed images count:', viewedImages.length);
     console.log('Snooze until:', snoozeUntil);
 
-    // Skip if user has snoozed
-    const ONE_THIRD_MARK = Math.floor(260 / 3);
-    if (snoozeUntil === 'third' && viewedImages.length < ONE_THIRD_MARK) return;
-    if (snoozeUntil === 'half' && viewedImages.length < 130) return;
-    if (snoozeUntil === 'complete' && viewedImages.length < 260) return;
+    const TOTAL_IMAGES = 260;
+    const QUARTER_MARK = Math.round(TOTAL_IMAGES / 4);  // 65
+    const THIRD_MARK   = Math.round(TOTAL_IMAGES / 3);  // 87
+    const HALF_MARK    = Math.round(TOTAL_IMAGES / 2);  // 130
 
-    if (viewedImages.length > 0 && viewedImages.length % 5 === 0) {
+    // Skip if user has snoozed past a milestone they haven't reached yet
+    if (snoozeUntil === 'quarter'  && viewedImages.length < QUARTER_MARK) return;
+    if (snoozeUntil === 'third'    && viewedImages.length < THIRD_MARK)   return;
+    if (snoozeUntil === 'half'     && viewedImages.length < HALF_MARK)    return;
+    if (snoozeUntil === 'all'      && viewedImages.length < TOTAL_IMAGES) return;
+    // "Later" snooze: count:N means wait until N images viewed
+    if (snoozeUntil?.startsWith('count:')) {
+      const target = parseInt(snoozeUntil.split(':')[1]);
+      if (viewedImages.length < target) return;
+    }
+
+    const count = viewedImages.length;
+
+    // First prompt fires at exactly 30; after that every 10 images
+    // First prompt fires at exactly 30; after that every 10 images.
+    // Also fires at the exact target of a "Later" snooze.
+    const isLaterTarget = snoozeUntil?.startsWith('count:') &&
+      count === parseInt(snoozeUntil.split(':')[1]);
+    const isFirstPrompt  = count === 30;
+    const isRepeatPrompt = count > 30 && (count - 30) % 10 === 0;
+
+    if (isFirstPrompt || isRepeatPrompt || isLaterTarget) {
       const lastPromptAt = parseInt(
         localStorage.getItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`) || '0'
       );
 
-      // ✅ Only trigger if this is a NEW milestone
-      if (viewedImages.length > lastPromptAt) {
-        console.log('Triggering mastery check at', viewedImages.length, 'images');
+      // Only trigger if this is a NEW milestone (not already prompted here)
+      if (count > lastPromptAt) {
+        console.log('Triggering mastery check at', count, 'images');
 
         setTimeout(() => {
+          // Determine which milestone we just hit
+          const milestone =
+            count <= 30          ? null        :
+            count <= QUARTER_MARK ? 'quarter'  :
+            count <= THIRD_MARK   ? 'third'    :
+            count <= HALF_MARK    ? 'half'     : 'all';
+          setCurrentMilestone(milestone);
           setShowHexagonTransition(true);
           localStorage.setItem(
             `${lockedUserIdRef.current}_lastMasteryPromptAt`,
-            viewedImages.length.toString()
+            count.toString()
           );
         }, 3000);
       }
@@ -248,12 +277,14 @@ function AlphabetScreen(props) {
 
   const handleDeclineMasteryCheck = () => {
     setShowHexagonTransition(false);
-    setSnoozeUntil(null);
+    // "Later" = snooze for 15 more images from current position
+    setSnoozeUntil(`count:${viewedImages.length + 15}`);
   };
 
   const handleExitMasteryCheck = (score, total) => {
     setShowMasteryChallenge(false);
     setSnoozeUntil(null);
+    setCurrentMilestone(null);
 
     console.log(`Score: ${score}, Total: ${total}, Ratio: ${score / total}`);
 
@@ -321,6 +352,7 @@ function AlphabetScreen(props) {
         onDecline={handleDeclineMasteryCheck}
         onSnooze={handleSnoozeMasteryCheck}
         speak={props.speak}
+        viewedCount={viewedImages.length}
       />
     );
   }
@@ -332,6 +364,7 @@ function AlphabetScreen(props) {
         recentWords={recentWords}
         onExit={handleExitMasteryCheck}
         speak={props.speak}
+        milestone={currentMilestone}
       />
     );
   }

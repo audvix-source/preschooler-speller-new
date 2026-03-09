@@ -83,7 +83,7 @@ const POWER_WORDS = [
   { display: 'Marvelous!',    speak: 'Marvelous' }
 ];
 
-function MixedMasteryChallenge({ recentWords, onExit, speak }) {
+function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [score, setScore] = useState(0);
@@ -111,10 +111,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
 
       const normalizedWords = recentWords.map(normalizeWord);
 
-      // ✅ ORDERING FIX:
-      // Spelling questions first (short words < 7 letters),
-      // then recognition questions (long words ≥ 6 letters with images).
-      // Long words with no image fall back to spelling so nothing is skipped.
       const spellingQuestions = [];
       const recognitionQuestions = [];
 
@@ -125,7 +121,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           if (imgPath) {
             recognitionQuestions.push({ type: 'recognition', word });
           } else {
-            // No image for long word — treat as spelling
             spellingQuestions.push({ type: 'spelling', word });
           }
         } else {
@@ -133,12 +128,9 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         }
       });
 
-      // ✅ Spelling always comes first, recognition at the end
       const orderedQuestions = [...spellingQuestions, ...recognitionQuestions];
 
-      // ✅ Guarantee exactly 5 questions
       if (orderedQuestions.length > 5) {
-        // Keep up to 3 spelling + up to 2 recognition, spelling first
         const spelling = orderedQuestions.filter(q => q.type === 'spelling');
         const recognition = orderedQuestions.filter(q => q.type === 'recognition');
         const wantSpelling = Math.min(spelling.length, 3);
@@ -147,14 +139,12 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           ...spelling.slice(0, wantSpelling),
           ...recognition.slice(0, wantRecognition),
         ];
-        // Top up if still short
         if (trimmed.length < 5) {
           const remaining = orderedQuestions.filter(q => !trimmed.includes(q));
           trimmed.push(...remaining.slice(0, 5 - trimmed.length));
         }
         setQuestions(trimmed.slice(0, 5));
       } else {
-        // Pad to 5 with spelling repeats (spelling first, then recognition)
         const padded = [...orderedQuestions];
         let padIndex = 0;
         while (padded.length < 5) {
@@ -162,7 +152,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
           padded.push({ type: 'spelling', word: source });
           padIndex++;
         }
-        // Re-sort so spelling is always before recognition after padding
         const finalSpelling = padded.filter(q => q.type === 'spelling');
         const finalRecognition = padded.filter(q => q.type === 'recognition');
         setQuestions([...finalSpelling, ...finalRecognition].slice(0, 5));
@@ -255,7 +244,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       setShowFeedback(false);
       setIsCorrect(false);
     } else {
-      const finalScoreValue = calculatedScore !== undefined ? calculatedScore : score;
+      // ✅ Use calculatedScore directly — no intermediate variable needed
       setFinalTotal(totalQuestions);
       window.speechSynthesis.cancel();
       setTimeout(() => {
@@ -271,7 +260,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
   };
 
   const handleExit = () => {
-        onExit(score, questions.length); 
+    onExit(score, questions.length); 
   };
 
   const handleAnimationComplete = () => {
@@ -285,6 +274,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
         total={finalTotal}
         onComplete={handleAnimationComplete}
         speak={speak}
+        milestone={milestone}
       />
     );
   }
@@ -304,12 +294,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
       'zigzag': '⚡', 'zeppelin': '🛩️', 'queue': '👥', 'question-mark': '❓'
     };
     return emojiMap[word.toLowerCase()] || '📝';
-  };
-
-  const isLetterStillNeeded = (letter, word, currentAnswer) => {
-    const totalNeeded = word.toUpperCase().split('').filter(l => l === letter).length;
-    const alreadyUsed = currentAnswer.filter(l => l === letter).length;
-    return alreadyUsed < totalNeeded;
   };
 
   if (!currentQuestion) {
@@ -442,39 +426,38 @@ function MixedMasteryChallenge({ recentWords, onExit, speak }) {
               </div>
 
               <div className="keyboard-wrapper-container">
-  <div className="challenge-keyboard">
-    {alphabet.map(letter => {
-      const wordUpper = currentQuestion.word.word.toUpperCase();
-      const totalNeeded = wordUpper.split('').filter(l => l === letter).length;
-      const alreadyUsed = userAnswer.filter(l => l === letter).length;
-      const isUsed = (totalNeeded > 0) && (alreadyUsed >= totalNeeded);
-      const isNeeded = alreadyUsed < totalNeeded;
-      
-      return (
-        <button
-          key={letter}
-          className={`keyboard-key ${isUsed ? 'used' : isNeeded ? 'needed-letter' : 'not-needed-letter'}`}
-          onClick={() => handleLetterClick(letter)}
-          disabled={showFeedback || isUsed}
-        >
-          {letter}
-        </button>
-      );
-    })}
-  </div>
+                <div className="challenge-keyboard">
+                  {alphabet.map(letter => {
+                    const wordUpper = currentQuestion.word.word.toUpperCase();
+                    const totalNeeded = wordUpper.split('').filter(l => l === letter).length;
+                    const alreadyUsed = userAnswer.filter(l => l === letter).length;
+                    const isUsed = (totalNeeded > 0) && (alreadyUsed >= totalNeeded);
+                    const isNeeded = alreadyUsed < totalNeeded;
+                    
+                    return (
+                      <button
+                        key={letter}
+                        className={`keyboard-key ${isUsed ? 'used' : isNeeded ? 'needed-letter' : 'not-needed-letter'}`}
+                        onClick={() => handleLetterClick(letter)}
+                        disabled={showFeedback || isUsed}
+                      >
+                        {letter}
+                      </button>
+                    );
+                  })}
+                </div>
 
-  {/* ── NEW WRAPPER for orange-trimmed button box ── */}
-  <div className="button-group-wrapper">
-    <div className="challenge-controls">
-      <button className="backspace-button" onClick={handleBackspace} disabled={showFeedback}>
-  ⌫ Backspace
-</button>
-<button className="exit-button" onClick={handleExit}>
-  🚪 Exit
-</button>
-    </div>
-  </div>
-</div>
+                <div className="button-group-wrapper">
+                  <div className="challenge-controls">
+                    <button className="backspace-button" onClick={handleBackspace} disabled={showFeedback}>
+                      ⌫ Backspace
+                    </button>
+                    <button className="exit-button" onClick={handleExit}>
+                      🚪 Exit
+                    </button>
+                  </div>
+                </div>
+              </div>
             </>
           )}
         </div>

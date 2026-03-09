@@ -16,8 +16,7 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
   // ✅ Reset Logic State
   const [resetStep, setResetStep] = useState(0); // 0=hidden, 1=explanation, 2=preview
   const [viewedUserId, setViewedUserId] = useState(userId);
-  const [showSwitchPrompt, setShowSwitchPrompt] = useState(false);
-
+  
   useEffect(() => {
     loadStats(viewedUserId);
   }, [viewedUserId]);
@@ -59,15 +58,7 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
   };
 
   // ✅ Reset Handler
-  const handleReset = async () => {
-    await scoreDB.resetAllData(userId);
-    localStorage.removeItem(`${userId}_lastViewedRewards`);
-    setResetStep(0);
-    loadStats(viewedUserId);
-    if (speak) speak("All scores have been reset to zero.");
-  };
-
-  const dismissNewRewards = () => {
+    const dismissNewRewards = () => {
     if (!stats) return;
     const currentRewards = {
       stars: stats.stars || 0,

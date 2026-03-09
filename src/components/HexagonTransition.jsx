@@ -3,7 +3,7 @@ import './HexagonTransition.css';
 import BeeAnimation from './BeeAnimation';
 import './BeeAnimation.css';
 
-const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
+const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount = 30 }) => {
   const [phase, setPhase] = useState('fullscreen');
   const [showPrompt, setShowPrompt] = useState(false);
   const [showDeferOptions, setShowDeferOptions] = useState(false);
@@ -20,56 +20,45 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
 
     return () => {
       clearTimeout(deferTimer);
-      // ✅ REMOVED - Don't cancel speech here anymore!
-      // Speech will continue until user clicks a button
     };
   }, []);
 
   const handleAccept = () => {
-    // ✅ Cancel speech when user clicks "Let's Go!"
     window.speechSynthesis.cancel();
-    
     if (speak) speak("Awesome! Let's test your knowledge!");
-    
     setShowDeferOptions(false);
     setBeeConfig({ count: 20, size: 40, pattern: 'default' });
     setShowBees(true);
   };
 
   const handleDecline = () => {
-    // ✅ Cancel speech when user clicks "Later"
     window.speechSynthesis.cancel();
-    
-    if (speak) speak("No problem! Keep learning!");
-    onDecline();
+    if (speak) speak("No problem! I'll remind you soon!");
+    onDecline(); // snoozes 15 images
   };
 
   const handleSnooze = (option) => {
-    // ✅ Cancel previous speech when user clicks a snooze option
     window.speechSynthesis.cancel();
-    
     setShowDeferOptions(false);
     
     const beeConfigs = {
       'quarter': { count: 50, size: 28, pattern: 'quarter' },
-      'third': { count: 60, size: 22, pattern: 'third' },
-      'half': { count: 80, size: 17, pattern: 'half' },
-      'all': { count: 120, size: 13, pattern: 'all' }
+      'third':   { count: 60, size: 22, pattern: 'third' },
+      'half':    { count: 80, size: 17, pattern: 'half' },
+      'all':     { count: 120, size: 13, pattern: 'all' }
     };
     
     const config = beeConfigs[option];
     setBeeConfig(config);
     setShowBees(true);
     
-    // ✅ Speak new message (old one already cancelled above)
     if (speak) {
       const messages = {
         'quarter': "Got it! I'll ask you again after 1 out of 4 of the pictures.",
-        'third': "Got it! I'll ask you again after 1 out of 3 of the pictures.",
-        'half': "Perfect! I'll ask you again after half of the pictures.",
-        'all': "Sounds good! I'll ask you when you finish all the letters."
+        'third':   "Got it! I'll ask you again after 1 out of 3 of the pictures.",
+        'half':    "Perfect! I'll ask you again after half of the pictures.",
+        'all':     "Sounds good! I'll ask you when you finish all the letters."
       };
-      
       speak(messages[option]);
     }
   };
@@ -127,8 +116,8 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
                   </h1>
 
                   <p className="hexagon-transition__animated-message">
-                    <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>You've learned</span>{' '}
-                    <span className="hexagon-transition__word-fade hexagon-transition__highlight-number" style={{ animationDelay: '1s' }}>5 letters</span>
+                    <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>You've seen</span>{' '}
+                    <span className="hexagon-transition__word-fade hexagon-transition__highlight-number" style={{ animationDelay: '1s' }}>{viewedCount} pictures</span>
                     <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.2s' }}>!</span>
                     <br />
                     <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.4s' }}>Ready for a quick challenge?</span>
@@ -160,7 +149,6 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak }) => {
               <div className="hexagon-transition__defer-box">
                 <p className="hexagon-transition__defer-label">Or remind me after...</p>
                 
-                {/* ✅ HEADS UP MESSAGE */}
                 <p className="hexagon-transition__heads-up">
                   💡 <strong>Changed your mind?</strong><br />
                   Go back to the menu and tap<br />
