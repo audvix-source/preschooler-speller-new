@@ -203,9 +203,9 @@
     margin-bottom: 12px;                     /* ← add this, pushes labels away from frame */
     margin-left: auto;
     margin-right: auto;
-    width: 55%;
-    min-height: 240px;                       /* ← was 200px */
-    max-height: 290px;                       /* ← was 260px */
+    width: 70%;
+    min-height: 250px;                       /* ← was 200px */
+    max-height: 270px;                       /* ← was 260px */
   }
 
   .word-image-frame img {
