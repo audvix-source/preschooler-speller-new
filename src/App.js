@@ -34,9 +34,21 @@ function App() {
   const [users, setUsers] = useState(() => initUsers());
   const [activeUserId, setActiveUserIdState] = useState(() => getActiveUserId());
 
+  // ✅ Pending navigation — intercept quiz screens to confirm active player
+  const [pendingNav, setPendingNav] = useState(null); // { screen, category }
+
+  // ✅ Track whether the player has been confirmed for this play session.
+  // Using a ref so navigateTo always reads the live value — no stale closures.
+  // Resets when user visits Stats (score-checking is the session break)
+  // or switches player via the Players screen.
+  const sessionConfirmedRef = useRef(false);
+
   const handleSetActiveUser = (userId) => {
     setActiveUserId(userId);
     setActiveUserIdState(userId);
+    // Actively picking a player counts as confirmation — no prompt needed on next quiz.
+    // The prompt only resets when the user visits Stats (score-checking = session break).
+    sessionConfirmedRef.current = true;
   };
 
   const activeUser = users.find(u => u?.id === activeUserId) || users[0];
@@ -117,9 +129,40 @@ function App() {
     }, 50);
   };
 
+  // ✅ Called by StatsScreen when user browses a *different* player's tab.
+  // Only then do we re-prompt — viewing your own scores is not a session break.
+  const handleViewedOtherPlayer = () => {
+    sessionConfirmedRef.current = false;
+  };
+
+  // ✅ Intercept quiz screen navigation to confirm active player
+  const QUIZ_SCREENS = ['alphabet', 'learning'];
+
   const navigateTo = (screen, category = '') => {
+    if (QUIZ_SCREENS.includes(screen) && !sessionConfirmedRef.current) {
+      // First quiz entry after a session break — confirm who's playing
+      setPendingNav({ screen, category });
+      return;
+    }
     setSelectedCategory(category);
     setCurrentScreen(screen);
+  };
+
+  // ✅ User confirmed — proceed to the quiz and mark session as confirmed
+  const handleConfirmPlayer = () => {
+    if (pendingNav) {
+      sessionConfirmedRef.current = true;
+      setSelectedCategory(pendingNav.category);
+      setCurrentScreen(pendingNav.screen);
+      setPendingNav(null);
+    }
+  };
+
+  // ✅ User wants to switch — drop them on Players screen.
+  // Session will be confirmed once they pick a player there.
+  const handleSwitchPlayer = () => {
+    setPendingNav(null);
+    setCurrentScreen('players');
   };
 
   const renderScreen = () => {
@@ -162,8 +205,8 @@ function App() {
           userId={activeUserId}
           users={users}
           setActiveUserId={handleSetActiveUser}
+          onViewedOtherPlayer={handleViewedOtherPlayer}
         />;
-        
       case 'players':
         return <PlayersScreen
           users={users}
@@ -184,7 +227,62 @@ function App() {
     }
   };
 
-  return <div className="App">{renderScreen()}</div>;
+  return (
+    <div className="App">
+      {renderScreen()}
+
+      {/* ✅ Player confirmation modal — shown before any quiz screen */}
+      {pendingNav && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.65)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: '#fff8e7',
+            borderRadius: 24,
+            padding: '32px 28px',
+            textAlign: 'center',
+            maxWidth: 300,
+            width: '85%',
+            border: '3px solid #FFA500',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+          }}>
+            <div style={{ fontSize: 52, marginBottom: 4 }}>{activeUser?.avatar}</div>
+            <p style={{ margin: '0 0 4px', color: '#888', fontSize: 15 }}>Playing as</p>
+            <h2 style={{ margin: '0 0 20px', color: '#2d3436', fontSize: 26 }}>
+              {activeUser?.name}
+            </h2>
+            <button
+              onClick={handleConfirmPlayer}
+              style={{
+                display: 'block', width: '100%', padding: '13px',
+                background: '#00b894', color: '#fff', border: 'none',
+                borderRadius: 14, fontSize: 18, fontWeight: 'bold',
+                marginBottom: 10, cursor: 'pointer',
+                boxShadow: '0 4px 0 #00916e'
+              }}
+            >
+              ✅ Yes, that's me!
+            </button>
+            <button
+              onClick={handleSwitchPlayer}
+              style={{
+                display: 'block', width: '100%', padding: '13px',
+                background: '#e17055', color: '#fff', border: 'none',
+                borderRadius: 14, fontSize: 18, fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 4px 0 #c0392b'
+              }}
+            >
+              🔄 Switch Player
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default App;

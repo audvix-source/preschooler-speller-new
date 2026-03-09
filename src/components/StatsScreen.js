@@ -4,7 +4,7 @@ import { getWordsByCategory } from '../wordList.js';
 import './StatsScreen.css';
 import ScoringLegend from './ScoringLegend';
 
-function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActiveUserId }) {
+function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActiveUserId, onViewedOtherPlayer }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [newRewards, setNewRewards] = useState([]);
@@ -190,20 +190,24 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
           <h1>🏆 My Progress 🏆</h1>
         </div>
 
-         {/* ── Player Tabs ── */}
+        {/* ── Player Tabs ── */}
         <div className="player-tabs">
           {users.filter(u => u !== null).map(user => (
             <div
               key={user.id}
               className={`player-tab ${user.id === viewedUserId ? 'active' : ''}`}
               style={user.id === viewedUserId ? { backgroundColor: user.color } : {}}
-              onClick={() => { 
-  setViewedUserId(user.id); 
-  setRewardDetails({}); 
-  setExpandedReward(null); 
-  loadStats(user.id); 
-}}
-  
+              onClick={() => {
+                setViewedUserId(user.id);
+                setRewardDetails({});
+                setExpandedReward(null);
+                loadStats(user.id);
+                // ✅ Only flag a session break if browsing a DIFFERENT player's scores.
+                // Viewing your own tab is not a session break — no re-prompt needed.
+                if (user.id !== userId && onViewedOtherPlayer) {
+                  onViewedOtherPlayer();
+                }
+              }}
             >
               <span className="player-tab-avatar">{user.avatar}</span>
               <span className="player-tab-name">{user.name}</span>
@@ -322,7 +326,7 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
         </button>
       </div>
 
-      {/* ✅ Reset Overlay positioned inside the outer stats-screen div */}
+      {/* ✅ Reset Overlay */}
       {resetStep > 0 && (
         <div className="reset-overlay">
           <div className="reset-modal">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AlphabetScreen.css';
 import { wordList } from './wordList.js';
 import birdBackground from './assets/pair-birds.png';
@@ -11,8 +11,8 @@ import MixedMasteryChallenge from './components/MixedMasteryChallenge';
 // Dynamic image context setup - LOAD FROM BOTH FOLDERS
 const importAll = (r) => {
   let images = {};
-  r.keys().forEach((item) => { 
-    images[item.replace('./', '')] = r(item); 
+  r.keys().forEach((item) => {
+    images[item.replace('./', '')] = r(item);
   });
   return images;
 };
@@ -36,12 +36,17 @@ const getImagePath = (fileName) => {
 
 function AlphabetScreen(props) {
   const { userId = 'user_1' } = props;
+
+  // ✅ Lock the userId at mount time so scores never drift to another player
+  // even if the parent re-renders with a different activeUserId mid-session.
+  const lockedUserIdRef = useRef(userId);
+
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  
+
   // Load saved state
   const getSavedAlphabetState = () => {
     try {
-      const saved = localStorage.getItem(`${userId}_alphabetScreenState`);
+      const saved = localStorage.getItem(`${lockedUserIdRef.current}_alphabetScreenState`);
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       console.error('Error loading alphabet state:', e);
@@ -61,7 +66,7 @@ function AlphabetScreen(props) {
   const [showBanner, setShowBanner] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
-  // ✅ NEW: IMAGE-BASED MASTERY CHECK WITH HEXAGON TRANSITION
+  // ✅ IMAGE-BASED MASTERY CHECK WITH HEXAGON TRANSITION
   const [viewedImages, setViewedImages] = useState(savedState?.viewedImages || []);
   const [recentWords, setRecentWords] = useState(savedState?.recentWords || []);
   const [showHexagonTransition, setShowHexagonTransition] = useState(false);
@@ -69,33 +74,37 @@ function AlphabetScreen(props) {
   const [snoozeUntil, setSnoozeUntil] = useState(savedState?.snoozeUntil || null);
 
   // ✅ Check for mastery prompt every 5 images
- useEffect(() => {
-  console.log('Viewed images count:', viewedImages.length);
-  console.log('Snooze until:', snoozeUntil);
-  
-  // Skip if user has snoozed
-  const ONE_THIRD_MARK = Math.floor(260 / 3);
-  if (snoozeUntil === 'third' && viewedImages.length < ONE_THIRD_MARK) return;
-  if (snoozeUntil === 'half' && viewedImages.length < 130) return;
-  if (snoozeUntil === 'complete' && viewedImages.length < 260) return;
-  
-  if (viewedImages.length > 0 && viewedImages.length % 5 === 0) {
-    const lastPromptAt = parseInt(localStorage.getItem(`${userId}_lastMasteryPromptAt`) || '0');
-    
-    // ✅ FIX: Only trigger if this is a NEW milestone
-    if (viewedImages.length > lastPromptAt) {
-      console.log('Triggering mastery check at', viewedImages.length, 'images');
-      
-      setTimeout(() => {
-        setShowHexagonTransition(true);
-        // ✅ Set the flag IMMEDIATELY, not in setTimeout
-        localStorage.setItem(`${userId}_lastMasteryPromptAt`, viewedImages.length.toString());
-      }, 3000);
-    }
-  }
-}, [viewedImages, snoozeUntil]);
+  useEffect(() => {
+    console.log('Viewed images count:', viewedImages.length);
+    console.log('Snooze until:', snoozeUntil);
 
-    // Auto-save state
+    // Skip if user has snoozed
+    const ONE_THIRD_MARK = Math.floor(260 / 3);
+    if (snoozeUntil === 'third' && viewedImages.length < ONE_THIRD_MARK) return;
+    if (snoozeUntil === 'half' && viewedImages.length < 130) return;
+    if (snoozeUntil === 'complete' && viewedImages.length < 260) return;
+
+    if (viewedImages.length > 0 && viewedImages.length % 5 === 0) {
+      const lastPromptAt = parseInt(
+        localStorage.getItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`) || '0'
+      );
+
+      // ✅ Only trigger if this is a NEW milestone
+      if (viewedImages.length > lastPromptAt) {
+        console.log('Triggering mastery check at', viewedImages.length, 'images');
+
+        setTimeout(() => {
+          setShowHexagonTransition(true);
+          localStorage.setItem(
+            `${lockedUserIdRef.current}_lastMasteryPromptAt`,
+            viewedImages.length.toString()
+          );
+        }, 3000);
+      }
+    }
+  }, [viewedImages, snoozeUntil]);
+
+  // Auto-save state
   useEffect(() => {
     const stateToSave = {
       selectedWord,
@@ -108,7 +117,10 @@ function AlphabetScreen(props) {
     };
 
     try {
-      localStorage.setItem(`${userId}_alphabetScreenState`, JSON.stringify(stateToSave));
+      localStorage.setItem(
+        `${lockedUserIdRef.current}_alphabetScreenState`,
+        JSON.stringify(stateToSave)
+      );
     } catch (e) {
       console.error('Error saving alphabet state:', e);
     }
@@ -128,19 +140,19 @@ function AlphabetScreen(props) {
       item.category === 'Alphabet Fun' &&
       item.word.toUpperCase().startsWith(letter)
     );
-    
+
     if (wordsForLetter.length === 0) return;
-    
+
     setActiveLetter(letter);
     const currentIndex = letterProgress[letter] || 0;
     const foundWord = wordsForLetter[currentIndex];
     const nextIndex = (currentIndex + 1) % wordsForLetter.length;
-    
+
     setLetterProgress({
       ...letterProgress,
       [letter]: nextIndex
     });
-    
+
     setSelectedWord({
       ...foundWord,
       currentIndex: currentIndex,
@@ -148,13 +160,13 @@ function AlphabetScreen(props) {
       letter: letter
     });
     props.speak(foundWord.word);
-    
+
     // ✅ Track this image view
     const imageId = `${foundWord.id}-${foundWord.word}`;
     if (!viewedImages.includes(imageId)) {
       console.log('New image viewed:', imageId);
       setViewedImages([...viewedImages, imageId]);
-      
+
       // Keep last 5 words for mastery check
       const updatedRecent = [...recentWords, foundWord];
       if (updatedRecent.length > 5) {
@@ -162,7 +174,7 @@ function AlphabetScreen(props) {
       }
       setRecentWords(updatedRecent);
     }
-    
+
     if (nextIndex === 0 && currentIndex > 0) {
       setTimeout(() => {
         setActiveLetter(null);
@@ -176,21 +188,21 @@ function AlphabetScreen(props) {
   };
 
   const handleBackToMenu = () => {
-    localStorage.removeItem(`${userId}_alphabetScreenState`);
-    localStorage.removeItem(`${userId}_lastMasteryPromptAt`);
+    localStorage.removeItem(`${lockedUserIdRef.current}_alphabetScreenState`);
+    localStorage.removeItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`);
     props.onNavigate('menu');
   };
 
   const hasMoreImages = (letter) => {
     if (activeLetter !== letter) return false;
-    
+
     const wordsForLetter = wordList.filter(item =>
       item.category === 'Alphabet Fun' &&
       item.word.toUpperCase().startsWith(letter)
     );
-    
+
     const currentProgress = letterProgress[letter] || 0;
-    
+
     return currentProgress < wordsForLetter.length;
   };
 
@@ -217,7 +229,7 @@ function AlphabetScreen(props) {
   const handleDismissBanner = () => {
     setShowBanner(false);
     setBannerDismissed(true);
-    localStorage.setItem('${userId}challengeBannerDismissed', 'true');
+    localStorage.setItem(`${lockedUserIdRef.current}_challengeBannerDismissed`, 'true');
   };
 
   // ✅ HEXAGON TRANSITION HANDLERS
@@ -225,78 +237,81 @@ function AlphabetScreen(props) {
     console.log('Mastery check accepted, recent words:', recentWords);
     setShowHexagonTransition(false);
     setShowMasteryChallenge(true);
-    setSnoozeUntil(null); // Clear any snooze
+    setSnoozeUntil(null);
   };
+
   const handleSnoozeMasteryCheck = (option) => {
-  console.log('Mastery check snoozed until:', option);
-  setShowHexagonTransition(false);
-  setSnoozeUntil(option);
+    console.log('Mastery check snoozed until:', option);
+    setShowHexagonTransition(false);
+    setSnoozeUntil(option);
   };
+
   const handleDeclineMasteryCheck = () => {
     setShowHexagonTransition(false);
-    setSnoozeUntil(null); // Clear any snooze
+    setSnoozeUntil(null);
   };
 
   const handleExitMasteryCheck = (score, total) => {
-  setShowMasteryChallenge(false);
-  setSnoozeUntil(null);
-  
-  console.log(`Score: ${score}, Total: ${total}, Ratio: ${score/total}`);
-  
-  const accuracy = total > 0 ? (score / total) * 100 : 0;
-  const isPerfect = score === total;
-  
-  const wordsTestedString = recentWords
-    .map(w => w.word)
-    .join(', ');
-  
-  const saveResults = async () => {
-    if (!scoreDB.db) await scoreDB.init();
-    await scoreDB.recordLearningAttempt(
-      `Mastery Check: ${wordsTestedString}`,
-      isPerfect,
-      userId
-    );
-    for (const [index, word] of recentWords.entries()) {
-      const isCorrect = index < score;
+    setShowMasteryChallenge(false);
+    setSnoozeUntil(null);
+
+    console.log(`Score: ${score}, Total: ${total}, Ratio: ${score / total}`);
+
+    const accuracy = total > 0 ? (score / total) * 100 : 0;
+    const isPerfect = score === total;
+
+    const wordsTestedString = recentWords
+      .map(w => w.word)
+      .join(', ');
+
+    // ✅ Use lockedUserIdRef.current — never drifts to another player
+    const saveResults = async () => {
+      if (!scoreDB.db) await scoreDB.init();
       await scoreDB.recordLearningAttempt(
-        `${word.letter || word.word[0]}-${word.word}`,
-        isCorrect,
-        userId
+        `Mastery Check: ${wordsTestedString}`,
+        isPerfect,
+        lockedUserIdRef.current
       );
+      for (const [index, word] of recentWords.entries()) {
+        const isCorrect = index < score;
+        await scoreDB.recordLearningAttempt(
+          `${word.letter || word.word[0]}-${word.word}`,
+          isCorrect,
+          lockedUserIdRef.current
+        );
+      }
+    };
+    saveResults();
+
+    if (total === 0) {
+      // say nothing
+    } else if (score === 0) {
+      setTimeout(() => {
+        if (props.speak) props.speak("Don't give up! Try again!");
+      }, 500);
+    } else {
+      const ratio = score / total;
+      setTimeout(() => {
+        if (score === total) {
+          const powerWords = [
+            'Perfect!', 'Excellent!', 'Amazing!', 'You Did It!',
+            'Splendid!', 'Genius!', 'Brilliant!', 'Outstanding!',
+            'Fantastic!', 'Wonderful!'
+          ];
+          const chosen = powerWords[Math.floor(Math.random() * powerWords.length)];
+          if (props.speak) props.speak(chosen);
+        } else if (ratio >= 0.8) {
+          if (props.speak) props.speak("So close! Almost perfect!");
+        } else if (ratio >= 0.6) {
+          if (props.speak) props.speak("Nice work! You're getting there!");
+        } else if (ratio >= 0.4) {
+          if (props.speak) props.speak("Good try! Practice makes perfect!");
+        } else {
+          if (props.speak) props.speak("That's a start! Keep going!");
+        }
+      }, 500);
     }
   };
-  saveResults();
-  
-  if (total === 0) {
-    // say nothing
-  } else if (score === 0) {
-    setTimeout(() => {
-      if (props.speak) props.speak("Don't give up! Try again!");
-    }, 500);
-  } else {
-    const ratio = score / total;
-    setTimeout(() => {
-      if (score === total) {
-        const powerWords = [
-          'Perfect!', 'Excellent!', 'Amazing!', 'You Did It!',
-          'Splendid!', 'Genius!', 'Brilliant!', 'Outstanding!',
-          'Fantastic!', 'Wonderful!'
-        ];
-        const chosen = powerWords[Math.floor(Math.random() * powerWords.length)];
-        if (props.speak) props.speak(chosen);
-      } else if (ratio >= 0.8) {
-        if (props.speak) props.speak("So close! Almost perfect!");
-      } else if (ratio >= 0.6) {
-        if (props.speak) props.speak("Nice work! You're getting there!");
-      } else if (ratio >= 0.4) {
-        if (props.speak) props.speak("Good try! Practice makes perfect!");
-      } else {
-        if (props.speak) props.speak("That's a start! Keep going!");
-      }
-    }, 500);
-  }
-};
 
   // ✅ If hexagon transition is active
   if (showHexagonTransition) {
@@ -369,7 +384,7 @@ function AlphabetScreen(props) {
               />
             </div>
             <p className="word-text">{selectedWord.word}</p>
-            
+
             {selectedWord.totalCount > 1 && (
               <div className="progress-dots">
                 {Array.from({ length: selectedWord.totalCount }).map((_, i) => (
@@ -380,8 +395,8 @@ function AlphabetScreen(props) {
                 ))}
               </div>
             )}
-            
-           <p className="tap-more-hint" style={{
+
+            <p className="tap-more-hint" style={{
               visibility: (selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1) ? 'visible' : 'hidden'
             }}>👇 Tap {selectedWord.word[0]} for more!</p>
           </div>
