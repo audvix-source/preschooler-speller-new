@@ -15,7 +15,8 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
   
   // ✅ Reset Logic State
   const [resetStep, setResetStep] = useState(0); // 0=hidden, 1=explanation, 2=preview
-  const [viewedUserId, setViewedUserId] = useState(userId); // ← ADD THIS
+  const [viewedUserId, setViewedUserId] = useState(userId);
+  const [showSwitchPrompt, setShowSwitchPrompt] = useState(false);
 
   useEffect(() => {
     loadStats(viewedUserId);
@@ -197,12 +198,12 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
               className={`player-tab ${user.id === viewedUserId ? 'active' : ''}`}
               style={user.id === viewedUserId ? { backgroundColor: user.color } : {}}
               onClick={() => { 
-  setActiveUserId(user.id); 
   setViewedUserId(user.id); 
   setRewardDetails({}); 
   setExpandedReward(null); 
   loadStats(user.id); 
 }}
+  
             >
               <span className="player-tab-avatar">{user.avatar}</span>
               <span className="player-tab-name">{user.name}</span>
@@ -325,20 +326,20 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
       {resetStep > 0 && (
         <div className="reset-overlay">
           <div className="reset-modal">
+
             {resetStep === 1 && (
               <>
                 <div className="reset-step-icon">⚠️</div>
-                <h2 className="reset-title">Reset All Scores?</h2>
+                <h2 className="reset-title">Reset Scores</h2>
                 <p className="reset-explanation">
-                  This will erase <strong>all</strong> your stars, rewards, and learning progress.
-                  <br /><br />
-                  Everything goes back to zero — including streaks, correct answers, and all badges earned.
-                  <br /><br />
-                  Want to see what that looks like first?
+                  Who would you like to reset?
                 </p>
                 <div className="reset-buttons">
                   <button className="reset-preview-btn" onClick={() => setResetStep(2)}>
-                    👀 Show me what happens
+                    👤 Reset <strong>{users.find(u => u?.id === viewedUserId)?.name || 'This Player'}</strong> only
+                  </button>
+                  <button className="reset-all-btn" onClick={() => setResetStep(3)}>
+                    👥 Reset ALL Players
                   </button>
                   <button className="reset-cancel-btn" onClick={() => setResetStep(0)}>
                     Cancel
@@ -350,7 +351,7 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
             {resetStep === 2 && (
               <>
                 <div className="reset-step-icon">🔍</div>
-                <h2 className="reset-title">After reset, this is what you'll see:</h2>
+                <h2 className="reset-title">Reset {users.find(u => u?.id === viewedUserId)?.name || 'This Player'}?</h2>
                 <div className="reset-preview">
                   <div className="preview-rewards-grid">
                     <div className="preview-reward-card">⭐<br/><strong>0</strong><br/><span>Stars</span></div>
@@ -358,16 +359,17 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
                     <div className="preview-reward-card">🥈<br/><strong>0</strong><br/><span>Silver</span></div>
                     <div className="preview-reward-card">👑<br/><strong>0</strong><br/><span>Champion</span></div>
                   </div>
-                  <div className="preview-stats-row">
-                    <div className="preview-stat">✅<br/><strong>0</strong><br/><span>Correct</span></div>
-                    <div className="preview-stat">📝<br/><strong>0</strong><br/><span>Attempts</span></div>
-                    <div className="preview-stat">🔥<br/><strong>0</strong><br/><span>Streak</span></div>
-                  </div>
-                  <p className="preview-warning">⚠️ All learning progress will also be cleared.</p>
+                  <p className="preview-warning">⚠️ All learning and alphabet progress will be cleared.</p>
                 </div>
                 <div className="reset-buttons">
-                  <button className="reset-confirm-btn" onClick={handleReset}>
-                    🗑️ Yes, Reset Everything
+                  <button className="reset-confirm-btn" onClick={async () => {
+                    await scoreDB.resetAllData(viewedUserId);
+                    localStorage.removeItem(`${viewedUserId}_lastViewedRewards`);
+                    setResetStep(0);
+                    loadStats(viewedUserId);
+                    if (speak) speak("Scores have been reset.");
+                  }}>
+                    🗑️ Yes, Reset This Player
                   </button>
                   <button className="reset-cancel-btn" onClick={() => setResetStep(0)}>
                     Cancel
@@ -375,9 +377,63 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
                 </div>
               </>
             )}
+
+            {resetStep === 3 && (
+              <>
+                <div className="reset-step-icon">⚠️</div>
+                <h2 className="reset-title">Reset ALL Players?</h2>
+                <p className="reset-explanation">
+                  This will erase <strong>every player's</strong> stars, rewards, and learning progress.
+                  <br/><br/>
+                  This cannot be undone!
+                </p>
+                <div className="reset-buttons">
+                  <button className="reset-confirm-btn" onClick={() => setResetStep(4)}>
+                    👀 Show me what happens
+                  </button>
+                  <button className="reset-cancel-btn" onClick={() => setResetStep(0)}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+
+            {resetStep === 4 && (
+              <>
+                <div className="reset-step-icon">🗑️</div>
+                <h2 className="reset-title">All players will be reset to zero:</h2>
+                <div className="reset-preview">
+                  {users.filter(u => u !== null).map(user => (
+                    <div key={user.id} className="reset-player-row">
+                      <span>{user.avatar} {user.name}</span>
+                      <span className="reset-player-zeroes">⭐0 🥉0 🥈0 👑0</span>
+                    </div>
+                  ))}
+                  <p className="preview-warning">⚠️ All learning and alphabet progress will be cleared.</p>
+                </div>
+                <div className="reset-buttons">
+                  <button className="reset-confirm-btn" onClick={async () => {
+                    for (const user of users.filter(u => u !== null)) {
+                      await scoreDB.resetAllData(user.id);
+                      localStorage.removeItem(`${user.id}_lastViewedRewards`);
+                    }
+                    setResetStep(0);
+                    loadStats(viewedUserId);
+                    if (speak) speak("All scores have been reset.");
+                  }}>
+                    🗑️ Yes, Reset Everyone
+                  </button>
+                  <button className="reset-cancel-btn" onClick={() => setResetStep(0)}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+
           </div>
         </div>
       )}
+
     </div>
   );
 }

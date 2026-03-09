@@ -540,11 +540,16 @@
 .tap-more-hint {
   font-size: 1.2em;
   color: #FFD700;
+  min-height: 28px;
   margin-top: -1px;          /* ← tighten from 8px */
   margin-bottom: 0;         /* ← add this */
   margin-block-start: 0;    /* ← kill browser p default */
   margin-block-end: 0;      /* ← kill browser p default */
   animation: gentle-bounce 1.5s ease-in-out infinite;
+}
+
+.tap-more-spacer {
+  height: 90px;
 }
 
 @keyframes gentle-bounce {

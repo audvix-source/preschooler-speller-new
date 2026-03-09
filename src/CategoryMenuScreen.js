@@ -43,7 +43,7 @@ function CategoryMenuScreen({ onNavigate, activeUser, speak }) {
             onClick={() => handleCategoryClick(category)}
             disabled={!category.enabled}
           >
-            {category.name === 'Add Players?' ? '👥 Add Players?' : category.name}
+            {category.name === 'Add Players?' ? '👥 Add / Change Players' : category.name}
           </button>
         ))}
       </div>

@@ -49,7 +49,7 @@ function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActi
       // Update existing user
       updated[editingSlot] = {
         ...updated[editingSlot],
-        name: formName.trim().slice(0, 12),
+        name: formName.trim().slice(0, 12).replace(/^\w/, c => c.toUpperCase()),
         avatar: formAvatar,
         color: formColor
       };
@@ -59,7 +59,7 @@ function PlayersScreen({ users, setUsers, activeUserId, setActiveUserId: setActi
       if (speak) speak(`Profile updated!`);
     } else {
       // Create new user
-      const newUpdated = createUser(users, editingSlot, formName, formAvatar, formColor);
+      const newUpdated = createUser(users, editingSlot, formName.trim().slice(0, 12).replace(/^\w/, c => c.toUpperCase()), formAvatar, formColor);
       setUsers(newUpdated);
       setActiveUserId(newUpdated[editingSlot].id);
       setActive(newUpdated[editingSlot].id);

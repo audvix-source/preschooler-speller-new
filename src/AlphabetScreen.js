@@ -381,9 +381,9 @@ function AlphabetScreen(props) {
               </div>
             )}
             
-            {selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1 && (
-               <p className="tap-more-hint">👇 Tap {selectedWord.word[0]} for more!</p>
-            )}
+           <p className="tap-more-hint" style={{
+              visibility: (selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1) ? 'visible' : 'hidden'
+            }}>👇 Tap {selectedWord.word[0]} for more!</p>
           </div>
         )}
       </div>

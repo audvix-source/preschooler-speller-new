@@ -374,3 +374,16 @@
   font-weight: 700;
   color: #333;
 }
+
+.reset-all-btn {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 1em;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(239,68,68,.4);
+}
