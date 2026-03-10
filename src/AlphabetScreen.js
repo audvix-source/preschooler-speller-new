@@ -40,7 +40,6 @@ function AlphabetScreen(props) {
   // ✅ Lock the userId at mount time so scores never drift to another player
   // even if the parent re-renders with a different activeUserId mid-session.
   const lockedUserIdRef = useRef(userId);
-  const recentWordsRef = useRef([]);
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -56,6 +55,8 @@ function AlphabetScreen(props) {
   };
 
   const savedState = getSavedAlphabetState();
+  const recentWordsRef = useRef(savedState?.recentWords || []);
+  const tapCountRef = useRef(0); // increments on every tap, repeated or not
 
   // STATE DEFINITIONS
   const [selectedWord, setSelectedWord] = useState(savedState?.selectedWord || null);
@@ -70,13 +71,12 @@ function AlphabetScreen(props) {
   // ✅ IMAGE-BASED MASTERY CHECK WITH HEXAGON TRANSITION
   const [viewedImages, setViewedImages] = useState(savedState?.viewedImages || []);
   const [recentWords, setRecentWords] = useState(savedState?.recentWords || []);
-  // Keep ref in sync with saved state on mount
-  recentWordsRef.current = savedState?.recentWords || [];
   const [showHexagonTransition, setShowHexagonTransition] = useState(false);
   const [showMasteryChallenge, setShowMasteryChallenge] = useState(false);
   const [snoozeUntil, setSnoozeUntil] = useState(savedState?.snoozeUntil || null);
   const [currentMilestone, setCurrentMilestone] = useState(null);
   const [promptType, setPromptType] = useState('first');
+  const [tapCount, setTapCount] = useState(0); // triggers useEffect on every tap
 
   // ✅ Check for mastery prompt: first at 30 images, then every 10 after that.
   // Snooze thresholds: quarter=65 (1/4 of 260), third=87 (1/3), half=130 (1/2), all=260.
@@ -89,29 +89,19 @@ function AlphabetScreen(props) {
     const THIRD_MARK   = Math.round(TOTAL_IMAGES / 3);  // 87
     const HALF_MARK    = Math.round(TOTAL_IMAGES / 2);  // 130
 
-    // Skip if user has snoozed past a milestone they haven't reached yet
-    if (snoozeUntil === 'quarter'  && viewedImages.length < QUARTER_MARK) return;
-    if (snoozeUntil === 'third'    && viewedImages.length < THIRD_MARK)   return;
-    if (snoozeUntil === 'half'     && viewedImages.length < HALF_MARK)    return;
-    if (snoozeUntil === 'all'      && viewedImages.length < TOTAL_IMAGES) return;
-    // "Later" snooze: count:N means wait until N images viewed
-    if (snoozeUntil?.startsWith('count:')) {
-      const target = parseInt(snoozeUntil.split(':')[1]);
-      if (viewedImages.length < target) return;
-    }
-
     const count = viewedImages.length;
 
-    // First prompt fires at exactly 30; after that every 15 images.
-    // Also fires at the exact target of a "Later" snooze.
     const isLaterTarget = snoozeUntil?.startsWith('count:') &&
-  count === parseInt(snoozeUntil.split(':')[1]);
-const isFirstPrompt = count === 30;
-// ✅ Only fire repeat-every-10 if user is NOT in a "Later" snooze
-const isRepeatPrompt = !snoozeUntil?.startsWith('count:') &&
-  count > 30 && (count - 30) % 15 === 0;
+      count >= parseInt(snoozeUntil.split(':')[1]);
+    const isFirstPrompt  = !snoozeUntil && count === 30;
+    const isRepeatPrompt = !snoozeUntil && count > 30 && (count - 30) % 15 === 0;
+    const isMilestoneTarget =
+      (snoozeUntil === 'quarter' && count >= QUARTER_MARK) ||
+      (snoozeUntil === 'third'   && count >= THIRD_MARK)   ||
+      (snoozeUntil === 'half'    && count >= HALF_MARK)    ||
+      (snoozeUntil === 'all'     && count >= TOTAL_IMAGES);
 
-if (isFirstPrompt || isRepeatPrompt || isLaterTarget) {
+    if (isFirstPrompt || isRepeatPrompt || isLaterTarget || isMilestoneTarget) {
       const lastPromptAt = parseInt(
         localStorage.getItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`) || '0'
       );
@@ -121,13 +111,12 @@ if (isFirstPrompt || isRepeatPrompt || isLaterTarget) {
         console.log('Triggering mastery check at', count, 'images');
 
         setTimeout(() => {
-          // Determine which milestone we just hit
           const milestone =
-            count <= 30          ? null        :
+            count <= 30           ? null       :
             count <= QUARTER_MARK ? 'quarter'  :
             count <= THIRD_MARK   ? 'third'    :
             count <= HALF_MARK    ? 'half'     : 'all';
-          const promptType = (isLaterTarget || isRepeatPrompt) ? 'later' : 'first';
+          const promptType = isFirstPrompt ? 'first' : 'later';
           setCurrentMilestone(milestone);
           setPromptType(promptType);
           setShowHexagonTransition(true);
@@ -138,7 +127,7 @@ if (isFirstPrompt || isRepeatPrompt || isLaterTarget) {
         }, 3000);
       }
     }
-  }, [viewedImages, snoozeUntil]);
+  }, [viewedImages, snoozeUntil, tapCount]);
 
   // Auto-save state
   useEffect(() => {
@@ -199,6 +188,11 @@ if (isFirstPrompt || isRepeatPrompt || isLaterTarget) {
 
     // ✅ Track this image view
     const imageId = `${foundWord.id}-${foundWord.word}`;
+
+    // Always increment tap counter — fires useEffect even on repeated images
+    tapCountRef.current += 1;
+    setTapCount(tapCountRef.current);
+
     if (!viewedImages.includes(imageId)) {
       console.log('New image viewed:', imageId);
       setViewedImages([...viewedImages, imageId]);
