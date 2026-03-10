@@ -40,6 +40,7 @@ function AlphabetScreen(props) {
   // ✅ Lock the userId at mount time so scores never drift to another player
   // even if the parent re-renders with a different activeUserId mid-session.
   const lockedUserIdRef = useRef(userId);
+  const recentWordsRef = useRef([]);
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -69,10 +70,13 @@ function AlphabetScreen(props) {
   // ✅ IMAGE-BASED MASTERY CHECK WITH HEXAGON TRANSITION
   const [viewedImages, setViewedImages] = useState(savedState?.viewedImages || []);
   const [recentWords, setRecentWords] = useState(savedState?.recentWords || []);
+  // Keep ref in sync with saved state on mount
+  recentWordsRef.current = savedState?.recentWords || [];
   const [showHexagonTransition, setShowHexagonTransition] = useState(false);
   const [showMasteryChallenge, setShowMasteryChallenge] = useState(false);
   const [snoozeUntil, setSnoozeUntil] = useState(savedState?.snoozeUntil || null);
   const [currentMilestone, setCurrentMilestone] = useState(null);
+  const [promptType, setPromptType] = useState('first');
 
   // ✅ Check for mastery prompt: first at 30 images, then every 10 after that.
   // Snooze thresholds: quarter=65 (1/4 of 260), third=87 (1/3), half=130 (1/2), all=260.
@@ -98,15 +102,16 @@ function AlphabetScreen(props) {
 
     const count = viewedImages.length;
 
-    // First prompt fires at exactly 30; after that every 10 images
-    // First prompt fires at exactly 30; after that every 10 images.
+    // First prompt fires at exactly 30; after that every 15 images.
     // Also fires at the exact target of a "Later" snooze.
     const isLaterTarget = snoozeUntil?.startsWith('count:') &&
-      count === parseInt(snoozeUntil.split(':')[1]);
-    const isFirstPrompt  = count === 30;
-    const isRepeatPrompt = count > 30 && (count - 30) % 10 === 0;
+  count === parseInt(snoozeUntil.split(':')[1]);
+const isFirstPrompt = count === 30;
+// ✅ Only fire repeat-every-10 if user is NOT in a "Later" snooze
+const isRepeatPrompt = !snoozeUntil?.startsWith('count:') &&
+  count > 30 && (count - 30) % 15 === 0;
 
-    if (isFirstPrompt || isRepeatPrompt || isLaterTarget) {
+if (isFirstPrompt || isRepeatPrompt || isLaterTarget) {
       const lastPromptAt = parseInt(
         localStorage.getItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`) || '0'
       );
@@ -122,7 +127,9 @@ function AlphabetScreen(props) {
             count <= QUARTER_MARK ? 'quarter'  :
             count <= THIRD_MARK   ? 'third'    :
             count <= HALF_MARK    ? 'half'     : 'all';
+          const promptType = (isLaterTarget || isRepeatPrompt) ? 'later' : 'first';
           setCurrentMilestone(milestone);
+          setPromptType(promptType);
           setShowHexagonTransition(true);
           localStorage.setItem(
             `${lockedUserIdRef.current}_lastMasteryPromptAt`,
@@ -199,9 +206,10 @@ function AlphabetScreen(props) {
       // Keep last 5 words for mastery check
       const updatedRecent = [...recentWords, foundWord];
       if (updatedRecent.length > 5) {
-        updatedRecent.shift(); // Remove oldest
+        updatedRecent.shift();
       }
       setRecentWords(updatedRecent);
+      recentWordsRef.current = updatedRecent;
     }
 
     if (nextIndex === 0 && currentIndex > 0) {
@@ -263,7 +271,7 @@ function AlphabetScreen(props) {
 
   // ✅ HEXAGON TRANSITION HANDLERS
   const handleAcceptMasteryCheck = () => {
-    console.log('Mastery check accepted, recent words:', recentWords);
+    console.log('recentWords at accept:', recentWordsRef.current);
     setShowHexagonTransition(false);
     setShowMasteryChallenge(true);
     setSnoozeUntil(null);
@@ -353,6 +361,7 @@ function AlphabetScreen(props) {
         onSnooze={handleSnoozeMasteryCheck}
         speak={props.speak}
         viewedCount={viewedImages.length}
+        promptType={promptType}
       />
     );
   }
@@ -361,7 +370,7 @@ function AlphabetScreen(props) {
   if (showMasteryChallenge) {
     return (
       <MixedMasteryChallenge
-        recentWords={recentWords}
+        recentWords={recentWordsRef.current}
         onExit={handleExitMasteryCheck}
         speak={props.speak}
         milestone={currentMilestone}

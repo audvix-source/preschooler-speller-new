@@ -3,7 +3,7 @@ import './HexagonTransition.css';
 import BeeAnimation from './BeeAnimation';
 import './BeeAnimation.css';
 
-const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount = 30 }) => {
+const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount = 30, promptType = 'first' }) => {
   const [phase, setPhase] = useState('fullscreen');
   const [showPrompt, setShowPrompt] = useState(false);
   const [showDeferOptions, setShowDeferOptions] = useState(false);
@@ -54,10 +54,10 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
     
     if (speak) {
       const messages = {
-        'quarter': "Got it! I'll ask you again after 1 out of 4 of the pictures.",
-        'third':   "Got it! I'll ask you again after 1 out of 3 of the pictures.",
-        'half':    "Perfect! I'll ask you again after half of the pictures.",
-        'all':     "Sounds good! I'll ask you when you finish all the letters."
+        'quarter': "Got it! I'll ask you again when you're a quarter of the way through!",
+        'third':   "Got it! I'll ask you again when you're a third of the way through!",
+        'half':    "Perfect! I'll ask you again when you're halfway through!",
+        'all':     "Sounds good! I'll ask you when you've seen all the pictures!"
       };
       speak(messages[option]);
     }
@@ -116,11 +116,21 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
                   </h1>
 
                   <p className="hexagon-transition__animated-message">
-                    <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>You've seen</span>{' '}
-                    <span className="hexagon-transition__word-fade hexagon-transition__highlight-number" style={{ animationDelay: '1s' }}>{viewedCount} pictures</span>
-                    <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.2s' }}>!</span>
-                    <br />
-                    <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.4s' }}>Ready for a quick challenge?</span>
+                    {promptType === 'later' ? (
+                      <>
+                        <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>15 more pictures done!</span>
+                        <br />
+                        <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.2s' }}>Ready to try now?</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>You've seen</span>{' '}
+                        <span className="hexagon-transition__word-fade hexagon-transition__highlight-number" style={{ animationDelay: '1s' }}>{viewedCount} pictures</span>
+                        <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.2s' }}>!</span>
+                        <br />
+                        <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.4s' }}>Ready for a quick challenge?</span>
+                      </>
+                    )}
                   </p>
 
                   <div className="hexagon-transition__main-action-buttons">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './MixedMasteryChallenge.css';
 import { wordList } from '../wordList.js';
 import RecognitionChallenge from './RecognitionChallenge.jsx';
@@ -19,14 +19,11 @@ const getImagePath = (fileName) => {
     console.log('❌ getImagePath: fileName is empty/null');
     return null;
   }
-  
   if (typeof fileName !== 'string') {
     console.log('✅ getImagePath: Already resolved module:', fileName);
     return fileName;
   }
-
   console.log(`🔍 getImagePath: Processing "${fileName}"`);
-
   const specialMappings = {
     'x-box.png': 'xbox-emoji.png',
     'x-pen.png': 'xpen-emoji.png',
@@ -39,7 +36,6 @@ const getImagePath = (fileName) => {
     'mailbox.png': 'mailbox-emoji.png',
     'uniform.png': 'uniform-emoji.png',
   };
-  
   if (specialMappings[fileName]) {
     const mappedFile = specialMappings[fileName];
     if (images[mappedFile]) {
@@ -50,9 +46,7 @@ const getImagePath = (fileName) => {
       return null;
     }
   }
-  
   const emojiFileName = fileName.replace('.png', '-emoji.png');
-  
   if (images[emojiFileName]) {
     console.log(`✅ Found in emojis: ${fileName} → ${emojiFileName}`);
     return images[emojiFileName];
@@ -62,7 +56,6 @@ const getImagePath = (fileName) => {
   }
 };
 
-// ✅ Module-level power word tracker
 let globalPowerWordIndex = -1;
 
 const POWER_WORDS = [
@@ -95,6 +88,35 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
   const [finalTotal, setFinalTotal] = useState(0);
   const [completionMessage, setCompletionMessage] = useState('Perfect!');
 
+  // ✅ Refs to track live values — avoids ALL stale closure bugs
+  const questionsRef = useRef([]);
+  const scoreRef = useRef(0);
+  const quizStartedRef = useRef(false);
+  const currentQuestionIndexRef = useRef(0);
+
+  useEffect(() => {
+    questionsRef.current = questions;
+  }, [questions]);
+
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+
+  useEffect(() => {
+    currentQuestionIndexRef.current = currentQuestionIndex;
+  }, [currentQuestionIndex]);
+
+  // ✅ Fallback: only exits if questions never loaded AND quiz never started
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (questionsRef.current.length === 0 && !quizStartedRef.current) {
+        console.warn('MixedMasteryChallenge: no questions generated, exiting');
+        onExit(0, 0);
+      }
+    }, 8000);
+    return () => clearTimeout(timeout);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const generateQuestions = () => {
       if (!recentWords || recentWords.length === 0) {
@@ -110,7 +132,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
       };
 
       const normalizedWords = recentWords.map(normalizeWord);
-
       const spellingQuestions = [];
       const recognitionQuestions = [];
 
@@ -127,6 +148,9 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
           spellingQuestions.push({ type: 'spelling', word });
         }
       });
+
+      // ✅ Shortest word first
+      spellingQuestions.sort((a, b) => a.word.word.length - b.word.word.length);
 
       const orderedQuestions = [...spellingQuestions, ...recognitionQuestions];
 
@@ -165,9 +189,9 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
   const totalQuestions = questions.length;
 
   const handleLetterClick = (letter) => {
+    quizStartedRef.current = true;
     if (!currentQuestion || showFeedback || currentQuestion.type !== 'spelling') return;
-
-    if (speak) speak(letter);   
+    if (speak) speak(letter);
 
     const newAnswer = [...userAnswer, letter];
     setUserAnswer(newAnswer);
@@ -176,32 +200,23 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
       const userWord = newAnswer.join('').toLowerCase();
       const correctWord = currentQuestion.word.word.toLowerCase();
       const correct = userWord === correctWord;
-      
+
       setIsCorrect(correct);
       setShowFeedback(true);
 
-      let calculatedScore = score;
-      
+      let calculatedScore = scoreRef.current;
+
       if (correct) {
-        setScore(prevScore => {
-          const newScore = prevScore + 1;
-          calculatedScore = newScore;
-          if (currentQuestionIndex === questions.length - 1) {
-            setFinalScore(newScore);
-          }
-          return newScore;
-        });
-        
+        const newScore = scoreRef.current + 1;
+        setScore(newScore);
+        scoreRef.current = newScore;
+        calculatedScore = newScore;
         globalPowerWordIndex = (globalPowerWordIndex + 1) % POWER_WORDS.length;
         const chosen = POWER_WORDS[globalPowerWordIndex];
         setCompletionMessage(chosen.display);
         if (speak) speak(chosen.speak);
       } else {
-        calculatedScore = score;
-        if (currentQuestionIndex === questions.length - 1) {
-          setFinalScore(score);
-        }
-        if (speak) speak(`Try again!`);
+        if (speak) speak('Try again!');
       }
 
       setTimeout(() => {
@@ -211,26 +226,17 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
   };
 
   const handleRecognitionAnswer = (correct) => {
+    quizStartedRef.current = true;
     if (showFeedback && currentQuestion?.type === 'recognition') return;
-    
-    let calculatedScore = score;
-    
+
+    let calculatedScore = scoreRef.current;
     if (correct) {
-      setScore(prevScore => {
-        const newScore = prevScore + 1;
-        calculatedScore = newScore;
-        if (currentQuestionIndex === questions.length - 1) {
-          setFinalScore(newScore);
-        }
-        return newScore;
-      });
-    } else {
-      calculatedScore = score;
-      if (currentQuestionIndex === questions.length - 1) {
-        setFinalScore(score);
-      }
+      const newScore = scoreRef.current + 1;
+      setScore(newScore);
+      scoreRef.current = newScore;
+      calculatedScore = newScore;
     }
-    
+
     setTimeout(() => {
       window.speechSynthesis.cancel();
       moveToNextQuestion(calculatedScore);
@@ -238,13 +244,22 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
   };
 
   const moveToNextQuestion = (calculatedScore) => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    // ✅ Use refs — never stale inside setTimeout callbacks
+    const currentIndex = currentQuestionIndexRef.current;
+    const totalQuestions = questionsRef.current.length;
+
+    if (currentIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentIndex + 1);
       setUserAnswer([]);
       setShowFeedback(false);
       setIsCorrect(false);
     } else {
-      // ✅ Use calculatedScore directly — no intermediate variable needed
+      if (totalQuestions === 0) {
+        onExit(0, 0);
+        return;
+      }
+      const safeScore = calculatedScore ?? scoreRef.current;
+      setFinalScore(safeScore);
       setFinalTotal(totalQuestions);
       window.speechSynthesis.cancel();
       setTimeout(() => {
@@ -260,7 +275,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
   };
 
   const handleExit = () => {
-    onExit(score, questions.length); 
+    onExit(scoreRef.current, questionsRef.current.length);
   };
 
   const handleAnimationComplete = () => {
@@ -384,7 +399,7 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
               <div className={`word-card ${showFeedback ? (isCorrect ? 'correct' : 'incorrect') : ''}`}>
                 <div className="word-emoji-display">
                   {getImagePath(currentQuestion.word.image) ? (
-                    <img 
+                    <img
                       src={getImagePath(currentQuestion.word.image)}
                       alt=""
                       className="emoji-huge-image"
@@ -414,8 +429,8 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
 
               <div className="answer-boxes">
                 {Array.from({ length: currentQuestion.word.word.length }).map((_, index) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className={`answer-box ${userAnswer[index] ? 'filled' : ''} ${
                       showFeedback ? (isCorrect ? 'correct-box' : 'incorrect-box') : ''
                     }`}
@@ -433,7 +448,6 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
                     const alreadyUsed = userAnswer.filter(l => l === letter).length;
                     const isUsed = (totalNeeded > 0) && (alreadyUsed >= totalNeeded);
                     const isNeeded = alreadyUsed < totalNeeded;
-                    
                     return (
                       <button
                         key={letter}

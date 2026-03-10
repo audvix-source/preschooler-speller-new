@@ -4,7 +4,7 @@ import { getWordsByCategory } from '../wordList.js';
 import './StatsScreen.css';
 import ScoringLegend from './ScoringLegend';
 
-function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActiveUserId, onViewedOtherPlayer }) {
+  function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], onViewedOtherPlayer }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [newRewards, setNewRewards] = useState([]);

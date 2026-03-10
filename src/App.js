@@ -43,13 +43,11 @@ function App() {
   // or switches player via the Players screen.
   const sessionConfirmedRef = useRef(false);
 
-  const handleSetActiveUser = (userId) => {
-    setActiveUserId(userId);
-    setActiveUserIdState(userId);
-    // Actively picking a player counts as confirmation — no prompt needed on next quiz.
-    // The prompt only resets when the user visits Stats (score-checking = session break).
-    sessionConfirmedRef.current = true;
-  };
+  const handleSetActiveUser = (userId, confirm = false) => {
+  setActiveUserId(userId);
+  setActiveUserIdState(userId);
+  if (confirm) sessionConfirmedRef.current = true;
+};
 
   const activeUser = users.find(u => u?.id === activeUserId) || users[0];
 
@@ -131,22 +129,23 @@ function App() {
 
   // ✅ Called by StatsScreen when user browses a *different* player's tab.
   // Only then do we re-prompt — viewing your own scores is not a session break.
-  const handleViewedOtherPlayer = () => {
-    sessionConfirmedRef.current = false;
-  };
-
+  const handleViewedOtherPlayer = () => {};
+    
   // ✅ Intercept quiz screen navigation to confirm active player
   const QUIZ_SCREENS = ['alphabet', 'learning'];
 
-  const navigateTo = (screen, category = '') => {
-    if (QUIZ_SCREENS.includes(screen) && !sessionConfirmedRef.current) {
-      // First quiz entry after a session break — confirm who's playing
-      setPendingNav({ screen, category });
-      return;
-    }
-    setSelectedCategory(category);
-    setCurrentScreen(screen);
-  };
+ const navigateTo = (screen, category = '') => {
+  // Visiting stats = session break, require re-confirmation before next quiz
+  if (screen === 'stats') {
+    sessionConfirmedRef.current = false;
+  }
+  if (QUIZ_SCREENS.includes(screen) && !sessionConfirmedRef.current) {
+    setPendingNav({ screen, category });
+    return;
+  }
+  setSelectedCategory(category);
+  setCurrentScreen(screen);
+};
 
   // ✅ User confirmed — proceed to the quiz and mark session as confirmed
   const handleConfirmPlayer = () => {
@@ -204,7 +203,6 @@ function App() {
           speak={speak}
           userId={activeUserId}
           users={users}
-          setActiveUserId={handleSetActiveUser}
           onViewedOtherPlayer={handleViewedOtherPlayer}
         />;
       case 'players':
@@ -212,7 +210,7 @@ function App() {
           users={users}
           setUsers={setUsers}
           activeUserId={activeUserId}
-          setActiveUserId={handleSetActiveUser}
+          setActiveUserId={(id) => handleSetActiveUser(id, true)}
           onBack={() => navigateTo('menu')}
           speak={speak}
         />;
