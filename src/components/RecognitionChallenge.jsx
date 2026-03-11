@@ -103,7 +103,7 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak }) {
   };
 
   const handleSpeakWord = () => {
-    if (speak) speak(word);
+    if (speak) speak(`Which one is the ${word}?`);
   };
 
   return (

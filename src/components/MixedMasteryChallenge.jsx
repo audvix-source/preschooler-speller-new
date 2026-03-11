@@ -35,6 +35,7 @@ const getImagePath = (fileName) => {
     'umbrella.png': 'umbrella-emoji.png',
     'mailbox.png': 'mailbox-emoji.png',
     'uniform.png': 'uniform-emoji.png',
+    'question-mark.png': 'questionmark-emoji.png',
   };
   if (specialMappings[fileName]) {
     const mappedFile = specialMappings[fileName];
@@ -54,6 +55,26 @@ const getImagePath = (fileName) => {
     console.log(`❌ NOT in emojis folder: ${fileName} → ${emojiFileName}`);
     return null;
   }
+};
+
+// Count syllables in a word — vowel groups, minimum 1
+const countSyllables = (word) => {
+  const cleaned = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (!cleaned) return 1;
+  const matches = cleaned.match(/[aeiouy]+/g);
+  return matches ? matches.length : 1;
+};
+
+// Calculate how long to wait after speak() fires before advancing
+// word speech + 750ms buffer + power word speech, all estimated from syllables
+const getSpeechDelay = (wordText, powerWordText) => {
+  const wordSyllables  = wordText.split(/[\s-]/).reduce((sum, w) => sum + countSyllables(w), 0);
+  const powerSyllables = countSyllables(powerWordText);
+  const wordMs  = wordSyllables  * 350; // ~350ms per syllable
+  const powerMs = powerSyllables * 350;
+  const buffer  = 750; // 3/4 second pause between word and power word
+  const tail    = wordSyllables * 500; // ~1 full second after power word for 2-syl words
+  return wordMs + buffer + powerMs + tail;
 };
 
 let globalPowerWordIndex = -1;
@@ -76,7 +97,7 @@ const POWER_WORDS = [
   { display: 'Marvelous!',    speak: 'Marvelous' }
 ];
 
-function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
+function MixedMasteryChallenge({ recentWords, onExit, speak, milestone, quizSize = 5 }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [score, setScore] = useState(0);
@@ -154,36 +175,41 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
 
       const orderedQuestions = [...spellingQuestions, ...recognitionQuestions];
 
-      if (orderedQuestions.length > 5) {
-        const spelling = orderedQuestions.filter(q => q.type === 'spelling');
+      // Scale spelling/recognition ratio with quizSize
+      // Roughly 60% spelling, 40% recognition, always at least 1 of each if available
+      const wantSpelling = Math.max(1, Math.round(quizSize * 0.6));
+
+      if (orderedQuestions.length > quizSize) {
+        const spelling    = orderedQuestions.filter(q => q.type === 'spelling');
         const recognition = orderedQuestions.filter(q => q.type === 'recognition');
-        const wantSpelling = Math.min(spelling.length, 3);
-        const wantRecognition = Math.min(recognition.length, 5 - wantSpelling);
+        const actualSpelling    = Math.min(spelling.length, wantSpelling);
+        const actualRecognition = Math.min(recognition.length, quizSize - actualSpelling);
         const trimmed = [
-          ...spelling.slice(0, wantSpelling),
-          ...recognition.slice(0, wantRecognition),
+          ...spelling.slice(0, actualSpelling),
+          ...recognition.slice(0, actualRecognition),
         ];
-        if (trimmed.length < 5) {
+        if (trimmed.length < quizSize) {
           const remaining = orderedQuestions.filter(q => !trimmed.includes(q));
-          trimmed.push(...remaining.slice(0, 5 - trimmed.length));
+          trimmed.push(...remaining.slice(0, quizSize - trimmed.length));
         }
-        setQuestions(trimmed.slice(0, 5));
+        setQuestions(trimmed.slice(0, quizSize));
       } else {
+        // Pad by cycling through recentWords until we reach quizSize
         const padded = [...orderedQuestions];
         let padIndex = 0;
-        while (padded.length < 5) {
+        while (padded.length < quizSize) {
           const source = normalizedWords[padIndex % normalizedWords.length];
           padded.push({ type: 'spelling', word: source });
           padIndex++;
         }
-        const finalSpelling = padded.filter(q => q.type === 'spelling');
+        const finalSpelling    = padded.filter(q => q.type === 'spelling');
         const finalRecognition = padded.filter(q => q.type === 'recognition');
-        setQuestions([...finalSpelling, ...finalRecognition].slice(0, 5));
+        setQuestions([...finalSpelling, ...finalRecognition].slice(0, quizSize));
       }
     };
 
     generateQuestions();
-  }, [recentWords]);
+  }, [recentWords, quizSize]);
 
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
@@ -191,7 +217,8 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
   const handleLetterClick = (letter) => {
     quizStartedRef.current = true;
     if (!currentQuestion || showFeedback || currentQuestion.type !== 'spelling') return;
-    if (speak) speak(letter);
+    // Speak "hyphen" for the hyphen character
+    if (speak) speak(letter === '-' ? 'hyphen' : letter);
 
     const newAnswer = [...userAnswer, letter];
     setUserAnswer(newAnswer);
@@ -214,14 +241,25 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
         globalPowerWordIndex = (globalPowerWordIndex + 1) % POWER_WORDS.length;
         const chosen = POWER_WORDS[globalPowerWordIndex];
         setCompletionMessage(chosen.display);
-        if (speak) speak(chosen.speak);
+        // Say word then power word
+        if (speak) {
+          const wordText = currentQuestion.word.word;
+          speak(`${wordText}, ${chosen.speak}`);
+        }
+        // Wait for speech to finish before advancing — syllable-based estimate
+        const delay = getSpeechDelay(currentQuestion.word.word, chosen.speak);
+        setTimeout(() => {
+          moveToNextQuestion(calculatedScore);
+        }, delay);
       } else {
+        // Wrong — say "Try again", then reset answer so user can retry same question
         if (speak) speak('Try again!');
+        setTimeout(() => {
+          setUserAnswer([]);
+          setShowFeedback(false);
+          setIsCorrect(false);
+        }, 1500);
       }
-
-      setTimeout(() => {
-        moveToNextQuestion(calculatedScore);
-      }, 2000);
     }
   };
 
@@ -235,12 +273,25 @@ function MixedMasteryChallenge({ recentWords, onExit, speak, milestone }) {
       setScore(newScore);
       scoreRef.current = newScore;
       calculatedScore = newScore;
+      globalPowerWordIndex = (globalPowerWordIndex + 1) % POWER_WORDS.length;
+      const chosen = POWER_WORDS[globalPowerWordIndex];
+      setCompletionMessage(chosen.display);
+      if (speak) {
+        const wordText = currentQuestion.word.word;
+        speak(`${wordText}, ${chosen.speak}`);
+      }
+      const delay = getSpeechDelay(currentQuestion.word.word, chosen.speak);
+      setTimeout(() => {
+        window.speechSynthesis.cancel();
+        moveToNextQuestion(calculatedScore);
+      }, delay);
+    } else {
+      // Wrong recognition — just move on after a short pause
+      setTimeout(() => {
+        window.speechSynthesis.cancel();
+        moveToNextQuestion(calculatedScore);
+      }, 500);
     }
-
-    setTimeout(() => {
-      window.speechSynthesis.cancel();
-      moveToNextQuestion(calculatedScore);
-    }, 500);
   };
 
   const moveToNextQuestion = (calculatedScore) => {

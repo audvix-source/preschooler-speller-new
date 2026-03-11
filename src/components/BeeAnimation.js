@@ -8,52 +8,47 @@ function BeeAnimation({ beeCount, beeSize, onComplete, flightPattern = 'default'
   const [bees, setBees] = useState([]);
 
   useEffect(() => {
-    // ✅ DIFFERENT FLIGHT PATTERNS based on snooze option
+    // Flight patterns mapped shortest → longest delay option:
+    //   default  = Let's Go  → fly RIGHT (excited charge)
+    //   taps:20  = +20 taps  → fly LEFT
+    //   taps:30  = +30 taps  → diagonal up-left
+    //   taps:40  = +40 taps  → straight up
+    //   taps:50  = +50 taps  → chaos everywhere
     const patterns = {
-      // 20 bees - "Let's Go!" - RIGHT SIDE (default)
       'default': () => ({
         midX: (Math.random() - 0.5) * 40,
         midY: Math.random() * 100 + 60,
         endX: Math.random() * 80 + 140,
         endY: -(Math.random() * 120 + 140)
       }),
-      
-      // 35 bees - 1/4 images - FLY LEFT
-      'quarter': () => ({
-        midX: -(Math.random() * 40 + 20), // Fly LEFT initially
+      'taps:20': () => ({
+        midX: -(Math.random() * 40 + 20),
         midY: Math.random() * 80 + 40,
-        endX: -(Math.random() * 120 + 100), // End position LEFT side
+        endX: -(Math.random() * 120 + 100),
         endY: -(Math.random() * 100 + 120)
       }),
-      
-      // 50 bees - 1/3 images - FLY DIAGONAL UP-LEFT
-      'third': () => ({
+      'taps:30': () => ({
         midX: -(Math.random() * 30 + 10),
         midY: Math.random() * 60 + 30,
-        endX: -(Math.random() * 150 + 120), // Far LEFT
-        endY: -(Math.random() * 150 + 160) // Very HIGH
+        endX: -(Math.random() * 150 + 120),
+        endY: -(Math.random() * 150 + 160)
       }),
-      
-      // 70 bees - 1/2 images - FLY STRAIGHT UP
-      'half': () => ({
-        midX: (Math.random() - 0.5) * 30, // Minimal horizontal movement
+      'taps:40': () => ({
+        midX: (Math.random() - 0.5) * 30,
         midY: Math.random() * 50 + 20,
-        endX: (Math.random() - 0.5) * 60, // Stay near center horizontally
-        endY: -(Math.random() * 180 + 180) // VERY high up
+        endX: (Math.random() - 0.5) * 60,
+        endY: -(Math.random() * 180 + 180)
       }),
-      
-      // 100 bees - All images - FLY EVERYWHERE (chaos!)
-      'all': () => ({
-        midX: (Math.random() - 0.5) * 100, // Random horizontal
+      'taps:50': () => ({
+        midX: (Math.random() - 0.5) * 100,
         midY: Math.random() * 120 + 40,
-        endX: (Math.random() - 0.5) * 250, // Anywhere on screen
-        endY: -(Math.random() * 200 + 100) // High variance
-      })
+        endX: (Math.random() - 0.5) * 250,
+        endY: -(Math.random() * 200 + 100)
+      }),
     };
 
     const getPattern = patterns[flightPattern] || patterns['default'];
-    
-    // Generate bees with selected pattern
+
     const generatedBees = Array.from({ length: beeCount }).map((_, i) => {
       const coords = getPattern();
       return {
@@ -64,10 +59,9 @@ function BeeAnimation({ beeCount, beeSize, onComplete, flightPattern = 'default'
         rotation: Math.random() * 360
       };
     });
-    
+
     setBees(generatedBees);
 
-    // Call onComplete after animation finishes
     const timer = setTimeout(() => {
       if (onComplete) onComplete();
     }, 3500);
@@ -77,33 +71,24 @@ function BeeAnimation({ beeCount, beeSize, onComplete, flightPattern = 'default'
 
   return (
     <div className="bee-animation-container">
-      {/* Tree Branch - at LEFT SIDE */}
       <div className="bee-animation__branch">
-        <img 
+        <img
           src={branchImage}
           alt="Tree Branch"
           className="branch-image"
-          style={{
-            height: '450px',
-            width: 'auto'
-          }}
+          style={{ height: '450px', width: 'auto' }}
           key={Date.now()}
         />
       </div>
 
-      {/* Beehive - SEPARATE from tree, at LEFT SIDE */}
       <div className="bee-animation__beehive">
-        <img 
+        <img
           src={beehiveImage}
-          alt="Beehive" 
-          style={{ 
-            width: 'auto',
-            height: '300px'
-          }}
+          alt="Beehive"
+          style={{ width: 'auto', height: '300px' }}
         />
       </div>
 
-      {/* Bees - with dynamic flight pattern */}
       {bees.map(bee => (
         <div
           key={bee.id}
@@ -120,14 +105,10 @@ function BeeAnimation({ beeCount, beeSize, onComplete, flightPattern = 'default'
             animationDelay: `${bee.startDelay}s`
           }}
         >
-          <img 
-            src={beeSwarmImage} 
+          <img
+            src={beeSwarmImage}
             alt="Bee"
-            style={{ 
-              width: '100%', 
-              height: '100%',
-              objectFit: 'contain'
-            }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
         </div>
       ))}

@@ -77,57 +77,49 @@ function AlphabetScreen(props) {
   const [currentMilestone, setCurrentMilestone] = useState(null);
   const [promptType, setPromptType] = useState('first');
   const [tapCount, setTapCount] = useState(0); // triggers useEffect on every tap
+  const [quizSize, setQuizSize] = useState(5); // number of questions for next quiz
 
   // ✅ Check for mastery prompt: first at 30 images, then every 10 after that.
-  // Snooze thresholds: quarter=65 (1/4 of 260), third=87 (1/3), half=130 (1/2), all=260.
+  // tapsSinceSnooze: counts every tap after a snooze option is chosen (resets on snooze)
+  const tapsSinceSnoozeRef = useRef(0);
+  const pendingQuizSizeRef = useRef(5); // persists chosen quiz size across the snooze wait
+
+  // Trigger logic:
+  // - First prompt: after 30 unique images viewed (no snooze active)
+  // - Repeat: every 15 taps after that (no snooze active)
+  // - Snooze "taps:N": fires after N total taps since snooze was set
+  // - "Later" (handleDecline): snooze for +15 taps
   useEffect(() => {
-    console.log('Viewed images count:', viewedImages.length);
-    console.log('Snooze until:', snoozeUntil);
+    console.log('Tap count:', tapCountRef.current, '| Unique images:', viewedImages.length, '| Snooze:', snoozeUntil);
 
-    const TOTAL_IMAGES = 260;
-    const QUARTER_MARK = Math.round(TOTAL_IMAGES / 4);  // 65
-    const THIRD_MARK   = Math.round(TOTAL_IMAGES / 3);  // 87
-    const HALF_MARK    = Math.round(TOTAL_IMAGES / 2);  // 130
+    const uniqueCount = viewedImages.length;
 
-    const count = viewedImages.length;
+    const isFirstPrompt  = !snoozeUntil && uniqueCount === 30;
+    const isRepeatPrompt = !snoozeUntil && uniqueCount > 30 && (tapCount % 15 === 0);
+    const isTapsTarget   = snoozeUntil?.startsWith('taps:') &&
+      tapsSinceSnoozeRef.current >= parseInt(snoozeUntil.split(':')[1]);
 
-    const isLaterTarget = snoozeUntil?.startsWith('count:') &&
-      count >= parseInt(snoozeUntil.split(':')[1]);
-    const isFirstPrompt  = !snoozeUntil && count === 30;
-    const isRepeatPrompt = !snoozeUntil && count > 30 && (count - 30) % 15 === 0;
-    const isMilestoneTarget =
-      (snoozeUntil === 'quarter' && count >= QUARTER_MARK) ||
-      (snoozeUntil === 'third'   && count >= THIRD_MARK)   ||
-      (snoozeUntil === 'half'    && count >= HALF_MARK)    ||
-      (snoozeUntil === 'all'     && count >= TOTAL_IMAGES);
-
-    if (isFirstPrompt || isRepeatPrompt || isLaterTarget || isMilestoneTarget) {
+    if (isFirstPrompt || isRepeatPrompt || isTapsTarget) {
       const lastPromptAt = parseInt(
         localStorage.getItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`) || '0'
       );
 
-      // Only trigger if this is a NEW milestone (not already prompted here)
-      if (count > lastPromptAt) {
-        console.log('Triggering mastery check at', count, 'images');
+      if (tapCount > lastPromptAt) {
+        console.log('Triggering mastery check at tap', tapCount);
 
         setTimeout(() => {
-          const milestone =
-            count <= 30           ? null       :
-            count <= QUARTER_MARK ? 'quarter'  :
-            count <= THIRD_MARK   ? 'third'    :
-            count <= HALF_MARK    ? 'half'     : 'all';
           const promptType = isFirstPrompt ? 'first' : 'later';
-          setCurrentMilestone(milestone);
+          setCurrentMilestone(null);
           setPromptType(promptType);
           setShowHexagonTransition(true);
           localStorage.setItem(
             `${lockedUserIdRef.current}_lastMasteryPromptAt`,
-            count.toString()
+            tapCount.toString()
           );
         }, 3000);
       }
     }
-  }, [viewedImages, snoozeUntil, tapCount]);
+  }, [tapCount, snoozeUntil]);
 
   // Auto-save state
   useEffect(() => {
@@ -184,13 +176,15 @@ function AlphabetScreen(props) {
       totalCount: wordsForLetter.length,
       letter: letter
     });
-    props.speak(foundWord.word);
+    // Simple association: just say the image name
+    if (props.speak) props.speak(foundWord.word);
 
     // ✅ Track this image view
     const imageId = `${foundWord.id}-${foundWord.word}`;
 
-    // Always increment tap counter — fires useEffect even on repeated images
+    // Always increment tap counters — fires useEffect even on repeated images
     tapCountRef.current += 1;
+    tapsSinceSnoozeRef.current += 1;
     setTapCount(tapCountRef.current);
 
     if (!viewedImages.includes(imageId)) {
@@ -199,7 +193,7 @@ function AlphabetScreen(props) {
 
       // Keep last 5 words for mastery check
       const updatedRecent = [...recentWords, foundWord];
-      if (updatedRecent.length > 5) {
+      if (updatedRecent.length > 20) {
         updatedRecent.shift();
       }
       setRecentWords(updatedRecent);
@@ -264,29 +258,42 @@ function AlphabetScreen(props) {
   };
 
   // ✅ HEXAGON TRANSITION HANDLERS
-  const handleAcceptMasteryCheck = () => {
+  const handleAcceptMasteryCheck = (size = 5) => {
     console.log('recentWords at accept:', recentWordsRef.current);
+    // Use size passed directly (Let's Go), or the one stored from a prior snooze choice
+    const resolvedSize = size !== 5 ? size : pendingQuizSizeRef.current;
+    setQuizSize(resolvedSize);
+    pendingQuizSizeRef.current = 5; // reset for next time
     setShowHexagonTransition(false);
     setShowMasteryChallenge(true);
     setSnoozeUntil(null);
+    tapsSinceSnoozeRef.current = 0;
   };
 
-  const handleSnoozeMasteryCheck = (option) => {
-    console.log('Mastery check snoozed until:', option);
+  const handleSnoozeMasteryCheck = (option, size = 5) => {
+    // option is "taps:20", "taps:30", "taps:40", "taps:50"
+    console.log('Mastery check snoozed:', option, '| Next quiz size:', size);
+    pendingQuizSizeRef.current = size; // store for when quiz eventually fires
+    setQuizSize(size);
     setShowHexagonTransition(false);
     setSnoozeUntil(option);
+    tapsSinceSnoozeRef.current = 0; // reset tap counter from this moment
   };
 
   const handleDeclineMasteryCheck = () => {
     setShowHexagonTransition(false);
-    // "Later" = snooze for 15 more images from current position
-    setSnoozeUntil(`count:${viewedImages.length + 15}`);
+    // "Later" = snooze for 15 more taps, 5-question quiz
+    pendingQuizSizeRef.current = 5;
+    setQuizSize(5);
+    setSnoozeUntil('taps:15');
+    tapsSinceSnoozeRef.current = 0;
   };
 
   const handleExitMasteryCheck = (score, total) => {
     setShowMasteryChallenge(false);
     setSnoozeUntil(null);
     setCurrentMilestone(null);
+    tapsSinceSnoozeRef.current = 0;
 
     console.log(`Score: ${score}, Total: ${total}, Ratio: ${score / total}`);
 
@@ -368,6 +375,7 @@ function AlphabetScreen(props) {
         onExit={handleExitMasteryCheck}
         speak={props.speak}
         milestone={currentMilestone}
+        quizSize={quizSize}
       />
     );
   }

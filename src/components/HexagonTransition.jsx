@@ -3,30 +3,34 @@ import './HexagonTransition.css';
 import BeeAnimation from './BeeAnimation';
 import './BeeAnimation.css';
 
+// Snooze options: +20/30/40/50 taps, each with distinct bee swarm and quiz size
+const SNOOZE_OPTIONS = [
+  { label: '+20',  desc: 'taps', value: 20, quizSize: 5,  beeCount: 25,  beeSize: 36, beePattern: 'default' },
+  { label: '+30',  desc: 'taps', value: 30, quizSize: 10, beeCount: 45,  beeSize: 28, beePattern: 'default' },
+  { label: '+40',  desc: 'taps', value: 40, quizSize: 15, beeCount: 70,  beeSize: 22, beePattern: 'default' },
+  { label: '+50',  desc: 'taps', value: 50, quizSize: 20, beeCount: 100, beeSize: 17, beePattern: 'default' },
+];
+
 const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount = 30, promptType = 'first' }) => {
   const [phase, setPhase] = useState('fullscreen');
   const [showPrompt, setShowPrompt] = useState(false);
   const [showDeferOptions, setShowDeferOptions] = useState(false);
   const [showBees, setShowBees] = useState(false);
   const [beeConfig, setBeeConfig] = useState({ count: 20, size: 40, pattern: 'default' });
+  const pendingSnoozeRef = useRef(null); // stores { value, quizSize } for after bee animation
 
   useEffect(() => {
     setPhase('transition');
     setShowPrompt(true);
-    
-    const deferTimer = setTimeout(() => {
-      setShowDeferOptions(true);
-    }, 1000);
-
-    return () => {
-      clearTimeout(deferTimer);
-    };
+    const deferTimer = setTimeout(() => setShowDeferOptions(true), 1000);
+    return () => clearTimeout(deferTimer);
   }, []);
 
   const handleAccept = () => {
     window.speechSynthesis.cancel();
     if (speak) speak("Awesome! Let's test your knowledge!");
     setShowDeferOptions(false);
+    pendingSnoozeRef.current = null; // null = Let's Go → 5-question quiz
     setBeeConfig({ count: 20, size: 40, pattern: 'default' });
     setShowBees(true);
   };
@@ -34,47 +38,24 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
   const handleDecline = () => {
     window.speechSynthesis.cancel();
     if (speak) speak("No problem! I'll remind you soon!");
-    onDecline(); // snoozes 15 images
+    onDecline(); // parent handles +15 taps snooze, 5-question quiz
   };
 
   const handleSnooze = (option) => {
     window.speechSynthesis.cancel();
     setShowDeferOptions(false);
-    
-    const beeConfigs = {
-      'quarter': { count: 50, size: 28, pattern: 'quarter' },
-      'third':   { count: 60, size: 22, pattern: 'third' },
-      'half':    { count: 80, size: 17, pattern: 'half' },
-      'all':     { count: 120, size: 13, pattern: 'all' }
-    };
-    
-    const config = beeConfigs[option];
-    setBeeConfig(config);
+    pendingSnoozeRef.current = { value: option.value, quizSize: option.quizSize };
+    setBeeConfig({ count: option.beeCount, size: option.beeSize, pattern: option.beePattern });
     setShowBees(true);
-    
-    if (speak) {
-      const messages = {
-        'quarter': "Got it! I'll ask you again when you're a quarter of the way through!",
-        'third':   "Got it! I'll ask you again when you're a third of the way through!",
-        'half':    "Perfect! I'll ask you again when you're halfway through!",
-        'all':     "Sounds good! I'll ask you when you've seen all the pictures!"
-      };
-      speak(messages[option]);
-    }
+    if (speak) speak(`Got it! I'll remind you after ${option.value} more taps!`);
   };
 
   const handleBeeAnimationComplete = () => {
-    if (beeConfig.count === 20) {
-      onAccept();
+    if (pendingSnoozeRef.current === null) {
+      onAccept(5); // Let's Go → always 5 questions
     } else {
-      const snoozeOptions = {
-        50: 'quarter',
-        60: 'third',
-        80: 'half',
-        120: 'all'
-      };
-      const option = snoozeOptions[beeConfig.count];
-      onSnooze(option);
+      const { value, quizSize } = pendingSnoozeRef.current;
+      onSnooze(`taps:${value}`, quizSize); // e.g. "taps:30", 10
     }
   };
 
@@ -102,10 +83,10 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
                 <div className="hexagon-transition__prompt-main-content">
                   <h1 className="hexagon-transition__animated-title">
                     {'Progress!'.split('').map((letter, i) => (
-                      <span 
-                        key={i} 
+                      <span
+                        key={i}
                         className="hexagon-transition__letter-pop"
-                        style={{ 
+                        style={{
                           animationDelay: `${i * 0.1}s`,
                           display: letter === ' ' ? 'inline' : 'inline-block'
                         }}
@@ -118,7 +99,7 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
                   <p className="hexagon-transition__animated-message">
                     {promptType === 'later' ? (
                       <>
-                        <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>15 more pictures done!</span>
+                        <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>More pictures done!</span>
                         <br />
                         <span className="hexagon-transition__word-fade" style={{ animationDelay: '1.2s' }}>Ready to try now?</span>
                       </>
@@ -134,15 +115,15 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
                   </p>
 
                   <div className="hexagon-transition__main-action-buttons">
-                    <button 
-                      className="hexagon-transition__action-btn hexagon-transition__btn-go" 
+                    <button
+                      className="hexagon-transition__action-btn hexagon-transition__btn-go"
                       onClick={handleAccept}
                     >
                       <span className="hexagon-transition__btn-icon">🚀</span>
                       <span className="hexagon-transition__btn-text">Let's Go!</span>
                     </button>
-                    <button 
-                      className="hexagon-transition__action-btn hexagon-transition__btn-later" 
+                    <button
+                      className="hexagon-transition__action-btn hexagon-transition__btn-later"
                       onClick={handleDecline}
                     >
                       <span className="hexagon-transition__btn-icon">⏭️</span>
@@ -158,42 +139,18 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
             <div className="hexagon-transition__defer-box-container">
               <div className="hexagon-transition__defer-box">
                 <p className="hexagon-transition__defer-label">Or remind me after...</p>
-                
-                <p className="hexagon-transition__heads-up">
-                  💡 <strong>Changed your mind?</strong><br />
-                  Go back to the menu and tap<br />
-                  <strong>Alphabet Fun</strong> again to reset!
-                </p>
-                
                 <div className="hexagon-transition__defer-options-grid">
-                  <button 
-                    className="hexagon-transition__defer-option-btn" 
-                    onClick={() => handleSnooze('quarter')}
-                  >
-                    <span className="hexagon-transition__defer-fraction">1/4</span>
-                    <span className="hexagon-transition__defer-desc">of pictures</span>
-                  </button>
-                  <button 
-                    className="hexagon-transition__defer-option-btn" 
-                    onClick={() => handleSnooze('third')}
-                  >
-                    <span className="hexagon-transition__defer-fraction">1/3</span>
-                    <span className="hexagon-transition__defer-desc">of pictures</span>
-                  </button>
-                  <button 
-                    className="hexagon-transition__defer-option-btn" 
-                    onClick={() => handleSnooze('half')}
-                  >
-                    <span className="hexagon-transition__defer-fraction">1/2</span>
-                    <span className="hexagon-transition__defer-desc">of pictures</span>
-                  </button>
-                  <button 
-                    className="hexagon-transition__defer-option-btn" 
-                    onClick={() => handleSnooze('all')}
-                  >
-                    <span className="hexagon-transition__defer-fraction">✅</span>
-                    <span className="hexagon-transition__defer-desc">All done</span>
-                  </button>
+                  {SNOOZE_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      className="hexagon-transition__defer-option-btn"
+                      onClick={() => handleSnooze(option)}
+                    >
+                      <span className="hexagon-transition__defer-fraction">{option.label}</span>
+                      <span className="hexagon-transition__defer-desc">{option.desc}</span>
+                      <span className="hexagon-transition__defer-quiz-size">{option.quizSize}-item quiz</span>
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

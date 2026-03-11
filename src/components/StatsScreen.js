@@ -4,7 +4,7 @@ import { getWordsByCategory } from '../wordList.js';
 import './StatsScreen.css';
 import ScoringLegend from './ScoringLegend';
 
-  function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], onViewedOtherPlayer }) {
+function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActiveUserId, onViewedOtherPlayer }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [newRewards, setNewRewards] = useState([]);
@@ -16,7 +16,8 @@ import ScoringLegend from './ScoringLegend';
   // ✅ Reset Logic State
   const [resetStep, setResetStep] = useState(0); // 0=hidden, 1=explanation, 2=preview
   const [viewedUserId, setViewedUserId] = useState(userId);
-  
+  const [showSwitchPrompt, setShowSwitchPrompt] = useState(false);
+
   useEffect(() => {
     loadStats(viewedUserId);
   }, [viewedUserId]);
@@ -58,7 +59,15 @@ import ScoringLegend from './ScoringLegend';
   };
 
   // ✅ Reset Handler
-    const dismissNewRewards = () => {
+  const handleReset = async () => {
+    await scoreDB.resetAllData(userId);
+    localStorage.removeItem(`${userId}_lastViewedRewards`);
+    setResetStep(0);
+    loadStats(viewedUserId);
+    if (speak) speak("All scores have been reset to zero.");
+  };
+
+  const dismissNewRewards = () => {
     if (!stats) return;
     const currentRewards = {
       stars: stats.stars || 0,
@@ -271,7 +280,7 @@ import ScoringLegend from './ScoringLegend';
                       const stars = accuracy >= 80 ? '⭐⭐⭐' : accuracy >= 60 ? '⭐⭐' : accuracy >= 40 ? '⭐' : '';
                       return (
                         <div key={index} className="learning-item">
-                          <div className="learning-word">{word.word}</div>
+                          <div className="learning-word">{word.word.charAt(0).toUpperCase() + word.word.slice(1)}</div>
                           <div className="learning-stats">
                             <div className="stat"><span className="stat-label">Accuracy:</span><span className="stat-value">{accuracy}%</span></div>
                             <div className="stat"><span className="stat-label">Attempts:</span><span className="stat-value">{word.totalAttempts}</span></div>

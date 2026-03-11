@@ -143,7 +143,7 @@
 /* ── MOBILE (<769px) — full screen 412×914 ── */
 @media only screen and (max-width: 768px) {
   .bee-animation-container {
-    height: 55%;   /* taller on mobile so tree fills bottom half */
+    height: 55%;
   }
 
   .bee-animation__branch {
@@ -152,7 +152,7 @@
   }
 
   .bee-animation__branch img {
-    height: 380px;  /* slightly shorter than desktop so it fits */
+    height: 380px;
     width: auto;
   }
 
@@ -162,7 +162,7 @@
   }
 
   .bee-animation__beehive img {
-    height: 220px;  /* scaled down for mobile */
+    height: 220px;
     width: auto;
   }
 
