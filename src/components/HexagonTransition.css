@@ -590,3 +590,276 @@
     height: 0;
   }
 }
+
+/* ========================================
+   SNOOZE EXPAND / SUB-OPTION UI
+   Append these rules to HexagonTransition.css
+   ======================================== */
+
+.hexagon-transition__snooze-slot {
+  display: flex;
+  flex-direction: column;
+}
+ 
+.hexagon-transition__snooze-slot--full {
+  width: 100%;
+}
+ 
+.hexagon-transition__defer-option-btn--grayed {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(60%);
+}
+ 
+.hexagon-transition__snooze-expanded {
+  position: relative;
+  background: linear-gradient(135deg, #EDE7F6 0%, #D1C4E9 100%);
+  border: 2px solid #7E57C2;
+  border-radius: 12px;
+  padding: 8px 8px 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: snoozeExpand 0.22s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+ 
+.hexagon-transition__snooze-expanded--full {
+  width: 100%;
+}
+ 
+@keyframes snoozeExpand {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+ 
+.hexagon-transition__snooze-expanded-label {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  color: #4527A0;
+  text-align: center;
+  line-height: 1.2;
+}
+ 
+.hexagon-transition__snooze-sub-options {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+ 
+.hexagon-transition__snooze-sub-btn {
+  flex: 1;
+  border: none;
+  border-radius: 9px;
+  padding: 7px 4px;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.78em;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+ 
+.hexagon-transition__snooze-sub-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+ 
+.hexagon-transition__snooze-sub-btn:active { transform: translateY(0); }
+ 
+.hexagon-transition__snooze-sub-btn--mixed {
+  background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+  color: white;
+}
+ 
+.hexagon-transition__snooze-sub-btn--mc {
+  background: linear-gradient(135deg, #66BB6A 0%, #388E3C 100%);
+  color: white;
+}
+ 
+.hexagon-transition__snooze-sub-icon { font-size: 1.2em; }
+.hexagon-transition__snooze-sub-text { line-height: 1.1; text-align: center; }
+ 
+.hexagon-transition__snooze-collapse-btn {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 0.7em;
+  color: #7E57C2;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-weight: 700;
+  opacity: 0.7;
+}
+.hexagon-transition__snooze-collapse-btn:hover { opacity: 1; }
+
+/* ── Mobile adjustments ── */
+@media (max-width: 768px) {
+  .hexagon-transition__snooze-expanded {
+    padding: 7px 7px 5px 7px;
+    gap: 5px;
+  }
+
+  .hexagon-transition__snooze-expanded-label {
+    font-size: 0.68em;
+  }
+
+  .hexagon-transition__snooze-sub-btn {
+    padding: 6px 3px;
+    font-size: 0.74em;
+  }
+
+  .hexagon-transition__defer-later-row { 
+    margin-bottom: 6px; }
+}
+
+/* ========================================
+   DEFER BOX LAYOUT — Later row + 2×2 grid
+   Append to HexagonTransition.css
+   ======================================== */
+ 
+/* Later button — full width row above the 2×2 grid */
+.hexagon-transition__defer-later-row {
+  width: 100%;
+  margin-bottom: 8px;
+}
+ 
+.hexagon-transition__defer-option-btn--full {
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+  border-color: #FF9800;
+}
+ 
+.hexagon-transition__defer-option-btn--full:hover {
+  background: linear-gradient(135deg, #FFE0B2 0%, #FFCC80 100%);
+  border-color: #F57C00;
+}
+ 
+.hexagon-transition__defer-option-btn--full .hexagon-transition__defer-fraction {
+  color: #E65100;
+}
+ 
+.hexagon-transition__defer-option-btn--full .hexagon-transition__defer-desc {
+  color: #BF360C;
+}
+ 
+/* ========================================
+   SNOOZE EXPAND / SUB-OPTION UI
+   ======================================== */
+ 
+.hexagon-transition__snooze-slot {
+  display: flex;
+  flex-direction: column;
+}
+ 
+.hexagon-transition__snooze-slot--full {
+  width: 100%;
+}
+ 
+.hexagon-transition__defer-option-btn--grayed {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(60%);
+}
+ 
+.hexagon-transition__snooze-expanded {
+  position: relative;
+  background: linear-gradient(135deg, #EDE7F6 0%, #D1C4E9 100%);
+  border: 2px solid #7E57C2;
+  border-radius: 12px;
+  padding: 8px 8px 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: snoozeExpand 0.22s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+ 
+.hexagon-transition__snooze-expanded--full {
+  width: 100%;
+}
+ 
+@keyframes snoozeExpand {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+ 
+.hexagon-transition__snooze-expanded-label {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  color: #4527A0;
+  text-align: center;
+  line-height: 1.2;
+}
+ 
+.hexagon-transition__snooze-sub-options {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+ 
+.hexagon-transition__snooze-sub-btn {
+  flex: 1;
+  border: none;
+  border-radius: 9px;
+  padding: 7px 4px;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.78em;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+ 
+.hexagon-transition__snooze-sub-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+ 
+.hexagon-transition__snooze-sub-btn:active { transform: translateY(0); }
+ 
+.hexagon-transition__snooze-sub-btn--mixed {
+  background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+  color: white;
+}
+ 
+.hexagon-transition__snooze-sub-btn--mc {
+  background: linear-gradient(135deg, #66BB6A 0%, #388E3C 100%);
+  color: white;
+}
+ 
+.hexagon-transition__snooze-sub-icon { font-size: 1.2em; }
+.hexagon-transition__snooze-sub-text { line-height: 1.1; text-align: center; }
+ 
+.hexagon-transition__snooze-collapse-btn {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 0.7em;
+  color: #7E57C2;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-weight: 700;
+  opacity: 0.7;
+}
+.hexagon-transition__snooze-collapse-btn:hover { opacity: 1; }

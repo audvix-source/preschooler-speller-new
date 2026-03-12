@@ -8,209 +8,188 @@ import scoreDB from './services/scoreDatabase';
 import HexagonTransition from './components/HexagonTransition';
 import MixedMasteryChallenge from './components/MixedMasteryChallenge';
 
-// Dynamic image context setup - LOAD FROM BOTH FOLDERS
 const importAll = (r) => {
   let images = {};
-  r.keys().forEach((item) => {
-    images[item.replace('./', '')] = r(item);
-  });
+  r.keys().forEach((item) => { images[item.replace('./', '')] = r(item); });
   return images;
 };
 
-// Load from main assets folder (labeled images)
-const mainImages = importAll(require.context('./assets', false, /\.(png|jpe?g|svg)$/));
-
-// Load from emojis folder
+const mainImages  = importAll(require.context('./assets', false, /\.(png|jpe?g|svg)$/));
 const emojiImages = importAll(require.context('./assets/emojis', false, /\.(png|jpe?g|svg)$/));
-
-// Combine both
-const allImages = { ...mainImages, ...emojiImages };
+const allImages   = { ...mainImages, ...emojiImages };
 
 const getImagePath = (fileName) => {
-  if (allImages[fileName]) {
-    return allImages[fileName];
-  }
+  if (allImages[fileName]) return allImages[fileName];
   console.warn(`AlphabetScreen: Image not found: ${fileName}`);
   return null;
 };
 
+// ── Thresholds ────────────────────────────────────────────────────────────────
+const FIRST_PROMPT_AT   = 20;
+const REPEAT_EVERY_TAPS = 20;
+
 function AlphabetScreen(props) {
   const { userId = 'user_1' } = props;
-
-  // ✅ Lock the userId at mount time so scores never drift to another player
-  // even if the parent re-renders with a different activeUserId mid-session.
   const lockedUserIdRef = useRef(userId);
-
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Load saved state
+  // ── Saved state loaders ───────────────────────────────────────────────────
   const getSavedAlphabetState = () => {
     try {
       const saved = localStorage.getItem(`${lockedUserIdRef.current}_alphabetScreenState`);
       return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      console.error('Error loading alphabet state:', e);
-      return null;
-    }
+    } catch (e) { return null; }
   };
 
-  const savedState = getSavedAlphabetState();
+  const getAllViewedWordsFromStorage = () => {
+    try {
+      const saved = localStorage.getItem(`${lockedUserIdRef.current}_allViewedWords`);
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) { return []; }
+  };
+
+  const savedState     = getSavedAlphabetState();
   const recentWordsRef = useRef(savedState?.recentWords || []);
-  const tapCountRef = useRef(0); // increments on every tap, repeated or not
+  const tapCountRef    = useRef(0);
 
-  // STATE DEFINITIONS
-  const [selectedWord, setSelectedWord] = useState(savedState?.selectedWord || null);
-  const [letterProgress, setLetterProgress] = useState(savedState?.letterProgress || {});
-  const [activeLetter, setActiveLetter] = useState(savedState?.activeLetter || null);
-  const [showChallenge, setShowChallenge] = useState(false);
-  const [challengeMode, setChallengeMode] = useState(null);
-  const [challengeLetter, setChallengeLetter] = useState(null);
-  const [showBanner, setShowBanner] = useState(false);
-  const [bannerDismissed, setBannerDismissed] = useState(false);
+  // ── State ─────────────────────────────────────────────────────────────────
+  const [selectedWord,     setSelectedWord]     = useState(savedState?.selectedWord || null);
+  const [letterProgress,   setLetterProgress]   = useState(savedState?.letterProgress || {});
+  const [activeLetter,     setActiveLetter]     = useState(savedState?.activeLetter || null);
+  const [showChallenge,    setShowChallenge]    = useState(false);
+  const [challengeMode,    setChallengeMode]    = useState(null);
+  const [challengeLetter,  setChallengeLetter]  = useState(null);
+  const [showBanner,       setShowBanner]       = useState(false);
+  const [bannerDismissed,  setBannerDismissed]  = useState(false);
 
-  // ✅ IMAGE-BASED MASTERY CHECK WITH HEXAGON TRANSITION
-  const [viewedImages, setViewedImages] = useState(savedState?.viewedImages || []);
-  const [recentWords, setRecentWords] = useState(savedState?.recentWords || []);
+  const [viewedImages,          setViewedImages]          = useState(savedState?.viewedImages || []);
+  const [recentWords,           setRecentWords]           = useState(savedState?.recentWords || []);
+  const [allViewedWords,        setAllViewedWords]        = useState(getAllViewedWordsFromStorage);
   const [showHexagonTransition, setShowHexagonTransition] = useState(false);
-  const [showMasteryChallenge, setShowMasteryChallenge] = useState(false);
-  const [snoozeUntil, setSnoozeUntil] = useState(savedState?.snoozeUntil || null);
-  const [currentMilestone, setCurrentMilestone] = useState(null);
-  const [promptType, setPromptType] = useState('first');
-  const [tapCount, setTapCount] = useState(0); // triggers useEffect on every tap
-  const [quizSize, setQuizSize] = useState(5); // number of questions for next quiz
+  const [showMasteryChallenge,  setShowMasteryChallenge]  = useState(false);
+  const [snoozeUntil,           setSnoozeUntil]           = useState(savedState?.snoozeUntil || null);
+  const [currentMilestone,      setCurrentMilestone]      = useState(null);
+  const [promptType,            setPromptType]            = useState('first');
+  const [tapCount,              setTapCount]              = useState(0);
+  const [quizSize,              setQuizSize]              = useState(5);
+  const [quizType,              setQuizType]              = useState('mixed');
 
-  // ✅ Check for mastery prompt: first at 30 images, then every 10 after that.
-  // tapsSinceSnooze: counts every tap after a snooze option is chosen (resets on snooze)
+  // ✅ Track whether the very first prompt has been shown this lifetime
+  const firstPromptShownRef = useRef(
+    !!localStorage.getItem(`${lockedUserIdRef.current}_firstPromptShown`)
+  );
+
   const tapsSinceSnoozeRef = useRef(0);
-  const pendingQuizSizeRef = useRef(5); // persists chosen quiz size across the snooze wait
+  const pendingQuizSizeRef = useRef(5);
+  const pendingQuizTypeRef = useRef('mixed');
 
-  // Trigger logic:
-  // - First prompt: after 30 unique images viewed (no snooze active)
-  // - Repeat: every 15 taps after that (no snooze active)
-  // - Snooze "taps:N": fires after N total taps since snooze was set
-  // - "Later" (handleDecline): snooze for +15 taps
+  // ── Mastery prompt trigger ────────────────────────────────────────────────
   useEffect(() => {
-    console.log('Tap count:', tapCountRef.current, '| Unique images:', viewedImages.length, '| Snooze:', snoozeUntil);
+    console.log('Tap:', tapCountRef.current, '| Unique:', viewedImages.length, '| Snooze:', snoozeUntil);
 
-    const uniqueCount = viewedImages.length;
-
-    const isFirstPrompt  = !snoozeUntil && uniqueCount === 30;
-    const isRepeatPrompt = !snoozeUntil && uniqueCount > 30 && (tapCount % 15 === 0);
+    const uniqueCount    = viewedImages.length;
+    const isFirstPrompt  = !snoozeUntil && uniqueCount === FIRST_PROMPT_AT;
+    const isRepeatPrompt = !snoozeUntil && uniqueCount > FIRST_PROMPT_AT &&
+                           (tapCount % REPEAT_EVERY_TAPS === 0);
     const isTapsTarget   = snoozeUntil?.startsWith('taps:') &&
-      tapsSinceSnoozeRef.current >= parseInt(snoozeUntil.split(':')[1]);
+                           tapsSinceSnoozeRef.current >= parseInt(snoozeUntil.split(':')[1]);
 
     if (isFirstPrompt || isRepeatPrompt || isTapsTarget) {
       const lastPromptAt = parseInt(
         localStorage.getItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`) || '0'
       );
-
       if (tapCount > lastPromptAt) {
-        console.log('Triggering mastery check at tap', tapCount);
-
+        console.log('Triggering mastery check at tap', tapCount, '| isFirst:', isFirstPrompt);
         setTimeout(() => {
-          const promptType = isFirstPrompt ? 'first' : 'later';
-          setCurrentMilestone(null);
-          setPromptType(promptType);
-          setShowHexagonTransition(true);
-          localStorage.setItem(
-            `${lockedUserIdRef.current}_lastMasteryPromptAt`,
-            tapCount.toString()
-          );
+          localStorage.setItem(`${lockedUserIdRef.current}_lastMasteryPromptAt`, tapCount.toString());
+
+          if (isFirstPrompt && !firstPromptShownRef.current) {
+            // ✅ Very first prompt ever — full HexagonTransition experience
+            firstPromptShownRef.current = true;
+            localStorage.setItem(`${lockedUserIdRef.current}_firstPromptShown`, '1');
+            setCurrentMilestone(null);
+            setPromptType('first');
+            setShowHexagonTransition(true);
+          } else {
+            // ✅ All repeat prompts — show HexagonTransition in lightweight 'repeat' mode
+            // User sees the prompt and can choose quiz type/size or defer
+            // Let's Go fires immediately (no bee animation)
+            setCurrentMilestone(null);
+            setPromptType('repeat');
+            setShowHexagonTransition(true);
+          }
         }, 3000);
       }
     }
   }, [tapCount, snoozeUntil]);
 
-  // Auto-save state
+  // ── Auto-save session state ───────────────────────────────────────────────
   useEffect(() => {
-    const stateToSave = {
-      selectedWord,
-      letterProgress,
-      activeLetter,
-      viewedImages,
-      recentWords,
-      snoozeUntil,
-      lastSaved: new Date().toISOString()
-    };
-
     try {
       localStorage.setItem(
         `${lockedUserIdRef.current}_alphabetScreenState`,
-        JSON.stringify(stateToSave)
+        JSON.stringify({
+          selectedWord, letterProgress, activeLetter,
+          viewedImages, recentWords, snoozeUntil,
+          lastSaved: new Date().toISOString()
+        })
       );
-    } catch (e) {
-      console.error('Error saving alphabet state:', e);
-    }
+    } catch (e) { console.error('Error saving alphabet state:', e); }
   }, [selectedWord, letterProgress, activeLetter, viewedImages, recentWords, snoozeUntil]);
 
-  const getLetterIconSource = (letter) => {
-    const firstWord = wordList.find(item =>
-      item.category === 'Alphabet Fun' &&
-      item.word.toUpperCase().startsWith(letter.toUpperCase())
-    );
-    return firstWord ? firstWord.image : null;
-  };
+  // ── Persist allViewedWords ────────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        `${lockedUserIdRef.current}_allViewedWords`,
+        JSON.stringify(allViewedWords)
+      );
+    } catch (e) { console.error('Error saving allViewedWords:', e); }
+  }, [allViewedWords]);
 
-  // ✅ UPDATED: Track each image view
+  // ── Letter tap ────────────────────────────────────────────────────────────
   const handleLetterClick = (letter) => {
     const wordsForLetter = wordList.filter(item =>
       item.category === 'Alphabet Fun' &&
       item.word.toUpperCase().startsWith(letter)
     );
-
     if (wordsForLetter.length === 0) return;
 
     setActiveLetter(letter);
     const currentIndex = letterProgress[letter] || 0;
-    const foundWord = wordsForLetter[currentIndex];
-    const nextIndex = (currentIndex + 1) % wordsForLetter.length;
+    const foundWord    = wordsForLetter[currentIndex];
+    const nextIndex    = (currentIndex + 1) % wordsForLetter.length;
 
-    setLetterProgress({
-      ...letterProgress,
-      [letter]: nextIndex
-    });
+    setLetterProgress({ ...letterProgress, [letter]: nextIndex });
+    setSelectedWord({ ...foundWord, currentIndex, totalCount: wordsForLetter.length, letter });
 
-    setSelectedWord({
-      ...foundWord,
-      currentIndex: currentIndex,
-      totalCount: wordsForLetter.length,
-      letter: letter
-    });
-    // Simple association: just say the image name
     if (props.speak) props.speak(foundWord.word);
 
-    // ✅ Track this image view
     const imageId = `${foundWord.id}-${foundWord.word}`;
-
-    // Always increment tap counters — fires useEffect even on repeated images
     tapCountRef.current += 1;
     tapsSinceSnoozeRef.current += 1;
     setTapCount(tapCountRef.current);
 
     if (!viewedImages.includes(imageId)) {
-      console.log('New image viewed:', imageId);
-      setViewedImages([...viewedImages, imageId]);
+      setViewedImages(prev => [...prev, imageId]);
 
-      // Keep last 5 words for mastery check
+      // recentWords — rolling window of 20 for mixed quiz
       const updatedRecent = [...recentWords, foundWord];
-      if (updatedRecent.length > 20) {
-        updatedRecent.shift();
-      }
+      if (updatedRecent.length > 20) updatedRecent.shift();
       setRecentWords(updatedRecent);
       recentWordsRef.current = updatedRecent;
+
+      // allViewedWords — full lifetime pool for Picture Quiz, no cap
+      setAllViewedWords(prev => {
+        const alreadyIn = prev.some(w => w.id === foundWord.id && w.word === foundWord.word);
+        return alreadyIn ? prev : [...prev, foundWord];
+      });
     }
 
-    if (nextIndex === 0 && currentIndex > 0) {
-      setTimeout(() => {
-        setActiveLetter(null);
-      }, 100);
-    }
+    if (nextIndex === 0 && currentIndex > 0) setTimeout(() => setActiveLetter(null), 100);
   };
 
-  const handleCloseWord = () => {
-    setSelectedWord(null);
-    setActiveLetter(null);
-  };
+  const handleCloseWord = () => { setSelectedWord(null); setActiveLetter(null); };
 
   const handleBackToMenu = () => {
     localStorage.removeItem(`${lockedUserIdRef.current}_alphabetScreenState`);
@@ -220,15 +199,10 @@ function AlphabetScreen(props) {
 
   const hasMoreImages = (letter) => {
     if (activeLetter !== letter) return false;
-
-    const wordsForLetter = wordList.filter(item =>
-      item.category === 'Alphabet Fun' &&
-      item.word.toUpperCase().startsWith(letter)
+    const words = wordList.filter(item =>
+      item.category === 'Alphabet Fun' && item.word.toUpperCase().startsWith(letter)
     );
-
-    const currentProgress = letterProgress[letter] || 0;
-
-    return currentProgress < wordsForLetter.length;
+    return (letterProgress[letter] || 0) < words.length;
   };
 
   const handleStartRandomChallenge = () => {
@@ -257,35 +231,38 @@ function AlphabetScreen(props) {
     localStorage.setItem(`${lockedUserIdRef.current}_challengeBannerDismissed`, 'true');
   };
 
-  // ✅ HEXAGON TRANSITION HANDLERS
+  // ── HexagonTransition handlers ────────────────────────────────────────────
+
   const handleAcceptMasteryCheck = (size = 5) => {
-    console.log('recentWords at accept:', recentWordsRef.current);
-    // Use size passed directly (Let's Go), or the one stored from a prior snooze choice
     const resolvedSize = size !== 5 ? size : pendingQuizSizeRef.current;
     setQuizSize(resolvedSize);
-    pendingQuizSizeRef.current = 5; // reset for next time
+    setQuizType('mixed');
+    pendingQuizSizeRef.current = 5;
+    pendingQuizTypeRef.current = 'mixed';
     setShowHexagonTransition(false);
     setShowMasteryChallenge(true);
     setSnoozeUntil(null);
     tapsSinceSnoozeRef.current = 0;
   };
 
-  const handleSnoozeMasteryCheck = (option, size = 5) => {
-    // option is "taps:20", "taps:30", "taps:40", "taps:50"
-    console.log('Mastery check snoozed:', option, '| Next quiz size:', size);
-    pendingQuizSizeRef.current = size; // store for when quiz eventually fires
+  const handleSnoozeMasteryCheck = (option, size = 5, type = 'mixed') => {
+    pendingQuizSizeRef.current = type;
+    pendingQuizTypeRef.current = type;
     setQuizSize(size);
+    setQuizType(type);
     setShowHexagonTransition(false);
     setSnoozeUntil(option);
-    tapsSinceSnoozeRef.current = 0; // reset tap counter from this moment
+    tapsSinceSnoozeRef.current = 0;
   };
 
   const handleDeclineMasteryCheck = () => {
+    // "Not Now" = +20 taps, 10-question mixed quiz
     setShowHexagonTransition(false);
-    // "Later" = snooze for 15 more taps, 5-question quiz
-    pendingQuizSizeRef.current = 5;
-    setQuizSize(5);
-    setSnoozeUntil('taps:15');
+    pendingQuizSizeRef.current = 10;
+    pendingQuizTypeRef.current = 'mixed';
+    setQuizSize(10);
+    setQuizType('mixed');
+    setSnoozeUntil('taps:20');
     tapsSinceSnoozeRef.current = 0;
   };
 
@@ -295,65 +272,44 @@ function AlphabetScreen(props) {
     setCurrentMilestone(null);
     tapsSinceSnoozeRef.current = 0;
 
-    console.log(`Score: ${score}, Total: ${total}, Ratio: ${score / total}`);
+    const isPerfect         = score === total;
+    const wordsTestedString = recentWords.map(w => w.word).join(', ');
 
-    const accuracy = total > 0 ? (score / total) * 100 : 0;
-    const isPerfect = score === total;
-
-    const wordsTestedString = recentWords
-      .map(w => w.word)
-      .join(', ');
-
-    // ✅ Use lockedUserIdRef.current — never drifts to another player
     const saveResults = async () => {
       if (!scoreDB.db) await scoreDB.init();
-      await scoreDB.recordLearningAttempt(
-        `Mastery Check: ${wordsTestedString}`,
-        isPerfect,
-        lockedUserIdRef.current
-      );
+      await scoreDB.recordLearningAttempt(`Mastery Check: ${wordsTestedString}`, isPerfect, lockedUserIdRef.current);
       for (const [index, word] of recentWords.entries()) {
-        const isCorrect = index < score;
         await scoreDB.recordLearningAttempt(
           `${word.letter || word.word[0]}-${word.word}`,
-          isCorrect,
+          index < score,
           lockedUserIdRef.current
         );
       }
     };
     saveResults();
 
-    if (total === 0) {
-      // say nothing
-    } else if (score === 0) {
-      setTimeout(() => {
+    if (total === 0) return;
+    const ratio = score / total;
+    setTimeout(() => {
+      if (score === 0) {
         if (props.speak) props.speak("Don't give up! Try again!");
-      }, 500);
-    } else {
-      const ratio = score / total;
-      setTimeout(() => {
-        if (score === total) {
-          const powerWords = [
-            'Perfect!', 'Excellent!', 'Amazing!', 'You Did It!',
-            'Splendid!', 'Genius!', 'Brilliant!', 'Outstanding!',
-            'Fantastic!', 'Wonderful!'
-          ];
-          const chosen = powerWords[Math.floor(Math.random() * powerWords.length)];
-          if (props.speak) props.speak(chosen);
-        } else if (ratio >= 0.8) {
-          if (props.speak) props.speak("So close! Almost perfect!");
-        } else if (ratio >= 0.6) {
-          if (props.speak) props.speak("Nice work! You're getting there!");
-        } else if (ratio >= 0.4) {
-          if (props.speak) props.speak("Good try! Practice makes perfect!");
-        } else {
-          if (props.speak) props.speak("That's a start! Keep going!");
-        }
-      }, 500);
-    }
+      } else if (score === total) {
+        const pw = ['Perfect!','Excellent!','Amazing!','You Did It!','Splendid!','Genius!','Brilliant!','Outstanding!','Fantastic!','Wonderful!'];
+        if (props.speak) props.speak(pw[Math.floor(Math.random() * pw.length)]);
+      } else if (ratio >= 0.8) {
+        if (props.speak) props.speak("So close! Almost perfect!");
+      } else if (ratio >= 0.6) {
+        if (props.speak) props.speak("Nice work! You're getting there!");
+      } else if (ratio >= 0.4) {
+        if (props.speak) props.speak("Good try! Practice makes perfect!");
+      } else {
+        if (props.speak) props.speak("That's a start! Keep going!");
+      }
+    }, 500);
   };
 
-  // ✅ If hexagon transition is active
+  // ── Render ────────────────────────────────────────────────────────────────
+
   if (showHexagonTransition) {
     return (
       <HexagonTransition
@@ -367,20 +323,20 @@ function AlphabetScreen(props) {
     );
   }
 
-  // ✅ If mastery check challenge is active
   if (showMasteryChallenge) {
     return (
       <MixedMasteryChallenge
         recentWords={recentWordsRef.current}
+        allViewedWords={allViewedWords}
         onExit={handleExitMasteryCheck}
         speak={props.speak}
         milestone={currentMilestone}
         quizSize={quizSize}
+        quizType={quizType}
       />
     );
   }
 
-  // If regular challenge mode
   if (showChallenge) {
     return (
       <AlphabetChallenge
@@ -394,7 +350,6 @@ function AlphabetScreen(props) {
 
   return (
     <div className="app-screen alphabet-screen-container">
-      {/* Challenge Banner */}
       {showBanner && !bannerDismissed && (
         <ChallengeBanner
           onStartChallenge={handleStartRandomChallenge}
@@ -402,7 +357,6 @@ function AlphabetScreen(props) {
         />
       )}
 
-      {/* Top Section - Video OR Word Image */}
       <div className="top-section">
         {!selectedWord ? (
           <div className="video-section">
@@ -422,51 +376,38 @@ function AlphabetScreen(props) {
           <div className="word-display-section">
             <button className="close-word-button" onClick={handleCloseWord}>×</button>
             <div className="word-image-frame">
-              <img
-                src={getImagePath(selectedWord.image)}
-                alt={selectedWord.word}
-              />
+              <img src={getImagePath(selectedWord.image)} alt={selectedWord.word} />
             </div>
             <p className="word-text">{selectedWord.word}</p>
-
             {selectedWord.totalCount > 1 && (
               <div className="progress-dots">
                 {Array.from({ length: selectedWord.totalCount }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`progress-dot ${i === selectedWord.currentIndex ? 'active' : ''}`}
-                  />
+                  <div key={i} className={`progress-dot ${i === selectedWord.currentIndex ? 'active' : ''}`} />
                 ))}
               </div>
             )}
-
             <p className="tap-more-hint" style={{
-              visibility: (selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1) ? 'visible' : 'hidden'
-            }}>👇 Tap {selectedWord.word[0]} for more!</p>
+              visibility: (selectedWord.totalCount > 1 && selectedWord.currentIndex < selectedWord.totalCount - 1)
+                ? 'visible' : 'hidden'
+            }}>
+              👇 Tap {selectedWord.word[0]} for more!
+            </p>
           </div>
         )}
       </div>
 
-      {/* Keyboard Grid */}
       <div className="keyboard-wrapper">
-        <div
-          className="alphabet-grid"
-          style={{ backgroundImage: `url(${birdBackground})` }}
-        >
-          {alphabet.map(letter => {
-            return (
-              <button
-                key={letter}
-                className={`letter-tile ${hasMoreImages(letter) ? 'has-more' : ''}`}
-                onClick={() => handleLetterClick(letter)}
-              >
-                {letter}
-              </button>
-            );
-          })}
-          <button className="back-button" onClick={handleBackToMenu}>
-            Back to Menu
-          </button>
+        <div className="alphabet-grid" style={{ backgroundImage: `url(${birdBackground})` }}>
+          {alphabet.map(letter => (
+            <button
+              key={letter}
+              className={`letter-tile ${hasMoreImages(letter) ? 'has-more' : ''}`}
+              onClick={() => handleLetterClick(letter)}
+            >
+              {letter}
+            </button>
+          ))}
+          <button className="back-button" onClick={handleBackToMenu}>Back to Menu</button>
         </div>
       </div>
     </div>
