@@ -1,0 +1,241 @@
+/* ========================================
+   CELEBRATION SCREEN
+   ======================================== */
+
+.cs__overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+@media only screen and (min-width: 769px) {
+  .cs__overlay {
+    position: fixed !important;
+    top: 50% !important; left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 420px !important; height: 680px !important;
+    max-height: 680px !important;
+    border-radius: 40px !important;
+    margin: 0 !important; padding: 0 !important;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .cs__overlay {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important; height: 100% !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* SNOW */
+.cs__snow-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 2; overflow: hidden;
+}
+
+.cs__snow-burst {
+  position: absolute;
+  opacity: 0;
+  animation: snowBurst forwards;
+}
+
+@keyframes snowBurst {
+  0%   { opacity: 0; transform: translate(0,0) scale(0.3); }
+  12%  { opacity: 1; }
+  65%  { opacity: 0.85; }
+  100% { opacity: 0; transform: translate(var(--bx,0px), var(--by,0px)) scale(0.7); }
+}
+
+.cs__snow-gentle {
+  position: absolute;
+  top: -30px;
+  opacity: 0;
+  animation: snowGentle linear infinite;
+}
+
+@keyframes snowGentle {
+  0%   { top: -30px; opacity: 0; transform: translateX(0) rotate(0deg); }
+  8%   { opacity: 0.75; }
+  88%  { opacity: 0.75; }
+  100% { top: 108%; opacity: 0; transform: translateX(15px) rotate(180deg); }
+}
+
+/* TEDDY BEARS */
+.cs__bears-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 3; overflow: hidden;
+}
+
+.cs__bear {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  opacity: 0;
+  font-size: var(--bear-size, 24px);
+  animation: bearArc 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes bearArc {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(0.4); }
+  35%  { transform: translateX(calc(-50% + var(--land-x) * 0.5)) translateY(-160px) scale(1.15); }
+  75%  { opacity: 1; transform: translateX(calc(-50% + var(--land-x))) translateY(-15px) scale(1.0); }
+  88%  { transform: translateX(calc(-50% + var(--land-x))) translateY(5px) scale(1.05); }
+  100% { opacity: 1; transform: translateX(calc(-50% + var(--land-x))) translateY(0) scale(1.0); }
+}
+
+/* FALLING OBJECTS */
+.cs__layer {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 4; overflow: hidden;
+}
+
+.cs__piece {
+  position: absolute;
+  top: -50px;
+  opacity: 0;
+  user-select: none;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+}
+
+.cs__piece--left  { animation-name: csFallLeft; }
+.cs__piece--right { animation-name: csFallRight; }
+
+@keyframes csFallLeft {
+  0%   { top: -50px; opacity: 0; transform: rotate(0deg) translateX(0) scale(0.6); }
+  6%   { opacity: 1; }
+  50%  { transform: rotate(-20deg) translateX(-12px) scale(1.1); }
+  85%  { opacity: 1; }
+  100% { top: 108%; opacity: 0; transform: rotate(-40deg) translateX(-8px) scale(0.9); }
+}
+
+@keyframes csFallRight {
+  0%   { top: -50px; opacity: 0; transform: rotate(0deg) translateX(0) scale(0.6); }
+  6%   { opacity: 1; }
+  50%  { transform: rotate(20deg) translateX(12px) scale(1.1); }
+  85%  { opacity: 1; }
+  100% { top: 108%; opacity: 0; transform: rotate(40deg) translateX(8px) scale(0.9); }
+}
+
+/* PARTY POPPERS */
+.cs__poppers-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 5; overflow: hidden;
+}
+
+.cs__popper {
+  position: absolute;
+  top: -40px;
+  opacity: 0;
+  animation: popperFall linear infinite;
+}
+
+@keyframes popperFall {
+  0%   { top: -40px; opacity: 0; transform: rotate(0deg) scale(0.5); }
+  10%  { opacity: 1; transform: rotate(45deg) scale(1.2); }
+  50%  { transform: rotate(180deg) scale(1.0) translateX(10px); }
+  88%  { opacity: 1; }
+  100% { top: 108%; opacity: 0; transform: rotate(360deg) scale(0.7); }
+}
+
+/* SCORE CARD */
+.cs__content {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 88%;
+  max-width: 310px;
+}
+
+.cs__card {
+  width: 100%;
+  background: rgba(255,255,255,0.97);
+  border: 5px solid #FFD700;
+  border-radius: 24px;
+  padding: 20px 28px 24px 28px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,215,0,0.45);
+  animation: csCardPop 0.55s cubic-bezier(0.68,-0.55,0.265,1.55) forwards;
+}
+
+@keyframes csCardPop {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+  70%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.cs__quiz-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 0.8em;
+  font-weight: 800;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.cs__card-emoji {
+  font-size: 3em; display: block; margin-bottom: 6px;
+  animation: csEmojiPop 0.6s cubic-bezier(0.68,-0.55,0.265,1.55) 0.25s both;
+}
+
+@keyframes csEmojiPop {
+  0%   { transform: scale(0); }
+  60%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.cs__card-message {
+  font-family: Arial, sans-serif;
+  font-size: 1.9em; font-weight: 900; letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.cs__card-numbers {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; margin-bottom: 6px;
+}
+
+.cs__score-val { font-family: Arial, sans-serif; font-size: 3em; font-weight: 900; color: #2C3E50; line-height: 1; }
+.cs__score-sep { font-family: Arial, sans-serif; font-size: 2.2em; color: #95A5A6; font-weight: 300; }
+.cs__score-tot { font-family: Arial, sans-serif; font-size: 3em; font-weight: 900; color: #95A5A6; line-height: 1; }
+.cs__card-accuracy { font-family: Arial, sans-serif; font-size: 1em; font-weight: 700; color: #7F8C8D; }
+
+/* BUTTONS */
+.cs__buttons {
+  display: flex; flex-direction: column; gap: 10px; width: 100%;
+  opacity: 0; transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.cs__buttons--visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.cs__btn {
+  width: 100%; padding: 15px 20px; border: none; border-radius: 16px;
+  font-family: Arial, sans-serif; font-size: 1.05em; font-weight: 800;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 8px; box-shadow: 0 5px 16px rgba(0,0,0,0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cs__btn:hover  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.3); }
+.cs__btn:active { transform: translateY(0); }
+
+.cs__btn--again  { background: linear-gradient(135deg,#4CAF50,#388E3C); color:white; border:3px solid #2E7D32; }
+.cs__btn--change { background: linear-gradient(135deg,#42A5F5,#1976D2); color:white; border:3px solid #1565C0; }
+.cs__btn--menu   { background: linear-gradient(135deg,#FF9800,#F57C00); color:white; border:3px solid #E65100; }

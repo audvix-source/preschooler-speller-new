@@ -126,7 +126,7 @@ export const wordList = [
 { id: 125, word: 'Yo-yo', image: 'yo-yo.png', category: 'Alphabet Fun' },
 { id: 125.1, letter: 'y', word: 'Yak', image: 'yak.png', category: 'Alphabet Fun' },
 { id: 125.2, letter: 'y', word: 'Yarn', image: 'yarn.png', category: 'Alphabet Fun' },
-{ id: 125.3, letter: 'y', word: 'Yatch', image: 'yatch.png', category: 'Alphabet Fun' },
+{ id: 125.3, letter: 'y', word: 'Yacht', image: 'yacht.png', category: 'Alphabet Fun' },
 { id: 125.4, letter: 'y', word: 'Yogurt', image: 'yogurt.png', category: 'Alphabet Fun' },
 { id: 126, word: 'Zebra', image: 'zebra.png', category: 'Alphabet Fun' },
 { id: 126.1, letter: 'z', word: 'Zap', image: 'zap.png', category: 'Alphabet Fun' },

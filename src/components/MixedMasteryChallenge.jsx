@@ -3,8 +3,7 @@ import './MixedMasteryChallenge.css';
 import { wordList } from '../wordList.js';
 import RecognitionChallenge from './RecognitionChallenge.jsx';
 import ListeningChallenge from './ListeningChallenge.jsx';
-import RunningTilesAnimation from './RunningTilesAnimation';
-import QuickCelebration from './QuickCelebration';
+import CelebrationScreen from './CelebrationScreen';
 
 const importAll = (r) => {
   let images = {};
@@ -331,26 +330,22 @@ function MixedMasteryChallenge({
 
   const handleExit = () => onExit(scoreRef.current, questionsRef.current.length, 'change');
 
-  // Post-quiz action from RunningTilesAnimation
+  // Post-quiz action from CelebrationScreen
   const handleAnimationComplete = (action) => onExit(finalScore, finalTotal, action);
 
   if (showAnimation) {
-    // Small quizzes (≤5q) → flower + confetti QuickCelebration
-    // Larger quizzes       → full RunningTilesAnimation
-    if (finalTotal <= 5) {
-      return (
-        <QuickCelebration
-          score={finalScore} total={finalTotal}
-          onComplete={handleAnimationComplete}
-          speak={speak}
-        />
-      );
-    }
+    // Map quiz size to celebration intensity
+    const celebSize = finalTotal <= 5 ? 'small'
+      : finalTotal <= 15 ? 'medium'
+      : 'large';
     return (
-      <RunningTilesAnimation
-        score={finalScore} total={finalTotal}
+      <CelebrationScreen
+        score={finalScore}
+        total={finalTotal}
+        size={celebSize}
+        quizType={quizType}
         onComplete={handleAnimationComplete}
-        speak={speak} milestone={milestone}
+        speak={speak}
       />
     );
   }
