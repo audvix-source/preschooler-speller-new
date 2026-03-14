@@ -174,3 +174,24 @@
   .recognition-question { font-size: 1.35em; }
   .sound-icon { font-size: 2em; }
 }
+
+/* Force all 4 choice boxes to be identical squares */
+.recognition-choice {
+  aspect-ratio: 1 / 1 !important;
+  min-height: unset !important;
+  height: auto !important;
+}
+ 
+/* Image fills the square evenly */
+.choice-image {
+  width: 85% !important;
+  height: 85% !important;
+  object-fit: contain !important;
+}
+ 
+/* Grid rows share space equally and don't overflow */
+.recognition-choices {
+  grid-template-rows: 1fr 1fr !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}

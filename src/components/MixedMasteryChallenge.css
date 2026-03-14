@@ -691,3 +691,233 @@
   color: white;
   box-shadow: 0 2px 6px rgba(56, 142, 60, 0.35);
 }
+
+/* ========================================
+   APPEND THESE RULES TO THE BOTTOM OF
+   MixedMasteryChallenge.css
+   ======================================== */
+
+/* ── New header layout: exit | badge+score | question ── */
+.challenge-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 10px !important;
+}
+
+.challenge-exit-top {
+  background: rgba(255,255,255,0.18);
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 50%;
+  color: white;
+  font-size: 1em;
+  font-weight: 900;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+  line-height: 1;
+}
+
+.challenge-exit-top:hover {
+  background: rgba(255,255,255,0.32);
+}
+
+.challenge-header-centre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  padding: 0 6px;
+}
+
+.challenge-header-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.challenge-header-question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Quiz type badges ── */
+.challenge-quiz-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.7em;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.challenge-quiz-type-badge--mc {
+  background: linear-gradient(135deg, #66BB6A 0%, #388E3C 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(56,142,60,0.35);
+}
+
+.challenge-quiz-type-badge--listening {
+  background: linear-gradient(135deg, #FF4081 0%, #C2185B 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(194,24,91,0.35);
+}
+
+.challenge-quiz-type-badge--reading {
+  background: linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(123,31,162,0.35);
+}
+
+/* ── Snooze expanded: 2x2 grid for 4 quiz types ── */
+.hexagon-transition__snooze-sub-options--grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+  width: 100% !important;
+}
+
+.hexagon-transition__snooze-sub-btn--listening {
+  background: linear-gradient(135deg, #FF4081 0%, #C2185B 100%);
+  color: white;
+}
+
+.hexagon-transition__snooze-sub-btn--reading {
+  background: linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%);
+  color: white;
+}
+
+/* Make sub-buttons taller in the 2x2 grid */
+.hexagon-transition__snooze-sub-options--grid .hexagon-transition__snooze-sub-btn {
+  padding: 12px 6px !important;
+  font-size: 0.82em !important;
+  min-height: 56px !important;
+}
+
+/* ========================================
+   APPEND THESE RULES TO THE BOTTOM OF
+   MixedMasteryChallenge.css
+   ======================================== */
+
+/* ── New header layout: exit | badge+score | question ── */
+.challenge-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 10px !important;
+}
+
+.challenge-exit-top {
+  background: rgba(255,255,255,0.18);
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 50%;
+  color: white;
+  font-size: 1em;
+  font-weight: 900;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+  line-height: 1;
+}
+
+.challenge-exit-top:hover {
+  background: rgba(255,255,255,0.32);
+}
+
+.challenge-header-centre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  padding: 0 6px;
+}
+
+.challenge-header-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.challenge-header-question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Quiz type badges ── */
+.challenge-quiz-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.7em;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.challenge-quiz-type-badge--mc {
+  background: linear-gradient(135deg, #66BB6A 0%, #388E3C 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(56,142,60,0.35);
+}
+
+.challenge-quiz-type-badge--listening {
+  background: linear-gradient(135deg, #FF4081 0%, #C2185B 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(194,24,91,0.35);
+}
+
+.challenge-quiz-type-badge--reading {
+  background: linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%);
+  color: white;
+  box-shadow: 0 2px 6px rgba(123,31,162,0.35);
+}
+
+/* ── Snooze expanded: 2x2 grid for 4 quiz types ── */
+.hexagon-transition__snooze-sub-options--grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+  width: 100% !important;
+}
+
+.hexagon-transition__snooze-sub-btn--listening {
+  background: linear-gradient(135deg, #FF4081 0%, #C2185B 100%);
+  color: white;
+}
+
+.hexagon-transition__snooze-sub-btn--reading {
+  background: linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%);
+  color: white;
+}
+
+/* Make sub-buttons taller in the 2x2 grid */
+.hexagon-transition__snooze-sub-options--grid .hexagon-transition__snooze-sub-btn {
+  padding: 12px 6px !important;
+  font-size: 0.82em !important;
+  min-height: 56px !important;
+}

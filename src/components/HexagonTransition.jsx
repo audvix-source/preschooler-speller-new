@@ -3,7 +3,6 @@ import './HexagonTransition.css';
 import BeeAnimation from './BeeAnimation';
 import './BeeAnimation.css';
 
-// ── Snooze options per the quiz table ────────────────────────────────────────
 const LATER_OPTION = {
   label: 'Later', desc: 'taps', value: 20, quizSize: 10,
   beeCount: 30, beeSize: 32, beePattern: 'default'
@@ -16,11 +15,13 @@ const SNOOZE_OPTIONS = [
   { label: '+60', desc: 'taps', value: 60, quizSize: 30, beeCount: 130, beeSize: 14, beePattern: 'default' },
 ];
 
-// promptType:
-//   'first'  — very first prompt ever, full experience with bee animation on Let's Go
-//   'later'  — shown after Not Now / snooze fires (within session), full experience
-//   'repeat' — shown after returning from menu and hitting 20 images again, lighter:
-//              Let's Go fires immediately (no bee), defer options still show
+// 4 quiz types shown in the expanded snooze slot
+const QUIZ_TYPE_OPTIONS = [
+  { quizType: 'mixed',     icon: '✏️',  label: 'Mixed',       cls: 'hexagon-transition__snooze-sub-btn--mixed' },
+  { quizType: 'mc-only',   icon: '🖼️',  label: 'Picture Quiz', cls: 'hexagon-transition__snooze-sub-btn--mc' },
+  { quizType: 'listening', icon: '🔊',  label: 'Listening',    cls: 'hexagon-transition__snooze-sub-btn--listening' },
+  { quizType: 'reading',   icon: '📖',  label: 'Reading',      cls: 'hexagon-transition__snooze-sub-btn--reading' },
+];
 
 const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount = 20, promptType = 'first' }) => {
   const [phase, setPhase]                       = useState('fullscreen');
@@ -31,8 +32,6 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
   const [expandedSnooze, setExpandedSnooze]     = useState(null);
 
   const pendingSnoozeRef = useRef(null);
-
-  // For repeat mode, fire defer options a bit sooner
   const deferDelay = promptType === 'repeat' ? 600 : 1000;
 
   useEffect(() => {
@@ -42,11 +41,9 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
     return () => clearTimeout(t);
   }, []);
 
-  // ── Let's Go ──────────────────────────────────────────────────────────────
   const handleAccept = () => {
     window.speechSynthesis.cancel();
     if (promptType === 'repeat') {
-      // Lighter mode — no bee animation, fire immediately
       if (speak) speak("Let's go!");
       onAccept(5);
     } else {
@@ -59,19 +56,16 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
     }
   };
 
-  // ── Not Now ───────────────────────────────────────────────────────────────
   const handleDecline = () => {
     window.speechSynthesis.cancel();
     if (speak) speak("No problem! I'll remind you soon!");
     onDecline();
   };
 
-  // ── Expand snooze button ──────────────────────────────────────────────────
   const handleSnoozeExpand = (option) => {
     setExpandedSnooze(prev => prev === option.value ? null : option.value);
   };
 
-  // ── Pick Mixed or Picture Quiz ────────────────────────────────────────────
   const handleSnoozeTypeSelect = (option, quizType) => {
     window.speechSynthesis.cancel();
     setShowDeferOptions(false);
@@ -79,12 +73,11 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
     pendingSnoozeRef.current = { value: option.value, quizSize: option.quizSize, quizType };
 
     if (promptType === 'repeat') {
-      // No bee animation in repeat mode — fire snooze directly
       onSnooze(`taps:${option.value}`, option.quizSize, quizType);
     } else {
       setBeeConfig({ count: option.beeCount, size: option.beeSize, pattern: option.beePattern });
       setShowBees(true);
-      const typeLabel = quizType === 'mc-only' ? 'picture quiz' : 'mixed quiz';
+      const typeLabel = { 'mc-only': 'picture quiz', 'listening': 'listening quiz', 'reading': 'reading quiz' }[quizType] || 'mixed quiz';
       if (speak) speak(`Got it! ${typeLabel} after ${option.value} more taps!`);
     }
   };
@@ -98,18 +91,13 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
     }
   };
 
-  // ── Prompt message per type ───────────────────────────────────────────────
   const renderMessage = () => {
     if (promptType === 'repeat') {
       return (
         <>
-          <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.4s' }}>
-            More pictures done!
-          </span>
+          <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.4s' }}>More pictures done!</span>
           <br />
-          <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.7s' }}>
-            Want spelling, picture quiz, or mixed?
-          </span>
+          <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.7s' }}>Want spelling, picture quiz, or mixed?</span>
         </>
       );
     }
@@ -122,7 +110,6 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
         </>
       );
     }
-    // 'first'
     return (
       <>
         <span className="hexagon-transition__word-fade" style={{ animationDelay: '0.8s' }}>You've seen</span>{' '}
@@ -134,45 +121,49 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
     );
   };
 
-  // ── Snooze button renderer ────────────────────────────────────────────────
   const renderSnoozeButton = (option, isFullWidth = false) => {
     const isExpanded = expandedSnooze === option.value;
     const isGrayed   = expandedSnooze !== null && !isExpanded;
 
+    // Hide grayed slots entirely so the grid reflows naturally
+    if (isGrayed) return (
+      <div
+        key={option.value}
+        className="hexagon-transition__snooze-slot"
+        style={{ display: 'none' }}
+      />
+    );
+
     return (
       <div
         key={option.value}
-        className={`hexagon-transition__snooze-slot ${isFullWidth ? 'hexagon-transition__snooze-slot--full' : ''}`}
+        className={`hexagon-transition__snooze-slot ${isFullWidth || isExpanded ? 'hexagon-transition__snooze-slot--full' : ''}`}
+        style={isExpanded ? { gridColumn: '1 / -1' } : undefined}
       >
         {!isExpanded ? (
           <button
-            className={`hexagon-transition__defer-option-btn ${isGrayed ? 'hexagon-transition__defer-option-btn--grayed' : ''} ${isFullWidth ? 'hexagon-transition__defer-option-btn--full' : ''}`}
-            onClick={() => !isGrayed && handleSnoozeExpand(option)}
-            disabled={isGrayed}
+            className={`hexagon-transition__defer-option-btn ${isFullWidth ? 'hexagon-transition__defer-option-btn--full' : ''}`}
+            onClick={() => handleSnoozeExpand(option)}
           >
             <span className="hexagon-transition__defer-fraction">{option.label}</span>
             <span className="hexagon-transition__defer-desc">{option.desc} · {option.quizSize}-item quiz</span>
           </button>
         ) : (
-          <div className={`hexagon-transition__snooze-expanded ${isFullWidth ? 'hexagon-transition__snooze-expanded--full' : ''}`}>
+          <div className="hexagon-transition__snooze-expanded hexagon-transition__snooze-expanded--full">
             <div className="hexagon-transition__snooze-expanded-label">
-              {option.label} taps — pick quiz type:
+              {option.label} taps — pick a quiz type:
             </div>
-            <div className="hexagon-transition__snooze-sub-options">
-              <button
-                className="hexagon-transition__snooze-sub-btn hexagon-transition__snooze-sub-btn--mixed"
-                onClick={() => handleSnoozeTypeSelect(option, 'mixed')}
-              >
-                <span className="hexagon-transition__snooze-sub-icon">✏️</span>
-                <span className="hexagon-transition__snooze-sub-text">Mixed</span>
-              </button>
-              <button
-                className="hexagon-transition__snooze-sub-btn hexagon-transition__snooze-sub-btn--mc"
-                onClick={() => handleSnoozeTypeSelect(option, 'mc-only')}
-              >
-                <span className="hexagon-transition__snooze-sub-icon">🖼️</span>
-                <span className="hexagon-transition__snooze-sub-text">Picture Quiz</span>
-              </button>
+            <div className="hexagon-transition__snooze-sub-options hexagon-transition__snooze-sub-options--grid">
+              {QUIZ_TYPE_OPTIONS.map(qt => (
+                <button
+                  key={qt.quizType}
+                  className={`hexagon-transition__snooze-sub-btn ${qt.cls}`}
+                  onClick={() => handleSnoozeTypeSelect(option, qt.quizType)}
+                >
+                  <span className="hexagon-transition__snooze-sub-icon">{qt.icon}</span>
+                  <span className="hexagon-transition__snooze-sub-text">{qt.label}</span>
+                </button>
+              ))}
             </div>
             <button
               className="hexagon-transition__snooze-collapse-btn"
@@ -208,32 +199,19 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
                 <div className="hexagon-transition__prompt-main-content">
                   <h1 className="hexagon-transition__animated-title">
                     {'Progress!'.split('').map((letter, i) => (
-                      <span
-                        key={i}
-                        className="hexagon-transition__letter-pop"
-                        style={{ animationDelay: `${i * 0.1}s`, display: letter === ' ' ? 'inline' : 'inline-block' }}
-                      >
+                      <span key={i} className="hexagon-transition__letter-pop"
+                        style={{ animationDelay: `${i * 0.1}s`, display: letter === ' ' ? 'inline' : 'inline-block' }}>
                         {letter}
                       </span>
                     ))}
                   </h1>
-
-                  <p className="hexagon-transition__animated-message">
-                    {renderMessage()}
-                  </p>
-
+                  <p className="hexagon-transition__animated-message">{renderMessage()}</p>
                   <div className="hexagon-transition__main-action-buttons">
-                    <button
-                      className="hexagon-transition__action-btn hexagon-transition__btn-go"
-                      onClick={handleAccept}
-                    >
+                    <button className="hexagon-transition__action-btn hexagon-transition__btn-go" onClick={handleAccept}>
                       <span className="hexagon-transition__btn-icon">🚀</span>
                       <span className="hexagon-transition__btn-text">Let's Go!</span>
                     </button>
-                    <button
-                      className="hexagon-transition__action-btn hexagon-transition__btn-later"
-                      onClick={handleDecline}
-                    >
+                    <button className="hexagon-transition__action-btn hexagon-transition__btn-later" onClick={handleDecline}>
                       <span className="hexagon-transition__btn-icon">⏭️</span>
                       <span className="hexagon-transition__btn-text">Not Now</span>
                     </button>
@@ -246,14 +224,17 @@ const HexagonTransition = ({ onAccept, onDecline, onSnooze, speak, viewedCount =
           {showDeferOptions && (
             <div className="hexagon-transition__defer-box-container">
               <div className="hexagon-transition__defer-box">
-                <p className="hexagon-transition__defer-label">Or remind me after...</p>
-
-                {/* Later — full width row */}
-                <div className="hexagon-transition__defer-later-row">
-                  {renderSnoozeButton(LATER_OPTION, true)}
-                </div>
-
-                {/* +30 / +40 / +50 / +60 — 2×2 grid */}
+                <p className="hexagon-transition__defer-label">Or remind me...</p>
+                {/* Later — full width row, hidden when a grid slot is expanded */}
+                {expandedSnooze === null || expandedSnooze === LATER_OPTION.value ? (
+                  <div className="hexagon-transition__defer-later-row">
+                    {renderSnoozeButton(LATER_OPTION, true)}
+                  </div>
+                ) : null}
+                {/* "Or, after..." label above the 2×2 grid — hidden when Later is expanded */}
+                {(expandedSnooze === null || expandedSnooze !== LATER_OPTION.value) && (
+                  <p className="hexagon-transition__defer-or-after">Or, after...</p>
+                )}
                 <div className="hexagon-transition__defer-options-grid">
                   {SNOOZE_OPTIONS.map(option => renderSnoozeButton(option, false))}
                 </div>

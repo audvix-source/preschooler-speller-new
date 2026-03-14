@@ -34,17 +34,13 @@
    FIREWORKS LAYER (100% only)
 ══════════════════════════════════════════════ */
 .rta__fireworks-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  overflow: hidden;
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 2; overflow: hidden;
 }
 
 .rta__firework-particle {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   animation: fireworkBurst 1.2s ease-out forwards;
@@ -62,16 +58,12 @@
    CONFETTI LAYER (≥80%)
 ══════════════════════════════════════════════ */
 .rta__confetti-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-  overflow: hidden;
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 3; overflow: hidden;
 }
 
 .rta__confetti {
-  position: absolute;
-  top: -20px;
+  position: absolute; top: -20px;
   border-radius: 2px;
   animation: confettiFall linear forwards;
   opacity: 0.9;
@@ -92,16 +84,12 @@
    STAR RAIN LAYER (≥60%)
 ══════════════════════════════════════════════ */
 .rta__star-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 4;
-  overflow: hidden;
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 4; overflow: hidden;
 }
 
 .rta__star {
-  position: absolute;
-  top: -30px;
+  position: absolute; top: -30px;
   animation: starFall ease-in forwards;
   opacity: 0;
 }
@@ -114,35 +102,27 @@
 }
 
 /* ══════════════════════════════════════════════
-   EMOJI PARADE LAYER (all tiers)
+   EMOJI PARADE LAYER
 ══════════════════════════════════════════════ */
 .rta__parade-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 5;
-  overflow: hidden;
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 5; overflow: hidden;
 }
 
 .rta__parade-emoji {
   position: absolute;
   animation: paradeScroll linear forwards;
-  opacity: 0;
-  white-space: nowrap;
+  opacity: 0; white-space: nowrap;
 }
 
-/* Row 0 — marches left to right near bottom */
 .rta__parade-emoji--row0 {
-  bottom: 18%;
-  left: -60px;
+  bottom: 18%; left: -60px;
   animation-duration: 3s;
   animation-name: paradeLeft;
 }
 
-/* Row 1 — marches right to left slightly above */
 .rta__parade-emoji--row1 {
-  bottom: 8%;
-  right: -60px;
+  bottom: 8%; right: -60px;
   animation-duration: 3.2s;
   animation-name: paradeRight;
 }
@@ -164,31 +144,46 @@
 }
 
 /* ══════════════════════════════════════════════
-   SCORE CARD
+   SCORE AREA — card + buttons stacked
 ══════════════════════════════════════════════ */
-.score-reveal {
+.rta__score-area {
   position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  /* semi-transparent overlay so tiles show through */
+  background: rgba(60, 40, 100, 0.45);
+}
 
+/* ── Score card ── */
+.score-reveal {
+  width: 100%;
+  max-width: 300px;
   background: rgba(255, 255, 255, 0.97);
   border: 5px solid #FFD700;
   border-radius: 24px;
-  padding: 30px 40px;
+  padding: 24px 32px;
   text-align: center;
   box-shadow:
     0 20px 60px rgba(0,0,0,0.45),
     0 0 40px rgba(255,215,0,0.4),
     inset 0 0 20px rgba(255,215,0,0.1);
   animation: scoreReveal 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-  min-width: 240px;
 }
 
 @keyframes scoreReveal {
-  0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.4) rotate(-8deg); }
-  70%  { transform: translate(-50%,-50%) scale(1.08) rotate(2deg); opacity: 1; }
-  100% { transform: translate(-50%,-50%) scale(1) rotate(0deg); opacity: 1; }
+  0%   { opacity: 0; transform: scale(0.4) rotate(-8deg); }
+  70%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 .score-emoji {
@@ -252,7 +247,6 @@
   letter-spacing: 1px;
 }
 
-/* ── Milestone badge ── */
 .score-milestone {
   margin-top: 14px;
   padding: 8px 16px;
@@ -271,4 +265,68 @@
   0%   { opacity: 0; transform: scale(0.7); }
   70%  { transform: scale(1.08); }
   100% { opacity: 1; transform: scale(1); }
+}
+
+/* ══════════════════════════════════════════════
+   POST-QUIZ ACTION BUTTONS
+   Fade in 1.5s after score card appears
+══════════════════════════════════════════════ */
+.rta__action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.rta__action-buttons--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.rta__btn {
+  width: 100%;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 16px;
+  font-family: Arial, sans-serif;
+  font-size: 1.05em;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.22);
+  letter-spacing: 0.3px;
+}
+
+.rta__btn:hover  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.28); }
+.rta__btn:active { transform: translateY(0);    box-shadow: 0 3px 10px rgba(0,0,0,0.2);  }
+
+/* Try Again — green */
+.rta__btn--again {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+  color: white;
+  border: 3px solid #2E7D32;
+}
+
+/* Change Quiz — blue */
+.rta__btn--change {
+  background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+  color: white;
+  border: 3px solid #1565C0;
+}
+
+/* Main Menu — orange */
+.rta__btn--menu {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
+  border: 3px solid #E65100;
 }

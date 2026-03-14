@@ -863,3 +863,114 @@
   opacity: 0.7;
 }
 .hexagon-transition__snooze-collapse-btn:hover { opacity: 1; }
+
+/* ========================================
+   APPEND TO BOTTOM OF HexagonTransition.css
+   Adds colors for Listening + Reading buttons
+   and makes the 2x2 grid buttons bigger
+   ======================================== */
+
+/* Listening — hot pink */
+.hexagon-transition__snooze-sub-btn--listening {
+  background: linear-gradient(135deg, #FF4081 0%, #C2185B 100%) !important;
+  color: white !important;
+}
+
+/* Reading — purple */
+.hexagon-transition__snooze-sub-btn--reading {
+  background: linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%) !important;
+  color: white !important;
+}
+
+/* 2×2 grid layout for 4 quiz type buttons */
+.hexagon-transition__snooze-sub-options--grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 7px !important;
+  width: 100% !important;
+}
+
+/* Make all 4 type buttons bigger and more tappable */
+.hexagon-transition__snooze-sub-options--grid .hexagon-transition__snooze-sub-btn {
+  padding: 14px 6px !important;
+  font-size: 0.85em !important;
+  min-height: 62px !important;
+  border-radius: 10px !important;
+}
+
+/* Ensure icon is visible in all buttons */
+.hexagon-transition__snooze-sub-options--grid .hexagon-transition__snooze-sub-icon {
+  font-size: 1.4em !important;
+  display: block !important;
+}
+
+.hexagon-transition__snooze-sub-options--grid .hexagon-transition__snooze-sub-text {
+  font-weight: 800 !important;
+  font-size: 0.9em !important;
+  text-align: center !important;
+  line-height: 1.2 !important;
+}
+
+/* Bigger, bolder ✕ collapse button */
+.hexagon-transition__snooze-collapse-btn {
+  position: absolute !important;
+  top: 5px !important;
+  right: 7px !important;
+  background: rgba(126, 87, 194, 0.18) !important;
+  border: 2px solid #7E57C2 !important;
+  border-radius: 50% !important;
+  font-size: 0.95em !important;
+  color: #4527A0 !important;
+  cursor: pointer !important;
+  width: 26px !important;
+  height: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 900 !important;
+  opacity: 1 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+}
+.hexagon-transition__snooze-collapse-btn:hover {
+  background: rgba(126, 87, 194, 0.38) !important;
+}
+
+/* "Or, after..." label between Later and the 2×2 grid */
+.hexagon-transition__defer-or-after {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.82em;
+  color: #6B5B95;
+  font-weight: 600;
+  font-style: italic;
+  text-align: center;
+  margin: 6px 0 4px 0;
+  padding: 0;
+}
+
+/* Push quiz type buttons down so they don't crowd the ✕ circle */
+.hexagon-transition__snooze-sub-options--grid {
+  margin-top: 10px !important;
+}
+
+/* --- Patch for Suspense boundary --- */
+.challenge-loading-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 600px; /* Match the height above */
+  background: transparent;
+}
+
+/* Ensure the wrapper doesn't break your existing layout */
+.suspense-container {
+  display: contents; /* Makes this div invisible to Flex/Grid */
+  width: 100%;
+  height: 100%;
+}
+
+.challenge-loading-wrapper {
+  display: contents; /* Makes the fallback div invisible too */
+}
+

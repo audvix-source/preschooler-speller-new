@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import './MixedMasteryChallenge.css';
 import { wordList } from '../wordList.js';
 import RecognitionChallenge from './RecognitionChallenge.jsx';
+import ListeningChallenge from './ListeningChallenge.jsx';
 import RunningTilesAnimation from './RunningTilesAnimation';
+import QuickCelebration from './QuickCelebration';
 
 const importAll = (r) => {
   let images = {};
@@ -48,42 +50,41 @@ const getSpeechDelay = (wordText, powerWordText) => {
 let globalPowerWordIndex = -1;
 
 const POWER_WORDS = [
-  { display: 'Perfect!',      speak: 'Perfect' },
-  { display: 'Excellent!',    speak: 'Excellent' },
-  { display: 'Amazing!',      speak: 'Amazing' },
-  { display: 'You Did It!',   speak: 'You Did It' },
-  { display: 'Splendid!',     speak: 'Splendid' },
-  { display: 'Genius!',       speak: 'Genius' },
-  { display: 'Brilliant!',    speak: 'Brilliant' },
-  { display: 'Outstanding!',  speak: 'Outstanding' },
-  { display: 'Fantastic!',    speak: 'Fantastic' },
-  { display: 'Wonderful!',    speak: 'Wonderful' },
-  { display: 'Superb!',       speak: 'Superb' },
-  { display: 'Magnificent!',  speak: 'Magnificent' },
-  { display: 'Champion!',     speak: 'Champion' },
-  { display: 'Incredible!',   speak: 'Incredible' },
-  { display: 'Marvelous!',    speak: 'Marvelous' }
+  { display: 'Perfect!',     speak: 'Perfect' },
+  { display: 'Excellent!',   speak: 'Excellent' },
+  { display: 'Amazing!',     speak: 'Amazing' },
+  { display: 'You Did It!',  speak: 'You Did It' },
+  { display: 'Splendid!',    speak: 'Splendid' },
+  { display: 'Genius!',      speak: 'Genius' },
+  { display: 'Brilliant!',   speak: 'Brilliant' },
+  { display: 'Outstanding!', speak: 'Outstanding' },
+  { display: 'Fantastic!',   speak: 'Fantastic' },
+  { display: 'Wonderful!',   speak: 'Wonderful' },
+  { display: 'Superb!',      speak: 'Superb' },
+  { display: 'Magnificent!', speak: 'Magnificent' },
+  { display: 'Champion!',    speak: 'Champion' },
+  { display: 'Incredible!',  speak: 'Incredible' },
+  { display: 'Marvelous!',   speak: 'Marvelous' }
 ];
+
+// Wrong-answer phrases (varied, kid-friendly)
+const WRONG_PHRASES = [
+  'Not quite!', 'Nice try!', 'Almost!', 'Good try!', 'Not this one!',
+  'So close!', 'Try again!', 'Keep going!',
+];
+const getWrongPhrase = () => WRONG_PHRASES[Math.floor(Math.random() * WRONG_PHRASES.length)];
 
 const normalizeWord = (wordObj) =>
   wordObj?.word?.toLowerCase() === 'nail' ? { ...wordObj, word: 'nails' } : wordObj;
 
 // ── Picture Quiz builder ──────────────────────────────────────────────────────
-// Uses allViewedWords (full lifetime pool).
-// ANY word with an image qualifies — no length restriction.
-// Words without images are skipped entirely.
-// Pads by cycling if pool is smaller than quizSize.
 const buildMCOnlyQuestions = (allViewedWords, quizSize) => {
   const pool = (allViewedWords || [])
     .map(normalizeWord)
-    .filter(w => w.word && getImagePath(w.image)); // ✅ no length filter — any word with image
+    .filter(w => w.word && getImagePath(w.image));
 
-  console.log(`Picture Quiz pool: ${pool.length} eligible words from ${allViewedWords?.length || 0} total viewed`);
-
-  if (pool.length === 0) {
-    console.warn('Picture Quiz: no eligible words with images in allViewedWords');
-    return [];
-  }
+  console.log(`Picture Quiz pool: ${pool.length} from ${allViewedWords?.length || 0} total`);
+  if (pool.length === 0) { console.warn('Picture Quiz: empty pool'); return []; }
 
   const questions = [];
   let i = 0;
@@ -94,9 +95,25 @@ const buildMCOnlyQuestions = (allViewedWords, quizSize) => {
   return questions;
 };
 
+// ── Listening Quiz builder ────────────────────────────────────────────────────
+const buildListeningQuestions = (allViewedWords, quizSize) => {
+  const pool = (allViewedWords || [])
+    .map(normalizeWord)
+    .filter(w => w.word && getImagePath(w.image));
+
+  console.log(`Listening Quiz pool: ${pool.length} from ${allViewedWords?.length || 0} total`);
+  if (pool.length === 0) { console.warn('Listening Quiz: empty pool'); return []; }
+
+  const questions = [];
+  let i = 0;
+  while (questions.length < quizSize) {
+    questions.push({ type: 'listening', word: pool[i % pool.length] });
+    i++;
+  }
+  return questions;
+};
+
 // ── Mixed builder ─────────────────────────────────────────────────────────────
-// Uses recentWords (rolling 20).
-// 3-5 letter words → spelling. 6+ letter words with image → recognition.
 const buildMixedQuestions = (recentWords, quizSize) => {
   const normalizedWords      = recentWords.map(normalizeWord);
   const spellingQuestions    = [];
@@ -142,10 +159,36 @@ const buildMixedQuestions = (recentWords, quizSize) => {
   }
 };
 
+const bodyPartWords = [
+  'head','face','hair','forehead','eyebrow','eyebrows','eyelash','eyelashes',
+  'eye','eyes','eyelid','eyelids','nose','nostrils','ear','ears','earlobe',
+  'cheek','cheeks','dimple','dimples','mouth','lip','lips','tongue','tooth',
+  'teeth','chin','jaw','jawline','neck','throat','cleft chin','cleft-chin',
+  'shoulder','shoulders','chest','breast','arm','arms','armpit','armpits',
+  'elbow','elbows','forearm','forearms','wrist','wrists','hand','hands',
+  'palm','palms','finger','fingers','thumb','thumbs','fingernail','fingernails',
+  'knuckle','knuckles','belly','bellybutton','belly button','belly-button',
+  'navel','stomach','tummy','abdomen','back','spine','waist','hip','hips',
+  'leg','legs','thigh','thighs','knee','knees','kneecap','calf','calves',
+  'shin','shins','ankle','ankles','foot','feet','heel','heels','toe','toes',
+  'toenail','toenails','sole','soles','arch','body','eyelashes','nails'
+];
+
+// ── Quiz type config ──────────────────────────────────────────────────────────
+const QUIZ_TYPE_CONFIG = {
+  'mixed':     { badge: null },
+  'mc-only':   { badge: { icon: '🖼️', label: 'Picture Quiz', cls: 'challenge-quiz-type-badge--mc' } },
+  'listening': { badge: { icon: '🔊', label: 'Listening',    cls: 'challenge-quiz-type-badge--listening' } },
+  'reading':   { badge: { icon: '📖', label: 'Reading',      cls: 'challenge-quiz-type-badge--reading' } },
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
-// quizType: 'mixed' | 'mc-only' (Picture Quiz)
-// allViewedWords: full lifetime pool from AlphabetScreen
+// quizType: 'mixed' | 'mc-only' | 'listening' | 'reading'
+// onExit(score, total, action):
+//   action = 'again'  → Try Again
+//   action = 'change' → Change Quiz (go to HexagonTransition)
+//   action = 'menu'   → Main Menu
 // ─────────────────────────────────────────────────────────────────────────────
 function MixedMasteryChallenge({
   recentWords,
@@ -176,12 +219,11 @@ function MixedMasteryChallenge({
   useEffect(() => { scoreRef.current = score; },                                [score]);
   useEffect(() => { currentQuestionIndexRef.current = currentQuestionIndex; }, [currentQuestionIndex]);
 
-  // Fallback exit if questions never load
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (questionsRef.current.length === 0 && !quizStartedRef.current) {
         console.warn('MixedMasteryChallenge: no questions generated, exiting');
-        onExit(0, 0);
+        onExit(0, 0, 'change');
       }
     }, 8000);
     return () => clearTimeout(timeout);
@@ -189,21 +231,18 @@ function MixedMasteryChallenge({
 
   useEffect(() => {
     if (quizType === 'mc-only') {
-      if (!allViewedWords || allViewedWords.length === 0) {
-        console.warn('Picture Quiz: allViewedWords is empty');
-        return;
-      }
-      const built = buildMCOnlyQuestions(allViewedWords, quizSize);
-      console.log('quizType: mc-only (Picture Quiz) | built:', built);
-      setQuestions(built);
+      if (!allViewedWords?.length) { console.warn('Picture Quiz: allViewedWords empty'); return; }
+      setQuestions(buildMCOnlyQuestions(allViewedWords, quizSize));
+    } else if (quizType === 'listening') {
+      if (!allViewedWords?.length) { console.warn('Listening: allViewedWords empty'); return; }
+      setQuestions(buildListeningQuestions(allViewedWords, quizSize));
+    } else if (quizType === 'reading') {
+      // Reading uses same pool as Picture Quiz (image required) but routes to RecognitionChallenge with hideSpeaker
+      if (!allViewedWords?.length) { console.warn('Reading: allViewedWords empty'); return; }
+      setQuestions(buildMCOnlyQuestions(allViewedWords, quizSize).map(q => ({ ...q, type: 'reading' })));
     } else {
-      if (!recentWords || recentWords.length === 0) {
-        console.warn('Mixed: recentWords is empty');
-        return;
-      }
-      const built = buildMixedQuestions(recentWords, quizSize);
-      console.log('quizType: mixed | built:', built);
-      setQuestions(built);
+      if (!recentWords?.length) { console.warn('Mixed: recentWords empty'); return; }
+      setQuestions(buildMixedQuestions(recentWords, quizSize));
     }
   }, [recentWords, allViewedWords, quizSize, quizType]);
 
@@ -233,7 +272,8 @@ function MixedMasteryChallenge({
         if (speak) speak(`${currentQuestion.word.word}, ${chosen.speak}`);
         setTimeout(() => moveToNextQuestion(calculatedScore), getSpeechDelay(currentQuestion.word.word, chosen.speak));
       } else {
-        if (speak) speak('Try again!');
+        const phrase = getWrongPhrase();
+        if (speak) speak(phrase);
         setTimeout(() => { setUserAnswer([]); setShowFeedback(false); setIsCorrect(false); }, 1500);
       }
     }
@@ -258,16 +298,28 @@ function MixedMasteryChallenge({
     }
   };
 
+  const handleListeningAnswer = (correct) => {
+    quizStartedRef.current = true;
+    if (showFeedback) return;
+    let calculatedScore = scoreRef.current;
+
+    if (correct) {
+      const newScore = scoreRef.current + 1;
+      setScore(newScore); scoreRef.current = newScore; calculatedScore = newScore;
+    }
+    setTimeout(() => { window.speechSynthesis.cancel(); moveToNextQuestion(calculatedScore); }, 1500);
+  };
+
   const moveToNextQuestion = (calculatedScore) => {
     const currentIndex   = currentQuestionIndexRef.current;
-    const totalQuestions = questionsRef.current.length;
-    if (currentIndex < totalQuestions - 1) {
+    const totalQ         = questionsRef.current.length;
+    if (currentIndex < totalQ - 1) {
       setCurrentQuestionIndex(currentIndex + 1);
       setUserAnswer([]); setShowFeedback(false); setIsCorrect(false);
     } else {
-      if (totalQuestions === 0) { onExit(0, 0); return; }
+      if (totalQ === 0) { onExit(0, 0, 'change'); return; }
       const safeScore = calculatedScore ?? scoreRef.current;
-      setFinalScore(safeScore); setFinalTotal(totalQuestions);
+      setFinalScore(safeScore); setFinalTotal(totalQ);
       window.speechSynthesis.cancel();
       setTimeout(() => setShowAnimation(true), 400);
     }
@@ -277,10 +329,23 @@ function MixedMasteryChallenge({
     if (userAnswer.length > 0 && !showFeedback) setUserAnswer(userAnswer.slice(0, -1));
   };
 
-  const handleExit            = () => onExit(scoreRef.current, questionsRef.current.length);
-  const handleAnimationComplete = () => onExit(finalScore, finalTotal);
+  const handleExit = () => onExit(scoreRef.current, questionsRef.current.length, 'change');
+
+  // Post-quiz action from RunningTilesAnimation
+  const handleAnimationComplete = (action) => onExit(finalScore, finalTotal, action);
 
   if (showAnimation) {
+    // Small quizzes (≤5q) → flower + confetti QuickCelebration
+    // Larger quizzes       → full RunningTilesAnimation
+    if (finalTotal <= 5) {
+      return (
+        <QuickCelebration
+          score={finalScore} total={finalTotal}
+          onComplete={handleAnimationComplete}
+          speak={speak}
+        />
+      );
+    }
     return (
       <RunningTilesAnimation
         score={finalScore} total={finalTotal}
@@ -318,25 +383,12 @@ function MixedMasteryChallenge({
   }
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ-'.split('');
+  const typeConfig = QUIZ_TYPE_CONFIG[quizType] || QUIZ_TYPE_CONFIG['mixed'];
 
-  const quizTypeBadge = quizType === 'mc-only'
-    ? <span className="challenge-quiz-type-badge challenge-quiz-type-badge--mc">🖼️ Picture Quiz</span>
-    : null;
-
-  const bodyPartWords = [
-    'head','face','hair','forehead','eyebrow','eyebrows','eyelash','eyelashes',
-    'eye','eyes','eyelid','eyelids','nose','nostrils','ear','ears','earlobe',
-    'cheek','cheeks','dimple','dimples','mouth','lip','lips','tongue','tooth',
-    'teeth','chin','jaw','jawline','neck','throat','cleft chin','cleft-chin',
-    'shoulder','shoulders','chest','breast','arm','arms','armpit','armpits',
-    'elbow','elbows','forearm','forearms','wrist','wrists','hand','hands',
-    'palm','palms','finger','fingers','thumb','thumbs','fingernail','fingernails',
-    'knuckle','knuckles','belly','bellybutton','belly button','belly-button',
-    'navel','stomach','tummy','abdomen','back','spine','waist','hip','hips',
-    'leg','legs','thigh','thighs','knee','knees','kneecap','calf','calves',
-    'shin','shins','ankle','ankles','foot','feet','heel','heels','toe','toes',
-    'toenail','toenails','sole','soles','arch','body','eyelashes','nails'
-  ];
+  const allWordsForChoices = wordList
+    .filter(w => !bodyPartWords.includes(w.word.toLowerCase().trim()))
+    .map(w => ({ word: w.word, image: getImagePath(w.image), originalFilename: w.image }))
+    .filter(w => w.image);
 
   return (
     <div className="challenge-overlay-fixed">
@@ -353,28 +405,54 @@ function MixedMasteryChallenge({
           ))}
         </div>
 
+        {/* ── Header: exit left, badge+score centred, question right ── */}
         <div className="challenge-header">
-          <div className="score-display">
-            <span className="score-label">Question:</span>
-            <span className="score-value">{currentQuestionIndex + 1} / {totalQuestions}</span>
+          {/* Exit button — top left */}
+          <button className="challenge-exit-top" onClick={handleExit} title="Exit quiz">✕</button>
+
+          {/* Centre: badge + score */}
+          <div className="challenge-header-centre">
+            {typeConfig.badge && (
+              <span className={`challenge-quiz-type-badge ${typeConfig.badge.cls}`}>
+                {typeConfig.badge.icon} {typeConfig.badge.label}
+              </span>
+            )}
+            <div className="challenge-header-score">
+              <span className="accuracy-label">Score</span>
+              <span className="accuracy-value">{score}</span>
+            </div>
           </div>
-          <div className="accuracy-display">
-            {quizTypeBadge}
-            <span className="accuracy-label">Score:</span>
-            <span className="accuracy-value">{score}</span>
+
+          {/* Question counter — top right */}
+          <div className="challenge-header-question">
+            <span className="score-label">Q</span>
+            <span className="score-value">{currentQuestionIndex + 1}/{totalQuestions}</span>
           </div>
         </div>
 
         <div className="question-content">
-          {currentQuestion.type === 'recognition' ? (
+          {currentQuestion.type === 'listening' ? (
+            <ListeningChallenge
+              word={currentQuestion.word.word}
+              wordImage={getImagePath(currentQuestion.word.image)}
+              allWords={allWordsForChoices}
+              onAnswer={handleListeningAnswer}
+              speak={speak}
+            />
+          ) : currentQuestion.type === 'reading' ? (
             <RecognitionChallenge
               word={currentQuestion.word.word}
               wordImage={getImagePath(currentQuestion.word.image)}
-              allWords={wordList
-                .filter(w => !bodyPartWords.includes(w.word.toLowerCase().trim()))
-                .map(w => ({ word: w.word, image: getImagePath(w.image), originalFilename: w.image }))
-                .filter(w => w.image)
-              }
+              allWords={allWordsForChoices}
+              onAnswer={handleRecognitionAnswer}
+              speak={speak}
+              hideSpeaker={true}
+            />
+          ) : currentQuestion.type === 'recognition' ? (
+            <RecognitionChallenge
+              word={currentQuestion.word.word}
+              wordImage={getImagePath(currentQuestion.word.image)}
+              allWords={allWordsForChoices}
               onAnswer={handleRecognitionAnswer}
               speak={speak}
             />

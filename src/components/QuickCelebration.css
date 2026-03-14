@@ -1,0 +1,238 @@
+/* ========================================
+   QUICK CELEBRATION
+   Used for small quizzes (≤5 questions)
+   Flowers + confetti + score card + buttons
+   ======================================== */
+
+.qc__overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* Desktop card mode — match challenge-overlay-fixed exactly */
+@media only screen and (min-width: 769px) {
+  .qc__overlay {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 420px !important;
+    height: 680px !important;
+    max-height: 680px !important;
+    border-radius: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .qc__overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* ── Confetti layer ── */
+.qc__confetti-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 2; overflow: hidden;
+}
+
+.qc__confetti {
+  position: absolute; top: -20px;
+  border-radius: 2px;
+  animation: qcConfettiFall linear forwards;
+  opacity: 0.92;
+}
+
+.qc__confetti--circle { border-radius: 50%; }
+.qc__confetti--rect   { border-radius: 2px; }
+
+@keyframes qcConfettiFall {
+  0%   { top: -20px; transform: rotate(0deg) translateX(0);    opacity: 0.92; }
+  25%  { transform: rotate(120deg) translateX(18px); }
+  50%  { transform: rotate(240deg) translateX(-14px); opacity: 0.92; }
+  75%  { transform: rotate(360deg) translateX(22px); }
+  100% { top: 110%;  transform: rotate(480deg) translateX(-10px); opacity: 0; }
+}
+
+/* ── Flower layer ── */
+.qc__flower-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 3; overflow: hidden;
+}
+
+.qc__flower {
+  position: absolute; top: -40px;
+  animation-fill-mode: forwards;
+  opacity: 0;
+  user-select: none;
+}
+
+.qc__flower--left  { animation-name: qcFlowerFallLeft; }
+.qc__flower--right { animation-name: qcFlowerFallRight; }
+
+@keyframes qcFlowerFallLeft {
+  0%   { top: -40px; opacity: 0;   transform: rotate(0deg)   scale(0.6); }
+  8%   { opacity: 1; }
+  40%  { transform: rotate(-25deg) scale(1.1) translateX(-12px); }
+  70%  { transform: rotate(-50deg) scale(1.0) translateX(8px);  opacity: 1; }
+  90%  { opacity: 0.7; }
+  100% { top: 108%;  opacity: 0;   transform: rotate(-70deg) scale(0.8) translateX(-5px); }
+}
+
+@keyframes qcFlowerFallRight {
+  0%   { top: -40px; opacity: 0;   transform: rotate(0deg)  scale(0.6); }
+  8%   { opacity: 1; }
+  40%  { transform: rotate(25deg)  scale(1.1) translateX(12px); }
+  70%  { transform: rotate(50deg)  scale(1.0) translateX(-8px); opacity: 1; }
+  90%  { opacity: 0.7; }
+  100% { top: 108%;  opacity: 0;   transform: rotate(70deg)  scale(0.8) translateX(5px); }
+}
+
+/* ── Content area ── */
+.qc__content {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 88%;
+  max-width: 310px;
+}
+
+/* ── Score card ── */
+.qc__card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.97);
+  border: 5px solid #FFD700;
+  border-radius: 24px;
+  padding: 26px 32px;
+  text-align: center;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 40px rgba(255,215,0,0.45),
+    inset 0 0 20px rgba(255,215,0,0.12);
+  animation: qcCardPop 0.55s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes qcCardPop {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+  70%  { transform: scale(1.1) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.qc__card-emoji {
+  font-size: 3.2em;
+  display: block;
+  margin-bottom: 8px;
+  animation: qcEmojiPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.25s both;
+}
+
+@keyframes qcEmojiPop {
+  0%   { transform: scale(0); }
+  60%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.qc__card-message {
+  font-family: Arial, sans-serif;
+  font-size: 1.9em;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.12);
+  margin-bottom: 12px;
+}
+
+.qc__card-numbers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.qc__score-value {
+  font-family: Arial, sans-serif;
+  font-size: 3.2em; font-weight: 900;
+  color: #2C3E50; line-height: 1;
+}
+
+.qc__score-sep {
+  font-family: Arial, sans-serif;
+  font-size: 2.2em; color: #95A5A6; font-weight: 300;
+}
+
+.qc__score-total {
+  font-family: Arial, sans-serif;
+  font-size: 3.2em; font-weight: 900;
+  color: #95A5A6; line-height: 1;
+}
+
+.qc__card-accuracy {
+  font-family: Arial, sans-serif;
+  font-size: 1.05em; font-weight: 700;
+  color: #7F8C8D; letter-spacing: 1px;
+}
+
+/* ── Action buttons ── */
+.qc__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.qc__buttons--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.qc__btn {
+  width: 100%;
+  padding: 15px 20px;
+  border: none; border-radius: 16px;
+  font-family: Arial, sans-serif;
+  font-size: 1.05em; font-weight: 800;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.25);
+  letter-spacing: 0.3px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.qc__btn:hover  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.3); }
+.qc__btn:active { transform: translateY(0); }
+
+.qc__btn--again  {
+  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+  color: white; border: 3px solid #2E7D32;
+}
+
+.qc__btn--change {
+  background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+  color: white; border: 3px solid #1565C0;
+}
+
+.qc__btn--menu   {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white; border: 3px solid #E65100;
+}

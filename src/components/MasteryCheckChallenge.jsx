@@ -144,7 +144,7 @@ function MasteryCheckChallenge({ studiedLetters, onExit, speak }) {
       'wagon': '🛒', 'watch': '⌚', 'whale': '🐋', 'wheel': '🎡',
       'xylophone': '🎹', 'x-ray': '🩻', 'x-box': '🎮',
       'yak': '🦬', 'yarn': '🧶', 'yogurt': '🥛', 'yatch': '⛵',
-      'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '\u{1F6A1}', 'zigzag': 'U+299A'
+      'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '', 'zigzag': ''
     };
 
     const wordLower = currentWord.word.toLowerCase();
