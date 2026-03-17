@@ -49,13 +49,15 @@ function SnowParticle({ left, size, duration, delay, burst }) {
 
 // ── Teddy bear (arc trajectory) ───────────────────────────────────────────────
 function TeddyBear({ index, total, delay, size, landX }) {
-  // Each bear gets a unique CSS var for landing position
+  const t = total > 1 ? index / (total - 1) : 0.5;
+  const arcBottom = 20 + 80 * Math.pow(2 * t - 1, 2);
   return (
     <div
       className="cs__bear"
       style={{
         '--land-x': `${landX}px`,
         '--bear-size': `${size}px`,
+        '--bear-bottom': `${arcBottom}px`,
         animationDelay: `${delay}s`,
         fontSize: `${size}px`,
       }}
@@ -146,14 +148,13 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
     }));
   }
   if (!bearsRef.current) {
-    // 20 bears, scattered across bottom, growing from 40px to 130px (≈1/5 screen)
-    bearsRef.current = Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      delay: i * 0.22,
-      size: 40 + i * 4.5,                        // grows from 40px to ~130px
-      landX: randomBetween(-150, 150),
-    }));
-  }
+  bearsRef.current = Array.from({ length: 48 }, (_, i) => ({
+    id: i,
+    delay: i * 0.12,
+    size: 28 + 26 * Math.pow((2 * (i/(47)) - 1), 2),
+    landX: -180 + (i / 47) * 360,
+  }));
+}
   if (!poppersRef.current) {
     poppersRef.current = Array.from({ length: 45 }, (_, i) => ({
       id: i,

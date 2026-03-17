@@ -131,9 +131,6 @@ const buildMixedQuestions = (recentWords, quizSize) => {
     // 6+ letter words without images are skipped entirely
   });
 
-  console.log('Spelling:', spellingQuestions.map(q => q.word.word));
-  console.log('Recognition:', recognitionQuestions.map(q => q.word.word));
-
   spellingQuestions.sort((a, b) => {
   if (a.word.word.length !== b.word.word.length) {
     return a.word.word.length - b.word.word.length;
@@ -394,6 +391,7 @@ function MixedMasteryChallenge({
   const typeConfig = QUIZ_TYPE_CONFIG[quizType] || QUIZ_TYPE_CONFIG['mixed'];
 
   const allWordsForChoices = wordList
+    .filter(w => w.category === 'Alphabet Fun')
     .filter(w => !bodyPartWords.includes(w.word.toLowerCase().trim()))
     .map(w => ({ word: w.word, image: getImagePath(w.image), originalFilename: w.image }))
     .filter(w => w.image);

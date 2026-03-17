@@ -1,0 +1,224 @@
+/* ========================================
+   FOREST GARDEN CELEBRATION
+   ======================================== */
+
+.fgc__scene {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(180deg,
+    #1a4a0a 0%, #2d7a12 20%, #3d9e1a 40%,
+    #4db822 55%, #6ecf35 68%, #8be050 78%,
+    #a8f06a 88%, #5a9e2f 100%);
+  overflow: hidden;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+}
+
+@media only screen and (min-width: 769px) {
+  .fgc__scene {
+    position: fixed !important;
+    top: 50% !important; left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 420px !important; height: 680px !important;
+    border-radius: 20px !important;
+  }
+}
+
+/* ── Sun ── */
+.fgc__sun {
+  position: absolute;
+  top: 18px; right: 38px;
+  font-size: 52px; z-index: 8;
+  animation: fgcSunPulse 3s ease-in-out infinite;
+}
+@keyframes fgcSunPulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.06); }
+}
+
+/* ── Sun rays ── */
+.fgc__ray {
+  position: absolute;
+  top: 44px; right: 62px;
+  transform-origin: top right;
+  background: linear-gradient(to bottom,
+    rgba(255,255,180,0.5) 0%,
+    rgba(255,255,100,0.12) 60%,
+    transparent 100%);
+  z-index: 1;
+  animation: fgcRayFlicker ease-in-out infinite alternate;
+}
+@keyframes fgcRayFlicker {
+  from { opacity: 0.45; }
+  to   { opacity: 0.82; }
+}
+
+/* ── Clouds ── */
+.fgc__cloud-group {
+  position: absolute;
+  animation: fgcCloudDrift linear infinite;
+  z-index: 7;
+}
+.fgc__cloud-group span {
+  position: absolute;
+  opacity: 0.9;
+}
+@keyframes fgcCloudDrift {
+  from { transform: translateX(-160px); }
+  to   { transform: translateX(112vw); }
+}
+
+/* ── Trees ── */
+.fgc__tree {
+  position: absolute;
+  bottom: 80px;
+  animation: fgcTreeSway 3s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+  z-index: 2;
+}
+@keyframes fgcTreeSway {
+  from { transform: rotate(-3deg); }
+  to   { transform: rotate(3deg); }
+}
+
+/* ── Bushes ── */
+.fgc__bush {
+  position: absolute;
+  animation: fgcBushSway 2.5s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+  z-index: 3;
+}
+@keyframes fgcBushSway {
+  from { transform: rotate(-5deg); }
+  to   { transform: rotate(5deg); }
+}
+
+/* ── Leaf stalks ── */
+.fgc__leaf {
+  position: absolute;
+  animation: fgcLeafSway 2s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+@keyframes fgcLeafSway {
+  from { transform: rotate(-8deg); }
+  to   { transform: rotate(8deg); }
+}
+
+/* ── Flowers ── */
+.fgc__flower {
+  position: absolute;
+  animation: fgcFlowerSway 2.2s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+  z-index: 5;
+}
+@keyframes fgcFlowerSway {
+  from { transform: rotate(-6deg); }
+  to   { transform: rotate(6deg); }
+}
+
+/* ── Butterflies ── */
+.fgc__butterfly {
+  position: absolute;
+  animation: fgcHoverButterfly ease-in-out infinite;
+  z-index: 10;
+}
+@keyframes fgcHoverButterfly {
+  0%   { transform: translate(0,0) scaleX(1); }
+  20%  { transform: translate(15px,-18px) scaleX(-1); }
+  40%  { transform: translate(-10px,-25px) scaleX(1); }
+  60%  { transform: translate(20px,-12px) scaleX(-1); }
+  80%  { transform: translate(-5px,-20px) scaleX(1); }
+  100% { transform: translate(0,0) scaleX(1); }
+}
+
+/* ── Bees ── */
+.fgc__bee {
+  position: absolute;
+  animation: fgcHoverBee ease-in-out infinite;
+  z-index: 10;
+}
+@keyframes fgcHoverBee {
+  0%   { transform: translate(0,0); }
+  15%  { transform: translate(10px,-12px); }
+  30%  { transform: translate(-8px,-8px); }
+  50%  { transform: translate(14px,-18px); }
+  70%  { transform: translate(-6px,-10px); }
+  85%  { transform: translate(8px,-14px); }
+  100% { transform: translate(0,0); }
+}
+
+/* ── Dragonflies ── */
+.fgc__dragonfly {
+  position: absolute;
+  animation: fgcHoverDragon ease-in-out infinite;
+  z-index: 10;
+}
+@keyframes fgcHoverDragon {
+  0%   { transform: translate(0,0) scaleX(1); }
+  25%  { transform: translate(18px,-22px) scaleX(-1); }
+  50%  { transform: translate(-12px,-15px) scaleX(1); }
+  75%  { transform: translate(22px,-28px) scaleX(-1); }
+  100% { transform: translate(0,0) scaleX(1); }
+}
+
+/* ── Score card ── */
+.fgc__content {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 88%;
+  max-width: 310px;
+}
+
+.fgc__card {
+  width: 100%;
+  background: rgba(255,255,255,0.97);
+  border: 5px solid #FFD700;
+  border-radius: 24px;
+  padding: 20px 28px 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,215,0,0.3);
+  animation: fgcCardPop 0.55s cubic-bezier(0.68,-0.55,0.265,1.55) forwards;
+}
+@keyframes fgcCardPop {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+  70%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.fgc__card-emoji    { font-size: 3em; display: block; margin-bottom: 6px; }
+.fgc__card-message  { font-family: Arial, sans-serif; font-size: 1.9em; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; }
+.fgc__card-numbers  { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; }
+.fgc__score-val     { font-family: Arial, sans-serif; font-size: 3em; font-weight: 900; color: #2C3E50; line-height: 1; }
+.fgc__score-sep     { font-family: Arial, sans-serif; font-size: 2.2em; color: #95A5A6; font-weight: 300; }
+.fgc__score-tot     { font-family: Arial, sans-serif; font-size: 3em; font-weight: 900; color: #95A5A6; line-height: 1; }
+.fgc__card-accuracy { font-family: Arial, sans-serif; font-size: 1em; font-weight: 700; color: #7F8C8D; }
+
+/* ── Buttons ── */
+.fgc__buttons {
+  display: flex; flex-direction: column; gap: 10px; width: 100%;
+  opacity: 0; transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fgc__buttons--visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.fgc__btn {
+  width: 100%; padding: 15px 20px; border: none; border-radius: 16px;
+  font-family: Arial, sans-serif; font-size: 1.05em; font-weight: 800;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 8px; box-shadow: 0 5px 16px rgba(0,0,0,0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.fgc__btn:hover  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.3); }
+.fgc__btn:active { transform: translateY(0); }
+
+.fgc__btn--again  { background: linear-gradient(135deg,#4CAF50,#388E3C); color:white; border: 3px solid #2E7D32; }
+.fgc__btn--change { background: linear-gradient(135deg,#42A5F5,#1976D2); color:white; border: 3px solid #1565C0; }
+.fgc__btn--menu   { background: linear-gradient(135deg,#FF9800,#F57C00); color:white; border: 3px solid #E65100; }

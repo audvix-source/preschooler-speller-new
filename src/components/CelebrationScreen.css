@@ -75,7 +75,7 @@
 
 .cs__bear {
   position: absolute;
-  bottom: 20px;
+  bottom: var(--bear-bottom, 20px);
   left: 50%;
   opacity: 0;
   font-size: var(--bear-size, 24px);
@@ -83,10 +83,12 @@
 }
 
 @keyframes bearArc {
-  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(0.4); }
-  35%  { transform: translateX(calc(-50% + var(--land-x) * 0.5)) translateY(-160px) scale(1.15); }
-  75%  { opacity: 1; transform: translateX(calc(-50% + var(--land-x))) translateY(-15px) scale(1.0); }
-  88%  { transform: translateX(calc(-50% + var(--land-x))) translateY(5px) scale(1.05); }
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(0.3); }
+  35%  { transform: translateX(calc(-50% + var(--land-x) * 0.5)) translateY(-220px) scale(1.2); }
+  70%  { transform: translateX(calc(-50% + var(--land-x))) translateY(-20px) scale(1.05); }
+  78%  { transform: translateX(calc(-50% + var(--land-x))) translateY(8px) scale(1.08); }
+  85%  { transform: translateX(calc(-50% + var(--land-x))) translateY(-5px) scale(1.03); }
+  92%  { transform: translateX(calc(-50% + var(--land-x))) translateY(3px) scale(1.01); }
   100% { opacity: 1; transform: translateX(calc(-50% + var(--land-x))) translateY(0) scale(1.0); }
 }
 
