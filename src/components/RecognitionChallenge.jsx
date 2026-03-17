@@ -152,8 +152,8 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak, hide
                 src={choice.image}
                 alt={choice.word}
                 style={{
-                  width: '82%',
-                  height: '82%',
+                  width: '92%',
+                  height: '92%',
                   objectFit: 'contain',
                   filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
                   display: 'block',

@@ -36,6 +36,7 @@ function App() {
 
   // ✅ Pending navigation — intercept quiz screens to confirm active player
   const [pendingNav, setPendingNav] = useState(null); // { screen, category }
+  const [lastBrowsedUserId, setLastBrowsedUserId] = useState(null);
 
   // ✅ Track whether the player has been confirmed for this play session.
   // Using a ref so navigateTo always reads the live value — no stale closures.
@@ -129,7 +130,14 @@ function App() {
 
   // ✅ Called by StatsScreen when user browses a *different* player's tab.
   // Only then do we re-prompt — viewing your own scores is not a session break.
-  const handleViewedOtherPlayer = () => {};
+  const handleViewedOtherPlayer = (browsedUserId) => {
+  if (browsedUserId !== activeUserId) {
+    setLastBrowsedUserId(browsedUserId);
+    sessionConfirmedRef.current = false;
+  }
+
+  sessionConfirmedRef.current = false;
+};
     
   // ✅ Intercept quiz screen navigation to confirm active player
   const QUIZ_SCREENS = ['alphabet', 'learning'];
@@ -176,14 +184,10 @@ function App() {
         />;
       case 'menu':
         return <CategoryMenuScreen
-          onNavigate={navigateTo}
-          users={users}
-          setUsers={setUsers}
-          activeUserId={activeUserId}
-          setActiveUserId={handleSetActiveUser}
-          speak={speak}
-          activeUser={activeUser}
-        />;
+  onNavigate={navigateTo}
+  speak={speak}
+  activeUser={activeUser}
+/>;
       case 'alphabet':
         return <AlphabetScreen
           onNavigate={navigateTo}
@@ -231,54 +235,83 @@ function App() {
 
       {/* ✅ Player confirmation modal — shown before any quiz screen */}
       {pendingNav && (
-        <div style={{
-          position: 'fixed', inset: 0,
-          background: 'rgba(0,0,0,0.65)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: '#fff8e7',
-            borderRadius: 24,
-            padding: '32px 28px',
-            textAlign: 'center',
-            maxWidth: 300,
-            width: '85%',
-            border: '3px solid #FFA500',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
-          }}>
-            <div style={{ fontSize: 52, marginBottom: 4 }}>{activeUser?.avatar}</div>
-            <p style={{ margin: '0 0 4px', color: '#888', fontSize: 15 }}>Playing as</p>
-            <h2 style={{ margin: '0 0 20px', color: '#2d3436', fontSize: 26 }}>
-              {activeUser?.name}
-            </h2>
-            <button
-              onClick={handleConfirmPlayer}
-              style={{
-                display: 'block', width: '100%', padding: '13px',
-                background: '#00b894', color: '#fff', border: 'none',
-                borderRadius: 14, fontSize: 18, fontWeight: 'bold',
-                marginBottom: 10, cursor: 'pointer',
-                boxShadow: '0 4px 0 #00916e'
-              }}
-            >
-              ✅ Yes, that's me!
-            </button>
-            <button
-              onClick={handleSwitchPlayer}
-              style={{
-                display: 'block', width: '100%', padding: '13px',
-                background: '#e17055', color: '#fff', border: 'none',
-                borderRadius: 14, fontSize: 18, fontWeight: 'bold',
-                cursor: 'pointer',
-                boxShadow: '0 4px 0 #c0392b'
-              }}
-            >
-              🔄 Switch Player
-            </button>
-          </div>
-        </div>
-      )}
+  <div style={{
+    position: 'fixed', inset: 0,
+    background: 'rgba(0,0,0,0.65)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 9999
+  }}>
+    <div style={{
+      background: '#fff8e7',
+      borderRadius: 24,
+      padding: '32px 28px',
+      textAlign: 'center',
+      maxWidth: 300,
+      width: '85%',
+      border: '3px solid #FFA500',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.25)'
+    }}>
+      {/* Active player confirmation */}
+      <div style={{ fontSize: 52, marginBottom: 4 }}>{activeUser?.avatar}</div>
+      <p style={{ margin: '0 0 4px', color: '#888', fontSize: 15 }}>Still playing?</p>
+      <h2 style={{ margin: '0 0 20px', color: '#2d3436', fontSize: 26 }}>
+        {activeUser?.name}
+      </h2>
+      <button
+        onClick={handleConfirmPlayer}
+        style={{
+          display: 'block', width: '100%', padding: '13px',
+          background: '#00b894', color: '#fff', border: 'none',
+          borderRadius: 14, fontSize: 18, fontWeight: 'bold',
+          marginBottom: 10, cursor: 'pointer',
+          boxShadow: '0 4px 0 #00916e'
+        }}
+      >
+        ✅ Yes, that's me!
+      </button>
+
+      {/* Switch to last browsed player */}
+      {lastBrowsedUserId && lastBrowsedUserId !== activeUserId && (() => {
+        const browsedUser = users.find(u => u?.id === lastBrowsedUserId);
+        return browsedUser ? (
+          <button
+            onClick={() => {
+              handleSetActiveUser(lastBrowsedUserId, true);
+              setLastBrowsedUserId(null);
+              sessionConfirmedRef.current = true;
+              setSelectedCategory(pendingNav.category);
+              setCurrentScreen(pendingNav.screen);
+              setPendingNav(null);
+            }}
+            style={{
+              display: 'block', width: '100%', padding: '13px',
+              background: '#6c5ce7', color: '#fff', border: 'none',
+              borderRadius: 14, fontSize: 18, fontWeight: 'bold',
+              marginBottom: 10, cursor: 'pointer',
+              boxShadow: '0 4px 0 #5b4bc4'
+            }}
+          >
+            🔄 Switch to {browsedUser.avatar} {browsedUser.name}
+          </button>
+        ) : null;
+      })()}
+
+      {/* Go to Players screen */}
+      <button
+        onClick={handleSwitchPlayer}
+        style={{
+          display: 'block', width: '100%', padding: '13px',
+          background: '#e17055', color: '#fff', border: 'none',
+          borderRadius: 14, fontSize: 18, fontWeight: 'bold',
+          cursor: 'pointer',
+          boxShadow: '0 4px 0 #c0392b'
+        }}
+      >
+        👥 Someone else?
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }

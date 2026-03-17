@@ -182,11 +182,11 @@ function LearningScreen(props) {
     const word = currentWord.word;
     const letters = word.toUpperCase().split('');
     setFilledLetters(Array(letters.length).fill(null));
-    await props.speak(`Let's spell ${word}`);
+    props.speak(`Let's spell ${word}`);
     await wait(1500);
     for (let i = 0; i < letters.length; i++) {
       setCurrentLetterIndex(i);
-      await props.speak(letters[i]);
+      props.speak(letters[i]);
       setFilledLetters(prev => {
         const copy = [...prev];
         copy[i] = letters[i];

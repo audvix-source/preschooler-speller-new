@@ -30,7 +30,7 @@
     position: absolute !important;
     top: 0 !important; left: 0 !important;
     width: 100% !important; height: 100% !important;
-    border-radius: 0 !important;
+    border-radius: 20 !important;
   }
 }
 
@@ -161,7 +161,7 @@
   width: 100%;
   background: rgba(255,255,255,0.97);
   border: 5px solid #FFD700;
-  border-radius: 24px;
+  border-radius: 40px;
   padding: 20px 28px 24px 28px;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,215,0,0.45);

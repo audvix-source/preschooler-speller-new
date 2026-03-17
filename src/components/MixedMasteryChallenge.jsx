@@ -85,13 +85,14 @@ const buildMCOnlyQuestions = (allViewedWords, quizSize) => {
   console.log(`Picture Quiz pool: ${pool.length} from ${allViewedWords?.length || 0} total`);
   if (pool.length === 0) { console.warn('Picture Quiz: empty pool'); return []; }
 
+  const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
   const questions = [];
   let i = 0;
   while (questions.length < quizSize) {
-    questions.push({ type: 'recognition', word: pool[i % pool.length] });
+    questions.push({ type: 'recognition', word: shuffledPool[i % shuffledPool.length] });
     i++;
   }
-  return questions;
+  return questions.sort(() => Math.random() - 0.5);
 };
 
 // ── Listening Quiz builder ────────────────────────────────────────────────────
@@ -103,13 +104,14 @@ const buildListeningQuestions = (allViewedWords, quizSize) => {
   console.log(`Listening Quiz pool: ${pool.length} from ${allViewedWords?.length || 0} total`);
   if (pool.length === 0) { console.warn('Listening Quiz: empty pool'); return []; }
 
+  const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
   const questions = [];
   let i = 0;
   while (questions.length < quizSize) {
-    questions.push({ type: 'listening', word: pool[i % pool.length] });
+    questions.push({ type: 'listening', word: shuffledPool[i % shuffledPool.length] });
     i++;
   }
-  return questions;
+  return questions.sort(() => Math.random() - 0.5);
 };
 
 // ── Mixed builder ─────────────────────────────────────────────────────────────
@@ -120,15 +122,26 @@ const buildMixedQuestions = (recentWords, quizSize) => {
 
   normalizedWords.forEach(word => {
     if (!word.word) return;
-    if (word.word.length >= 6 && getImagePath(word.image)) {
-      recognitionQuestions.push({ type: 'recognition', word });
-    } else {
+    // Spelling: 3-5 letters only. 6+ always go to recognition regardless of image.
+    if (word.word.length <= 5) {
       spellingQuestions.push({ type: 'spelling', word });
+    } else if (getImagePath(word.image)) {
+      recognitionQuestions.push({ type: 'recognition', word });
     }
+    // 6+ letter words without images are skipped entirely
   });
 
-  spellingQuestions.sort((a, b) => a.word.word.length - b.word.word.length);
-  const orderedQuestions = [...spellingQuestions, ...recognitionQuestions];
+  console.log('Spelling:', spellingQuestions.map(q => q.word.word));
+  console.log('Recognition:', recognitionQuestions.map(q => q.word.word));
+
+  spellingQuestions.sort((a, b) => {
+  if (a.word.word.length !== b.word.word.length) {
+    return a.word.word.length - b.word.word.length;
+  }
+  return Math.random() - 0.5;
+});
+  const shuffledRecognition = [...recognitionQuestions].sort(() => Math.random() - 0.5);
+const orderedQuestions = [...spellingQuestions, ...shuffledRecognition];
   const wantSpelling     = Math.max(1, Math.round(quizSize * 0.6));
 
   if (orderedQuestions.length > quizSize) {
@@ -170,7 +183,7 @@ const bodyPartWords = [
   'navel','stomach','tummy','abdomen','back','spine','waist','hip','hips',
   'leg','legs','thigh','thighs','knee','knees','kneecap','calf','calves',
   'shin','shins','ankle','ankles','foot','feet','heel','heels','toe','toes',
-  'toenail','toenails','sole','soles','arch','body','eyelashes','nails'
+  'x-pen','xpen','xerox-machine','xeroxmachine'
 ];
 
 // ── Quiz type config ──────────────────────────────────────────────────────────

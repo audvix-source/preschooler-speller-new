@@ -143,7 +143,7 @@ function MasteryCheckChallenge({ studiedLetters, onExit, speak }) {
       'vase': '🏺', 'vest': '🦺', 'violin': '🎻', 'volcano': '🌋',
       'wagon': '🛒', 'watch': '⌚', 'whale': '🐋', 'wheel': '🎡',
       'xylophone': '🎹', 'x-ray': '🩻', 'x-box': '🎮',
-      'yak': '🦬', 'yarn': '🧶', 'yogurt': '🥛', 'yatch': '⛵',
+      'yak': '🦬', 'yarn': '🧶', 'yogurt': '🥛', 'yacht': '⛵',
       'zebra': '🦓', 'zipper': '🤐', 'zap': '⚡', 'zeppelin': '', 'zigzag': ''
     };
 
@@ -201,9 +201,7 @@ function MasteryCheckChallenge({ studiedLetters, onExit, speak }) {
     <span className="emoji-large">{getWordVisual()}</span>
   )}
 </div>
-            <span className="emoji-large">{getWordVisual()}</span>
-          </div>
-          
+                    
           {/* Letter hint */}
           <div className="letter-hint">
             {currentWord.word[0].toUpperCase()} - {currentWord.word}

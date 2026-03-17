@@ -205,8 +205,8 @@ function StatsScreen({ onNavigate, speak, userId = 'user_1', users = [], setActi
                 // ✅ Only flag a session break if browsing a DIFFERENT player's scores.
                 // Viewing your own tab is not a session break — no re-prompt needed.
                 if (user.id !== userId && onViewedOtherPlayer) {
-                  onViewedOtherPlayer();
-                }
+  onViewedOtherPlayer(user.id);
+}
               }}
             >
               <span className="player-tab-avatar">{user.avatar}</span>

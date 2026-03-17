@@ -1,7 +1,7 @@
 .stats-screen {
   width: 100vw !important;
-  height: 100vh !important;
-  min-height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex !important;
   justify-content: center !important;
@@ -11,7 +11,9 @@
   box-sizing: border-box !important;
   position: fixed !important;
   top: 0 !important;
+  bottom: 0 !important;
   left: 0 !important;
+  right: 0 !important;
 }
 
 .stats-container {
@@ -19,8 +21,9 @@
   border: 6px solid #FFD700 !important;
   border-radius: 20px !important;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5) !important;
-  width: 420px !important;
-  height: calc(100% - 2px);                    /* or reduce max-height by 38px */
+  width: min(420px, 100%) !important;
+  height: 100dvh;                                /* or reduce max-height by 38px */
+  max-height: 100dvh;
   padding: 15px !important;
   box-sizing: border-box !important;
   overflow: hidden !important;

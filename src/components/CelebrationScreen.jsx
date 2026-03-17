@@ -2,12 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CelebrationScreen.css';
 
 // ── Element sets ──────────────────────────────────────────────────────────────
-const FLOWERS   = ['🌸','🌺','🌼','🌷','💐','🌹','🪷'];
-const CONFETTI  = ['🎉','🎊','🎈','🎀'];
-const STARS     = ['⭐','🌟','✨','💫'];
-const ANIMALS   = ['🦋','🐝','🐢','🐞','🦜','🐠'];
-const NOTES     = ['🎵','🎶','🎼','🎸'];
-const BUBBLES   = ['🫧','⚪','🔵'];
+const FLOWERS   = ['🌸','🌺','🌼','🌷','💐','🌹','🪷','🌻'];
+const FRUITS    = ['🍎','🍊','🍋','🍇','🍓','🍒','🍑','🍍','🥭','🍌','🍉','🍈'];
+const LEAVES    = ['🍃','🍂','🍁','🌿','☘️','🌱'];
 const POPPERS   = ['🎉','🎊','🎆','🎇','✨','🌟','💥','🎈'];
 
 function randomBetween(a, b) { return a + Math.random() * (b - a); }
@@ -92,17 +89,15 @@ function buildLayer(emojis, count, sMin, sMax, dMin, dMax) {
 
 // ── Small / Medium layer configs ──────────────────────────────────────────────
 const SMALL_LAYERS = [
-  { emojis: FLOWERS,  count: 18, sMin: 16, sMax: 28, dMin: 3.0, dMax: 5.0 },
-  { emojis: CONFETTI, count: 20, sMin: 14, sMax: 24, dMin: 2.5, dMax: 4.5 },
-  { emojis: STARS,    count: 14, sMin: 14, sMax: 26, dMin: 2.8, dMax: 4.8 },
+  { emojis: FLOWERS, count: 18, sMin: 18, sMax: 32, dMin: 3.0, dMax: 5.0 },
+  { emojis: FRUITS,  count: 16, sMin: 16, sMax: 28, dMin: 2.5, dMax: 4.5 },
+  { emojis: LEAVES,  count: 14, sMin: 16, sMax: 28, dMin: 2.8, dMax: 4.8 },
 ];
 
 const MEDIUM_LAYERS = [
-  { emojis: FLOWERS,  count: 28, sMin: 18, sMax: 32, dMin: 2.8, dMax: 5.0 },
-  { emojis: CONFETTI, count: 30, sMin: 14, sMax: 26, dMin: 2.5, dMax: 4.5 },
-  { emojis: STARS,    count: 22, sMin: 14, sMax: 28, dMin: 2.8, dMax: 4.8 },
-  { emojis: ANIMALS,  count: 18, sMin: 18, sMax: 30, dMin: 3.2, dMax: 5.5 },
-  { emojis: NOTES,    count: 16, sMin: 16, sMax: 28, dMin: 3.0, dMax: 5.0 },
+  { emojis: FLOWERS, count: 28, sMin: 20, sMax: 36, dMin: 2.8, dMax: 5.0 },
+  { emojis: FRUITS,  count: 24, sMin: 18, sMax: 32, dMin: 2.5, dMax: 4.5 },
+  { emojis: LEAVES,  count: 22, sMin: 18, sMax: 32, dMin: 2.8, dMax: 4.8 },
 ];
 
 // ── Main Component ────────────────────────────────────────────────────────────
@@ -151,12 +146,12 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
     }));
   }
   if (!bearsRef.current) {
-    // 20 bears, scattered across bottom, each a bit bigger
+    // 20 bears, scattered across bottom, growing from 40px to 130px (≈1/5 screen)
     bearsRef.current = Array.from({ length: 20 }, (_, i) => ({
       id: i,
-      delay: i * 0.22,                           // staggered launch
-      size: 18 + i * 2.2,                        // grows from 18px to ~60px
-      landX: randomBetween(-140, 140),            // scatter left/right from center
+      delay: i * 0.22,
+      size: 40 + i * 4.5,                        // grows from 40px to ~130px
+      landX: randomBetween(-150, 150),
     }));
   }
   if (!poppersRef.current) {
@@ -221,7 +216,11 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
     : 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)';
 
   const pieces = size === 'large'
-    ? mediumPiecesRef.current   // large uses medium density pieces + bears/poppers/snow
+    ? [
+        ...buildLayer(FLOWERS, 35, 20, 38, 2.5, 4.8),
+        ...buildLayer(FRUITS,  30, 18, 34, 2.5, 4.5),
+        ...buildLayer(LEAVES,  28, 18, 34, 2.8, 4.8),
+      ]
     : size === 'medium'
     ? mediumPiecesRef.current
     : smallPiecesRef.current;
