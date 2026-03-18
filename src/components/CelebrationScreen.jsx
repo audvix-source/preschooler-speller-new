@@ -49,15 +49,13 @@ function SnowParticle({ left, size, duration, delay, burst }) {
 
 // ── Teddy bear (arc trajectory) ───────────────────────────────────────────────
 function TeddyBear({ index, total, delay, size, landX }) {
-  const t = total > 1 ? index / (total - 1) : 0.5;
-  const arcBottom = 20 + 80 * Math.pow(2 * t - 1, 2);
+  // Each bear gets a unique CSS var for landing position
   return (
     <div
       className="cs__bear"
       style={{
         '--land-x': `${landX}px`,
         '--bear-size': `${size}px`,
-        '--bear-bottom': `${arcBottom}px`,
         animationDelay: `${delay}s`,
         fontSize: `${size}px`,
       }}
@@ -119,6 +117,8 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
   const snowBurstRef    = useRef(null);
   const snowGentleRef   = useRef(null);
   const bearsRef        = useRef(null);
+  const leftBearsRef  = useRef(null);
+  const rightBearsRef = useRef(null);
   const poppersRef      = useRef(null);
 
   if (!smallPiecesRef.current) {
@@ -133,28 +133,49 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
     snowBurstRef.current = Array.from({ length: 60 }, (_, i) => ({
       id: i,
       left: randomBetween(0, 100),
-      size: randomBetween(14, 28),
-      duration: randomBetween(0.8, 2.0),
-      delay: randomBetween(0, 0.8),
+      size: randomBetween(10, 36),
+      duration: randomBetween(0.6, 1.8),
+      delay: randomBetween(0, 1.2),
     }));
   }
   if (!snowGentleRef.current) {
     snowGentleRef.current = Array.from({ length: 30 }, (_, i) => ({
       id: i,
       left: randomBetween(0, 100),
-      size: randomBetween(10, 20),
-      duration: randomBetween(3.0, 5.5),
-      delay: randomBetween(0, 4.0),
+      size: randomBetween(8, 32),
+      duration: randomBetween(2.5, 6.0),
+      delay: randomBetween(0, 5.0),
     }));
   }
   if (!bearsRef.current) {
+    // 20 bears, scattered across bottom, growing from 40px to 130px (≈1/5 screen)
   bearsRef.current = Array.from({ length: 48 }, (_, i) => ({
+  id: i,
+  delay: i * 0.22 + randomBetween(0, 0.15),
+  landX: -220 + (i / 47) * 440 + randomBetween(-40, 40),
+  size: 140 + 195 * Math.pow((i / 47) * 2 - 1, 8) + randomBetween(-25, 25),
+}));
+  }
+
+  // ← ADD THESE TWO NEW REFS RIGHT HERE
+if (!leftBearsRef.current) {
+  leftBearsRef.current = Array.from({ length: 8 }, (_, i) => ({
     id: i,
-    delay: i * 0.12,
-    size: 28 + 26 * Math.pow((2 * (i/(47)) - 1), 2),
-    landX: -180 + (i / 47) * 360,
+    delay: 0.5 + i * 0.15,
+    size: 80 + i * 8,
+    landX: randomBetween(-320, -160),
   }));
 }
+
+if (!rightBearsRef.current) {
+  rightBearsRef.current = Array.from({ length: 8 }, (_, i) => ({
+    id: i,
+    delay: 0.5 + i * 0.15,
+    size: 80 + i * 8,
+    landX: randomBetween(160, 320),
+  }));
+}
+
   if (!poppersRef.current) {
     poppersRef.current = Array.from({ length: 45 }, (_, i) => ({
       id: i,
@@ -173,7 +194,7 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
       // Bears: 20 × 0.22s stagger = ~4.4s → score card
       // Score card → buttons 1.5s later
       const bearStart   = 2500;
-      const cardDelay   = bearStart + 20 * 220 + 600;  // all bears + settle
+      const cardDelay   = bearStart + 20 * 220 + 10000;  // all bears + settle
       const buttonDelay = cardDelay + 1500;
 
       const t1 = setTimeout(() => setPhase('bears'),   bearStart);
@@ -249,12 +270,18 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
 
       {/* ── Teddy bears (large only, phase: bears or later) ── */}
       {size === 'large' && (phase === 'bears' || phase === 'poppers') && (
-        <div className="cs__bears-layer">
-          {bearsRef.current.map(b => (
-            <TeddyBear key={b.id} index={b.id} total={20} {...b} />
-          ))}
-        </div>
-      )}
+  <div className="cs__bears-layer">
+    {bearsRef.current.map(b => (
+      <TeddyBear key={b.id} index={b.id} total={48} {...b} />
+    ))}
+    {leftBearsRef.current.map(b => (
+      <TeddyBear key={`l${b.id}`} index={b.id} total={8} {...b} />
+    ))}
+    {rightBearsRef.current.map(b => (
+      <TeddyBear key={`r${b.id}`} index={b.id} total={8} {...b} />
+    ))}
+  </div>
+)}
 
       {/* ── Falling objects (all sizes, phase: poppers) ── */}
       {phase === 'poppers' && (

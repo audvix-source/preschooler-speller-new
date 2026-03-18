@@ -4,6 +4,8 @@ import { wordList } from '../wordList.js';
 import RecognitionChallenge from './RecognitionChallenge.jsx';
 import ListeningChallenge from './ListeningChallenge.jsx';
 import CelebrationScreen from './CelebrationScreen';
+import AirshowCelebration from './AirshowCelebration'; 
+import MilkyWayCelebration from './MilkyWaycelebration.jsx';
 
 const importAll = (r) => {
   let images = {};
@@ -131,6 +133,9 @@ const buildMixedQuestions = (recentWords, quizSize) => {
     // 6+ letter words without images are skipped entirely
   });
 
+  console.log('Spelling:', spellingQuestions.map(q => q.word.word));
+  console.log('Recognition:', recognitionQuestions.map(q => q.word.word));
+
   spellingQuestions.sort((a, b) => {
   if (a.word.word.length !== b.word.word.length) {
     return a.word.word.length - b.word.word.length;
@@ -157,9 +162,14 @@ const orderedQuestions = [...spellingQuestions, ...shuffledRecognition];
   } else {
     const padded = [...orderedQuestions];
     let padIndex = 0;
-    while (padded.length < quizSize) {
-      padded.push({ type: 'spelling', word: normalizedWords[padIndex % normalizedWords.length] });
+    let safetyCount = 0;
+    while (padded.length < quizSize && safetyCount < normalizedWords.length * 2) {
+      const candidate = normalizedWords[padIndex % normalizedWords.length];
       padIndex++;
+      safetyCount++;
+      if (candidate.word.length <= 5) {
+        padded.push({ type: 'spelling', word: candidate });
+      }
     }
     return [
       ...padded.filter(q => q.type === 'spelling'),
@@ -167,7 +177,7 @@ const orderedQuestions = [...spellingQuestions, ...shuffledRecognition];
     ].slice(0, quizSize);
   }
 };
-
+  
 const bodyPartWords = [
   'head','face','hair','forehead','eyebrow','eyebrows','eyelash','eyelashes',
   'eye','eyes','eyelid','eyelids','nose','nostrils','ear','ears','earlobe',
@@ -344,21 +354,40 @@ function MixedMasteryChallenge({
   const handleAnimationComplete = (action) => onExit(finalScore, finalTotal, action);
 
   if (showAnimation) {
-    // Map quiz size to celebration intensity
-    const celebSize = finalTotal <= 5 ? 'small'
-      : finalTotal <= 15 ? 'medium'
-      : 'large';
+  if (quizType === 'airshow') {
     return (
-      <CelebrationScreen
+      <AirshowCelebration
         score={finalScore}
         total={finalTotal}
-        size={celebSize}
-        quizType={quizType}
         onComplete={handleAnimationComplete}
         speak={speak}
       />
     );
   }
+  if (quizType === 'milkyway') {
+    return (
+      <MilkyWayCelebration
+        score={finalScore}
+        total={finalTotal}
+        onComplete={handleAnimationComplete}
+        speak={speak}
+      />
+    );
+  }
+  const celebSize = finalTotal <= 5 ? 'large'
+    : finalTotal <= 15 ? 'medium'
+    : 'large';
+  return (
+    <CelebrationScreen
+      score={finalScore}
+      total={finalTotal}
+      size={celebSize}
+      quizType={quizType}
+      onComplete={handleAnimationComplete}
+      speak={speak}
+    />
+  );
+}
 
   const getWordVisual = (word) => {
     const emojiMap = {

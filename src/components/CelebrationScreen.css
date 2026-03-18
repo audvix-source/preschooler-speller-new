@@ -42,15 +42,30 @@
 
 .cs__snow-burst {
   position: absolute;
+  top: -30px;
   opacity: 0;
-  animation: snowBurst forwards;
+  animation: snowFallBurst linear forwards;
 }
 
-@keyframes snowBurst {
-  0%   { opacity: 0; transform: translate(0,0) scale(0.3); }
-  12%  { opacity: 1; }
-  65%  { opacity: 0.85; }
-  100% { opacity: 0; transform: translate(var(--bx,0px), var(--by,0px)) scale(0.7); }
+.cs__snow-gentle {
+  position: absolute;
+  top: -30px;
+  opacity: 0;
+  animation: snowFallGentle linear infinite;
+}
+
+@keyframes snowFallBurst {
+  0%   { top: -30px; transform: translateX(0) scale(0.3); opacity: 0.7; }
+  8%   { opacity: 1; }
+  85%  { opacity: 0.9; }
+  100% { top: 108%; transform: translateX(12px) scale(1.6); opacity: 0; }
+}
+
+@keyframes snowFallGentle {
+  0%   { top: -30px; transform: translateX(0) scale(0.4); opacity: 0; }
+  8%   { opacity: 0.75; }
+  88%  { opacity: 0.85; }
+  100% { top: 108%; transform: translateX(15px) scale(1.4); opacity: 0.3; }
 }
 
 .cs__snow-gentle {
@@ -75,7 +90,7 @@
 
 .cs__bear {
   position: absolute;
-  bottom: var(--bear-bottom, 20px);
+  bottom: 20px;
   left: 50%;
   opacity: 0;
   font-size: var(--bear-size, 24px);
@@ -83,12 +98,10 @@
 }
 
 @keyframes bearArc {
-  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(0.3); }
-  35%  { transform: translateX(calc(-50% + var(--land-x) * 0.5)) translateY(-220px) scale(1.2); }
-  70%  { transform: translateX(calc(-50% + var(--land-x))) translateY(-20px) scale(1.05); }
-  78%  { transform: translateX(calc(-50% + var(--land-x))) translateY(8px) scale(1.08); }
-  85%  { transform: translateX(calc(-50% + var(--land-x))) translateY(-5px) scale(1.03); }
-  92%  { transform: translateX(calc(-50% + var(--land-x))) translateY(3px) scale(1.01); }
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(0.4); }
+  35%  { transform: translateX(calc(-50% + var(--land-x) * 0.5)) translateY(-160px) scale(1.15); }
+  75%  { opacity: 1; transform: translateX(calc(-50% + var(--land-x))) translateY(-15px) scale(1.0); }
+  88%  { transform: translateX(calc(-50% + var(--land-x))) translateY(5px) scale(1.05); }
   100% { opacity: 1; transform: translateX(calc(-50% + var(--land-x))) translateY(0) scale(1.0); }
 }
 
