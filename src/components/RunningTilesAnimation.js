@@ -1,103 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './RunningTilesAnimation.css';
 
-const CONFETTI_COLORS = ['#FFD700','#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD','#98FB98'];
-const PARADE_SETS = [
-  ['🎉','🌟','🏆','🎊','⭐','💫','🎈','🌈'],
-  ['🦄','🐬','🦋','🌸','🍭','🎠','🎡','🎪'],
-  ['👑','💎','🏅','🥇','🎖️','✨','🌠','🎆'],
-  ['🚀','⚡','🌊','🔥','💥','🌺','🎯','🎵'],
-];
-
-function randomBetween(a, b) { return a + Math.random() * (b - a); }
-
-function FireworkParticle({ x, y, color, angle, speed, delay }) {
-  return (
-    <div className="rta__firework-particle" style={{
-      left: `${x}%`, top: `${y}%`, background: color,
-      '--angle': `${angle}deg`, '--speed': `${speed}px`, animationDelay: `${delay}s`,
-    }} />
-  );
-}
-
-function Fireworks() {
-  const bursts = Array.from({ length: 6 }, (_, i) => ({
-    id: i, x: randomBetween(15, 85), y: randomBetween(10, 55),
-    delay: i * 0.35, color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-  }));
-  return (
-    <div className="rta__fireworks-layer">
-      {bursts.map(burst =>
-        Array.from({ length: 12 }, (_, j) => (
-          <FireworkParticle key={`${burst.id}-${j}`} x={burst.x} y={burst.y}
-            color={CONFETTI_COLORS[j % CONFETTI_COLORS.length]}
-            angle={j * 30} speed={randomBetween(60, 130)} delay={burst.delay + j * 0.02} />
-        ))
-      )}
-    </div>
-  );
-}
-
-function ConfettiPiece({ left, color, size, duration, delay, shape }) {
-  return (
-    <div className={`rta__confetti rta__confetti--${shape}`} style={{
-      left: `${left}%`, background: color, width: `${size}px`,
-      height: shape === 'rect' ? `${size * 1.8}px` : `${size}px`,
-      animationDuration: `${duration}s`, animationDelay: `${delay}s`,
-    }} />
-  );
-}
-
-function ConfettiLayer({ count = 40 }) {
-  const pieces = Array.from({ length: count }, (_, i) => ({
-    id: i, left: randomBetween(0, 100), color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-    size: randomBetween(6, 12), duration: randomBetween(2.5, 4.5),
-    delay: randomBetween(0, 2), shape: ['rect', 'circle', 'rect'][i % 3],
-  }));
-  return (
-    <div className="rta__confetti-layer">
-      {pieces.map(p => <ConfettiPiece key={p.id} {...p} />)}
-    </div>
-  );
-}
-
-function StarRain({ count = 25 }) {
-  return (
-    <div className="rta__star-layer">
-      {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="rta__star" style={{
-          left: `${randomBetween(0, 100)}%`,
-          fontSize: `${randomBetween(14, 28)}px`,
-          animationDuration: `${randomBetween(1.5, 3)}s`,
-          animationDelay: `${randomBetween(0, 2.5)}s`,
-        }}>
-          {['⭐','🌟','✨','💫'][i % 4]}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function EmojiParade({ accuracy }) {
-  const setIndex = accuracy === 100 ? 2 : accuracy >= 80 ? 0 : accuracy >= 60 ? 1 : 3;
-  const emojis = PARADE_SETS[setIndex];
-  const items = Array.from({ length: 16 }, (_, i) => ({
-    id: i, emoji: emojis[i % emojis.length], row: i < 8 ? 0 : 1,
-    delay: (i % 8) * 0.18, size: randomBetween(28, 42),
-  }));
-  return (
-    <div className="rta__parade-layer">
-      {items.map(item => (
-        <div key={item.id}
-          className={`rta__parade-emoji rta__parade-emoji--row${item.row}`}
-          style={{ fontSize: `${item.size}px`, animationDelay: `${item.delay}s` }}>
-          {item.emoji}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ── Main component ────────────────────────────────────────────────────────────
 // onComplete(action):
 //   action = 'again'       → Try Again (same quiz)
@@ -163,12 +66,6 @@ function RunningTilesAnimation({ score, total, onComplete, speak, milestone }) {
           <div key={i} className="tile" style={{ animationDelay: `${Math.random() * 1.5}s` }} />
         ))}
       </div>
-
-      {/* Celebration layers */}
-      {accuracy === 100 && <Fireworks />}
-      {accuracy >= 80  && <ConfettiLayer count={accuracy === 100 ? 60 : 40} />}
-      {accuracy >= 60  && <StarRain count={accuracy >= 80 ? 30 : 18} />}
-      <EmojiParade accuracy={accuracy} />
 
       {/* Score card + buttons */}
       {animationPhase === 'score' && (

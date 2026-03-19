@@ -60,8 +60,8 @@ function ListeningChallenge({ word, wordImage, allWords, onAnswer, speak }) {
     setChoices(allChoices);
   }, [word, wordImage, allWords, isLocked, onAnswer]);
 
-  const playWord = () => {
-    if (!speak) return;
+    const playWord = () => {
+    if (!speak || showFeedback) return;
     setIsPlaying(true);
     setHasPlayed(true);
     speak(`Which one is the ${word}?`);
@@ -145,7 +145,7 @@ function ListeningChallenge({ word, wordImage, allWords, onAnswer, speak }) {
       {/* Speaker top box */}
       <div className="listening-header">
         <div
-          className={`listening-speaker-btn ${isPlaying ? 'listening-speaker-btn--playing' : !hasPlayed ? 'listening-speaker-btn--waiting' : ''}`}
+          className={`listening-speaker-btn ${isPlaying ? 'listening-speaker-btn--playing' : !hasPlayed ? 'listening-speaker-btn--waiting' : ''} ${showFeedback ? 'listening-speaker-btn--disabled' : ''}`}
           onClick={playWord}
           title="Tap to hear the word"
         >

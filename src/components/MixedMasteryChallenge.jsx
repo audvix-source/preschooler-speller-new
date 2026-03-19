@@ -3,9 +3,12 @@ import './MixedMasteryChallenge.css';
 import { wordList } from '../wordList.js';
 import RecognitionChallenge from './RecognitionChallenge.jsx';
 import ListeningChallenge from './ListeningChallenge.jsx';
-import CelebrationScreen from './CelebrationScreen';
+import RunningTilesAnimation from './RunningTilesAnimation';
+import ForestGardenCelebration from './ForestGardenCelebration';
 import AirshowCelebration from './AirshowCelebration'; 
-import MilkyWayCelebration from './MilkyWaycelebration.jsx';
+import MilkyWayCelebration from './MilkyWayCelebration.jsx';
+import UnderwaterCelebration from './UnderwaterCelebration'; 
+import CelebrationScreen from './CelebrationScreen';
 
 const importAll = (r) => {
   let images = {};
@@ -353,10 +356,10 @@ function MixedMasteryChallenge({
   // Post-quiz action from CelebrationScreen
   const handleAnimationComplete = (action) => onExit(finalScore, finalTotal, action);
 
-  if (showAnimation) {
-  if (quizType === 'airshow') {
+if (showAnimation) {
+  if (finalTotal <= 5) {
     return (
-      <AirshowCelebration
+      <RunningTilesAnimation
         score={finalScore}
         total={finalTotal}
         onComplete={handleAnimationComplete}
@@ -364,7 +367,39 @@ function MixedMasteryChallenge({
       />
     );
   }
-  if (quizType === 'milkyway') {
+  if (finalTotal <= 10) {
+    return (
+      <ForestGardenCelebration
+        score={finalScore}
+        total={finalTotal}
+        onComplete={handleAnimationComplete}
+        speak={speak}
+      />
+    );
+  }
+  if (finalTotal <= 15) {
+    return (
+      <UnderwaterCelebration
+        score={finalScore}
+        total={finalTotal}
+        onComplete={handleAnimationComplete}
+        speak={speak}
+      />
+    );
+  }
+  if (finalTotal <= 20) {
+    return (
+      <CelebrationScreen
+        score={finalScore}
+        total={finalTotal}
+        size='large'
+        quizType={quizType}
+        onComplete={handleAnimationComplete}
+        speak={speak}
+      />
+    );
+  }
+  if (finalTotal <= 25) {
     return (
       <MilkyWayCelebration
         score={finalScore}
@@ -374,15 +409,10 @@ function MixedMasteryChallenge({
       />
     );
   }
-  const celebSize = finalTotal <= 5 ? 'large'
-    : finalTotal <= 15 ? 'medium'
-    : 'large';
   return (
-    <CelebrationScreen
+    <AirshowCelebration
       score={finalScore}
       total={finalTotal}
-      size={celebSize}
-      quizType={quizType}
       onComplete={handleAnimationComplete}
       speak={speak}
     />

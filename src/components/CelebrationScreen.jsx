@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CelebrationScreen.css';
 
+function getSizeBadge(total) {
+  if (total <= 5)  return { icon:'⚡', label:'Warm Up Quiz',   bg:'linear-gradient(135deg,#F57C00,#E65100)' };
+  if (total <= 10) return { icon:'🌱', label:'Starter Quiz',   bg:'linear-gradient(135deg,#388E3C,#1B5E20)' };
+  if (total <= 15) return { icon:'⭐', label:'Solid Mastery',  bg:'linear-gradient(135deg,#1976D2,#0D47A1)' };
+  if (total <= 20) return { icon:'💪', label:'Strong Mastery', bg:'linear-gradient(135deg,#7B1FA2,#4A148C)' };
+  if (total <= 25) return { icon:'🔥', label:'Deep Mastery',   bg:'linear-gradient(135deg,#C62828,#B71C1C)' };
+  return               { icon:'👑', label:'Grand Mastery',  bg:'linear-gradient(135deg,#F9A825,#F57F17)' };
+}
+
 // ── Element sets ──────────────────────────────────────────────────────────────
 const FLOWERS   = ['🌸','🌺','🌼','🌷','💐','🌹','🪷','🌻'];
 const FRUITS    = ['🍎','🍊','🍋','🍇','🍓','🍒','🍑','🍍','🥭','🍌','🍉','🍈'];
@@ -194,7 +203,7 @@ if (!rightBearsRef.current) {
       // Bears: 20 × 0.22s stagger = ~4.4s → score card
       // Score card → buttons 1.5s later
       const bearStart   = 2500;
-      const cardDelay   = bearStart + 20 * 220 + 10000;  // all bears + settle
+      const cardDelay   = bearStart + 20 * 220 + 6000;  // all bears + settle
       const buttonDelay = cardDelay + 1500;
 
       const t1 = setTimeout(() => setPhase('bears'),   bearStart);
@@ -306,9 +315,14 @@ if (!rightBearsRef.current) {
         {showCard && (
           <div className="cs__card">
             {/* Quiz type badge — above emoji */}
-            <div className="cs__quiz-badge" style={{ background: qtCfg.bg }}>
-              {qtCfg.icon} {qtCfg.label}
-            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:4, alignItems:'center', marginBottom:10 }}>
+  <div className="cs__quiz-badge" style={{ background: qtCfg.bg }}>
+    {qtCfg.icon} {qtCfg.label}
+  </div>
+  <div className="cs__quiz-badge" style={{ background: getSizeBadge(total).bg }}>
+    {getSizeBadge(total).icon} {getSizeBadge(total).label}
+  </div>
+</div>
             <div className="cs__card-emoji">{perf.emoji}</div>
             <div className="cs__card-message" style={{ color: perf.color }}>
               {perf.text}

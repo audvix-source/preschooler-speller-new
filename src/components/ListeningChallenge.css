@@ -84,3 +84,9 @@
   .listening-speaker-btn { width: 60px; height: 60px; }
   .listening-speaker-icon { font-size: 1.7em; }
 }
+
+.listening-speaker-btn--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  filter: grayscale(100%);
+}

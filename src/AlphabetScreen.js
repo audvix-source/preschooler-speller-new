@@ -24,8 +24,8 @@ const getImagePath = (fileName) => {
   return null;
 };
 
-const FIRST_PROMPT_AT   = 3;
-const REPEAT_EVERY_TAPS = 3;
+const FIRST_PROMPT_AT   = 15;
+const REPEAT_EVERY_TAPS = 15;
 
 function AlphabetScreen(props) {
   const { userId = 'user_1' } = props;
