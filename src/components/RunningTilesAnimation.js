@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './RunningTilesAnimation.css';
 
+function getSizeBadge(total) {
+  if (total <= 5)  return { icon:'⚡', label:'Warm Up Quiz',   bg:'linear-gradient(135deg,#F57C00,#E65100)' };
+  if (total <= 10) return { icon:'🌱', label:'Starter Quiz',   bg:'linear-gradient(135deg,#388E3C,#1B5E20)' };
+  if (total <= 15) return { icon:'⭐', label:'Solid Mastery',  bg:'linear-gradient(135deg,#1976D2,#0D47A1)' };
+  if (total <= 20) return { icon:'💪', label:'Strong Mastery', bg:'linear-gradient(135deg,#7B1FA2,#4A148C)' };
+  if (total <= 25) return { icon:'🔥', label:'Deep Mastery',   bg:'linear-gradient(135deg,#C62828,#B71C1C)' };
+  return               { icon:'👑', label:'Grand Mastery',  bg:'linear-gradient(135deg,#F9A825,#F57F17)' };
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 // onComplete(action):
 //   action = 'again'       → Try Again (same quiz)
@@ -71,14 +80,19 @@ function RunningTilesAnimation({ score, total, onComplete, speak, milestone }) {
       {animationPhase === 'score' && (
         <div className="rta__score-area">
           <div className="score-reveal">
+            <div style={{ display:'flex', flexDirection:'column', gap:4, alignItems:'center', marginBottom:8 }}>
+              <div className="rta__size-badge" style={{ background: getSizeBadge(total).bg }}>
+                {getSizeBadge(total).icon} {getSizeBadge(total).label}
+              </div>
+            </div>
             <div className="score-emoji">{performance.emoji}</div>
             <div className="score-message" style={{ color: performance.color }}>
               {performance.text}
             </div>
             <div className="score-numbers">
-              <span className="score-value">{score}</span>
+              <span className="score-value">{score.toString()}</span>
               <span className="score-separator">/</span>
-              <span className="score-total">{total}</span>
+              <span className="score-total">{String(total)}</span>
             </div>
             <div className="score-accuracy">{accuracy}% Accuracy</div>
             {milestoneLabel && (

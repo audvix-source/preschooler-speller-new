@@ -21,137 +21,18 @@
 }
 
 @keyframes tileFlash {
-  0%   { background: rgba(255,255,255,0.1); box-shadow: none; transform: scale(0.95); }
-  100% {
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    box-shadow: 0 0 18px rgba(255,215,0,0.8), 0 0 30px rgba(255,165,0,0.5), inset 0 0 12px rgba(255,255,255,0.4);
-    transform: scale(1.05);
-    border-color: rgba(255,255,255,0.6);
-  }
+  0%   { background: rgba(255,255,255,0.1); transform: scale(0.95); }
+  100% { background: #FFD700; box-shadow: 0 0 18px rgba(255,215,0,0.8); transform: scale(1.05); border-color: rgba(255,255,255,0.6); }
 }
 
-/* ══════════════════════════════════════════════
-   FIREWORKS LAYER (100% only)
-══════════════════════════════════════════════ */
-.rta__fireworks-layer {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 2; overflow: hidden;
-}
-
-.rta__firework-particle {
-  position: absolute;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  animation: fireworkBurst 1.2s ease-out forwards;
-  animation-delay: var(--delay, 0s);
-  opacity: 0;
-}
-
-@keyframes fireworkBurst {
-  0%   { opacity: 1; transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(1); }
-  60%  { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--speed)) scale(0.3); }
-}
-
-/* ══════════════════════════════════════════════
-   CONFETTI LAYER (≥80%)
-══════════════════════════════════════════════ */
-.rta__confetti-layer {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 3; overflow: hidden;
-}
-
-.rta__confetti {
-  position: absolute; top: -20px;
-  border-radius: 2px;
-  animation: confettiFall linear forwards;
-  opacity: 0.9;
-}
-
-.rta__confetti--circle { border-radius: 50%; }
-.rta__confetti--rect   { border-radius: 2px; }
-
-@keyframes confettiFall {
-  0%   { top: -20px; transform: rotate(0deg) translateX(0); opacity: 0.9; }
-  25%  { transform: rotate(120deg) translateX(20px); }
-  50%  { transform: rotate(240deg) translateX(-15px); opacity: 0.9; }
-  75%  { transform: rotate(360deg) translateX(25px); }
-  100% { top: 110%; transform: rotate(480deg) translateX(-10px); opacity: 0; }
-}
-
-/* ══════════════════════════════════════════════
-   STAR RAIN LAYER (≥60%)
-══════════════════════════════════════════════ */
-.rta__star-layer {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 4; overflow: hidden;
-}
-
-.rta__star {
-  position: absolute; top: -30px;
-  animation: starFall ease-in forwards;
-  opacity: 0;
-}
-
-@keyframes starFall {
-  0%   { top: -30px; opacity: 0; transform: rotate(0deg) scale(0.5); }
-  15%  { opacity: 1; }
-  80%  { opacity: 1; }
-  100% { top: 105%; opacity: 0; transform: rotate(360deg) scale(1.2); }
-}
-
-/* ══════════════════════════════════════════════
-   EMOJI PARADE LAYER
-══════════════════════════════════════════════ */
-.rta__parade-layer {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 5; overflow: hidden;
-}
-
-.rta__parade-emoji {
-  position: absolute;
-  animation: paradeScroll linear forwards;
-  opacity: 0; white-space: nowrap;
-}
-
-.rta__parade-emoji--row0 {
-  bottom: 18%; left: -60px;
-  animation-duration: 3s;
-  animation-name: paradeLeft;
-}
-
-.rta__parade-emoji--row1 {
-  bottom: 8%; right: -60px;
-  animation-duration: 3.2s;
-  animation-name: paradeRight;
-}
-
-@keyframes paradeLeft {
-  0%   { transform: translateX(0) translateY(0) scale(0.8); opacity: 0; }
-  10%  { opacity: 1; }
-  50%  { transform: translateX(55vw) translateY(-8px) scale(1.1); }
-  90%  { opacity: 1; }
-  100% { transform: translateX(110vw) translateY(0) scale(0.8); opacity: 0; }
-}
-
-@keyframes paradeRight {
-  0%   { transform: translateX(0) translateY(0) scale(0.8); opacity: 0; }
-  10%  { opacity: 1; }
-  50%  { transform: translateX(-55vw) translateY(-8px) scale(1.1); }
-  90%  { opacity: 1; }
-  100% { transform: translateX(-110vw) translateY(0) scale(0.8); opacity: 0; }
-}
 
 /* ══════════════════════════════════════════════
    SCORE AREA — card + buttons stacked
 ══════════════════════════════════════════════ */
 .rta__score-area {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -160,7 +41,6 @@
   gap: 16px;
   padding: 20px;
   box-sizing: border-box;
-  /* semi-transparent overlay so tiles show through */
   background: rgba(60, 40, 100, 0.45);
 }
 
@@ -214,26 +94,28 @@
   justify-content: center;
   gap: 8px;
   margin-bottom: 8px;
+  font-size: 1rem;
 }
 
 .score-value {
-  font-family: Arial, sans-serif;
-  font-size: 3.5em;
-  font-weight: 900;
-  color: #2C3E50;
-  line-height: 1;
+  font-family: Arial, sans-serif !important;
+  font-size: 2.2em !important;
+  font-weight: 900 !important;
+  color: #2C3E50 !important;
+  line-height: 1 !important;
+  font-variant-emoji: text !important;
 }
 
 .score-separator {
   font-family: Arial, sans-serif;
-  font-size: 2.5em;
+  font-size: 1.8em;
   color: #95A5A6;
   font-weight: 300;
 }
 
 .score-total {
   font-family: Arial, sans-serif;
-  font-size: 3.5em;
+  font-size: 2.2em;
   font-weight: 900;
   color: #95A5A6;
   line-height: 1;
@@ -268,8 +150,24 @@
 }
 
 /* ══════════════════════════════════════════════
+   SIZE BADGE
+══════════════════════════════════════════════ */
+.rta__size-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 0.75em;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin-bottom: 6px;
+}
+
+/* ══════════════════════════════════════════════
    POST-QUIZ ACTION BUTTONS
-   Fade in 1.5s after score card appears
 ══════════════════════════════════════════════ */
 .rta__action-buttons {
   display: flex;
@@ -310,23 +208,11 @@
 .rta__btn:hover  { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.28); }
 .rta__btn:active { transform: translateY(0);    box-shadow: 0 3px 10px rgba(0,0,0,0.2);  }
 
-/* Try Again — green */
-.rta__btn--again {
-  background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-  color: white;
-  border: 3px solid #2E7D32;
-}
+.rta__btn--again  { background: linear-gradient(135deg,#4CAF50,#388E3C); color:white; border:3px solid #2E7D32; }
+.rta__btn--change { background: linear-gradient(135deg,#42A5F5,#1976D2); color:white; border:3px solid #1565C0; }
+.rta__btn--menu   { background: linear-gradient(135deg,#FF9800,#F57C00); color:white; border:3px solid #E65100; }
 
-/* Change Quiz — blue */
-.rta__btn--change {
-  background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
-  color: white;
-  border: 3px solid #1565C0;
-}
-
-/* Main Menu — orange */
-.rta__btn--menu {
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-  color: white;
-  border: 3px solid #E65100;
+.score-value, .score-total, .score-separator {
+  font-variant-emoji: text;
+  -webkit-font-variant-emoji: text;
 }
