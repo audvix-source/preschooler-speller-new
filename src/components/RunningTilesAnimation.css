@@ -6,8 +6,8 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  gap: 6px;
-  padding: 10px;
+  gap: 4px;
+  padding: 4px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   box-sizing: border-box;
   z-index: 1;
