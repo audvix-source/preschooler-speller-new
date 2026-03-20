@@ -1,7 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './ForestGardenCelebration.css';
 
-function ForestGardenCelebration({ score, total, onComplete, speak }) {
+const QUIZ_TYPE_CONFIG = {
+  'mixed':     { icon: '✏️',  label: 'Mixed',       bg: 'linear-gradient(135deg,#42A5F5,#1976D2)' },
+  'mc-only':   { icon: '🖼️',  label: 'Picture Quiz', bg: 'linear-gradient(135deg,#66BB6A,#388E3C)' },
+  'listening': { icon: '🔊',  label: 'Listening',    bg: 'linear-gradient(135deg,#FF4081,#C2185B)' },
+  'reading':   { icon: '📖',  label: 'Reading',      bg: 'linear-gradient(135deg,#AB47BC,#7B1FA2)' },
+};
+
+function getSizeBadge(total) {
+  if (total <= 5)  return { icon:'⚡', label:'Warm Up Quiz',   bg:'linear-gradient(135deg,#F57C00,#E65100)' };
+  if (total <= 10) return { icon:'🌱', label:'Starter Quiz',   bg:'linear-gradient(135deg,#388E3C,#1B5E20)' };
+  if (total <= 15) return { icon:'⭐', label:'Solid Mastery',  bg:'linear-gradient(135deg,#1976D2,#0D47A1)' };
+  if (total <= 20) return { icon:'💪', label:'Strong Mastery', bg:'linear-gradient(135deg,#7B1FA2,#4A148C)' };
+  if (total <= 25) return { icon:'🔥', label:'Deep Mastery',   bg:'linear-gradient(135deg,#C62828,#B71C1C)' };
+  return               { icon:'👑', label:'Grand Mastery',  bg:'linear-gradient(135deg,#F9A825,#F57F17)' };
+}
+
+function ForestGardenCelebration({ score, total, quizType = 'mixed', onComplete, speak }) {
+  const qtCfg = QUIZ_TYPE_CONFIG[quizType] || QUIZ_TYPE_CONFIG['mixed'];
   const [showCard, setShowCard]       = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const accuracy = total > 0 ? Math.round((score / total) * 100) : 0;
@@ -230,6 +247,26 @@ function ForestGardenCelebration({ score, total, onComplete, speak }) {
       <div className="fgc__content">
         {showCard && (
           <div className="fgc__card">
+            <div style={{ display:'flex', flexDirection:'column', gap:4, alignItems:'center', marginBottom:8 }}>
+              <div style={{
+                display:'inline-flex', alignItems:'center', gap:5,
+                padding:'4px 12px', borderRadius:20, color:'white',
+                fontFamily:'Arial,sans-serif', fontSize:'0.75em', fontWeight:800,
+                boxShadow:'0 2px 8px rgba(0,0,0,0.2)',
+                background: qtCfg.bg,
+              }}>
+                {qtCfg.icon} {qtCfg.label}
+              </div>
+              <div style={{
+                display:'inline-flex', alignItems:'center', gap:5,
+                padding:'4px 12px', borderRadius:20, color:'white',
+                fontFamily:'Arial,sans-serif', fontSize:'0.75em', fontWeight:800,
+                boxShadow:'0 2px 8px rgba(0,0,0,0.2)',
+                background: getSizeBadge(total).bg,
+              }}>
+                {getSizeBadge(total).icon} {getSizeBadge(total).label}
+              </div>
+            </div>
             <div className="fgc__card-emoji">{perf.emoji}</div>
             <div className="fgc__card-message" style={{ color: perf.color }}>{perf.text}</div>
             <div className="fgc__card-numbers">

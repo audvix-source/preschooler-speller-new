@@ -307,7 +307,7 @@ function App() {
           boxShadow: '0 4px 0 #c0392b'
         }}
       >
-        👥 Someone else?
+        👥 Add a Player?
       </button>
     </div>
   </div>

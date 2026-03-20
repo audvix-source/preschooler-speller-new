@@ -146,14 +146,16 @@ const buildMixedQuestions = (recentWords, quizSize) => {
   return Math.random() - 0.5;
 });
   const shuffledRecognition = [...recognitionQuestions].sort(() => Math.random() - 0.5);
-const orderedQuestions = [...spellingQuestions, ...shuffledRecognition];
-  const wantSpelling     = Math.max(1, Math.round(quizSize * 0.6));
+  const orderedQuestions = [...spellingQuestions, ...shuffledRecognition];
+  // 50/50 split — identification gets the extra item on odd totals
+  const wantSpelling = Math.floor(quizSize / 2);
+  const wantRecognition = quizSize - wantSpelling;
 
   if (orderedQuestions.length > quizSize) {
     const spelling    = orderedQuestions.filter(q => q.type === 'spelling');
     const recognition = orderedQuestions.filter(q => q.type === 'recognition');
-    const actualSpelling    = Math.min(spelling.length, wantSpelling);
-    const actualRecognition = Math.min(recognition.length, quizSize - actualSpelling);
+    const actualRecognition = Math.min(recognition.length, wantRecognition);
+    const actualSpelling    = Math.min(spelling.length, quizSize - actualRecognition);
     const trimmed = [
       ...spelling.slice(0, actualSpelling),
       ...recognition.slice(0, actualRecognition),
@@ -356,10 +358,18 @@ function MixedMasteryChallenge({
   // Post-quiz action from CelebrationScreen
   const handleAnimationComplete = (action) => onExit(finalScore, finalTotal, action);
 
-if (showAnimation) {
+  if (showAnimation) {
+  return (
+    <AirshowCelebration
+      score={finalScore}
+      total={finalTotal}
+      onComplete={handleAnimationComplete}
+      speak={speak}
+    />
+  );
   if (finalTotal <= 5) {
     return (
-      <RunningTilesAnimation
+      <ForestGardenCelebration
         score={finalScore}
         total={finalTotal}
         onComplete={handleAnimationComplete}
@@ -367,7 +377,7 @@ if (showAnimation) {
       />
     );
   }
-  if (finalTotal <= 10) {
+  if (finalTotal <= 5) {
     return (
       <ForestGardenCelebration
         score={finalScore}

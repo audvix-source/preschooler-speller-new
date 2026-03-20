@@ -1,5 +1,21 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
+const QUIZ_TYPE_CONFIG = {
+  'mixed':     { icon: '✏️',  label: 'Mixed',       bg: 'linear-gradient(135deg,#42A5F5,#1976D2)' },
+  'mc-only':   { icon: '🖼️',  label: 'Picture Quiz', bg: 'linear-gradient(135deg,#66BB6A,#388E3C)' },
+  'listening': { icon: '🔊',  label: 'Listening',    bg: 'linear-gradient(135deg,#FF4081,#C2185B)' },
+  'reading':   { icon: '📖',  label: 'Reading',      bg: 'linear-gradient(135deg,#AB47BC,#7B1FA2)' },
+};
+
+function getSizeBadge(total) {
+  if (total <= 5)  return { icon:'⚡', label:'Warm Up Quiz',   bg:'linear-gradient(135deg,#F57C00,#E65100)' };
+  if (total <= 10) return { icon:'🌱', label:'Starter Quiz',   bg:'linear-gradient(135deg,#388E3C,#1B5E20)' };
+  if (total <= 15) return { icon:'⭐', label:'Solid Mastery',  bg:'linear-gradient(135deg,#1976D2,#0D47A1)' };
+  if (total <= 20) return { icon:'💪', label:'Strong Mastery', bg:'linear-gradient(135deg,#7B1FA2,#4A148C)' };
+  if (total <= 25) return { icon:'🔥', label:'Deep Mastery',   bg:'linear-gradient(135deg,#C62828,#B71C1C)' };
+  return                   { icon:'👑', label:'Grand Mastery', bg:'linear-gradient(135deg,#F9A825,#F57F17)' };
+}
+
 const W = 420;
 const H = 680;
 
@@ -22,7 +38,6 @@ const JET_CONFIGS = [
 ];
 
 const DRAW_ORDER = [0, 2, 1, 3];
-// Exit directions per draw sequence
 const EXIT_DIRS  = ['top', 'bottom', 'left', 'right'];
 
 function buildCirclePath(ringIdx, seqIdx) {
@@ -40,26 +55,28 @@ function buildCirclePath(ringIdx, seqIdx) {
     points.push([CX + R * Math.cos(angle), cy + R * Math.sin(angle)]);
   }
 
-  // Exit: shoot off in designated compass direction
   const last      = points[points.length - 1];
   const exitSteps = 30;
   for (let i = 1; i <= exitSteps; i++) {
     const t = i / exitSteps;
     switch (exitDir) {
-      case 'top':    points.push([last[0],                   last[1] - t * H * 0.35]); break;
-      case 'bottom': points.push([last[0],                   last[1] + t * H * 0.35]); break;
-      case 'left':   points.push([last[0] - t * W * 0.7,    last[1]               ]); break;
-      case 'right':  points.push([last[0] + t * W * 0.7,    last[1]               ]); break;
+      case 'top':    points.push([last[0],                last[1] - t * H * 0.35]); break;
+      case 'bottom': points.push([last[0],                last[1] + t * H * 0.35]); break;
+      case 'left':   points.push([last[0] - t * W * 0.7, last[1]               ]); break;
+      case 'right':  points.push([last[0] + t * W * 0.7, last[1]               ]); break;
       default: break;
     }
   }
   return points;
 }
 
-function AirshowCelebration({ score, total, onComplete, speak }) {
-  const canvasRef    = useRef(null);
-  const stateRef     = useRef(null);
-  const rafRef       = useRef(null);
+function AirshowCelebration({ score, total, quizType = 'mixed', onComplete, speak }) {
+  const qtCfg     = QUIZ_TYPE_CONFIG[quizType] || QUIZ_TYPE_CONFIG['mixed'];
+  const sizeBadge = getSizeBadge(total);
+
+  const canvasRef = useRef(null);
+  const stateRef  = useRef(null);
+  const rafRef    = useRef(null);
 
   const [showCard,    setShowCard]    = useState(false);
   const [showButtons, setShowButtons] = useState(false);
@@ -80,17 +97,17 @@ function AirshowCelebration({ score, total, onComplete, speak }) {
     const ctx   = canvas.getContext('2d');
     const paths = DRAW_ORDER.map((ringIdx, seqIdx) => buildCirclePath(ringIdx, seqIdx));
 
-    const JET_FLIGHT_DURATION = 1800; // fast — full circle in 1.8s
-    const STAGGER             = 400;  // 400ms between jets
-    const CARD_DELAY          = 3200; // card at ~3s
-    const ANIMATION_END       = JET_FLIGHT_DURATION + STAGGER * 3 + 200; // ~3s
+    const JET_FLIGHT_DURATION = 1800;
+    const STAGGER             = 400;
+    const CARD_DELAY          = 3200;
+    const ANIMATION_END       = JET_FLIGHT_DURATION + STAGGER * 3 + 200;
 
     const trails = [[], [], [], []];
     stateRef.current = {
-      startTime: performance.now(),
+      startTime:  performance.now(),
       paths,
       trails,
-      animDone: false,
+      animDone:   false,
       pulseStart: null,
     };
 
@@ -136,22 +153,19 @@ function AirshowCelebration({ score, total, onComplete, speak }) {
 
       ctx.clearRect(0, 0, W, H);
 
-      // After animation ends, switch to pulsing mode
       if (elapsed > ANIMATION_END && !s.animDone) {
-        s.animDone  = true;
+        s.animDone   = true;
         s.pulseStart = now;
       }
 
-      // Pulse alpha: sine wave between 0.6 and 1.0 with period ~2s
       let pulseAlpha = 1.0;
       if (s.animDone && s.pulseStart) {
-        const pt = (now - s.pulseStart) / 1000; // seconds since done
-        pulseAlpha = 0.7 + 0.3 * Math.sin(pt * Math.PI); // 0.7–1.0, period 2s
+        const pt = (now - s.pulseStart) / 1000;
+        pulseAlpha = 0.7 + 0.3 * Math.sin(pt * Math.PI);
       }
 
       drawTrails(s, now, pulseAlpha);
 
-      // Draw jets (only during animation phase)
       if (!s.animDone) {
         for (let ji = 0; ji < 4; ji++) {
           const ringIdx    = DRAW_ORDER[ji];
@@ -167,16 +181,9 @@ function AirshowCelebration({ score, total, onComplete, speak }) {
           if (t < 1) s.trails[ji].push([x, y]);
 
           if (t < 1) {
-            // Direction: look ahead a few points for accurate nose angle
-            const lookAhead = Math.min(ptIdx + 3, path.length - 1);
-            const [x2, y2]  = path[lookAhead];
-            const angle     = Math.atan2(y2 - y, x2 - x);
-
-            // Determine if we're in the exit segment (last 30 of path)
-            const inExit    = ptIdx >= path.length - 31;
-            const exitDir   = EXIT_DIRS[ji];
-
-            // Flip horizontally only when jet is genuinely flying leftward
+            const lookAhead  = Math.min(ptIdx + 3, path.length - 1);
+            const [x2, y2]   = path[lookAhead];
+            const angle      = Math.atan2(y2 - y, x2 - x);
             const flyingLeft = Math.cos(angle) < -0.3;
 
             ctx.save();
@@ -217,6 +224,13 @@ function AirshowCelebration({ score, total, onComplete, speak }) {
       stateRef.current = null;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const badgeStyle = {
+    display:'inline-flex', alignItems:'center', gap:5,
+    padding:'4px 12px', borderRadius:20, color:'white',
+    fontFamily:'Arial,sans-serif', fontSize:'0.75em', fontWeight:800,
+    boxShadow:'0 2px 8px rgba(0,0,0,0.2)',
+  };
 
   return (
     <div style={{
@@ -267,6 +281,16 @@ function AirshowCelebration({ score, total, onComplete, speak }) {
               boxShadow:'0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,215,0,0.4)',
               animation:'cardPop 0.55s cubic-bezier(0.68,-0.55,0.265,1.55) forwards',
             }}>
+              {/* Quiz type + size badges */}
+              <div style={{ display:'flex', flexDirection:'column', gap:4, alignItems:'center', marginBottom:10 }}>
+                <div style={{ ...badgeStyle, background: qtCfg.bg }}>
+                  {qtCfg.icon} {qtCfg.label}
+                </div>
+                <div style={{ ...badgeStyle, background: sizeBadge.bg }}>
+                  {sizeBadge.icon} {sizeBadge.label}
+                </div>
+              </div>
+
               <div style={{ fontSize:'3em', marginBottom:6 }}>{perf.emoji}</div>
               <div style={{
                 fontSize:'1.9em', fontWeight:900, letterSpacing:2,

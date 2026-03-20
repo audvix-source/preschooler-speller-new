@@ -203,7 +203,7 @@ if (!rightBearsRef.current) {
       // Bears: 20 × 0.22s stagger = ~4.4s → score card
       // Score card → buttons 1.5s later
       const bearStart   = 2500;
-      const cardDelay   = bearStart + 20 * 220 + 6000;  // all bears + settle
+      const cardDelay   = bearStart + 20 * 220 + 600;  // all bears + settle
       const buttonDelay = cardDelay + 1500;
 
       const t1 = setTimeout(() => setPhase('bears'),   bearStart);
@@ -316,13 +316,13 @@ if (!rightBearsRef.current) {
           <div className="cs__card">
             {/* Quiz type badge — above emoji */}
             <div style={{ display:'flex', flexDirection:'column', gap:4, alignItems:'center', marginBottom:10 }}>
-  <div className="cs__quiz-badge" style={{ background: qtCfg.bg }}>
-    {qtCfg.icon} {qtCfg.label}
-  </div>
-  <div className="cs__quiz-badge" style={{ background: getSizeBadge(total).bg }}>
-    {getSizeBadge(total).icon} {getSizeBadge(total).label}
-  </div>
-</div>
+            <div className="cs__quiz-badge" style={{ background: qtCfg.bg }}>
+            {qtCfg.icon} {qtCfg.label}
+          </div>
+          <div className="cs__quiz-badge" style={{ background: getSizeBadge(total).bg }}>
+            {getSizeBadge(total).icon} {getSizeBadge(total).label}
+          </div>
+          </div>
             <div className="cs__card-emoji">{perf.emoji}</div>
             <div className="cs__card-message" style={{ color: perf.color }}>
               {perf.text}
