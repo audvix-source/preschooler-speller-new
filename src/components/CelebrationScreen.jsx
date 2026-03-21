@@ -158,7 +158,7 @@ function CelebrationScreen({ score, total, size = 'small', quizType = 'mixed', o
   }
   if (!bearsRef.current) {
     // 20 bears, scattered across bottom, growing from 40px to 130px (≈1/5 screen)
-  bearsRef.current = Array.from({ length: 48 }, (_, i) => ({
+  bearsRef.current = Array.from({ length: 45 }, (_, i) => ({
   id: i,
   delay: i * 0.22 + randomBetween(0, 0.15),
   landX: -220 + (i / 47) * 440 + randomBetween(-40, 40),
@@ -200,10 +200,10 @@ if (!rightBearsRef.current) {
 
     if (size === 'large') {
       // Snow burst: 2.5s → then bears start
-      // Bears: 48 × 0.10s stagger = ~4.4s → score card
+      // Bears: 45 × 0.10s stagger = ~4.4s → score card
       // Score card → buttons 1.5s later
       const bearStart   = 100;
-      const cardDelay   = bearStart + 48 * 80 + 400;  // all bears + settle
+      const cardDelay   = bearStart + 45 * 80 + 400;  // all bears + settle
       const buttonDelay = cardDelay + 1000;
 
       const t1 = setTimeout(() => setPhase('bears'),   bearStart);
@@ -281,7 +281,7 @@ if (!rightBearsRef.current) {
       {size === 'large' && (phase === 'bears' || phase === 'poppers') && (
   <div className="cs__bears-layer">
     {bearsRef.current.map(b => (
-      <TeddyBear key={b.id} index={b.id} total={48} {...b} />
+      <TeddyBear key={b.id} index={b.id} total={45} {...b} />
     ))}
     {leftBearsRef.current.map(b => (
       <TeddyBear key={`l${b.id}`} index={b.id} total={8} {...b} />

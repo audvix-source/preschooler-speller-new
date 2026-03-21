@@ -72,7 +72,7 @@ function RunningTilesAnimation({ score, total, onComplete, speak, milestone }) {
       {/* Base tile grid */}
       <div className="tile-animation-container">
         {Array.from({ length: 48 }).map((_, i) => (
-          <div key={i} className="tile" style={{ animationDelay: `${Math.random() * 1.5}s` }} />
+          <div key={i} className="rta__tile" style={{ animationDelay: `${Math.random() * 1.5}s` }} />
         ))}
       </div>
 

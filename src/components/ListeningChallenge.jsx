@@ -86,8 +86,10 @@ const otherWords = allWords.filter(w => {
         speak(`Not quite! The one with the check mark is the ${word}.`);
       }
     }
-    setTimeout(() => onAnswer(choice.isCorrect), 1500);
-  };
+     const syllables = word.replace(/[^aeiouy]/gi, '').length || 1;
+     const feedbackDelay = choice.isCorrect ? 1500 : 2000 + syllables * 300;
+     setTimeout(() => onAnswer(choice.isCorrect), feedbackDelay);
+    };
 
   // ── Inline grid — same approach as RecognitionChallenge ──────────────────
   const gridStyle = {

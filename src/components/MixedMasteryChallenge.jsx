@@ -109,55 +109,40 @@ const buildListeningQuestions = (allViewedWords, quizSize) => {
 
 const buildMixedQuestions = (recentWords, quizSize) => {
   const normalizedWords = recentWords.map(normalizeWord);
-  const spellingQuestions = [], recognitionQuestions = [];
+  const spellingPool = [], recognitionPool = [];
 
   normalizedWords.forEach(word => {
     if (!word.word) return;
-    // Strip hyphens when checking length — "x-ray" = 4 letters, not 5
     const bareLength = word.word.replace(/-/g, '').length;
     if (bareLength <= 5) {
-      spellingQuestions.push({ type: 'spelling', word });
+      spellingPool.push({ type: 'spelling', word });
     } else if (getImagePath(word.image)) {
-      recognitionQuestions.push({ type: 'recognition', word });
+      recognitionPool.push({ type: 'recognition', word });
     }
   });
 
-  spellingQuestions.sort((a, b) => {
-    const aLen = a.word.word.replace(/-/g, '').length;
-    const bLen = b.word.word.replace(/-/g, '').length;
-    if (aLen !== bLen) return aLen - bLen;
-    return Math.random() - 0.5;
-  });
-
-  const shuffledRecognition = [...recognitionQuestions].sort(() => Math.random() - 0.5);
-  const orderedQuestions    = [...spellingQuestions, ...shuffledRecognition];
-
-  // On odd totals, recognition gets the extra item
+  // On odd totals, recognition gets the extra
   const wantSpelling    = Math.floor(quizSize / 2);
   const wantRecognition = quizSize - wantSpelling;
 
-  if (orderedQuestions.length > quizSize) {
-    const spelling    = orderedQuestions.filter(q => q.type === 'spelling');
-    const recognition = orderedQuestions.filter(q => q.type === 'recognition');
-    const actualRecognition = Math.min(recognition.length, wantRecognition);
-    const actualSpelling    = Math.min(spelling.length, quizSize - actualRecognition);
-    const trimmed = [...spelling.slice(0, actualSpelling), ...recognition.slice(0, actualRecognition)];
-    if (trimmed.length < quizSize) {
-      trimmed.push(...orderedQuestions.filter(q => !trimmed.includes(q)).slice(0, quizSize - trimmed.length));
-    }
-    return trimmed.slice(0, quizSize);
-  } else {
-    const padded = [...orderedQuestions];
-    let padIndex = 0, safetyCount = 0;
-    while (padded.length < quizSize && safetyCount < normalizedWords.length * 2) {
-      const candidate = normalizedWords[padIndex % normalizedWords.length];
-      padIndex++; safetyCount++;
-      const bareLen = candidate.word.replace(/-/g, '').length;
-      if (bareLen <= 5) padded.push({ type: 'spelling', word: candidate });
-    }
-    return [...padded.filter(q => q.type === 'spelling'), ...padded.filter(q => q.type === 'recognition')].slice(0, quizSize);
-  }
-};
+  // Shuffle both pools
+  const shuffledSpelling    = [...spellingPool].sort(() => Math.random() - 0.5);
+  const shuffledRecognition = [...recognitionPool].sort(() => Math.random() - 0.5);
+
+  // Fill up to wanted count, cycling through pool if needed
+  const pick = (pool, count) => {
+    if (pool.length === 0) return [];
+    return Array.from({ length: count }, (_, i) => ({ ...pool[i % pool.length] }));
+  };
+
+  const spelling    = pick(shuffledSpelling,    wantSpelling);
+  const recognition = pick(shuffledRecognition, wantRecognition);
+
+  // Sort spelling by word length ascending, then shuffle recognition
+  spelling.sort((a, b) => a.word.word.replace(/-/g, '').length - b.word.word.replace(/-/g, '').length);
+
+  return [...spelling, ...recognition];
+};  
 
 const bodyPartWords = [
   'head','face','hair','forehead','eyebrow','eyebrows','eyelash','eyelashes',

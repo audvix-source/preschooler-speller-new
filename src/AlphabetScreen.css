@@ -78,7 +78,7 @@
     top: -52px;                            /* ← push iframe up to hide YouTube's top bar */
     left: -3%;
     width: 115%;
-    height: calc(100% + 52px);             /* ← compensate so bottom isn't clipped */
+    height: calc(100% + 52px + 40px);  /* ← add 40px more at bottom */
     border-radius: 14px;
     pointer-events: auto;
   }
@@ -89,7 +89,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 10px;
+    height: 40px;
     background: #000;
     border-radius: 0 0 14px 14px;
     z-index: 1;

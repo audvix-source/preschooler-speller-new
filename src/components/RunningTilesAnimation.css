@@ -2,7 +2,8 @@
 .tile-animation-container {
   position: absolute;
   top: 0; left: 0;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;  
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(8, 1fr);
@@ -11,13 +12,34 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   box-sizing: border-box;
   z-index: 1;
-}
+  }
 
-.tile {
+.rta__tile {
   background: rgba(255, 215, 0, 0.15);
   border-radius: 10px;
   animation: tileFlash 0.9s ease-in-out infinite alternate;
   border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.grammar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  border-radius: 0;
+  z-index: 1000;
+}
+
+.grammar-overlay::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  z-index: -1;
 }
 
 @keyframes tileFlash {
@@ -32,8 +54,9 @@
 .rta__score-area {
   position: absolute;
   top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 20;
+  width: 100%; 
+  height: 100%;  
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
