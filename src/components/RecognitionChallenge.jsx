@@ -37,11 +37,15 @@ function RecognitionChallenge({ word, wordImage, allWords, onAnswer, speak, hide
     }
 
     const correctChoice = { word, image: wordImage, isCorrect: true };
-    const otherWords = allWords.filter(w => {
-      if (w.word.toLowerCase() === word.toLowerCase()) return false;
-      if (!w.image) return false;
-      return true;
-    });
+    const CAT_KITTEN = { 'cat': 'kitten', 'kitten': 'cat' };
+const excluded = CAT_KITTEN[word.toLowerCase()];
+
+const otherWords = allWords.filter(w => {
+  if (w.word.toLowerCase() === word.toLowerCase()) return false;
+  if (excluded && w.word.toLowerCase() === excluded) return false;
+  if (!w.image) return false;
+  return true;
+});
 
     const shuffled     = [...otherWords].sort(() => Math.random() - 0.5);
     const wrongChoices = shuffled.filter(w => w.image != null).slice(0, 3)

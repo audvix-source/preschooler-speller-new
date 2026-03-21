@@ -5,9 +5,9 @@ import RecognitionChallenge from './RecognitionChallenge.jsx';
 import ListeningChallenge from './ListeningChallenge.jsx';
 import RunningTilesAnimation from './RunningTilesAnimation';
 import ForestGardenCelebration from './ForestGardenCelebration';
-import AirshowCelebration from './AirshowCelebration'; 
+import AirshowCelebration from './AirshowCelebration';
 import MilkyWayCelebration from './MilkyWayCelebration.jsx';
-import UnderwaterCelebration from './UnderwaterCelebration'; 
+import UnderwaterCelebration from './UnderwaterCelebration';
 import CelebrationScreen from './CelebrationScreen';
 
 const importAll = (r) => {
@@ -33,6 +33,7 @@ const getImagePath = (fileName) => {
     'mailbox.png': 'mailbox-emoji.png',
     'uniform.png': 'uniform-emoji.png',
     'question-mark.png': 'questionmark-emoji.png',
+    'yacht.png': 'yacht-emoji.png',
   };
   if (specialMappings[fileName]) return images[specialMappings[fileName]] || null;
   return images[fileName.replace('.png', '-emoji.png')] || null;
@@ -71,7 +72,6 @@ const POWER_WORDS = [
   { display: 'Marvelous!',   speak: 'Marvelous' }
 ];
 
-// Wrong-answer phrases (varied, kid-friendly)
 const WRONG_PHRASES = [
   'Not quite!', 'Nice try!', 'Almost!', 'Good try!', 'Not this one!',
   'So close!', 'Try again!', 'Keep going!',
@@ -81,15 +81,9 @@ const getWrongPhrase = () => WRONG_PHRASES[Math.floor(Math.random() * WRONG_PHRA
 const normalizeWord = (wordObj) =>
   wordObj?.word?.toLowerCase() === 'nail' ? { ...wordObj, word: 'nails' } : wordObj;
 
-// ── Picture Quiz builder ──────────────────────────────────────────────────────
 const buildMCOnlyQuestions = (allViewedWords, quizSize) => {
-  const pool = (allViewedWords || [])
-    .map(normalizeWord)
-    .filter(w => w.word && getImagePath(w.image));
-
-  console.log(`Picture Quiz pool: ${pool.length} from ${allViewedWords?.length || 0} total`);
+  const pool = (allViewedWords || []).map(normalizeWord).filter(w => w.word && getImagePath(w.image));
   if (pool.length === 0) { console.warn('Picture Quiz: empty pool'); return []; }
-
   const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
   const questions = [];
   let i = 0;
@@ -100,15 +94,9 @@ const buildMCOnlyQuestions = (allViewedWords, quizSize) => {
   return questions.sort(() => Math.random() - 0.5);
 };
 
-// ── Listening Quiz builder ────────────────────────────────────────────────────
 const buildListeningQuestions = (allViewedWords, quizSize) => {
-  const pool = (allViewedWords || [])
-    .map(normalizeWord)
-    .filter(w => w.word && getImagePath(w.image));
-
-  console.log(`Listening Quiz pool: ${pool.length} from ${allViewedWords?.length || 0} total`);
+  const pool = (allViewedWords || []).map(normalizeWord).filter(w => w.word && getImagePath(w.image));
   if (pool.length === 0) { console.warn('Listening Quiz: empty pool'); return []; }
-
   const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
   const questions = [];
   let i = 0;
@@ -119,36 +107,33 @@ const buildListeningQuestions = (allViewedWords, quizSize) => {
   return questions.sort(() => Math.random() - 0.5);
 };
 
-// ── Mixed builder ─────────────────────────────────────────────────────────────
 const buildMixedQuestions = (recentWords, quizSize) => {
-  const normalizedWords      = recentWords.map(normalizeWord);
-  const spellingQuestions    = [];
-  const recognitionQuestions = [];
+  const normalizedWords = recentWords.map(normalizeWord);
+  const spellingQuestions = [], recognitionQuestions = [];
 
   normalizedWords.forEach(word => {
     if (!word.word) return;
-    // Spelling: 3-5 letters only. 6+ always go to recognition regardless of image.
-    if (word.word.length <= 5) {
+    // Strip hyphens when checking length — "x-ray" = 4 letters, not 5
+    const bareLength = word.word.replace(/-/g, '').length;
+    if (bareLength <= 5) {
       spellingQuestions.push({ type: 'spelling', word });
     } else if (getImagePath(word.image)) {
       recognitionQuestions.push({ type: 'recognition', word });
     }
-    // 6+ letter words without images are skipped entirely
   });
 
-  console.log('Spelling:', spellingQuestions.map(q => q.word.word));
-  console.log('Recognition:', recognitionQuestions.map(q => q.word.word));
-
   spellingQuestions.sort((a, b) => {
-  if (a.word.word.length !== b.word.word.length) {
-    return a.word.word.length - b.word.word.length;
-  }
-  return Math.random() - 0.5;
-});
+    const aLen = a.word.word.replace(/-/g, '').length;
+    const bLen = b.word.word.replace(/-/g, '').length;
+    if (aLen !== bLen) return aLen - bLen;
+    return Math.random() - 0.5;
+  });
+
   const shuffledRecognition = [...recognitionQuestions].sort(() => Math.random() - 0.5);
-  const orderedQuestions = [...spellingQuestions, ...shuffledRecognition];
-  // 50/50 split — identification gets the extra item on odd totals
-  const wantSpelling = Math.floor(quizSize / 2);
+  const orderedQuestions    = [...spellingQuestions, ...shuffledRecognition];
+
+  // On odd totals, recognition gets the extra item
+  const wantSpelling    = Math.floor(quizSize / 2);
   const wantRecognition = quizSize - wantSpelling;
 
   if (orderedQuestions.length > quizSize) {
@@ -156,33 +141,24 @@ const buildMixedQuestions = (recentWords, quizSize) => {
     const recognition = orderedQuestions.filter(q => q.type === 'recognition');
     const actualRecognition = Math.min(recognition.length, wantRecognition);
     const actualSpelling    = Math.min(spelling.length, quizSize - actualRecognition);
-    const trimmed = [
-      ...spelling.slice(0, actualSpelling),
-      ...recognition.slice(0, actualRecognition),
-    ];
+    const trimmed = [...spelling.slice(0, actualSpelling), ...recognition.slice(0, actualRecognition)];
     if (trimmed.length < quizSize) {
       trimmed.push(...orderedQuestions.filter(q => !trimmed.includes(q)).slice(0, quizSize - trimmed.length));
     }
     return trimmed.slice(0, quizSize);
   } else {
     const padded = [...orderedQuestions];
-    let padIndex = 0;
-    let safetyCount = 0;
+    let padIndex = 0, safetyCount = 0;
     while (padded.length < quizSize && safetyCount < normalizedWords.length * 2) {
       const candidate = normalizedWords[padIndex % normalizedWords.length];
-      padIndex++;
-      safetyCount++;
-      if (candidate.word.length <= 5) {
-        padded.push({ type: 'spelling', word: candidate });
-      }
+      padIndex++; safetyCount++;
+      const bareLen = candidate.word.replace(/-/g, '').length;
+      if (bareLen <= 5) padded.push({ type: 'spelling', word: candidate });
     }
-    return [
-      ...padded.filter(q => q.type === 'spelling'),
-      ...padded.filter(q => q.type === 'recognition'),
-    ].slice(0, quizSize);
+    return [...padded.filter(q => q.type === 'spelling'), ...padded.filter(q => q.type === 'recognition')].slice(0, quizSize);
   }
 };
-  
+
 const bodyPartWords = [
   'head','face','hair','forehead','eyebrow','eyebrows','eyelash','eyelashes',
   'eye','eyes','eyelid','eyelids','nose','nostrils','ear','ears','earlobe',
@@ -198,7 +174,6 @@ const bodyPartWords = [
   'x-pen','xpen','xerox-machine','xeroxmachine'
 ];
 
-// ── Quiz type config ──────────────────────────────────────────────────────────
 const QUIZ_TYPE_CONFIG = {
   'mixed':     { badge: null },
   'mc-only':   { badge: { icon: '🖼️', label: 'Picture Quiz', cls: 'challenge-quiz-type-badge--mc' } },
@@ -206,23 +181,7 @@ const QUIZ_TYPE_CONFIG = {
   'reading':   { badge: { icon: '📖', label: 'Reading',      cls: 'challenge-quiz-type-badge--reading' } },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component
-// quizType: 'mixed' | 'mc-only' | 'listening' | 'reading'
-// onExit(score, total, action):
-//   action = 'again'  → Try Again
-//   action = 'change' → Change Quiz (go to HexagonTransition)
-//   action = 'menu'   → Main Menu
-// ─────────────────────────────────────────────────────────────────────────────
-function MixedMasteryChallenge({
-  recentWords,
-  allViewedWords = [],
-  onExit,
-  speak,
-  milestone,
-  quizSize = 5,
-  quizType = 'mixed'
-}) {
+function MixedMasteryChallenge({ recentWords, allViewedWords = [], onExit, speak, milestone, quizSize = 5, quizType = 'mixed' }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions,     setQuestions]     = useState([]);
   const [score,         setScore]         = useState(0);
@@ -239,14 +198,13 @@ function MixedMasteryChallenge({
   const quizStartedRef          = useRef(false);
   const currentQuestionIndexRef = useRef(0);
 
-  useEffect(() => { questionsRef.current = questions; },                        [questions]);
-  useEffect(() => { scoreRef.current = score; },                                [score]);
+  useEffect(() => { questionsRef.current = questions; }, [questions]);
+  useEffect(() => { scoreRef.current = score; }, [score]);
   useEffect(() => { currentQuestionIndexRef.current = currentQuestionIndex; }, [currentQuestionIndex]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (questionsRef.current.length === 0 && !quizStartedRef.current) {
-        console.warn('MixedMasteryChallenge: no questions generated, exiting');
         onExit(0, 0, 'change');
       }
     }, 8000);
@@ -255,17 +213,16 @@ function MixedMasteryChallenge({
 
   useEffect(() => {
     if (quizType === 'mc-only') {
-      if (!allViewedWords?.length) { console.warn('Picture Quiz: allViewedWords empty'); return; }
+      if (!allViewedWords?.length) return;
       setQuestions(buildMCOnlyQuestions(allViewedWords, quizSize));
     } else if (quizType === 'listening') {
-      if (!allViewedWords?.length) { console.warn('Listening: allViewedWords empty'); return; }
+      if (!allViewedWords?.length) return;
       setQuestions(buildListeningQuestions(allViewedWords, quizSize));
     } else if (quizType === 'reading') {
-      // Reading uses same pool as Picture Quiz (image required) but routes to RecognitionChallenge with hideSpeaker
-      if (!allViewedWords?.length) { console.warn('Reading: allViewedWords empty'); return; }
+      if (!allViewedWords?.length) return;
       setQuestions(buildMCOnlyQuestions(allViewedWords, quizSize).map(q => ({ ...q, type: 'reading' })));
     } else {
-      if (!recentWords?.length) { console.warn('Mixed: recentWords empty'); return; }
+      if (!recentWords?.length) return;
       setQuestions(buildMixedQuestions(recentWords, quizSize));
     }
   }, [recentWords, allViewedWords, quizSize, quizType]);
@@ -277,16 +234,13 @@ function MixedMasteryChallenge({
     quizStartedRef.current = true;
     if (!currentQuestion || showFeedback || currentQuestion.type !== 'spelling') return;
     if (speak) speak(letter === '-' ? 'hyphen' : letter);
-
     const newAnswer = [...userAnswer, letter];
     setUserAnswer(newAnswer);
-
     if (newAnswer.length === currentQuestion.word.word.length) {
       const correct = newAnswer.join('').toLowerCase() === currentQuestion.word.word.toLowerCase();
       setIsCorrect(correct);
       setShowFeedback(true);
       let calculatedScore = scoreRef.current;
-
       if (correct) {
         const newScore = scoreRef.current + 1;
         setScore(newScore); scoreRef.current = newScore; calculatedScore = newScore;
@@ -296,8 +250,7 @@ function MixedMasteryChallenge({
         if (speak) speak(`${currentQuestion.word.word}, ${chosen.speak}`);
         setTimeout(() => moveToNextQuestion(calculatedScore), getSpeechDelay(currentQuestion.word.word, chosen.speak));
       } else {
-        const phrase = getWrongPhrase();
-        if (speak) speak(phrase);
+        if (speak) speak(getWrongPhrase());
         setTimeout(() => { setUserAnswer([]); setShowFeedback(false); setIsCorrect(false); }, 1500);
       }
     }
@@ -307,7 +260,6 @@ function MixedMasteryChallenge({
     quizStartedRef.current = true;
     if (showFeedback && currentQuestion?.type === 'recognition') return;
     let calculatedScore = scoreRef.current;
-
     if (correct) {
       const newScore = scoreRef.current + 1;
       setScore(newScore); scoreRef.current = newScore; calculatedScore = newScore;
@@ -315,8 +267,7 @@ function MixedMasteryChallenge({
       const chosen = POWER_WORDS[globalPowerWordIndex];
       setCompletionMessage(chosen.display);
       if (speak) speak(`${currentQuestion.word.word}, ${chosen.speak}`);
-      setTimeout(() => { window.speechSynthesis.cancel(); moveToNextQuestion(calculatedScore); },
-        getSpeechDelay(currentQuestion.word.word, chosen.speak));
+      setTimeout(() => { window.speechSynthesis.cancel(); moveToNextQuestion(calculatedScore); }, getSpeechDelay(currentQuestion.word.word, chosen.speak));
     } else {
       setTimeout(() => { window.speechSynthesis.cancel(); moveToNextQuestion(calculatedScore); }, 500);
     }
@@ -326,17 +277,13 @@ function MixedMasteryChallenge({
     quizStartedRef.current = true;
     if (showFeedback) return;
     let calculatedScore = scoreRef.current;
-
-    if (correct) {
-      const newScore = scoreRef.current + 1;
-      setScore(newScore); scoreRef.current = newScore; calculatedScore = newScore;
-    }
+    if (correct) { const newScore = scoreRef.current + 1; setScore(newScore); scoreRef.current = newScore; calculatedScore = newScore; }
     setTimeout(() => { window.speechSynthesis.cancel(); moveToNextQuestion(calculatedScore); }, 1500);
   };
 
   const moveToNextQuestion = (calculatedScore) => {
-    const currentIndex   = currentQuestionIndexRef.current;
-    const totalQ         = questionsRef.current.length;
+    const currentIndex = currentQuestionIndexRef.current;
+    const totalQ = questionsRef.current.length;
     if (currentIndex < totalQ - 1) {
       setCurrentQuestionIndex(currentIndex + 1);
       setUserAnswer([]); setShowFeedback(false); setIsCorrect(false);
@@ -349,99 +296,42 @@ function MixedMasteryChallenge({
     }
   };
 
-  const handleBackspace = () => {
-    if (userAnswer.length > 0 && !showFeedback) setUserAnswer(userAnswer.slice(0, -1));
-  };
-
+  const handleBackspace = () => { if (userAnswer.length > 0 && !showFeedback) setUserAnswer(userAnswer.slice(0, -1)); };
   const handleExit = () => onExit(scoreRef.current, questionsRef.current.length, 'change');
-
-  // Post-quiz action from CelebrationScreen
   const handleAnimationComplete = (action) => onExit(finalScore, finalTotal, action);
 
+  // ── Celebration routing ───────────────────────────────────────────────────
   if (showAnimation) {
-  return (
-    <AirshowCelebration
-      score={finalScore}
-      total={finalTotal}
-      onComplete={handleAnimationComplete}
-      speak={speak}
-    />
-  );
-  if (finalTotal <= 5) {
-    return (
-      <ForestGardenCelebration
-        score={finalScore}
-        total={finalTotal}
-        onComplete={handleAnimationComplete}
-        speak={speak}
-      />
-    );
+    if (finalTotal <= 5) {
+      return <RunningTilesAnimation score={finalScore} total={finalTotal} onComplete={handleAnimationComplete} speak={speak} />;
+    }
+    if (finalTotal <= 10) {
+  return <ForestGardenCelebration score={finalScore} total={finalTotal} quizType={quizType} onComplete={handleAnimationComplete} speak={speak} />;
+    }
+    if (finalTotal <= 15) {
+  return <UnderwaterCelebration score={finalScore} total={finalTotal} quizType={quizType} onComplete={handleAnimationComplete} speak={speak} />;
+    }
+    if (finalTotal <= 20) {
+      return <CelebrationScreen score={finalScore} total={finalTotal} size='large' quizType={quizType} onComplete={handleAnimationComplete} speak={speak} />;
+    }
+    if (finalTotal <= 25) {
+  return <MilkyWayCelebration score={finalScore} total={finalTotal} quizType={quizType} onComplete={handleAnimationComplete} speak={speak} />;
   }
-  if (finalTotal <= 5) {
-    return (
-      <ForestGardenCelebration
-        score={finalScore}
-        total={finalTotal}
-        onComplete={handleAnimationComplete}
-        speak={speak}
-      />
-    );
+    return <AirshowCelebration score={finalScore} total={finalTotal} quizType={quizType} onComplete={handleAnimationComplete} speak={speak} />;
   }
-  if (finalTotal <= 15) {
-    return (
-      <UnderwaterCelebration
-        score={finalScore}
-        total={finalTotal}
-        onComplete={handleAnimationComplete}
-        speak={speak}
-      />
-    );
-  }
-  if (finalTotal <= 20) {
-    return (
-      <CelebrationScreen
-        score={finalScore}
-        total={finalTotal}
-        size='large'
-        quizType={quizType}
-        onComplete={handleAnimationComplete}
-        speak={speak}
-      />
-    );
-  }
-  if (finalTotal <= 25) {
-    return (
-      <MilkyWayCelebration
-        score={finalScore}
-        total={finalTotal}
-        onComplete={handleAnimationComplete}
-        speak={speak}
-      />
-    );
-  }
-  return (
-    <AirshowCelebration
-      score={finalScore}
-      total={finalTotal}
-      onComplete={handleAnimationComplete}
-      speak={speak}
-    />
-  );
-}
 
+  // ── Quiz UI ───────────────────────────────────────────────────────────────
   const getWordVisual = (word) => {
     const emojiMap = {
-      'apple':'🍎','ant':'🐜','ball':'⚽','bear':'🐻','bus':'🚌','baby':'👶',
-      'cat':'🐱','car':'🚗','cookie':'🍪','cow':'🐄','dog':'🐕','duck':'🦆',
-      'door':'🚪','egg':'🥚','elf':'🧝','fish':'🐠','frog':'🐸','fire':'🔥',
-      'flower':'🌸','goat':'🐐','girl':'👧','hat':'🎩','horse':'🐴','hand':'✋',
-      'heart':'❤️','igloo':'🏔️','jar':'🫙','jet':'✈️','kite':'🪁','king':'🤴',
-      'lion':'🦁','lamp':'💡','lemon':'🍋','moon':'🌙','mouse':'🐭','monkey':'🐵',
-      'nails':'💅','nail':'💅','net':'🥅','nurse':'👩‍⚕️','ox':'🐂','pizza':'🍕',
-      'queen':'👸','quilt':'🛏️','rain':'🌧️','robot':'🤖','star':'⭐','sun':'☀️',
-      'tree':'🌳','truck':'🚚','vase':'🏺','vest':'🦺','watch':'⌚','whale':'🐋',
-      'yak':'🦬','yarn':'🧶','zebra':'🦓','zap':'⚡','zipper':'🤐',
-      'zigzag':'⚡','zeppelin':'🛩️','queue':'👥','question-mark':'❓'
+      'apple':'🍎','ant':'🐜','ball':'⚽','bear':'🐻','bus':'🚌','baby':'👶','cat':'🐱','car':'🚗',
+      'cookie':'🍪','cow':'🐄','dog':'🐕','duck':'🦆','door':'🚪','egg':'🥚','elf':'🧝','fish':'🐠',
+      'frog':'🐸','fire':'🔥','flower':'🌸','goat':'🐐','girl':'👧','hat':'🎩','horse':'🐴','hand':'✋',
+      'heart':'❤️','igloo':'🏔️','jar':'🫙','jet':'✈️','kite':'🪁','king':'🤴','lion':'🦁','lamp':'💡',
+      'lemon':'🍋','moon':'🌙','mouse':'🐭','monkey':'🐵','nails':'💅','nail':'💅','net':'🥅',
+      'nurse':'👩‍⚕️','ox':'🐂','pizza':'🍕','queen':'👸','quilt':'🛏️','rain':'🌧️','robot':'🤖',
+      'star':'⭐','sun':'☀️','tree':'🌳','truck':'🚚','vase':'🏺','vest':'🦺','watch':'⌚','whale':'🐋',
+      'yak':'🦬','yarn':'🧶','zebra':'🦓','zap':'⚡','zipper':'🤐','zigzag':'⚡','zeppelin':'🛩️',
+      'queue':'👥','question-mark':'❓'
     };
     return emojiMap[word.toLowerCase()] || '📝';
   };
@@ -458,7 +348,6 @@ function MixedMasteryChallenge({
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ-'.split('');
   const typeConfig = QUIZ_TYPE_CONFIG[quizType] || QUIZ_TYPE_CONFIG['mixed'];
-
   const allWordsForChoices = wordList
     .filter(w => w.category === 'Alphabet Fun')
     .filter(w => !bodyPartWords.includes(w.word.toLowerCase().trim()))
@@ -470,22 +359,14 @@ function MixedMasteryChallenge({
       <div className="challenge-container-fixed">
         <div className="challenge-confetti">
           {Array.from({ length: 15 }).map((_, i) => (
-            <div key={i} className="confetti-piece" style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              fontSize: `${1 + Math.random() * 0.5}em`
-            }}>
-              {['🎉','⭐','✨','🌟','💫'][Math.floor(Math.random() * 5)]}
+            <div key={i} className="confetti-piece" style={{ left:`${Math.random()*100}%`, animationDelay:`${Math.random()*5}s`, fontSize:`${1+Math.random()*0.5}em` }}>
+              {['🎉','⭐','✨','🌟','💫'][Math.floor(Math.random()*5)]}
             </div>
           ))}
         </div>
 
-        {/* ── Header: exit left, badge+score centred, question right ── */}
         <div className="challenge-header">
-          {/* Exit button — top left */}
           <button className="challenge-exit-top" onClick={handleExit} title="Exit quiz">✕</button>
-
-          {/* Centre: badge + score */}
           <div className="challenge-header-centre">
             {typeConfig.badge && (
               <span className={`challenge-quiz-type-badge ${typeConfig.badge.cls}`}>
@@ -497,8 +378,6 @@ function MixedMasteryChallenge({
               <span className="accuracy-value">{score}</span>
             </div>
           </div>
-
-          {/* Question counter — top right */}
           <div className="challenge-header-question">
             <span className="score-label">Q</span>
             <span className="score-value">{currentQuestionIndex + 1}/{totalQuestions}</span>
@@ -507,41 +386,17 @@ function MixedMasteryChallenge({
 
         <div className="question-content">
           {currentQuestion.type === 'listening' ? (
-            <ListeningChallenge
-              word={currentQuestion.word.word}
-              wordImage={getImagePath(currentQuestion.word.image)}
-              allWords={allWordsForChoices}
-              onAnswer={handleListeningAnswer}
-              speak={speak}
-            />
+            <ListeningChallenge word={currentQuestion.word.word} wordImage={getImagePath(currentQuestion.word.image)} allWords={allWordsForChoices} onAnswer={handleListeningAnswer} speak={speak} />
           ) : currentQuestion.type === 'reading' ? (
-            <RecognitionChallenge
-              word={currentQuestion.word.word}
-              wordImage={getImagePath(currentQuestion.word.image)}
-              allWords={allWordsForChoices}
-              onAnswer={handleRecognitionAnswer}
-              speak={speak}
-              hideSpeaker={true}
-            />
+            <RecognitionChallenge word={currentQuestion.word.word} wordImage={getImagePath(currentQuestion.word.image)} allWords={allWordsForChoices} onAnswer={handleRecognitionAnswer} speak={speak} hideSpeaker={true} />
           ) : currentQuestion.type === 'recognition' ? (
-            <RecognitionChallenge
-              word={currentQuestion.word.word}
-              wordImage={getImagePath(currentQuestion.word.image)}
-              allWords={allWordsForChoices}
-              onAnswer={handleRecognitionAnswer}
-              speak={speak}
-            />
+            <RecognitionChallenge word={currentQuestion.word.word} wordImage={getImagePath(currentQuestion.word.image)} allWords={allWordsForChoices} onAnswer={handleRecognitionAnswer} speak={speak} />
           ) : (
             <>
               <div className={`word-card ${showFeedback ? (isCorrect ? 'correct' : 'incorrect') : ''}`}>
                 <div className="word-emoji-display">
                   {getImagePath(currentQuestion.word.image) ? (
-                    <img
-                      src={getImagePath(currentQuestion.word.image)}
-                      alt=""
-                      className="emoji-huge-image"
-                      style={{ maxWidth:'100%', maxHeight:'140px', objectFit:'contain', filter:'drop-shadow(0 6px 12px rgba(0,0,0,0.2))' }}
-                    />
+                    <img src={getImagePath(currentQuestion.word.image)} alt="" className="emoji-huge-image" style={{ maxWidth:'100%', maxHeight:'140px', objectFit:'contain', filter:'drop-shadow(0 6px 12px rgba(0,0,0,0.2))' }} />
                   ) : (
                     <span className="emoji-huge">{getWordVisual(currentQuestion.word.word)}</span>
                   )}
@@ -549,19 +404,14 @@ function MixedMasteryChallenge({
                 {showFeedback && (
                   <div className="feedback-banner">
                     <span className="feedback-icon-inline">{isCorrect ? '✅' : '❌'}</span>
-                    <span className="feedback-text-inline">
-                      {isCorrect ? completionMessage : `It's ${currentQuestion.word.word}`}
-                    </span>
+                    <span className="feedback-text-inline">{isCorrect ? completionMessage : `It's ${currentQuestion.word.word}`}</span>
                   </div>
                 )}
               </div>
 
               <div className="answer-boxes">
                 {Array.from({ length: currentQuestion.word.word.length }).map((_, index) => (
-                  <div
-                    key={index}
-                    className={`answer-box ${userAnswer[index] ? 'filled' : ''} ${showFeedback ? (isCorrect ? 'correct-box' : 'incorrect-box') : ''}`}
-                  >
+                  <div key={index} className={`answer-box ${userAnswer[index] ? 'filled' : ''} ${showFeedback ? (isCorrect ? 'correct-box' : 'incorrect-box') : ''}`}>
                     {userAnswer[index] || ''}
                   </div>
                 ))}
@@ -570,18 +420,13 @@ function MixedMasteryChallenge({
               <div className="keyboard-wrapper-container">
                 <div className="challenge-keyboard">
                   {alphabet.map(letter => {
-                    const wordUpper   = currentQuestion.word.word.toUpperCase();
+                    const wordUpper = currentQuestion.word.word.toUpperCase();
                     const totalNeeded = wordUpper.split('').filter(l => l === letter).length;
                     const alreadyUsed = userAnswer.filter(l => l === letter).length;
-                    const isUsed      = totalNeeded > 0 && alreadyUsed >= totalNeeded;
-                    const isNeeded    = alreadyUsed < totalNeeded;
+                    const isUsed = totalNeeded > 0 && alreadyUsed >= totalNeeded;
+                    const isNeeded = alreadyUsed < totalNeeded;
                     return (
-                      <button
-                        key={letter}
-                        className={`keyboard-key ${isUsed ? 'used' : isNeeded ? 'needed-letter' : 'not-needed-letter'}`}
-                        onClick={() => handleLetterClick(letter)}
-                        disabled={showFeedback || isUsed}
-                      >
+                      <button key={letter} className={`keyboard-key ${isUsed ? 'used' : isNeeded ? 'needed-letter' : 'not-needed-letter'}`} onClick={() => handleLetterClick(letter)} disabled={showFeedback || isUsed}>
                         {letter}
                       </button>
                     );

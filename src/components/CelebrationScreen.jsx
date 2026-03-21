@@ -200,11 +200,11 @@ if (!rightBearsRef.current) {
 
     if (size === 'large') {
       // Snow burst: 2.5s → then bears start
-      // Bears: 20 × 0.22s stagger = ~4.4s → score card
+      // Bears: 48 × 0.10s stagger = ~4.4s → score card
       // Score card → buttons 1.5s later
-      const bearStart   = 2500;
-      const cardDelay   = bearStart + 20 * 220 + 600;  // all bears + settle
-      const buttonDelay = cardDelay + 1500;
+      const bearStart   = 100;
+      const cardDelay   = bearStart + 48 * 80 + 400;  // all bears + settle
+      const buttonDelay = cardDelay + 1000;
 
       const t1 = setTimeout(() => setPhase('bears'),   bearStart);
       const t2 = setTimeout(() => {
