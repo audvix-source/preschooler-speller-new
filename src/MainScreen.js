@@ -8,6 +8,7 @@ import welcomeJingle from './assets/welcome-jingle.mp3';
 
 function MainScreen(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const bubbleTimerRef = useRef(null);                  // Add this near your other refs [cite: 195]
   const audioRef = useRef(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [selectedGender, setSelectedGender] = useState(null);
@@ -59,43 +60,53 @@ function MainScreen(props) {
 
   const handleToucanClick = () => {
   window.speechSynthesis.cancel();
-  if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
+  if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current); // Clear previous
+
   setHasInteracted(true);
   setGuideVoice('male');
   const text = "Hi! I'm Treb the Toucan! Tap the truck below and I'll show you around!";
   setSpeechBubble({ who: 'toucan', text });
-  setTimeout(() => setSpeechBubble(null), 8000);
+
+  bubbleTimerRef.current = setTimeout(() => setSpeechBubble(null), 7000);
   setTimeout(() => speak(text, 'male'), 300);
   };
 
   const handleParrotClick = () => {
   window.speechSynthesis.cancel();
-  if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
+  if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current); // Clear previous
+
   setHasInteracted(true);
   setGuideVoice('female');
   const text = "Hi! I'm Maya the Parrot! Tap the doll below and I'll guide you!";
   setSpeechBubble({ who: 'parrot', text });
-  setTimeout(() => setSpeechBubble(null), 8000);
+
+  bubbleTimerRef.current = setTimeout(() => setSpeechBubble(null), 6000);
   setTimeout(() => speak(text, 'female'), 300);
   };
   
   const handleTruckClick = () => {
   window.speechSynthesis.cancel();
+  if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current); // Clear previous
+
   setGuideVoice('male');
   const text = "Great choice! I'm Treb and I'll be your guide. Let's fly!";
   setSpeechBubble({ who: 'toucan', text });
-  setTimeout(() => setSpeechBubble(null), 8000);
+
+  bubbleTimerRef.current = setTimeout(() => setSpeechBubble(null), 6000);
   setTimeout(() => speak(text, 'male'), 300);
-};
+  };
 
 const handleDollClick = () => {
   window.speechSynthesis.cancel();
+  if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current); // Clear previous
+
   setGuideVoice('female');
   const text = "Yay! I'm Maya and I'll guide you through! Let's fly!";
   setSpeechBubble({ who: 'parrot', text });
-  setTimeout(() => setSpeechBubble(null), 8000);
+
+  bubbleTimerRef.current = setTimeout(() => setSpeechBubble(null), 6000);
   setTimeout(() => speak(text, 'female'), 300);
-};
+  };
   // REPLACE IT WITH THIS
   const handleGenderSelect = (gender) => {
   setSelectedGender(gender);
@@ -145,18 +156,19 @@ const handleDollClick = () => {
   <div style={{
     position: 'absolute',
     bottom: '380px',
-    left: speechBubble.who === 'toucan' ? '1px' : '270px', // ← position based on who is speaking
-    background: 'rgba(255, 255, 255, 0.25)',              // ← transparent white
-    border: '2px solid #003580',                          // ← dark blue border
+    left: speechBubble.who === 'toucan' ? '5%' : '60%',     /* ← position based on who is speaking */
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',         /* ← transparent white */
+    border: '2px solid #003580',                          /* ← dark blue border */
     borderRadius: '18px',
     padding: '10px 14px',
     fontSize: '0.78em',
     fontWeight: '700',
-    color: 'black',                                         // ← black text so it's readable
+    color: 'black',                                         /* ← black text so it's readable */
+    fontFamily: 'Arial, sans-serif',                        /* ← add this to fix font */
     maxWidth: '130px',
     textAlign: 'center',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',             // ← softer shadow
-    backdropFilter: 'blur(4px)',               // ← frosted glass effect (bonus!)
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',             /* ← softer shadow */
+    backdropFilter: 'blur(4px)',                            /* ← frosted glass effect (bonus!) */
     zIndex: '30',
     lineHeight: '1.4',
   }}>

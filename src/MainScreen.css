@@ -141,11 +141,12 @@
 /* ── Speech Bubbles ── */
 .speech-bubble {
   position: absolute;
-  background: white;
+  background-color: white;
   border-radius: 18px;
   padding: 10px 14px;
   font-size: 0.78em;
   font-weight: 700;
+  font-family: 'Arial, sans-serif';             /* ← add this to fix font */
   color: #333;
   max-width: 140px;
   text-align: center;
@@ -172,7 +173,7 @@
 
 .speech-bubble--parrot {
   bottom: 700px;                      /* ← increase from 415px */
-  right: 270px !important;             /* ← move left toward Parrot's beak */
+  right: 220px !important;             /* ← move left toward Parrot's beak */
 }
 
 .speech-bubble--parrot::after {
