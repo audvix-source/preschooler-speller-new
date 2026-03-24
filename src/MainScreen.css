@@ -137,3 +137,68 @@
   /* No desktop-specific overrides needed */
   /* Touchpad positions are fixed and work consistently */
 }
+
+/* ── Speech Bubbles ── */
+.speech-bubble {
+  position: absolute;
+  background: white;
+  border-radius: 18px;
+  padding: 10px 14px;
+  font-size: 0.78em;
+  font-weight: 700;
+  color: #333;
+  max-width: 140px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 30;
+  animation: bubblePop 0.3s cubic-bezier(0.68,-0.55,0.265,1.55) forwards;
+  line-height: 1.4;
+}
+
+.speech-bubble--toucan {
+  bottom: 700px;                      /* ← increase from 415px */                       
+  left: 20px;
+}
+
+.speech-bubble--toucan::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 15px;                         /* ← move tail right toward Toucan's beak */
+  border-width: 10px 8px 0;
+  border-style: solid;
+  border-color: white transparent transparent;
+}
+
+.speech-bubble--parrot {
+  bottom: 700px;                      /* ← increase from 415px */
+  right: 270px !important;             /* ← move left toward Parrot's beak */
+}
+
+.speech-bubble--parrot::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 210px !important;             /* ← tail points toward Parrot */
+  right: auto;
+  border-width: 10px 8px 0;
+  border-style: solid;
+  border-color: white transparent transparent;
+}
+
+@keyframes bubblePop {
+  0%   { opacity: 0; transform: scale(0.5); }
+  70%  { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media only screen and (min-width: 769px) {
+  .speech-bubble--toucan {
+    bottom: 430px;
+    left: 25px;
+  }
+  .speech-bubble--parrot {
+    bottom: 430px;
+    right: 25px;
+  }
+}
